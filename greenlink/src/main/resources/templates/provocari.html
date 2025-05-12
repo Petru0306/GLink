@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLink - Provocări</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/images/greenlink-logo.png" alt="GreenLink Logo" class="logo-img">
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="index">Acasă</a></li>
+                <li><a href="marketplace">Marketplace</a></li>
+                <li><a href="educatie">Educație Ecologică</a></li>
+                <li><a href="reciclare">Reciclare & Reutilizare</a></li>
+                <li><a href="calculator">Calculator de Emisii</a></li>
+                <li><a href="provocari">Provocări</a></li>
+                <li><a href="despre">Despre Noi</a></li>
+                <li><a href="contact">Contact</a></li>
+                <li><a href="profil">Profilul Meu</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="challenges">
+            <h1>Provocări Ecologice</h1>
+            <div class="challenge-list">
+                <div class="challenge-card">
+                    <h3>Reciclează 10 sticle</h3>
+                    <p>Reciclează 10 sticle de plastic în această săptămână.</p>
+                    <button onclick="acceptChallenge('Reciclează 10 sticle', 10)">Acceptă Provocarea</button>
+                </div>
+                <div class="challenge-card">
+                    <h3>Economisește energie</h3>
+                    <p>Redu consumul de energie electrică cu 10% timp de o lună.</p>
+                    <button onclick="acceptChallenge('Economisește energie', 20)">Acceptă Provocarea</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="~{footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{head :: head('Înregistrare - GreenLink')}"></head>
+<body>
+<!-- Navbar -->
+<nav th:replace="~{navbar :: navbar}"></nav>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-center mb-4">Creează un cont nou</h3>
+
+          <form th:action="@{/user/register}" method="post">
+            <!-- Nume -->
+            <div class="mb-3">
+              <label for="firstName" class="form-label">Prenume</label>
+              <input type="text" class="form-control" id="firstName" name="firstName" required>
+            </div>
+
+            <!-- Prenume -->
+            <div class="mb-3">
+              <label for="lastName" class="form-label">Nume</label>
+              <input type="text" class="form-control" id="lastName" name="lastName" required>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+
+            <!-- Parola -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Parolă</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-success">Creează cont</button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <p>Ai deja cont? <a href="/login" class="text-success">Conectează-te</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{footer :: footer}"></footer>
+</body>
+</html>

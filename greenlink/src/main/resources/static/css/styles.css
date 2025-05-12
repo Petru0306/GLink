@@ -1,0 +1,148 @@
+/* Variabile pentru paleta de culori */
+:root {
+    --primary-color: #2ecc71;      /* Verde principal folosit pentru succes și accente */
+    --primary-dark: #27ae60;       /* Verde închis pentru hover și elemente secundare */
+    --primary-light: #a8e6cf;      /* Verde deschis pentru backgrounds și highlights */
+    --text-dark: #2c3e50;          /* Culoare text principal */
+    --text-muted: #95a5a6;         /* Text secundar/muted */
+    --white: #ffffff;              /* Alb pentru fundaluri */
+    --light-bg: #f8f9fa;          /* Background light */
+    --dark: #343a40;              /* Culoare pentru footer și text întunecat */
+    --success: var(--primary-color);
+    --success-hover: var(--primary-dark);
+}
+
+/* Clase de utilitate pentru culori */
+.bg-primary-light {
+    background-color: var(--primary-light) !important;
+}
+
+.text-success {
+    color: var(--primary-color) !important;
+}
+
+/* Override Bootstrap classes */
+.btn-success {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-success:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+.btn-outline-success {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-success:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Navbar styling */
+.navbar-light .navbar-nav .nav-link {
+    color: var(--text-dark);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--primary-color);
+}
+
+/* Card styling */
+.card {
+    transition: transform 0.3s ease-in-out;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Background classes */
+.bg-success {
+    background-color: var(--primary-color) !important;
+}
+
+/* Footer styling */
+.bg-dark {
+    background-color: var(--dark) !important;
+}
+
+/* Badge styling */
+.badge.bg-success {
+    background-color: var(--primary-color) !important;
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(46, 204, 113, 0.25);
+}
+
+/* Links */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Custom shadows */
+.shadow-sm {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+/* Icons */
+.bi {
+    vertical-align: -.125em;
+}
+
+.icon-success {
+    color: var(--primary-color);
+}
+
+/* Header backgrounds */
+.hero-section {
+    background: linear-gradient(rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+    color: var(--white);
+}
+
+/* List groups */
+.list-group-item.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Progress bars */
+.progress-bar {
+    background-color: var(--primary-color);
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.page-link {
+    color: var(--primary-color);
+}
+
+.page-link:hover {
+    color: var(--primary-dark);
+}
+
+/* Tables */
+.table-success {
+    --bs-table-bg: rgba(46, 204, 113, 0.1);
+}
+
+/* Input focus states */
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}

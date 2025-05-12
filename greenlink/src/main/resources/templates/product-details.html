@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLink - Detalii Produs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+<!-- Navbar -->
+<nav th:replace="~{navbar :: navbar}"></nav>
+
+<!-- Hero Section cu imaginea produsului -->
+<header class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}"
+                     class="img-fluid rounded shadow" alt="Product Image">
+                <img th:unless="${product.imageUrl}" src="/api/placeholder/600/400"
+                     class="img-fluid rounded shadow" alt="Product">
+            </div>
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bold" th:text="${product.name}">Nume Produs</h1>
+                <div class="mb-3">
+                    <span th:if="${product.ecoFriendly}" class="badge bg-success me-2">Eco-Friendly</span>
+                    <span class="badge bg-info" th:text="${product.category.displayName}">Categorie</span>
+                </div>
+                <h2 class="text-success fw-bold mb-4" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</h2>
+
+                <!-- Stoc -->
+                <div class="mb-4">
+                    <p th:if="${product.stock > 0}" class="text-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        În stoc: <span th:text="${product.stock}">10</span> bucăți
+                    </p>
+                    <p th:unless="${product.stock > 0}" class="text-danger">
+                        <i class="bi bi-x-circle-fill"></i>
+                        Stoc epuizat
+                    </p>
+                </div>
+
+                <!-- Butoane acțiune -->
+                <div class="d-grid gap-2">
+                    <button class="btn btn-success btn-lg" th:disabled="${product.stock <= 0}">
+                        <i class="bi bi-cart-plus"></i> Adaugă în coș
+                    </button>
+                    <button class="btn btn-outline-success">
+                        <i class="bi bi-heart"></i> Adaugă la favorite
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Detalii produs -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Tabs pentru informații -->
+            <ul class="nav nav-tabs mb-3" id="productTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description">
+                        Descriere
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="details-tab" data-bs-toggle="tab" href="#details">
+                        Specificații
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">
+                        Recenzii
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Tab content -->
+            <div class="tab-content" id="productTabsContent">
+                <div class="tab-pane fade show active" id="description">
+                    <p class="lead" th:text="${product.description}">Descriere detaliată produs...</p>
+                </div>
+                <div class="tab-pane fade" id="details">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <th>Categorie:</th>
+                                <td th:text="${product.category.displayName}">Categorie</td>
+                            </tr>
+                            <tr>
+                                <th>Eco-Friendly:</th>
+                                <td>
+                                            <span th:if="${product.ecoFriendly}" class="text-success">
+                                                <i class="bi bi-check-lg"></i> Da
+                                            </span>
+                                    <span th:unless="${product.ecoFriendly}" class="text-muted">Nu</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Data adăugării:</th>
+                                <td th:text="${#temporals.format(product.createdAt, 'dd MMMM yyyy')}">Data</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="reviews">
+                    <p class="text-muted text-center py-5">Nu există recenzii momentan.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar cu produse similare -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Produse similare</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted text-center">Se vor afișa produse similare din aceeași categorie.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Buton înapoi la marketplace -->
+<div class="container mb-5">
+    <a href="/marketplace" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Înapoi la Marketplace
+    </a>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

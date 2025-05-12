@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+
+</head>
+<body>
+<!-- Navbar -->
+<nav th:replace="~{navbar :: navbar}"></nav>
+
+<!-- Hero Section -->
+<header class="bg-success text-white py-4">
+    <div class="container">
+        <h1>Contactează-ne</h1>
+        <p class="lead">Suntem aici să te ajutăm</p>
+    </div>
+</header>
+
+<main class="container py-5">
+    <div class="row g-5">
+        <!-- Contact Information -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3>Informații de Contact</h3>
+                    <div class="mt-4">
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-geo-alt text-success fs-4 me-3"></i>
+                            <div>
+                                <h5>Adresă</h5>
+                                <p class="mb-0">Strada Verde nr. 123, București</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-envelope text-success fs-4 me-3"></i>
+                            <div>
+                                <h5>Email</h5>
+                                <p class="mb-0">contact@greenlink.ro</p>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-3">
+                            <i class="bi bi-telephone text-success fs-4 me-3"></i>
+                            <div>
+                                <h5>Telefon</h5>
+                                <p class="mb-0">0700 000 000</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3>Trimite-ne un mesaj</h3>
+                    <form class="mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nume</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Subiect</label>
+                                <input type="text" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Mesaj</label>
+                                <textarea class="form-control" rows="5" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-send me-2"></i>Trimite mesajul
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{footer :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
