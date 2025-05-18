@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>My Challenges - GreenLink</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-5">
+            <h2 class="mb-4">My Challenges</h2>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <!-- Active Challenges -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Active Challenges</h3>
+                        <a href="/challenges" class="btn btn-primary">Find New Challenges</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(activeChallenges)}" class="text-muted">
+                        No active challenges. Visit the challenges page to start a new one!
+                    </div>
+                    <div th:each="challenge : ${activeChallenges}" class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title" th:text="${challenge.challenge.title}">Challenge Title</h4>
+                            <p class="card-text" th:text="${challenge.challenge.description}">Challenge Description</p>
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" 
+                                     th:style="'width: ' + ${challenge.progressPercentage} + '%'"
+                                     th:text="${challenge.progressPercentage + '%'}">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Points: <span th:text="${challenge.challenge.points}">0</span></span>
+                                <form th:if="${challenge.progressPercentage == 100}" 
+                                      th:action="@{/profile/challenges/{id}/complete(id=${challenge.challenge.id})}" 
+                                      method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-success">Complete Challenge</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Challenges -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Completed Challenges</h3>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="text-muted">
+                        No completed challenges yet.
+                    </div>
+                    <div th:each="challenge : ${completedChallenges}" class="card mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title" th:text="${challenge.challenge.title}">Challenge Title</h4>
+                            <p class="card-text" th:text="${challenge.challenge.description}">Challenge Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Points Earned: <span th:text="${challenge.challenge.points}">0</span></span>
+                                <span class="text-success">
+                                    <i class="fas fa-check-circle"></i> Completed on 
+                                    <span th:text="${#temporals.format(challenge.completedAt, 'dd-MM-yyyy')}">Date</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

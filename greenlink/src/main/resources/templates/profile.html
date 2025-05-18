@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>Profile - GreenLink</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container py-5">
+            <!-- Profile Header -->
+            <div class="row mb-4">
+                <div class="col-md-4 text-center">
+                    <img th:if="${user.profilePicture}" th:src="${user.profilePicture}" 
+                         class="rounded-circle img-thumbnail" alt="Profile Picture"
+                         style="width: 200px; height: 200px; object-fit: cover;">
+                    <img th:unless="${user.profilePicture}" src="/img/default-profile.png" 
+                         class="rounded-circle img-thumbnail" alt="Default Profile Picture"
+                         style="width: 200px; height: 200px; object-fit: cover;">
+                </div>
+                <div class="col-md-8">
+                    <h2 th:text="${user.firstName + ' ' + user.lastName}">User Name</h2>
+                    <p class="text-muted" th:text="${user.email}">email@example.com</p>
+                    <p th:text="${user.bio}">Bio information</p>
+                    <div class="mb-3">
+                        <strong>Total Points:</strong> <span th:text="${totalPoints}">0</span>
+                    </div>
+                    <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+            <!-- Active Challenges -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Active Challenges</h3>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(activeChallenges)}" class="text-muted">
+                        No active challenges.
+                    </div>
+                    <div th:each="challenge : ${activeChallenges}" class="mb-3">
+                        <h4 th:text="${challenge.challenge.title}">Challenge Title</h4>
+                        <p th:text="${challenge.challenge.description}">Challenge Description</p>
+                        <div class="progress mb-2">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${challenge.progressPercentage} + '%'"
+                                 th:text="${challenge.progressPercentage + '%'}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Results -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Recent Quiz Results</h3>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(quizResults)}" class="text-muted">
+                        No quiz results yet.
+                    </div>
+                    <div th:each="result : ${quizResults}" class="mb-3">
+                        <h4 th:text="${result.quiz.title}">Quiz Title</h4>
+                        <p>Score: <span th:text="${result.score}">0</span>%</p>
+                        <p>Completed: <span th:text="${#temporals.format(result.completedAt, 'dd-MM-yyyy HH:mm')}">Date</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

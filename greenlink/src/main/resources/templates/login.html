@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autentificare - GreenLink</title>
+    <title>Login - GreenLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -14,6 +14,11 @@
 <!-- Navbar -->
 <nav th:replace="fragments/navbar :: navbar"></nav>
 
+<!-- Test Button - Remove after testing -->
+<button type="button" class="btn btn-primary position-fixed top-0 end-0 m-3" data-bs-toggle="modal" data-bs-target="#registerModal">
+    Test Register Modal
+</button>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -21,14 +26,24 @@
                 <div class="card-body p-4">
                     <div class="text-center mb-4">
                         <i class="bi bi-leaf-fill text-success fs-1"></i>
-                        <h2 class="mt-3">Bine ai revenit!</h2>
+                        <h2 class="mt-3">Login to GreenLink</h2>
                         <p class="text-muted">Intră în contul tău GreenLink</p>
+                    </div>
+
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        Invalid email or password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        You have been logged out.
+                    </div>
+                    <div th:if="${param.registered}" class="alert alert-success">
+                        Registration successful! Please login.
                     </div>
 
                     <form th:action="@{/login}" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <input type="email" class="form-control" id="email" name="email" required autofocus>
                         </div>
 
                         <div class="mb-3">
@@ -43,44 +58,137 @@
 
                         <div class="mb-3 d-flex justify-content-between align-items-center">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="remember">
-                                <label class="form-check-label" for="remember">Ține-mă minte</label>
+                                <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                                <label class="form-check-label" for="remember-me">Ține-mă minte</label>
                             </div>
                             <a href="/forgot-password" class="text-success">Ai uitat parola?</a>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 mb-3">Autentificare</button>
-
-                        <div class="text-center">
-                            <p class="mb-0">Nu ai cont încă?
-                                <a href="/register" class="text-success">Înregistrează-te</a>
-                            </p>
-                        </div>
+                        <button type="submit" class="btn btn-success w-100 mb-3">Login</button>
                     </form>
+
+                    <div class="text-center">
+                        <p class="mb-0">Nu ai cont încă?
+                            <button type="button" class="btn btn-link text-success p-0 border-0 text-decoration-underline" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Înregistrează-te
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
-<nav th:replace="~{navbar :: navbar}"></nav>
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create an Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/register}" method="post">
+                    <div class="mb-3">
+                        <label for="registerFirstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="registerFirstName" name="firstName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerLastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="registerLastName" name="lastName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="registerPassword" name="password" required>
+                            <button class="btn btn-outline-secondary" type="button" id="toggleRegisterPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Footer -->
+<footer th:replace="fragments/footer :: footer"></footer>
+
+<!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Modal and Password Toggle Script -->
 <script>
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        const password = document.getElementById('password');
-        const icon = this.querySelector('i');
-        if (password.type === 'password') {
-            password.type = 'text';
-            icon.classList.remove('bi-eye');
-            icon.classList.add('bi-eye-slash');
-        } else {
-            password.type = 'password';
-            icon.classList.remove('bi-eye-slash');
-            icon.classList.add('bi-eye');
+// Wait for the DOM to be fully loaded
+window.addEventListener('load', function() {
+    console.log('Window loaded');
+    
+    // Initialize modals
+    const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+    
+    // Add click handlers for all register buttons/links
+    document.querySelectorAll('[data-bs-target="#registerModal"]').forEach(button => {
+        button.onclick = function(e) {
+            e.preventDefault();
+            console.log('Register button clicked');
+            registerModal.show();
         }
     });
+
+    // Password toggle for login form
+    const toggleLoginBtn = document.getElementById('togglePassword');
+    if (toggleLoginBtn) {
+        toggleLoginBtn.onclick = function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        };
+    }
+
+    // Password toggle for register form
+    const toggleRegisterBtn = document.getElementById('toggleRegisterPassword');
+    if (toggleRegisterBtn) {
+        toggleRegisterBtn.onclick = function() {
+            const passwordInput = document.getElementById('registerPassword');
+            const icon = this.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        };
+    }
+});
+
+// Add a global function to show the register modal
+window.showRegisterModal = function() {
+    const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+    registerModal.show();
+}
 </script>
+
+<!-- Add a regular button for testing -->
+<button onclick="showRegisterModal()" class="btn btn-warning position-fixed bottom-0 end-0 m-3">
+    Show Register Modal
+</button>
 </body>
 </html>

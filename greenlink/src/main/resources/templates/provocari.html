@@ -1,51 +1,212 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Provocări</title>
+    <title>Challenges - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
 </head>
 <body>
-    <header>
-        <div class="logo">
-            <img src="/images/greenlink-logo.png" alt="GreenLink Logo" class="logo-img">
-        </div>
-        <nav>
-            <ul class="menu">
-                <li><a href="index">Acasă</a></li>
-                <li><a href="marketplace">Marketplace</a></li>
-                <li><a href="educatie">Educație Ecologică</a></li>
-                <li><a href="reciclare">Reciclare & Reutilizare</a></li>
-                <li><a href="calculator">Calculator de Emisii</a></li>
-                <li><a href="provocari">Provocări</a></li>
-                <li><a href="despre">Despre Noi</a></li>
-                <li><a href="contact">Contact</a></li>
-                <li><a href="profil">Profilul Meu</a></li>
-            </ul>
-        </nav>
-    </header>
+<!-- Navbar -->
+<nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <main>
-        <section class="challenges">
-            <h1>Provocări Ecologice</h1>
-            <div class="challenge-list">
-                <div class="challenge-card">
-                    <h3>Reciclează 10 sticle</h3>
-                    <p>Reciclează 10 sticle de plastic în această săptămână.</p>
-                    <button onclick="acceptChallenge('Reciclează 10 sticle', 10)">Acceptă Provocarea</button>
-                </div>
-                <div class="challenge-card">
-                    <h3>Economisește energie</h3>
-                    <p>Redu consumul de energie electrică cu 10% timp de o lună.</p>
-                    <button onclick="acceptChallenge('Economisește energie', 20)">Acceptă Provocarea</button>
+<!-- Hero Section -->
+<header class="bg-success text-white py-4">
+    <div class="container">
+        <h1 class="display-5">Environmental Challenges</h1>
+        <p class="lead">Complete challenges, earn points, and make a real impact on the environment</p>
+    </div>
+</header>
+
+<div class="container py-5">
+    <!-- Challenge Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-success active" data-challenge-type="ALL">All Challenges</button>
+                <button class="btn btn-outline-success" data-challenge-type="DAILY">Daily</button>
+                <button class="btn btn-outline-success" data-challenge-type="WEEKLY">Weekly</button>
+                <button class="btn btn-outline-success" data-challenge-type="MONTHLY">Monthly</button>
+                <button class="btn btn-outline-success" data-challenge-type="SPECIAL">Special</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overview -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-trophy-fill text-success display-4 mb-3"></i>
+                    <h5 class="card-title">Total Points</h5>
+                    <p class="display-6 text-success mb-0" th:text="${totalPoints ?: '0'}">0</p>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle-fill text-success display-4 mb-3"></i>
+                    <h5 class="card-title">Completed</h5>
+                    <p class="display-6 text-success mb-0" th:text="${completedCount ?: '0'}">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-lightning-fill text-success display-4 mb-3"></i>
+                    <h5 class="card-title">Current Streak</h5>
+                    <p class="display-6 text-success mb-0" th:text="${currentStreak ?: '0'} + ' days'">0 days</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <footer th:replace="~{footer :: footer}"></footer>
+    <!-- Available Challenges -->
+    <h2 class="mb-4">Available Challenges</h2>
+    <div id="challengeList" class="row g-4">
+        <div th:if="${allChallenges}" th:each="challenge : ${allChallenges}" class="col-md-6">
+            <div class="card border-0 shadow-sm hover-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-success" th:text="${challenge.type}">Daily</span>
+                        <span class="text-success"><i class="bi bi-coin"></i> <span th:text="${challenge.points}">50</span> points</span>
+                    </div>
+                    <h5 class="card-title" th:text="${challenge.title}">Challenge Title</h5>
+                    <p class="card-text text-muted" th:text="${challenge.description}">Challenge description</p>
+                    <button class="btn btn-success w-100" 
+                            th:data-challenge-id="${challenge.id}"
+                            onclick="startChallenge(this)">
+                        Start Challenge
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Challenges -->
+    <h2 class="mt-5 mb-4">Active Challenges</h2>
+    <div class="row g-4">
+        <div th:if="${activeChallenges}" th:each="userChallenge : ${activeChallenges}" class="col-md-6">
+            <div class="card border-0 shadow-sm hover-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-success" th:text="${userChallenge.challenge.type}">Daily</span>
+                        <span class="text-success"><i class="bi bi-coin"></i> <span th:text="${userChallenge.challenge.points}">50</span> points</span>
+                    </div>
+                    <h5 class="card-title" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
+                    <p class="card-text text-muted" th:text="${userChallenge.challenge.description}">Challenge description</p>
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
+                             th:attr="aria-valuenow=${userChallenge.progressPercentage}"
+                             aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <button class="btn btn-success w-100" 
+                            th:data-challenge-id="${userChallenge.id}"
+                            onclick="updateProgress(this)"
+                            th:text="${userChallenge.progressPercentage < 100 ? 'Update Progress' : 'Mark as Complete'}">
+                        Update Progress
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Challenges -->
+    <h2 class="mt-5 mb-4">Completed Challenges</h2>
+    <div class="row g-4">
+        <div th:if="${completedChallenges}" th:each="userChallenge : ${completedChallenges}" class="col-md-6">
+            <div class="card border-0 shadow-sm h-100 bg-light">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="badge bg-secondary" th:text="${userChallenge.challenge.type}">Daily</span>
+                        <span class="text-success">
+                            <i class="bi bi-check-circle-fill"></i> 
+                            <span th:text="${userChallenge.challenge.points}">50</span> points earned
+                        </span>
+                    </div>
+                    <h5 class="card-title text-muted" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
+                    <p class="card-text text-muted" th:text="${userChallenge.challenge.description}">Challenge description</p>
+                    <small class="text-muted">
+                        Completed on <span th:text="${#temporals.format(userChallenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: footer"></footer>
+
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Challenge Scripts -->
+<script>
+function startChallenge(button) {
+    const challengeId = button.getAttribute('data-challenge-id');
+    fetch(`/provocari/${challengeId}/start`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result === 'success') {
+            window.location.reload();
+        } else {
+            alert('Failed to start challenge: ' + result);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to start challenge');
+    });
+}
+
+function updateProgress(button) {
+    const challengeId = button.getAttribute('data-challenge-id');
+    const progress = prompt('Enter progress percentage (0-100):', '0');
+    
+    if (progress === null) return;
+    
+    const progressValue = parseInt(progress);
+    if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
+        alert('Please enter a valid number between 0 and 100');
+        return;
+    }
+
+    fetch(`/provocari/${challengeId}/progress`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `progress=${progressValue}`
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result === 'success') {
+            window.location.reload();
+        } else {
+            alert('Failed to update progress: ' + result);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update progress');
+    });
+}
+</script>
+
+<!-- Include the login modal script -->
+<div th:replace="fragments/login-modal :: loginModalScript"></div>
 </body>
 </html>

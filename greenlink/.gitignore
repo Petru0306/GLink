@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Application specific ###
+/uploads/
+/logs/
+application-*.properties
+!application.properties
+
+### System Files ###
+.DS_Store
+Thumbs.db

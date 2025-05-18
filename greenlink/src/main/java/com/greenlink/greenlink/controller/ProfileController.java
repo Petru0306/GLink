@@ -2,16 +2,17 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.Challenge;
+import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeService;
 import com.greenlink.greenlink.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,66 +32,95 @@ public class ProfileController {
 
     @GetMapping
     public String showProfile(Model model, Principal principal) {
-        User user = userService.getCurrentUser(principal.getName());
+        try {
+            User user = userService.getCurrentUser(principal.getName());
 
-        // Add user data to model
-        model.addAttribute("user", user);
-        model.addAttribute("totalPoints", user.getPoints());
+            // Add user data to model
+            model.addAttribute("user", user);
+            model.addAttribute("totalPoints", user.getPoints());
 
-        // Get quiz results
-        List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
-        model.addAttribute("quizResults", quizResults);
+            // Get quiz results
+            List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
+            model.addAttribute("quizResults", quizResults);
 
-        // Get challenges
-        List<Challenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
-        List<Challenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
-        model.addAttribute("activeChallenges", activeChallenges);
-        model.addAttribute("completedChallenges", completedChallenges);
+            // Get challenges
+            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
+            model.addAttribute("activeChallenges", activeChallenges);
+            model.addAttribute("completedChallenges", completedChallenges);
 
-        return "profil";
+            return "profile";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load profile: " + e.getMessage());
+            return "error";
+        }
     }
 
     @GetMapping("/edit")
     public String showEditProfile(Model model, Principal principal) {
-        User user = userService.getCurrentUser(principal.getName());
-        model.addAttribute("user", user);
-        return "edit-profile";
+        try {
+            User user = userService.getCurrentUser(principal.getName());
+            model.addAttribute("user", user);
+            return "profile/edit";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load profile for editing: " + e.getMessage());
+            return "error";
+        }
     }
 
     @PostMapping("/edit")
     public String updateProfile(@ModelAttribute User userUpdate,
-                                @RequestParam(required = false) MultipartFile profilePicture,
-                                Principal principal) {
-        userService.updateProfile(principal.getName(), userUpdate, profilePicture);
-        return "redirect:/profil";
+                              @RequestParam(required = false) MultipartFile profilePicture,
+                              Principal principal,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateProfile(principal.getName(), userUpdate, profilePicture);
+            redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update profile: " + e.getMessage());
+        }
+        return "redirect:/profile";
     }
 
     @GetMapping("/challenges")
     public String showChallenges(Model model, Principal principal) {
-        User user = userService.getCurrentUser(principal.getName());
-        model.addAttribute("activeChallenges",
-                challengeService.getUserActiveChallenges(user.getId()));
-        return "profile-challenges";
+        try {
+            User user = userService.getCurrentUser(principal.getName());
+            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
+            model.addAttribute("activeChallenges", activeChallenges);
+            model.addAttribute("completedChallenges", completedChallenges);
+            return "profile/challenges";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load challenges: " + e.getMessage());
+            return "error";
+        }
     }
 
     @PostMapping("/challenges/{challengeId}/complete")
-    public String completeChallenge(@PathVariable Long challengeId, Principal principal) {
-        User user = userService.getCurrentUser(principal.getName());
-        challengeService.completeChallenge(challengeId, user.getId());
+    public String completeChallenge(@PathVariable Long challengeId,
+                                  Principal principal,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.getCurrentUser(principal.getName());
+            UserChallenge challenge = challengeService.updateProgress(user.getId(), challengeId, 100);
+            redirectAttributes.addFlashAttribute("success", "Challenge completed successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to complete challenge: " + e.getMessage());
+        }
         return "redirect:/profile/challenges";
     }
 
     @GetMapping("/quizzes")
     public String showQuizResults(Model model, Principal principal) {
-        User user = userService.getCurrentUser(principal.getName());
-        model.addAttribute("quizResults",
-                quizService.getUserQuizResults(user.getId()));
-        return "profile-quizzes";
-    }
-
-    @ExceptionHandler(Exception.class)
-    public String handleError(Exception e, Model model) {
-        model.addAttribute("error", e.getMessage());
-        return "error";
+        try {
+            User user = userService.getCurrentUser(principal.getName());
+            List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
+            model.addAttribute("quizResults", quizResults);
+            return "profile/quizzes";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load quiz results: " + e.getMessage());
+            return "error";
+        }
     }
 }

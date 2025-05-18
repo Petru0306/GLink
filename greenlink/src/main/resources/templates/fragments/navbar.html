@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<!-- Navbar Fragment -->
+<th:block th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-success fw-bold" href="/">
+                <i class="bi bi-leaf-fill"></i> GreenLink
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/educatie">Education</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/marketplace">Marketplace</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reciclare">Recycling Points</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/despre">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/calculator">Carbon Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/provocari">Challenges</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2" sec:authorize="!isAuthenticated()">
+                    <a href="/register" class="btn btn-outline-success">Register</a>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                </div>
+                <div class="d-flex gap-2" sec:authorize="isAuthenticated()">
+                    <a href="/dashboard" class="btn btn-outline-success">Dashboard</a>
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-success">Logout</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Include the login modal -->
+    <div th:replace="fragments/login-modal :: loginModal"></div>
+    
+    <!-- Include the login modal script -->
+    <div th:replace="fragments/login-modal :: loginModalScript"></div>
+</th:block>
+</body>
+</html> 

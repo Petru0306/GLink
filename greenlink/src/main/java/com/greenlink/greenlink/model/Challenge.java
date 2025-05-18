@@ -17,33 +17,54 @@ public class Challenge {
     private String description;
 
     @Column(nullable = false)
-    private int pointsValue;
+    private int points;
+
+    @Enumerated(EnumType.STRING)
+    private ChallengeType type;
+
+    @Enumerated(EnumType.STRING)
+    private ChallengeStatus status;
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private LocalDateTime completedAt;
+    private LocalDateTime updatedAt;
+    private int progressPercentage;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    private ChallengeStatus status = ChallengeStatus.IN_PROGRESS;
+    public enum ChallengeType {
+        DAILY, WEEKLY, MONTHLY, SPECIAL
+    }
 
     public enum ChallengeStatus {
-        IN_PROGRESS,
-        COMPLETED,
-        FAILED
+        ACTIVE, IN_PROGRESS, COMPLETED, EXPIRED
     }
 
     // Constructors
     public Challenge() {}
 
-    public Challenge(String title, String description, int pointsValue) {
+    public Challenge(String title, String description, int points, ChallengeType type) {
         this.title = title;
         this.description = description;
-        this.pointsValue = pointsValue;
+        this.points = points;
+        this.type = type;
+        this.status = ChallengeStatus.ACTIVE;
+        this.progressPercentage = 0;
         this.startDate = LocalDateTime.now();
+        this.endDate = calculateEndDate();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    private LocalDateTime calculateEndDate() {
+        return switch (type) {
+            case DAILY -> startDate.plusDays(1);
+            case WEEKLY -> startDate.plusWeeks(1);
+            case MONTHLY -> startDate.plusMonths(1);
+            case SPECIAL -> startDate.plusMonths(3); // Special challenges last 3 months by default
+        };
     }
 
     // Getters and Setters
@@ -71,12 +92,31 @@ public class Challenge {
         this.description = description;
     }
 
-    public int getPointsValue() {
-        return pointsValue;
+    public int getPoints() {
+        return points;
     }
 
-    public void setPointsValue(int pointsValue) {
-        this.pointsValue = pointsValue;
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public ChallengeType getType() {
+        return type;
+    }
+
+    public void setType(ChallengeType type) {
+        this.type = type;
+    }
+
+    public ChallengeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ChallengeStatus status) {
+        this.status = status;
+        if (status == ChallengeStatus.COMPLETED && this.completedAt == null) {
+            this.completedAt = LocalDateTime.now();
+        }
     }
 
     public LocalDateTime getStartDate() {
@@ -103,19 +143,32 @@ public class Challenge {
         this.completedAt = completedAt;
     }
 
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getProgressPercentage() {
+        return progressPercentage;
+    }
+
+    public void setProgressPercentage(int progressPercentage) {
+        this.progressPercentage = Math.min(100, Math.max(0, progressPercentage));
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void setProgress(int progress) {
+        setProgressPercentage(progress);
+    }
+
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public ChallengeStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(ChallengeStatus status) {
-        this.status = status;
     }
 }

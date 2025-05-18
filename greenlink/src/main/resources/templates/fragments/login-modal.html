@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Login Modal -->
+<div th:fragment="loginModal">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login to GreenLink</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="loginAlert" class="alert alert-danger d-none">
+                        Invalid email or password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        You have been logged out.
+                    </div>
+                    <div th:if="${param.registered}" class="alert alert-success">
+                        Registration successful! Please login.
+                    </div>
+                    <form id="loginForm" onsubmit="return handleLogin(event)">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="loginPassword" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                            <label class="form-check-label" for="remember-me">Remember me</label>
+                        </div>
+                        <div class="mb-3 text-end">
+                            <a href="/forgot-password" class="text-success">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal Script -->
+<script th:fragment="loginModalScript">
+document.addEventListener('DOMContentLoaded', function() {
+    // Make sure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap is not loaded!');
+        return;
+    }
+
+    // Initialize the login modal
+    const loginModalEl = document.getElementById('loginModal');
+    if (!loginModalEl) {
+        console.error('Login modal element not found!');
+        return;
+    }
+
+    const loginModal = new bootstrap.Modal(loginModalEl);
+
+    // Add click handler for the login button
+    const loginButtons = document.querySelectorAll('[data-bs-toggle="modal"][data-bs-target="#loginModal"]');
+    loginButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginModal.show();
+        });
+    });
+
+    // Make the showLoginModal function available globally
+    window.showLoginModal = function() {
+        loginModal.show();
+    };
+
+    // Password toggle for login form
+    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+    const loginPasswordInput = document.getElementById('loginPassword');
+    if (toggleLoginPassword && loginPasswordInput) {
+        toggleLoginPassword.addEventListener('click', function() {
+            const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            loginPasswordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('bi-eye');
+            this.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+    }
+
+    // Handle login form submission
+    window.handleLogin = function(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        const alertDiv = document.getElementById('loginAlert');
+
+        fetch('/login', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Successful login - redirect to the target URL
+                window.location.href = response.url || '/dashboard';
+            } else {
+                // Show error message in the modal
+                alertDiv.classList.remove('d-none');
+                // Clear password field
+                form.querySelector('input[name="password"]').value = '';
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            alertDiv.classList.remove('d-none');
+            // Clear password field
+            form.querySelector('input[name="password"]').value = '';
+        });
+
+        return false;
+    };
+
+    // Hide alert when modal is hidden
+    loginModalEl.addEventListener('hidden.bs.modal', function () {
+        document.getElementById('loginAlert').classList.add('d-none');
+        document.getElementById('loginForm').reset();
+    });
+
+    // Debug logging
+    console.log('Login modal initialized');
+});
+</script>
+</body>
+</html> 
