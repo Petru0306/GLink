@@ -9,31 +9,137 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .calculator-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 12px;
+            margin-right: 1rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        .btn-calculate {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .result-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 0;
+        }
+
+        .recommendation-item {
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(40, 167, 69, 0.05);
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .recommendation-item:hover {
+            background: rgba(40, 167, 69, 0.1);
+            transform: translateX(5px);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 <!-- Navbar -->
 <nav th:replace="fragments/navbar :: navbar"></nav>
 
 <!-- Hero Section -->
-<header class="bg-success text-white py-4">
-    <div class="container">
-        <h1>Calculator Amprentă de Carbon</h1>
-        <p class="lead">Află impactul tău asupra mediului și descoperă modalități de a-l reduce</p>
+<header class="hero-section">
+    <div class="container hero-content">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">Calculator Amprentă de Carbon</h1>
+                <p class="lead fs-4 mb-0">Află impactul tău asupra mediului și descoperă modalități de a-l reduce</p>
+            </div>
+        </div>
     </div>
 </header>
 
 <main class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
+            <div class="calculator-card card">
+                <div class="card-body p-4 p-lg-5">
                     <form id="carbonCalculator">
                         <!-- Transport -->
                         <section class="mb-5">
-                            <h3 class="mb-4">
-                                <i class="bi bi-car-front text-success me-2"></i>Transport
-                            </h3>
-                            <div class="row g-3">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="bi bi-car-front text-success fs-4"></i>
+                                </div>
+                                <h3 class="mb-0">Transport</h3>
+                            </div>
+                            <div class="row g-4">
                                 <div class="col-md-6">
                                     <label class="form-label">Kilometri parcurși cu mașina pe săptămână</label>
                                     <input type="number" class="form-control" id="carKm">
@@ -56,10 +162,13 @@
 
                         <!-- Energie -->
                         <section class="mb-5">
-                            <h3 class="mb-4">
-                                <i class="bi bi-lightning text-success me-2"></i>Consum Energie
-                            </h3>
-                            <div class="row g-3">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="bi bi-lightning text-success fs-4"></i>
+                                </div>
+                                <h3 class="mb-0">Consum Energie</h3>
+                            </div>
+                            <div class="row g-4">
                                 <div class="col-md-6">
                                     <label class="form-label">Consum lunar electricitate (kWh)</label>
                                     <input type="number" class="form-control" id="electricity">
@@ -81,10 +190,13 @@
 
                         <!-- Alimentație -->
                         <section class="mb-5">
-                            <h3 class="mb-4">
-                                <i class="bi bi-basket text-success me-2"></i>Alimentație
-                            </h3>
-                            <div class="row g-3">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="bi bi-basket text-success fs-4"></i>
+                                </div>
+                                <h3 class="mb-0">Alimentație</h3>
+                            </div>
+                            <div class="row g-4">
                                 <div class="col-12">
                                     <label class="form-label">Dieta predominantă</label>
                                     <select class="form-select" id="diet">
@@ -107,27 +219,32 @@
 
                         <!-- Deșeuri și Reciclare -->
                         <section class="mb-5">
-                            <h3 class="mb-4">
-                                <i class="bi bi-recycle text-success me-2"></i>Deșeuri și Reciclare
-                            </h3>
-                            <div class="row g-3">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="bi bi-recycle text-success fs-4"></i>
+                                </div>
+                                <h3 class="mb-0">Deșeuri și Reciclare</h3>
+                            </div>
+                            <div class="row g-4">
                                 <div class="col-12">
-                                    <label class="form-label">Ce materiale reciclezi?</label>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="recyclePlastic">
-                                        <label class="form-check-label" for="recyclePlastic">Plastic</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="recyclePaper">
-                                        <label class="form-check-label" for="recyclePaper">Hârtie</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="recycleGlass">
-                                        <label class="form-check-label" for="recycleGlass">Sticlă</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="recycleMetal">
-                                        <label class="form-check-label" for="recycleMetal">Metal</label>
+                                    <label class="form-label mb-3">Ce materiale reciclezi?</label>
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="recyclePlastic">
+                                            <label class="form-check-label" for="recyclePlastic">Plastic</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="recyclePaper">
+                                            <label class="form-check-label" for="recyclePaper">Hârtie</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="recycleGlass">
+                                            <label class="form-check-label" for="recycleGlass">Sticlă</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="recycleMetal">
+                                            <label class="form-check-label" for="recycleMetal">Metal</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -137,7 +254,7 @@
                             </div>
                         </section>
 
-                        <button type="submit" class="btn btn-success btn-lg w-100">
+                        <button type="submit" class="btn btn-success btn-calculate w-100">
                             <i class="bi bi-calculator me-2"></i>Calculează amprenta de carbon
                         </button>
                     </form>
@@ -145,18 +262,18 @@
             </div>
 
             <!-- Rezultat -->
-            <div class="card border-0 shadow-sm mt-4 d-none" id="resultCard">
-                <div class="card-body p-4">
+            <div class="calculator-card card mt-4 d-none" id="resultCard">
+                <div class="card-body p-4 p-lg-5">
                     <h3 class="text-center mb-4">Rezultatul tău</h3>
-                    <div class="text-center">
-                        <h2 class="display-4 text-success" id="carbonResult">0</h2>
-                        <p class="lead">tone CO₂e/an</p>
+                    <div class="text-center mb-4">
+                        <p class="result-value" id="carbonResult">0</p>
+                        <p class="lead text-muted">tone CO₂e/an</p>
                     </div>
                     <div class="mt-4">
-                        <h4>Recomandări pentru reducerea amprentei de carbon:</h4>
-                        <ul class="list-group list-group-flush" id="recommendations">
+                        <h4 class="mb-3">Recomandări pentru reducerea amprentei de carbon:</h4>
+                        <div id="recommendations">
                             <!-- Recomandările vor fi adăugate dinamic -->
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,66 +287,111 @@
 <!-- Bootstrap Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Include the login modal script -->
-<div th:replace="fragments/login-modal :: loginModalScript"></div>
-
 <script>
-    document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
-        e.preventDefault();
+document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-        // Aici va fi logica de calcul
-        const result = calculateCarbonFootprint();
+    // Aici va fi logica de calcul
+    const result = calculateCarbonFootprint();
 
-        // Afișează rezultatul
-        document.getElementById('resultCard').classList.remove('d-none');
-        document.getElementById('carbonResult').textContent = result.toFixed(2);
+    // Afișează rezultatul
+    document.getElementById('resultCard').classList.remove('d-none');
+    document.getElementById('carbonResult').textContent = result.toFixed(2);
 
-        // Generează recomandări
-        generateRecommendations();
+    // Generează recomandări
+    generateRecommendations();
+});
+
+function calculateCarbonFootprint() {
+    // Transport
+    const carKm = parseFloat(document.getElementById('carKm').value || 0) * 52; // anual
+    const fuelType = document.getElementById('fuelType').value;
+    const flights = parseFloat(document.getElementById('flights').value || 0);
+
+    // Energie
+    const electricity = parseFloat(document.getElementById('electricity').value || 0) * 12; // anual
+    const gas = parseFloat(document.getElementById('gas').value || 0) * 12; // anual
+    const renewableEnergy = document.getElementById('renewableEnergy').checked;
+
+    // Alimentație
+    const diet = document.getElementById('diet').value;
+    const homeMeals = parseFloat(document.getElementById('homeMeals').value || 0) * 52; // anual
+    const foodWaste = parseFloat(document.getElementById('foodWaste').value || 0) * 12; // anual
+
+    // Deșeuri
+    const wasteGenerated = parseFloat(document.getElementById('wasteGenerated').value || 0) * 12; // anual
+    const recycling = (document.getElementById('recyclePlastic').checked ? 1 : 0) +
+                     (document.getElementById('recyclePaper').checked ? 1 : 0) +
+                     (document.getElementById('recycleGlass').checked ? 1 : 0) +
+                     (document.getElementById('recycleMetal').checked ? 1 : 0);
+
+    // Factori de emisie simplificați (tone CO2e)
+    let total = 0;
+
+    // Transport
+    const carEmissions = {
+        petrol: 0.00023,
+        diesel: 0.00027,
+        hybrid: 0.00015,
+        electric: 0.00005
+    };
+    total += carKm * carEmissions[fuelType];
+    total += flights * 0.9; // Emisii medii per zbor
+
+    // Energie
+    total += electricity * (renewableEnergy ? 0.0002 : 0.0005);
+    total += gas * 0.002;
+
+    // Alimentație
+    const dietFactors = {
+        meat: 2.5,
+        flexitarian: 1.8,
+        vegetarian: 1.3,
+        vegan: 1
+    };
+    total += dietFactors[diet];
+    total -= homeMeals * 0.001; // Reducere pentru gătitul acasă
+    total += foodWaste * 0.005;
+
+    // Deșeuri
+    total += wasteGenerated * 0.003;
+    total -= recycling * 0.1; // Reducere pentru fiecare tip de material reciclat
+
+    return Math.max(0, total);
+}
+
+function generateRecommendations() {
+    const recommendationsDiv = document.getElementById('recommendations');
+    recommendationsDiv.innerHTML = '';
+
+    const recommendations = [
+        {
+            condition: document.getElementById('carKm').value > 100,
+            text: "Încearcă să reduci călătoriile cu mașina folosind transportul public sau bicicleta pentru distanțe scurte."
+        },
+        {
+            condition: !document.getElementById('renewableEnergy').checked,
+            text: "Consideră trecerea la energie din surse regenerabile pentru a reduce semnificativ amprenta de carbon."
+        },
+        {
+            condition: document.getElementById('diet').value === 'meat',
+            text: "Reducerea consumului de carne poate avea un impact major asupra amprentei tale de carbon."
+        },
+        {
+            condition: document.getElementById('foodWaste').value > 2,
+            text: "Planifică-ți mai bine cumpărăturile și porțiile pentru a reduce risipa alimentară."
+        }
+    ];
+
+    recommendations.forEach(rec => {
+        if (rec.condition) {
+            const div = document.createElement('div');
+            div.className = 'recommendation-item';
+            div.innerHTML = `<i class="bi bi-lightbulb text-success me-2"></i>${rec.text}`;
+            recommendationsDiv.appendChild(div);
+        }
     });
-
-    function calculateCarbonFootprint() {
-        // Logica simplificată de calcul
-        let total = 0;
-
-        // Transport
-        const carKm = document.getElementById('carKm').value * 52; // anual
-        const fuelType = document.getElementById('fuelType').value;
-        const flights = document.getElementById('flights').value;
-
-        // Factori de emisie simplificați
-        const carFactors = {
-            petrol: 0.2,
-            diesel: 0.25,
-            hybrid: 0.1,
-            electric: 0.05
-        };
-
-        total += carKm * carFactors[fuelType];
-        total += flights * 0.9; // Factor simplificat pentru zboruri
-
-        return total;
-    }
-
-    function generateRecommendations() {
-        const recommendations = [
-            'Utilizează mai des transportul în comun sau bicicleta',
-            'Investește în panouri solare pentru energie regenerabilă',
-            'Reduce consumul de carne roșie',
-            'Reciclează mai multe materiale',
-            'Izolează-ți casa pentru eficiență energetică mai bună'
-        ];
-
-        const recommendationsList = document.getElementById('recommendations');
-        recommendationsList.innerHTML = '';
-
-        recommendations.forEach(rec => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            li.innerHTML = `<i class="bi bi-check-circle-fill text-success me-2"></i>${rec}`;
-            recommendationsList.appendChild(li);
-        });
-    }
+}
 </script>
 </body>
 </html>

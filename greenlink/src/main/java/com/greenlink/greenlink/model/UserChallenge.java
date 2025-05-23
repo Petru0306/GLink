@@ -20,7 +20,11 @@ public class UserChallenge {
     private Challenge challenge;
 
     private int progressPercentage;
+    
+    @Column(name = "start_date")
     private LocalDateTime startedAt;
+    
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
     @Enumerated(EnumType.STRING)

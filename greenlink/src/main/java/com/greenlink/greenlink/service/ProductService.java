@@ -7,10 +7,14 @@ import com.greenlink.greenlink.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class ProductService {
@@ -139,10 +143,73 @@ public class ProductService {
                 .map(this::convertToDto);
     }
 
+    public Page<ProductDto> getFilteredProducts(
+            Category category,
+            Boolean ecoFriendly,
+            String search,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable) {
+
+        // If we only have a search term, use the existing search method
+        if (search != null && !search.trim().isEmpty() &&
+            category == null && ecoFriendly == null && minPrice == null && maxPrice == null) {
+            return searchProducts(search.trim(), pageable);
+        }
+
+        // Create a specification for dynamic filtering
+        Specification<Product> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            
+            if (category != null) {
+                predicates.add(cb.equal(root.get("category"), category));
+            }
+            
+            if (ecoFriendly != null) {
+                predicates.add(cb.equal(root.get("ecoFriendly"), ecoFriendly));
+            }
+            
+            if (search != null && !search.trim().isEmpty()) {
+                String searchTerm = "%" + search.trim().toLowerCase() + "%";
+                predicates.add(cb.or(
+                    cb.like(cb.lower(root.get("name")), searchTerm),
+                    cb.like(cb.lower(root.get("description")), searchTerm)
+                ));
+            }
+            
+            if (minPrice != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("price"), minPrice));
+            }
+            
+            if (maxPrice != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+            
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return productRepository.findAll(spec, pageable).map(this::convertToDto);
+    }
+
     public List<ProductDto> filterProducts(Category category, Double minPrice, Double maxPrice, Boolean ecoFriendly) {
         return productRepository.findByFilters(category, minPrice, maxPrice, ecoFriendly)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<ProductDto> getSimilarProducts(Long productId, int limit) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+
+        // Get products from the same category, excluding the current product
+        return productRepository.findByCategoryAndIdNot(
+                product.getCategory(), 
+                productId, 
+                PageRequest.of(0, limit)
+            )
+            .stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
     }
 }

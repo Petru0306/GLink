@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -134,5 +135,14 @@ public class UserServiceTest {
 
         assertTrue(changed);
         assertTrue(passwordEncoder.matches("newPassword", mockUser.getPassword()));
+    }
+
+    @Test
+    public void testAdminPasswordHash() {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String storedHash = "$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW";
+        
+        assertTrue(encoder.matches("admin", storedHash), 
+            "The stored hash should match the 'admin' password");
     }
 } 

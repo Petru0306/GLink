@@ -25,10 +25,21 @@ public class EducationController {
         return "educatie"; // Returnează fișierul education.html
     }
 
-    @GetMapping("/course/{courseId}")
+    @GetMapping("/curs/{courseId}")
     public String getCourseDetails(@PathVariable Long courseId, Model model) {
         CourseDto course = courseService.getCourseById(courseId);
         model.addAttribute("course", course);
-        return "course-details"; // Returnează fișierul course-details.html
+        
+        // Return different templates based on courseId
+        switch(courseId.intValue()) {
+            case 1:
+                return "curs";
+            case 2:
+                return "curs2";
+            case 3:
+                return "curs3";
+            default:
+                return "curs"; // Default to first course if ID not found
+        }
     }
 }

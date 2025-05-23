@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLink - Introducere în Reciclare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .course-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .course-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 10px;
+        }
+        .content-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .content-section img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .quiz-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        .quiz-option {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .quiz-option.selected {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .highlight-box {
+            background: #e8f5e9;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Course Header -->
+    <header class="course-header text-center">
+        <div class="container">
+            <h1 class="display-4">Introducere în Reciclare</h1>
+            <p class="lead">Învață cum să contribui la un viitor mai verde</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="course-container">
+        <!-- Introduction Section -->
+        <section class="content-section">
+            <h2>Ce este reciclarea?</h2>
+            <div class="highlight-box">
+                <p class="mb-0">
+                    <i class="bi bi-lightbulb-fill me-2"></i>
+                    Reciclarea este procesul de transformare a materialelor folosite în produse noi pentru a preveni risipa.
+                </p>
+            </div>
+            <p>
+                În fiecare zi, oamenii din întreaga lume generează tone de deșeuri. 
+                Reciclarea ne ajută să transformăm aceste deșeuri în resurse valoroase, 
+                protejând astfel mediul înconjurător și conservând resursele naturale.
+            </p>
+            <img src="/images/education/Procesul de reciclare.png" alt="Procesul de reciclare" class="img-fluid">
+        </section>
+
+        <!-- Main Points Section -->
+        <section class="content-section">
+            <h2>Principii de bază</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-recycle text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Colectare</h5>
+                        <p>Separarea și colectarea materialelor reciclabile</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-arrow-repeat text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Procesare</h5>
+                        <p>Transformarea în materii prime reutilizabile</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <i class="bi bi-box-seam text-success" style="font-size: 2.5rem;"></i>
+                        <h5 class="mt-3">Reutilizare</h5>
+                        <p>Crearea de produse noi din materiale reciclate</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section" id="quiz">
+            <h2 class="text-center mb-4">Verifică ce ai învățat</h2>
+            <div class="quiz-options">
+                <p class="fw-bold">Care este principalul scop al reciclării?</p>
+                <div class="quiz-option" data-correct="false">
+                    Economisirea banilor
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    Transformarea deșeurilor în produse noi
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    Crearea locurilor de muncă
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <button class="btn btn-success btn-lg" id="checkAnswer">Verifică răspunsul</button>
+            </div>
+            <div class="alert mt-3 d-none" id="quizFeedback"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle quiz functionality
+        const quizOptions = document.querySelectorAll('.quiz-option');
+        const checkButton = document.getElementById('checkAnswer');
+        const feedback = document.getElementById('quizFeedback');
+        let selectedOption = null;
+
+        // Handle quiz option selection
+        quizOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                quizOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedOption = option;
+            });
+        });
+
+        // Handle answer checking
+        checkButton.addEventListener('click', () => {
+            if (!selectedOption) {
+                feedback.textContent = 'Te rog selectează un răspuns!';
+                feedback.className = 'alert alert-warning mt-3';
+            } else {
+                const isCorrect = selectedOption.getAttribute('data-correct') === 'true';
+                feedback.textContent = isCorrect 
+                        ? 'Corect! Reciclarea este într-adevăr despre transformarea deșeurilor în produse noi.' 
+                        : 'Încearcă din nou! Gândește-te la scopul principal al reciclării.';
+                feedback.className = `alert alert-${isCorrect ? 'success' : 'danger'} mt-3`;
+            }
+            feedback.classList.remove('d-none');
+        });
+    });
+    </script>
+</body>
+</html> 

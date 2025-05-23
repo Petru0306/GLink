@@ -9,74 +9,212 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-image {
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        }
+
+        .price-tag {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-action {
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-action.btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+        }
+
+        .nav-tabs {
+            border: none;
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: #6c757d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .tab-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+        }
+
+        .similar-products-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .similar-products-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 700;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 50px;
+            height: 3px;
+            background: #28a745;
+            border-radius: 2px;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 <!-- Navbar -->
-<nav th:replace="~{navbar :: navbar}"></nav>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 
-<!-- Hero Section cu imaginea produsului -->
-<header class="bg-light py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <img th:if="${product.imageUrl}" th:src="${product.imageUrl}"
-                     class="img-fluid rounded shadow" alt="Product Image">
-                <img th:unless="${product.imageUrl}" src="/api/placeholder/600/400"
-                     class="img-fluid rounded shadow" alt="Product">
-            </div>
-            <div class="col-md-6">
-                <h1 class="display-5 fw-bold" th:text="${product.name}">Nume Produs</h1>
-                <div class="mb-3">
-                    <span th:if="${product.ecoFriendly}" class="badge bg-success me-2">Eco-Friendly</span>
-                    <span class="badge bg-info" th:text="${product.category.displayName}">Categorie</span>
-                </div>
-                <h2 class="text-success fw-bold mb-4" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</h2>
-
-                <!-- Stoc -->
-                <div class="mb-4">
-                    <p th:if="${product.stock > 0}" class="text-success">
-                        <i class="bi bi-check-circle-fill"></i>
-                        În stoc: <span th:text="${product.stock}">10</span> bucăți
-                    </p>
-                    <p th:unless="${product.stock > 0}" class="text-danger">
-                        <i class="bi bi-x-circle-fill"></i>
-                        Stoc epuizat
-                    </p>
-                </div>
-
-                <!-- Butoane acțiune -->
-                <div class="d-grid gap-2">
-                    <button class="btn btn-success btn-lg" th:disabled="${product.stock <= 0}">
-                        <i class="bi bi-cart-plus"></i> Adaugă în coș
-                    </button>
-                    <button class="btn btn-outline-success">
-                        <i class="bi bi-heart"></i> Adaugă la favorite
-                    </button>
-                </div>
-            </div>
-        </div>
+<!-- Hero Section -->
+<header class="hero-section">
+    <div class="container hero-content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
+                <li class="breadcrumb-item text-white" th:text="${product.category.displayName}">Categorie</li>
+                <li class="breadcrumb-item active text-white" aria-current="page" th:text="${product.name}">Produs</li>
+            </ol>
+        </nav>
     </div>
 </header>
 
-<!-- Detalii produs -->
-<div class="container my-5">
-    <div class="row">
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}"
+                 class="img-fluid product-image w-100" alt="Product Image">
+            <img th:unless="${product.imageUrl}" src="/api/placeholder/600/400"
+                 class="img-fluid product-image w-100" alt="Product">
+        </div>
+        <div class="col-lg-6">
+            <div class="mb-4">
+                <span th:if="${product.ecoFriendly}" class="badge bg-success me-2">
+                    <i class="bi bi-leaf-fill me-2"></i>Eco-Friendly
+                </span>
+                <span class="badge bg-info" th:text="${product.category.displayName}">Categorie</span>
+            </div>
+            
+            <h1 class="display-5 fw-bold mb-4" th:text="${product.name}">Nume Produs</h1>
+            
+            <div class="price-tag">
+                <i class="bi bi-tag-fill me-2"></i>
+                <span th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
+            </div>
+
+            <!-- Butoane acțiune -->
+            <div class="d-grid gap-3">
+                <button class="btn btn-success btn-action" th:disabled="${product.stock <= 0}">
+                    <i class="bi bi-cart-plus me-2"></i> Adaugă în coș
+                </button>
+                <button class="btn btn-outline-success btn-action">
+                    <i class="bi bi-heart me-2"></i> Adaugă la favorite
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
         <div class="col-lg-8">
             <!-- Tabs pentru informații -->
-            <ul class="nav nav-tabs mb-3" id="productTabs" role="tablist">
+            <ul class="nav nav-tabs" id="productTabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="description-tab" data-bs-toggle="tab" href="#description">
-                        Descriere
+                        <i class="bi bi-file-text me-2"></i>Descriere
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="details-tab" data-bs-toggle="tab" href="#details">
-                        Specificații
+                        <i class="bi bi-info-circle me-2"></i>Specificații
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">
-                        Recenzii
+                        <i class="bi bi-star me-2"></i>Recenzii
                     </a>
                 </li>
             </ul>
@@ -84,23 +222,25 @@
             <!-- Tab content -->
             <div class="tab-content" id="productTabsContent">
                 <div class="tab-pane fade show active" id="description">
-                    <p class="lead" th:text="${product.description}">Descriere detaliată produs...</p>
+                    <p class="lead mb-0" th:text="${product.description}">Descriere detaliată produs...</p>
                 </div>
                 <div class="tab-pane fade" id="details">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-hover">
                             <tbody>
                             <tr>
-                                <th>Categorie:</th>
+                                <th class="w-25">Categorie:</th>
                                 <td th:text="${product.category.displayName}">Categorie</td>
                             </tr>
                             <tr>
                                 <th>Eco-Friendly:</th>
                                 <td>
-                                            <span th:if="${product.ecoFriendly}" class="text-success">
-                                                <i class="bi bi-check-lg"></i> Da
-                                            </span>
-                                    <span th:unless="${product.ecoFriendly}" class="text-muted">Nu</span>
+                                    <span th:if="${product.ecoFriendly}" class="text-success">
+                                        <i class="bi bi-check-lg me-2"></i> Da
+                                    </span>
+                                    <span th:unless="${product.ecoFriendly}" class="text-muted">
+                                        <i class="bi bi-x-lg me-2"></i> Nu
+                                    </span>
                                 </td>
                             </tr>
                             <tr>
@@ -112,19 +252,48 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="reviews">
-                    <p class="text-muted text-center py-5">Nu există recenzii momentan.</p>
+                    <div class="text-center py-5">
+                        <i class="bi bi-chat-square-text display-1 text-muted mb-4"></i>
+                        <p class="lead text-muted mb-0">Nu există recenzii momentan.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Sidebar cu produse similare -->
         <div class="col-lg-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Produse similare</h5>
+            <div class="similar-products-card">
+                <div class="card-header bg-white border-0 py-4">
+                    <h5 class="section-title mb-0">Produse similare</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted text-center">Se vor afișa produse similare din aceeași categorie.</p>
+                    <div th:if="${similarProducts.empty}" class="text-center py-4">
+                        <i class="bi bi-box display-1 text-muted mb-4"></i>
+                        <p class="lead text-muted mb-0">Nu există produse similare momentan.</p>
+                    </div>
+                    <div th:unless="${similarProducts.empty}" class="d-flex flex-column gap-3">
+                        <div th:each="similarProduct : ${similarProducts}" class="card border-0 shadow-sm">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img th:if="${similarProduct.imageUrl}" th:src="${similarProduct.imageUrl}"
+                                         class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Similar Product">
+                                    <img th:unless="${similarProduct.imageUrl}" src="/api/placeholder/200/200"
+                                         class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="Similar Product">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-1" th:text="${similarProduct.name}">Nume Produs</h6>
+                                        <p class="card-text text-success fw-bold mb-2" 
+                                           th:text="${#numbers.formatDecimal(similarProduct.price, 1, 2) + ' RON'}">99.99 RON</p>
+                                        <a th:href="@{'/marketplace/product/' + ${similarProduct.id}}" 
+                                           class="btn btn-sm btn-outline-success rounded-pill">
+                                            <i class="bi bi-eye me-1"></i> Vezi detalii
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -133,13 +302,13 @@
 
 <!-- Buton înapoi la marketplace -->
 <div class="container mb-5">
-    <a href="/marketplace" class="btn btn-outline-secondary">
-        <i class="bi bi-arrow-left"></i> Înapoi la Marketplace
+    <a href="/marketplace" class="btn btn-outline-secondary btn-action">
+        <i class="bi bi-arrow-left me-2"></i> Înapoi la Marketplace
     </a>
 </div>
 
 <!-- Footer -->
-<footer th:replace="~{footer :: footer}"></footer>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

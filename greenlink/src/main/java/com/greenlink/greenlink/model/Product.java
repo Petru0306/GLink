@@ -124,6 +124,9 @@ public class Product {
     }
 
     public String getImageUrl() {
+        if (imageUrl != null && !imageUrl.startsWith("/")) {
+            return "/images/products/" + imageUrl;
+        }
         return imageUrl;
     }
 

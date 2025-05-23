@@ -3,106 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Educație Ecologică</title>
+    <title>GreenLink - Cursuri Educaționale</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
-
+    <style>
+        .page-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            padding: 3rem 0;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        .course-card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+        .course-card .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .course-card .card-body {
+            padding: 1.5rem;
+        }
+        .course-stats {
+            font-size: 0.9rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .course-stats i {
+            color: #28a745;
+        }
+        .course-level {
+            display: inline-block;
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: #e8f5e9;
+            color: #28a745;
+        }
+        .btn-start {
+            border-radius: 30px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+    </style>
 </head>
-<body>
-<!-- Navbar -->
-<nav th:replace="fragments/navbar :: navbar"></nav>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
 
-<!-- Hero Section -->
-<header class="bg-success text-white py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4">Educație pentru un viitor verde</h1>
-                <p class="lead">Descoperă cursuri și resurse despre sustenabilitate și protecția mediului</p>
-                <a href="#courses" class="btn btn-light btn-lg mt-3">Vezi cursurile disponibile</a>
-            </div>
-            <div class="col-lg-6">
-                <img src="/api/placeholder/600/400" alt="Education" class="img-fluid rounded">
+    <!-- Header -->
+    <header class="page-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 mb-3">Cursuri Educaționale</h1>
+                    <p class="lead mb-0">Descoperă cursurile noastre despre reciclare și protecția mediului</p>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
-<!-- Main Content -->
-<main class="container py-5">
-    <!-- Featured Courses -->
-    <section class="mb-5">
-        <h2 class="mb-4">Cursuri recomandate</h2>
+    <!-- Courses Section -->
+    <main class="container mb-5">
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100">
-                    <img src="/api/placeholder/400/200" class="card-img-top" alt="Course">
+            <!-- Course Card 1 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="course-card">
+                    <img src="/images/education/Introducere in reciclare.png" class="card-img-top" alt="Curs Reciclare">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-success">Începător</span>
-                            <small class="text-muted">2h 30min</small>
-                        </div>
-                        <h5 class="card-title">Introducere în Reciclare</h5>
-                        <p class="card-text">Învață principiile de bază ale reciclării și cum poți face diferența.</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class="bi bi-star-fill text-warning"></i>
-                                <span>4.8 (120)</span>
-                            </div>
-                            <a href="/educatie/curs/1" class="btn btn-outline-success">Vezi cursul</a>
-                        </div>
+                        <h5 class="card-title mb-3">Introducere în Reciclare</h5>
+                        <p class="card-text text-muted mb-4">Învață principiile fundamentale ale reciclării și cum poți contribui la un viitor mai sustenabil.</p>
+                        <a href="/educatie/curs/1" class="btn btn-success btn-start w-100">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Începe cursul
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Mai multe carduri de cursuri -->
-        </div>
-    </section>
 
-    <!-- Course Categories -->
-    <section class="mb-5">
-        <h2 class="mb-4">Categorii de cursuri</h2>
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card text-center h-100">
+            <!-- Course Card 2 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="course-card">
+                    <img src="/images/education/Energie Verde si Sustenabilitate.png" class="card-img-top" alt="Curs Energie">
                     <div class="card-body">
-                        <i class="bi bi-tree text-success fs-1"></i>
-                        <h5 class="card-title mt-3">Ecologie</h5>
-                        <p class="card-text">Cursuri despre ecosisteme și biodiversitate</p>
+                        <h5 class="card-title mb-3">Energie Verde și Sustenabilitate</h5>
+                        <p class="card-text text-muted mb-4">Explorează sursele de energie regenerabilă și impactul lor asupra mediului.</p>
+                        <a href="/educatie/curs/2" class="btn btn-success btn-start w-100">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Începe cursul
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Mai multe categorii -->
-        </div>
-    </section>
 
-    <!-- Latest Articles -->
-    <section>
-        <h2 class="mb-4">Articole Educaționale</h2>
-        <div class="row g-4">
-            <div class="col-md-6">
-                <div class="card h-100">
+            <!-- Course Card 3 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="course-card">
+                    <img src="/images/education/Ecologie si Biodiversitate.png" class="card-img-top" alt="Curs Ecologie">
                     <div class="card-body">
-                        <h5 class="card-title">Cum să reduci amprenta de carbon</h5>
-                        <p class="card-text">Ghid practic pentru un stil de viață sustenabil...</p>
-                        <a href="#" class="btn btn-link text-success p-0">Citește mai mult</a>
+                        <h5 class="card-title mb-3">Ecologie și Biodiversitate</h5>
+                        <p class="card-text text-muted mb-4">Descoperă importanța biodiversității și cum putem proteja ecosistemele.</p>
+                        <a href="/educatie/curs/3" class="btn btn-success btn-start w-100">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Începe cursul
+                        </a>
                     </div>
                 </div>
             </div>
-            <!-- Mai multe articole -->
         </div>
-    </section>
-</main>
+    </main>
 
-<!-- Footer -->
-<footer th:replace="fragments/footer :: footer"></footer>
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
 
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Include the login modal script -->
-<div th:replace="fragments/login-modal :: loginModalScript"></div>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -4,71 +4,217 @@
       layout:decorate="~{layout/default}">
 <head>
     <title>My Challenges - GreenLink</title>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .challenge-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
+        }
+
+        .challenge-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+        }
+
+        .challenge-body {
+            padding: 1.5rem;
+        }
+
+        .btn-find-challenge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #28a745;
+            border: 2px solid white;
+        }
+
+        .btn-find-challenge:hover {
+            background: transparent;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-complete {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-complete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .progress {
+            height: 0.8rem;
+            border-radius: 1rem;
+            background-color: rgba(40, 167, 69, 0.1);
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 1rem;
+        }
+
+        .challenge-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+        }
+
+        .completed-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+        }
+
+        .points-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
     <div layout:fragment="content">
-        <div class="container py-5">
-            <h2 class="mb-4">My Challenges</h2>
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="container hero-content">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-lg-8">
+                        <h1 class="display-4 fw-bold mb-3">My Challenges</h1>
+                        <p class="lead fs-4 mb-0">Track your progress and complete eco-friendly challenges</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                        <a href="/challenges" class="btn btn-find-challenge">
+                            <i class="bi bi-plus-circle me-2"></i>Find New Challenges
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
 
+        <div class="container py-5">
             <!-- Success/Error Messages -->
             <div th:if="${success}" class="alert alert-success" role="alert" th:text="${success}"></div>
             <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
             <!-- Active Challenges -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">Active Challenges</h3>
-                        <a href="/challenges" class="btn btn-primary">Find New Challenges</a>
-                    </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <h3 class="mb-0">Active Challenges</h3>
                 </div>
-                <div class="card-body">
-                    <div th:if="${#lists.isEmpty(activeChallenges)}" class="text-muted">
-                        No active challenges. Visit the challenges page to start a new one!
+                <div class="challenge-body">
+                    <div th:if="${#lists.isEmpty(activeChallenges)}" class="text-center py-4">
+                        <i class="bi bi-clipboard2-x fs-1 text-muted mb-3"></i>
+                        <p class="text-muted mb-4">No active challenges. Start a new one to begin your eco-friendly journey!</p>
+                        <a href="/challenges" class="btn btn-success btn-complete">
+                            <i class="bi bi-plus-circle me-2"></i>Browse Challenges
+                        </a>
                     </div>
-                    <div th:each="challenge : ${activeChallenges}" class="card mb-3">
-                        <div class="card-body">
-                            <h4 class="card-title" th:text="${challenge.challenge.title}">Challenge Title</h4>
-                            <p class="card-text" th:text="${challenge.challenge.description}">Challenge Description</p>
-                            <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" 
-                                     th:style="'width: ' + ${challenge.progressPercentage} + '%'"
-                                     th:text="${challenge.progressPercentage + '%'}">
-                                </div>
+                    <div th:each="challenge : ${activeChallenges}" class="challenge-item">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h4 class="mb-0" th:text="${challenge.challenge.title}">Challenge Title</h4>
+                            <span class="points-badge">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <span th:text="${challenge.challenge.points}">0</span> points
+                            </span>
+                        </div>
+                        <p class="text-muted mb-3" th:text="${challenge.challenge.description}">Challenge Description</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${challenge.progressPercentage} + '%'"
+                                 th:text="${challenge.progressPercentage + '%'}">
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">Points: <span th:text="${challenge.challenge.points}">0</span></span>
-                                <form th:if="${challenge.progressPercentage == 100}" 
-                                      th:action="@{/profile/challenges/{id}/complete(id=${challenge.challenge.id})}" 
-                                      method="post" style="display: inline;">
-                                    <button type="submit" class="btn btn-success">Complete Challenge</button>
-                                </form>
-                            </div>
+                        </div>
+                        <div class="text-end">
+                            <form th:if="${challenge.progressPercentage == 100}" 
+                                  th:action="@{/profile/challenges/{id}/complete(id=${challenge.challenge.id})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-success btn-complete">
+                                    <i class="bi bi-check-circle me-2"></i>Complete Challenge
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Completed Challenges -->
-            <div class="card">
-                <div class="card-header">
-                    <h3>Completed Challenges</h3>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <h3 class="mb-0">Completed Challenges</h3>
                 </div>
-                <div class="card-body">
-                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="text-muted">
-                        No completed challenges yet.
+                <div class="challenge-body">
+                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="text-center py-4">
+                        <i class="bi bi-trophy fs-1 text-muted mb-3"></i>
+                        <p class="text-muted">Complete challenges to see your achievements here!</p>
                     </div>
-                    <div th:each="challenge : ${completedChallenges}" class="card mb-3">
-                        <div class="card-body">
-                            <h4 class="card-title" th:text="${challenge.challenge.title}">Challenge Title</h4>
-                            <p class="card-text" th:text="${challenge.challenge.description}">Challenge Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted">Points Earned: <span th:text="${challenge.challenge.points}">0</span></span>
-                                <span class="text-success">
-                                    <i class="fas fa-check-circle"></i> Completed on 
-                                    <span th:text="${#temporals.format(challenge.completedAt, 'dd-MM-yyyy')}">Date</span>
-                                </span>
-                            </div>
+                    <div th:each="challenge : ${completedChallenges}" class="challenge-item">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h4 class="mb-0" th:text="${challenge.challenge.title}">Challenge Title</h4>
+                            <span class="points-badge">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <span th:text="${challenge.challenge.points}">0</span> points earned
+                            </span>
+                        </div>
+                        <p class="text-muted mb-3" th:text="${challenge.challenge.description}">Challenge Description</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="completed-badge">
+                                <i class="bi bi-check-circle-fill me-2"></i>Completed on 
+                                <span th:text="${#temporals.format(challenge.completedAt, 'dd-MM-yyyy')}">Date</span>
+                            </span>
                         </div>
                     </div>
                 </div>

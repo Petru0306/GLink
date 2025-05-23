@@ -1,8 +1,12 @@
 package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.model.Role;
 import com.greenlink.greenlink.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,10 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,18 +35,68 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        logger.info("Attempting to load user by email: {}", email);
+        try {
+            logger.debug("Searching for user in database with email: {}", email);
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> {
+                        logger.error("Login failed - User not found with email: {}", email);
+                        return new UsernameNotFoundException("User not found with email: " + email);
+                    });
+            
+            logger.info("User found with details: Email={}, Enabled={}, Active={}, Role={}, PasswordHash={}",
+                user.getEmail(),
+                user.isEnabled(), 
+                user.isActive(),
+                user.getRole(),
+                user.getPassword());
+
+            if (!user.isEnabled()) {
+                logger.error("Login failed - User account is disabled: {}", email);
+                throw new UsernameNotFoundException("User account is disabled");
+            }
+            
+            if (!user.isActive()) {
+                logger.error("Login failed - User account is not active: {}", email);
+                throw new UsernameNotFoundException("User account is not active");
+            }
+
+            // Log authorities
+            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+            logger.info("User authorities: {}", authorities);
+            
+            logger.info("Successfully loaded user: {}", email);
+            return user;
+        } catch (Exception e) {
+            logger.error("Error during user authentication for email {}: {}", email, e.getMessage(), e);
+            throw e;
+        }
     }
 
     @Override
     @Transactional
     public User registerUser(User user) {
+        logger.info("Registering new user with email: {}", user.getEmail());
         if (userRepository.existsByEmail(user.getEmail())) {
+            logger.warn("Registration failed - email already exists: {}", user.getEmail());
             throw new RuntimeException("Email already registered");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+
+        // Log password encoding
+        String rawPassword = user.getPassword();
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        logger.info("Password encoding - Raw Length: {}, Encoded Length: {}", 
+            rawPassword.length(), encodedPassword.length());
+        
+        user.setPassword(encodedPassword);
+        user.setRole(Role.USER);
+        user.setEnabled(true);
+        user.setActive(true);
+        user.setPoints(0);
+        user.setProfilePicture("/images/default-avatar.png");
+        User savedUser = userRepository.save(user);
+        logger.info("User registered successfully: {}", user.getEmail());
+        return savedUser;
     }
 
     @Override
@@ -103,13 +160,21 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User createUser(User user) {
+        logger.debug("Creating new user with email: {}", user.getEmail());
         if (userRepository.existsByEmail(user.getEmail())) {
+            logger.warn("User creation failed - email already exists: {}", user.getEmail());
             throw new RuntimeException("Email already exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
+        user.setEnabled(true);
+        user.setActive(true);
         user.setPoints(0);
         user.setProfilePicture("/images/default-avatar.png");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        user.setCreatedAt(LocalDateTime.now());
+        User savedUser = userRepository.save(user);
+        logger.info("User created successfully: {}", user.getEmail());
+        return savedUser;
     }
 
     @Override

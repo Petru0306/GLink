@@ -5,13 +5,14 @@ import com.greenlink.greenlink.model.Product.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     Page<Product> findByCategory(Category category, Pageable pageable);
 
     Page<Product> findByEcoFriendlyTrue(Pageable pageable);
@@ -29,4 +30,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             @Param("ecoFriendly") Boolean ecoFriendly);
+
+    @Query("SELECT p FROM Product p WHERE p.category = :category AND p.id != :productId ORDER BY p.createdAt DESC")
+    List<Product> findByCategoryAndIdNot(
+            @Param("category") Category category,
+            @Param("productId") Long productId,
+            Pageable pageable);
 }

@@ -11,7 +11,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="loginAlert" class="alert alert-danger d-none">
+                    <div th:if="${param.error}" class="alert alert-danger">
                         Invalid email or password.
                     </div>
                     <div th:if="${param.logout}" class="alert alert-success">
@@ -20,15 +20,16 @@
                     <div th:if="${param.registered}" class="alert alert-success">
                         Registration successful! Please login.
                     </div>
-                    <form id="loginForm" onsubmit="return handleLogin(event)">
+                    <form th:action="@{/login}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <div class="mb-3">
-                            <label for="loginEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="loginEmail" name="email" required>
+                            <label for="username" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="username" name="username" required>
                         </div>
                         <div class="mb-3">
-                            <label for="loginPassword" class="form-label">Password</label>
+                            <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="loginPassword" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" required>
                                 <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Password toggle for login form
     const toggleLoginPassword = document.getElementById('toggleLoginPassword');
-    const loginPasswordInput = document.getElementById('loginPassword');
+    const loginPasswordInput = document.getElementById('password');
     if (toggleLoginPassword && loginPasswordInput) {
         toggleLoginPassword.addEventListener('click', function() {
             const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -93,46 +94,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Handle login form submission
-    window.handleLogin = function(event) {
-        event.preventDefault();
-        
-        const form = event.target;
-        const formData = new FormData(form);
-        const alertDiv = document.getElementById('loginAlert');
-
-        fetch('/login', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                // Successful login - redirect to the target URL
-                window.location.href = response.url || '/dashboard';
-            } else {
-                // Show error message in the modal
-                alertDiv.classList.remove('d-none');
-                // Clear password field
-                form.querySelector('input[name="password"]').value = '';
-            }
-        })
-        .catch(error => {
-            console.error('Login error:', error);
-            alertDiv.classList.remove('d-none');
-            // Clear password field
-            form.querySelector('input[name="password"]').value = '';
-        });
-
-        return false;
-    };
-
     // Hide alert when modal is hidden
     loginModalEl.addEventListener('hidden.bs.modal', function () {
-        document.getElementById('loginAlert').classList.add('d-none');
-        document.getElementById('loginForm').reset();
+        const form = loginModalEl.querySelector('form');
+        if (form) form.reset();
     });
 
     // Debug logging
