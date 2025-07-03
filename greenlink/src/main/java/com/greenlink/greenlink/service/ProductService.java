@@ -144,6 +144,7 @@ public class ProductService {
     }
 
     public Page<ProductDto> getFilteredProducts(
+            Product.Branch branch,
             Category category,
             Boolean ecoFriendly,
             String search,
@@ -151,44 +152,45 @@ public class ProductService {
             Double maxPrice,
             Pageable pageable) {
 
-        // If we only have a search term, use the existing search method
-        if (search != null && !search.trim().isEmpty() &&
-            category == null && ecoFriendly == null && minPrice == null && maxPrice == null) {
-            return searchProducts(search.trim(), pageable);
-        }
-
-        // Create a specification for dynamic filtering
         Specification<Product> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            
+
+            if (branch != null) {
+                predicates.add(cb.equal(root.get("branch"), branch));
+            }
             if (category != null) {
                 predicates.add(cb.equal(root.get("category"), category));
             }
-            
             if (ecoFriendly != null) {
                 predicates.add(cb.equal(root.get("ecoFriendly"), ecoFriendly));
             }
-            
             if (search != null && !search.trim().isEmpty()) {
                 String searchTerm = "%" + search.trim().toLowerCase() + "%";
                 predicates.add(cb.or(
-                    cb.like(cb.lower(root.get("name")), searchTerm),
-                    cb.like(cb.lower(root.get("description")), searchTerm)
+                        cb.like(cb.lower(root.get("name")), searchTerm),
+                        cb.like(cb.lower(root.get("description")), searchTerm)
                 ));
             }
-            
             if (minPrice != null) {
                 predicates.add(cb.greaterThanOrEqualTo(root.get("price"), minPrice));
             }
-            
             if (maxPrice != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("price"), maxPrice));
             }
-            
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
         return productRepository.findAll(spec, pageable).map(this::convertToDto);
+    }
+
+    public Page<ProductDto> getFilteredProducts(
+            Category category,
+            Boolean ecoFriendly,
+            String search,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable) {
+        return getFilteredProducts(null, category, ecoFriendly, search, minPrice, maxPrice, pageable);
     }
 
     public List<ProductDto> filterProducts(Category category, Double minPrice, Double maxPrice, Boolean ecoFriendly) {

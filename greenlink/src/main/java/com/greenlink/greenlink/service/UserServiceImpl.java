@@ -106,13 +106,13 @@ public class UserServiceImpl implements UserService {
             authentication.getPrincipal().equals("anonymousUser")) {
             throw new RuntimeException("No authenticated user found");
         }
-        return userRepository.findByEmail(authentication.getName())
+        return userRepository.findByEmailWithFavorites(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 
     @Override
     public User getCurrentUser(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailWithFavorites(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 

@@ -1,6 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <style>
+        /* Dropdown animation */
+        .dropdown-menu-animate {
+            animation: slideIn 0.2s ease-out;
+            transform-origin: top;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: scaleY(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scaleY(1);
+            }
+        }
+
+        /* Favorite button animations */
+        .favorite-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .favorite-btn.active:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .favorite-btn i {
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn:not(.active):hover i {
+            transform: scale(1.2);
+        }
+
+        .favorite-btn.active i {
+            animation: heartBeat 0.3s ease-out;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Quick favorite button position */
+        .quick-favorite-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .quick-favorite-btn:hover {
+            background: white;
+            transform: scale(1.1);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .quick-favorite-btn.active {
+            background: #dc3545;
+            color: white;
+        }
+
+        .quick-favorite-btn.active:hover {
+            background: #bb2d3b;
+        }
+    </style>
+</head>
 <body>
 <!-- Navbar Fragment -->
 <th:block th:fragment="navbar">
@@ -17,8 +108,27 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/educatie">Education</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/marketplace">Marketplace</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="/marketplace" id="marketplaceDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Marketplace
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="marketplaceDropdown">
+                            <li><a class="dropdown-item" href="/marketplace">
+                                <i class="bi bi-shop me-2"></i>Toate Piețele
+                            </a></li>
+                            <!-- Favorites for authenticated users -->
+                            <li sec:authorize="isAuthenticated()">
+                                <a class="dropdown-item" href="/marketplace/favorites">
+                                    <i class="bi bi-heart me-2"></i>Favorite
+                                </a>
+                            </li>
+                            <!-- Favorites triggers login for guests -->
+                            <li sec:authorize="!isAuthenticated()">
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <i class="bi bi-heart me-2"></i>Favorite
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/reciclare">Recycling Points</a>
@@ -52,6 +162,40 @@
     
     <!-- Include the login modal script -->
     <div th:replace="fragments/login-modal :: loginModalScript"></div>
+
+    <!-- Dropdown hover script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdownToggle = document.querySelector('#marketplaceDropdown');
+            const dropdownMenu = dropdownToggle.nextElementSibling;
+            let timeoutId;
+
+            // Show dropdown on hover
+            dropdownToggle.parentElement.addEventListener('mouseenter', function() {
+                clearTimeout(timeoutId);
+                dropdownToggle.classList.add('show');
+                dropdownMenu.classList.add('show');
+            });
+
+            // Hide dropdown when mouse leaves
+            dropdownToggle.parentElement.addEventListener('mouseleave', function() {
+                timeoutId = setTimeout(() => {
+                    dropdownToggle.classList.remove('show');
+                    dropdownMenu.classList.remove('show');
+                }, 200);
+            });
+
+            // Keep dropdown visible when hovering the menu
+            dropdownMenu.addEventListener('mouseenter', function() {
+                clearTimeout(timeoutId);
+            });
+
+            dropdownMenu.addEventListener('mouseleave', function() {
+                dropdownToggle.classList.remove('show');
+                dropdownMenu.classList.remove('show');
+            });
+        });
+    </script>
 </th:block>
 </body>
 </html> 

@@ -2,6 +2,7 @@ package com.greenlink.greenlink.dto;
 
 import com.greenlink.greenlink.model.Product.Category;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class ProductDto {
     private Long id;
@@ -112,5 +113,41 @@ public class ProductDto {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        
+        // Handle comparison with both ProductDto and Product
+        if (o instanceof ProductDto) {
+            ProductDto that = (ProductDto) o;
+            return Objects.equals(id, that.id);
+        } else if (o.getClass().getSimpleName().equals("Product")) {
+            // Compare with Product entity using reflection to avoid direct dependency
+            try {
+                Long thatId = (Long) o.getClass().getMethod("getId").invoke(o);
+                return Objects.equals(id, thatId);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "ProductDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category=" + category +
+                ", price=" + price +
+                '}';
     }
 }

@@ -1,38 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Detalii Reciclare</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <title>GreenLink - Detalii Punct de Reciclare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <style>
+        .detail-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+        }
+        .materials-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+    </style>
 </head>
-<body>
-<header>
-    <h1>Detalii Punct de Reciclare</h1>
-</header>
-<main class="container my-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title" th:text="${recyclingPoint.name}">Nume punct</h5>
-            <p class="card-text" th:text="${recyclingPoint.address}">Adresă</p>
-            <p><strong>Materiale acceptate:</strong></p>
-            <ul class="list-group">
-                <li th:each="material : ${recyclingPoint.materialsAccepted}"
-                    class="list-group-item" th:text="${material}">
-                    Material
-                </li>
-            </ul>
+<body class="bg-light">
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="detail-card bg-white p-4 mb-4">
+                    <h2 class="mb-4" th:text="${recyclingPoint.name}">Nume punct de reciclare</h2>
+                    
+                    <div class="mb-4">
+                        <p class="mb-2">
+                            <i class="bi bi-geo-alt me-2 text-success"></i>
+                            <span th:text="${recyclingPoint.address}">Adresa</span>
+                        </p>
+                        <p class="mb-2" th:if="${recyclingPoint.schedule}">
+                            <i class="bi bi-clock me-2 text-success"></i>
+                            <span th:text="${recyclingPoint.schedule}">Program</span>
+                        </p>
+                        <p class="mb-2" th:if="${recyclingPoint.contactPhone}">
+                            <i class="bi bi-telephone me-2 text-success"></i>
+                            <span th:text="${recyclingPoint.contactPhone}">Telefon</span>
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5 class="mb-3">Materiale acceptate:</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span th:each="material : ${recyclingPoint.materialsAccepted}" 
+                                  class="materials-badge" th:text="${material}">Material</span>
+                        </div>
+                    </div>
+
+                    <div th:if="${recyclingPoint.description}" class="mb-4">
+                        <h5 class="mb-3">Descriere:</h5>
+                        <p th:text="${recyclingPoint.description}">Descriere punct de reciclare</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="detail-card bg-white p-4">
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/reciclare" class="btn btn-outline-success">
+                <i class="bi bi-arrow-left me-2"></i>Înapoi la lista punctelor de reciclare
+            </a>
         </div>
     </div>
-    <a href="/recycling" class="btn btn-primary mt-3">Înapoi la Reciclare</a>
-</main>
 
-<footer th:replace="~{footer :: footer}"></footer>
+    <div th:replace="fragments/footer :: footer"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script th:inline="javascript">
+        // Get point coordinates from Thymeleaf
+        var latitude = /*[[${recyclingPoint.latitude}]]*/ 44.4268;
+        var longitude = /*[[${recyclingPoint.longitude}]]*/ 26.1025;
+
+        // Initialize map
+        var map = L.map('map').setView([latitude, longitude], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add marker
+        L.marker([latitude, longitude])
+            .bindPopup(/*[[${recyclingPoint.name}]]*/ 'Punct de reciclare')
+            .addTo(map);
+    </script>
 </body>
-</html>
+</html> 

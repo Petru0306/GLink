@@ -41,6 +41,10 @@ public class Product {
     @Column
     private String imagePath;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Branch branch = Branch.VERDE;
+
     public enum Category {
         BIO("Produse Bio"),
         COSMETICS("Cosmetice Naturale"),
@@ -56,6 +60,8 @@ public class Product {
             return displayName;
         }
     }
+
+    public enum Branch { VERDE, FOOD, ELECTRO }
 
     @PrePersist
     protected void onCreate() {

@@ -15,44 +15,60 @@ public class RecyclingService {
     @Autowired
     private RecyclingPointRepository recyclingPointRepository;
 
-    // Preia toate punctele de reciclare
     public List<RecyclingPointDto> getAllRecyclingPoints() {
         return recyclingPointRepository.findAll().stream()
-                .map(point -> new RecyclingPointDto(
-                        point.getId(),
-                        point.getName(),
-                        point.getAddress(),
-                        point.getMaterialsAccepted()
-                ))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    // Preia un punct de reciclare după ID
+    public List<RecyclingPointDto> searchRecyclingPoints(String searchTerm) {
+        return recyclingPointRepository.findByNameContainingIgnoreCaseOrAddressContainingIgnoreCase(
+                searchTerm, searchTerm)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<RecyclingPointDto> getRecyclingPointsByMaterial(String material) {
+        return recyclingPointRepository.findByMaterialsAcceptedContaining(material)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     public RecyclingPointDto getRecyclingPointById(Long id) {
         RecyclingPoint point = recyclingPointRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Punctul de reciclare nu a fost găsit"));
+        return convertToDto(point);
+    }
+
+    private RecyclingPointDto convertToDto(RecyclingPoint point) {
         return new RecyclingPointDto(
                 point.getId(),
                 point.getName(),
                 point.getAddress(),
-                point.getMaterialsAccepted()
+                point.getLatitude(),
+                point.getLongitude(),
+                point.getMaterialsAccepted(),
+                point.getDescription(),
+                point.getSchedule(),
+                point.getContactPhone()
         );
     }
 
-    // Adaugă un punct de reciclare nou
-    public RecyclingPointDto addRecyclingPoint(RecyclingPointDto recyclingPointDto) {
+    public RecyclingPointDto addRecyclingPoint(RecyclingPointDto dto) {
         RecyclingPoint point = new RecyclingPoint(
-                null,
-                recyclingPointDto.getName(),
-                recyclingPointDto.getAddress(),
-                recyclingPointDto.getMaterialsAccepted()
+                dto.getName(),
+                dto.getAddress(),
+                dto.getLatitude(),
+                dto.getLongitude(),
+                dto.getMaterialsAccepted()
         );
+        point.setDescription(dto.getDescription());
+        point.setSchedule(dto.getSchedule());
+        point.setContactPhone(dto.getContactPhone());
+        
         RecyclingPoint savedPoint = recyclingPointRepository.save(point);
-        return new RecyclingPointDto(
-                savedPoint.getId(),
-                savedPoint.getName(),
-                savedPoint.getAddress(),
-                savedPoint.getMaterialsAccepted()
-        );
+        return convertToDto(savedPoint);
     }
 }

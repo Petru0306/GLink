@@ -1,9 +1,12 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.ProductDto;
+import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.Product.Category;
+import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.FileStorageService;
+import com.greenlink.greenlink.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +29,12 @@ public class MarketplaceController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @GetMapping
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/{branch}")
     public String showMarketplace(
+            @PathVariable(required = false) String branch,
             Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
@@ -37,6 +44,23 @@ public class MarketplaceController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String sort) {
+
+        Product.Branch selectedBranch;
+        try {
+            selectedBranch = branch == null ? Product.Branch.VERDE : Product.Branch.valueOf(branch.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            selectedBranch = Product.Branch.VERDE;
+        }
+
+        System.out.println("Entering showMarketplace method");
+
+        User currentUser = null;
+        try {
+            currentUser = userService.getCurrentUser();
+            System.out.println("Current user fetched via UserService: " + currentUser.getEmail());
+        } catch (Exception ex) {
+            System.out.println("No authenticated user.");
+        }
 
         Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt");
         if (sort != null) {
@@ -58,6 +82,7 @@ public class MarketplaceController {
 
         // Apply all filters together
         products = productService.getFilteredProducts(
+            selectedBranch,
             category,
             ecoFriendly,
             search,
@@ -66,22 +91,64 @@ public class MarketplaceController {
             pageRequest
         );
 
+        System.out.println("Products fetched: " + products.getTotalElements());
+
+        // Add user and favorites to model if authenticated
+        if (currentUser != null) {
+            try {
+                System.out.println("Adding user favorites to model");
+                List<Long> favoriteIds = currentUser.getFavoriteProducts().stream()
+                    .map(Product::getId)
+                    .toList();
+                System.out.println("User favorite IDs: " + favoriteIds);
+                model.addAttribute("currentUser", currentUser);
+                model.addAttribute("favoriteIds", favoriteIds);
+            } catch (Exception e) {
+                System.out.println("Error getting user favorites: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
         model.addAttribute("products", products.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", products.getTotalPages());
         model.addAttribute("totalItems", products.getTotalElements());
         model.addAttribute("categories", Category.values());
+        model.addAttribute("branch", selectedBranch.name().toLowerCase());
 
+        String branchTitle;
+        switch (selectedBranch) {
+            case VERDE -> branchTitle = "Marketplace Verde";
+            case FOOD -> branchTitle = "Food Market";
+            case ELECTRO -> branchTitle = "Electro & Fashion";
+            default -> branchTitle = "Marketplace";
+        }
+        model.addAttribute("branchTitle", branchTitle);
+
+        System.out.println("Model attributes added, returning marketplace template");
         return "marketplace";
     }
 
-    @GetMapping("/product/{id}")
-    public String showProduct(@PathVariable Long id, Model model) {
+    @GetMapping("/{branch}/product/{id}")
+    public String showProduct(@PathVariable String branch, @PathVariable Long id, Model model) {
         try {
             ProductDto product = productService.getProductById(id);
             List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4); // Get 4 similar products
             model.addAttribute("product", product);
             model.addAttribute("similarProducts", similarProducts);
+            model.addAttribute("branch", branch);
+
+            // Add favourite IDs if user is authenticated
+            try {
+                User currentUser = userService.getCurrentUser();
+                List<Long> favoriteIds = currentUser.getFavoriteProducts().stream()
+                        .map(Product::getId)
+                        .toList();
+                model.addAttribute("favoriteIds", favoriteIds);
+            } catch (Exception ex) {
+                // User not authenticated; favouriteIds remains null
+            }
+
             return "product-details";
         } catch (RuntimeException e) {
             model.addAttribute("error", "Produsul nu a fost găsit");
@@ -152,5 +219,10 @@ public class MarketplaceController {
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la ștergerea produsului: " + e.getMessage());
         }
         return "redirect:/marketplace";
+    }
+
+    @GetMapping
+    public String showMarketplaceSelector() {
+        return "marketplace-selector";
     }
 }

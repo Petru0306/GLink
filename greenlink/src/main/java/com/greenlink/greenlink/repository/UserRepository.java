@@ -12,6 +12,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
 
+    @Query("SELECT u FROM User u LEFT JOIN FETCH u.favoriteProducts WHERE u.email = :email")
+    Optional<User> findByEmailWithFavorites(String email);
+
     @Query(value = "SELECT * FROM users WHERE active = true ORDER BY points DESC LIMIT :limit",
             nativeQuery = true)
     List<User> findTopByOrderByPointsDesc(int limit);
