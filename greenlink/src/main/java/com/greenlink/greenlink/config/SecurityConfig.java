@@ -44,7 +44,7 @@ public class SecurityConfig {
                 auth
                     .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/files/**", "/webjars/**", "/error",
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
-                                   "/provocari/**", "/contact/**").permitAll()
+                                   "/provocari/**", "/contact/**", "/profile/public/**").permitAll()
                     .anyRequest().authenticated();
             })
             .formLogin(form -> {

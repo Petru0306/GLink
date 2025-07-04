@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${profileUser.firstName + ' ' + profileUser.lastName} + ' - GreenLink'">Profil Utilizator - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 2rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-header {
+            margin-top: -4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            margin-top: -60px;
+        }
+
+        .profile-avatar-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 5px solid white;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            margin-top: -60px;
+        }
+
+        .profile-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #343a40;
+        }
+
+        .profile-email {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .profile-points {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            color: #28a745;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .profile-points:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .profile-bio {
+            color: #495057;
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 10px;
+            border-left: 3px solid #28a745;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding: 1.5rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.01);
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            color: #343a40;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 50px;
+            height: 3px;
+            background: #28a745;
+            border-radius: 2px;
+        }
+        
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            background: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        .eco-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.9) 0%, rgba(32, 201, 151, 0.9) 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        
+        .back-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-price {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.25rem;
+        }
+        
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 3rem;
+        }
+        
+        .product-description {
+            color: #6c757d;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 3rem;
+        }
+        
+        .product-footer {
+            background: rgba(0, 0, 0, 0.01);
+            border-top: none;
+            padding: 1rem;
+        }
+        
+        .product-view-btn {
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .product-view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+        
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-badge {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container hero-content">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Profil Vânzător</li>
+                </ol>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Profile Header -->
+    <div class="container profile-header">
+        <div class="profile-card text-center">
+            <!-- Profile Avatar -->
+            <div th:if="${profileUser.profilePicture}" class="d-flex justify-content-center">
+                <img th:src="${profileUser.profilePicture}" class="profile-avatar" alt="Profile Picture">
+            </div>
+            <div th:unless="${profileUser.profilePicture}" class="d-flex justify-content-center">
+                <div class="profile-avatar-placeholder">
+                    <i class="bi bi-person"></i>
+                </div>
+            </div>
+            
+            <!-- Profile Info -->
+            <h1 class="profile-name" th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Nume Utilizator</h1>
+            <div class="profile-points">
+                <i class="bi bi-award me-2"></i>
+                <span th:text="${profileUser.points + ' puncte GreenLink'}">0 puncte GreenLink</span>
+            </div>
+            
+            <div th:if="${profileUser.bio}" class="profile-bio" th:text="${profileUser.bio}">
+                Bio utilizator...
+            </div>
+            
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div>
+                    <div class="stat-value" th:text="${products.size()}">0</div>
+                    <div class="stat-label">Produse listate</div>
+                </div>
+                <div>
+                    <div class="stat-value" th:text="${#dates.format(profileUser.createdAt, 'MMM yyyy')}">Ian 2023</div>
+                    <div class="stat-label">Membru din</div>
+                </div>
+            </div>
+            
+            <!-- Back Button -->
+            <button onclick="window.history.back()" class="btn btn-outline-secondary back-button">
+                <i class="bi bi-arrow-left me-2"></i> Înapoi
+            </button>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="container py-4">
+        <h2 class="section-title mb-4">
+            <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+            Produse listate <span class="badge bg-success rounded-pill ms-2" th:text="${products.size()}">0</span>
+        </h2>
+        
+        <!-- Products Grid -->
+        <div th:if="${!products.isEmpty()}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div th:each="product : ${products}" class="col">
+                <div class="product-card">
+                    <div class="position-relative overflow-hidden">
+                        <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
+                             class="card-img-top product-img" alt="Product Image">
+                        <img th:unless="${product.imageUrl}" src="/images/placeholder-product.jpg" 
+                             class="card-img-top product-img" alt="Product Image">
+                        
+                        <span th:if="${product.ecoFriendly}" class="eco-badge">
+                            <i class="bi bi-leaf-fill me-1"></i> Eco-Friendly
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="product-title" th:text="${product.name}">Product Name</h5>
+                        <p class="product-price mb-2" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">0.00 RON</p>
+                        <p class="product-description" th:text="${product.description}">Product description...</p>
+                        
+                        <div class="product-meta">
+                            <span class="badge bg-light text-dark product-badge">
+                                <i class="bi bi-box-seam me-1"></i> 
+                                <span th:text="${product.stock}">0</span> în stoc
+                            </span>
+                            <span class="badge product-badge" th:classappend="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'bg-success' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'bg-warning text-dark' : 'bg-info text-dark')}">
+                                <span th:text="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Verde' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food' : 'Electro')}">Branch</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-footer">
+                        <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
+                           class="btn btn-success product-view-btn w-100">
+                            <i class="bi bi-eye me-1"></i> Vezi Detalii
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${products.isEmpty()}" class="empty-state">
+            <i class="bi bi-box empty-icon"></i>
+            <h3>Niciun produs listat</h3>
+            <p class="text-muted mb-4">Acest utilizator nu are produse listate în marketplace.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

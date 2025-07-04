@@ -1,11 +1,13 @@
 package com.greenlink.greenlink.controller;
 
+import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeService;
 import com.greenlink.greenlink.service.QuizService;
+import com.greenlink.greenlink.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,9 @@ public class ProfileController {
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private ProductService productService;
 
     @GetMapping
     public String showProfile(Model model, Principal principal) {
@@ -118,6 +123,27 @@ public class ProfileController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to load quiz results: " + e.getMessage());
             return "error";
+        }
+    }
+
+    @GetMapping("/public/{userId}")
+    public String viewPublicProfile(@PathVariable Long userId, Model model) {
+        try {
+            // Get the user by ID
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                return "redirect:/marketplace";
+            }
+            
+            // Get user's products
+            List<ProductDto> userProducts = productService.getProductsBySeller(userId);
+            
+            model.addAttribute("profileUser", user);
+            model.addAttribute("products", userProducts);
+            
+            return "profile/public-profile";
+        } catch (Exception e) {
+            return "redirect:/marketplace";
         }
     }
 }
