@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import com.greenlink.greenlink.model.Product;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,6 +57,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Challenge> challenges;
+    
+    @OneToMany(mappedBy = "seller")
+    private List<Product> products = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
@@ -214,6 +216,14 @@ public class User implements UserDetails {
 
     public void setChallenges(List<Challenge> challenges) {
         this.challenges = challenges;
+    }
+    
+    public List<Product> getProducts() {
+        return products;
+    }
+    
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public Role getRole() {

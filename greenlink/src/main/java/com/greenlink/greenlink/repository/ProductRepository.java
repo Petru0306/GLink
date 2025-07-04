@@ -36,4 +36,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             @Param("category") Category category,
             @Param("productId") Long productId,
             Pageable pageable);
+
+    List<Product> findBySellerId(Long sellerId);
 }

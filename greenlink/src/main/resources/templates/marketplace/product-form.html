@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Adaugă/Editează Produs</title>
+    <title th:text="${isSelling ? 'Listează Produs - GreenLink' : 'Adaugă/Editează Produs - GreenLink'}">GreenLink - Adaugă/Editează Produs</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -159,6 +159,47 @@
         .eco-friendly-check:hover {
             background: rgba(40, 167, 69, 0.1);
         }
+        
+        .seller-info {
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .seller-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .tips-card {
+            background: rgba(13, 110, 253, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .tips-card h5 {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+        
+        .tips-card ul {
+            padding-left: 1.5rem;
+            margin-bottom: 0;
+        }
+        
+        .tips-card li {
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -171,12 +212,17 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
+                    <li th:if="${isSelling}" class="breadcrumb-item"><a href="/marketplace/my-products" class="text-white">Produsele Mele</a></li>
                     <li class="breadcrumb-item active text-white" aria-current="page" 
-                        th:text="${product.id != null ? 'Editează Produs' : 'Adaugă Produs'}">
+                        th:text="${isSelling ? 'Listează Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs')}">
                         Adaugă Produs
                     </li>
                 </ol>
             </nav>
+            <h1 class="display-4 fw-bold mt-3" th:text="${isSelling ? 'Listează un Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs')}">
+                Adaugă Produs
+            </h1>
+            <p class="lead" th:if="${isSelling}">Completează detaliile produsului tău pentru a-l lista în marketplace</p>
         </div>
     </header>
 
@@ -184,14 +230,29 @@
     <div class="container">
         <div class="form-container">
             <div class="form-card">
-                <h2 class="section-title" th:text="${product.id != null ? 'Editează Produs' : 'Adaugă Produs Nou'}">
+                <h2 class="section-title" th:text="${isSelling ? 'Detalii Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs Nou')}">
                     Adaugă Produs Nou
                 </h2>
 
-                <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : '/marketplace/product/add'}}"
+                <!-- Seller Information (only for selling) -->
+                <div th:if="${isSelling}" class="seller-info d-flex align-items-center">
+                    <div class="seller-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div>
+                        <h6 class="mb-0">Vei lista acest produs ca:</h6>
+                        <p class="mb-0" th:text="${#authentication.principal.firstName + ' ' + #authentication.principal.lastName}">Nume Utilizator</p>
+                    </div>
+                </div>
+
+                <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : 
+                          (isSelling ? '/marketplace/sell' : '/marketplace/product/add')}}"
                       method="post"
                       enctype="multipart/form-data"
                       th:object="${product}">
+
+                    <!-- Hidden referer path field -->
+                    <input type="hidden" name="refererPath" th:if="${refererPath != null}" th:value="${refererPath}" />
 
                     <!-- Image Upload -->
                     <div class="mb-4">
@@ -202,26 +263,28 @@
                         
                         <label class="upload-label">
                             <i class="bi bi-cloud-upload me-2"></i>
-                            Încarcă Imagine
+                            Încarcă Imagine Produs
                             <input type="file" name="imageFile" id="imageFile" 
                                    accept="image/*" style="display: none;"
                                    onchange="previewImage(this)">
                         </label>
+                        <div class="form-text">Imaginile de calitate cresc șansele de vânzare. Recomandăm o imagine clară, pe un fundal neutru.</div>
                     </div>
 
                     <!-- Product Details -->
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Nume Produs</label>
+                                <label class="form-label">Nume Produs*</label>
                                 <input type="text" class="form-control" th:field="*{name}" required
                                        placeholder="Introduceți numele produsului">
+                                <div class="form-text">Un nume scurt și descriptiv pentru produsul tău</div>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Preț (RON)</label>
+                                <label class="form-label">Preț (RON)*</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" th:field="*{price}" 
                                            step="0.01" min="0" required
@@ -233,7 +296,7 @@
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Categorie</label>
+                                <label class="form-label">Categorie*</label>
                                 <select class="form-select" th:field="*{category}" required>
                                     <option value="">Selectează categoria</option>
                                     <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
@@ -241,15 +304,40 @@
                                             th:text="${cat.displayName}">
                                     </option>
                                 </select>
+                                <div class="form-text">Alege categoria care se potrivește cel mai bine produsului tău</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Stoc Disponibil*</label>
+                                <input type="number" class="form-control" th:field="*{stock}" 
+                                       min="1" required
+                                       placeholder="Cantitate disponibilă">
+                                <div class="form-text">Numărul de unități disponibile pentru vânzare</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Marketplace*</label>
+                                <select class="form-select" th:field="*{branch}" required>
+                                    <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                            th:value="${branch}"
+                                            th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion')}">
+                                    </option>
+                                </select>
+                                <div class="form-text">Alege secțiunea din marketplace unde va apărea produsul tău</div>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="mb-3">
-                                <label class="form-label">Descriere</label>
+                                <label class="form-label">Descriere Produs*</label>
                                 <textarea class="form-control" th:field="*{description}" 
                                           rows="4" required
                                           placeholder="Descrieți produsul în detaliu..."></textarea>
+                                <div class="form-text">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
                             </div>
                         </div>
 
@@ -262,19 +350,32 @@
                                         Acest produs este Eco-Friendly
                                     </label>
                                 </div>
+                                <div class="form-text">Produsele eco-friendly sunt mai vizibile în marketplace și contribuie la un mediu mai sănătos</div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Tips for Sellers -->
+                    <div th:if="${isSelling}" class="tips-card">
+                        <h5><i class="bi bi-lightbulb me-2"></i>Sfaturi pentru Vânzători</h5>
+                        <ul>
+                            <li>Folosește imagini clare și de calitate pentru produsul tău</li>
+                            <li>Oferă o descriere detaliată, menționând materialele și dimensiunile</li>
+                            <li>Specifică dacă produsul este eco-friendly și de ce</li>
+                            <li>Stabilește un preț competitiv, verificând produse similare din marketplace</li>
+                            <li>Actualizează stocul disponibil pentru a evita comenzi pe care nu le poți onora</li>
+                        </ul>
                     </div>
 
                     <!-- Submit Buttons -->
                     <div class="d-flex gap-3 mt-4">
                         <button type="submit" class="btn btn-success btn-submit">
                             <i class="bi bi-check-lg me-2"></i>
-                            <span th:text="${product.id != null ? 'Salvează Modificările' : 'Adaugă Produs'}">
+                            <span th:text="${isSelling ? 'Listează Produsul' : (product.id != null ? 'Salvează Modificările' : 'Adaugă Produs')}">
                                 Adaugă Produs
                             </span>
                         </button>
-                        <a href="/marketplace" class="btn btn-outline-secondary btn-submit">
+                        <a th:href="${isSelling ? (refererPath != null ? refererPath : '/dashboard') : (product.id != null ? '/marketplace/my-products' : '/marketplace')}" class="btn btn-outline-secondary btn-submit">
                             <i class="bi bi-x-lg me-2"></i>
                             Anulează
                         </a>

@@ -216,6 +216,18 @@
             transform: translateY(-2px);
             box-shadow: 0 0.5rem 1rem rgba(25,135,84,0.15);
         }
+        
+        .seller-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .seller-info i {
+            margin-right: 0.25rem;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -317,10 +329,10 @@
                             <option value="price_desc" th:selected="${param.sort == 'price_desc'}">Preț descrescător</option>
                             <option value="newest" th:selected="${param.sort == 'newest'}">Cele mai noi</option>
                         </select>
-                        <a href="/marketplace/product/add" class="btn btn-success btn-submit" 
-                           sec:authorize="hasRole('ADMIN')">
+                        <a href="/marketplace/sell" class="btn btn-success btn-submit" 
+                           sec:authorize="isAuthenticated()">
                             <i class="bi bi-plus-lg me-2"></i>
-                            Adaugă Produs
+                            Vinde Produs
                         </a>
                     </div>
                 </div>
@@ -377,6 +389,12 @@
                                         <i class="bi bi-leaf-fill me-1"></i>Eco
                                     </span>
                                 </div>
+                                
+                                <div th:if="${product.sellerName != null}" class="seller-info mb-2">
+                                    <i class="bi bi-person-circle"></i>
+                                    <span th:text="${product.sellerName}">Nume vânzător</span>
+                                </div>
+                                
                                 <p class="card-text text-muted" 
                                    th:text="${#strings.length(product.description) > 100 ? #strings.substring(product.description, 0, 97) + '...' : product.description}">
                                     Description
@@ -400,7 +418,7 @@
                                         <a th:href="@{'/marketplace/' + ${branch} + '/product/' + ${product.id}}" 
                                            class="btn btn-outline-success details-btn">
                                             <i class="bi bi-eye me-1"></i>Detalii
-                                            </a>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -503,8 +521,8 @@
                                 button.removeClass('active');
                                 icon.removeClass('bi-heart-fill').addClass('bi-heart');
                                 form.attr('action', '/marketplace/favorites/add/' + productId);
-            }
-            
+                            }
+                            
                             // Show success message
                             showToast('success', newIsFavorite ? 'Produs adăugat la favorite' : 'Produs eliminat de la favorite');
                         } else {
@@ -554,25 +572,25 @@
                 const params = new URLSearchParams(window.location.search);
                 const searchValue = searchInput.val().trim();
                 const sortValue = sortSelect.val();
-            
-            if (searchValue) {
-                params.set('search', searchValue);
+
+                if (searchValue) {
+                    params.set('search', searchValue);
                 } else {
                     params.delete('search');
-            }
-            
-            if (sortValue) {
-                params.set('sort', sortValue);
+                }
+
+                if (sortValue) {
+                    params.set('sort', sortValue);
                 } else {
                     params.delete('sort');
                 }
 
                 // Reset to first page when applying new search/sort
                 params.delete('page');
-            
+
                 window.location.href = window.location.pathname + '?' + params.toString();
-        }
-        
+            }
+
             // Trigger search on Enter key
             searchInput.on('keypress', function(e) {
                 if (e.which === 13) { // Enter key

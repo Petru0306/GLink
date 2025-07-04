@@ -2,7 +2,6 @@ package com.greenlink.greenlink.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "products")
@@ -44,6 +43,10 @@ public class Product {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Branch branch = Branch.VERDE;
+    
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private User seller;
 
     public enum Category {
         BIO("Produse Bio"),
@@ -130,9 +133,7 @@ public class Product {
     }
 
     public String getImageUrl() {
-        if (imageUrl != null && !imageUrl.startsWith("/")) {
-            return "/images/products/" + imageUrl;
-        }
+        // Return the imageUrl as is, since we're now using a dedicated controller
         return imageUrl;
     }
 
@@ -170,5 +171,21 @@ public class Product {
 
     public void setStock(int stock) {
         this.stock = stock;
+    }
+    
+    public Branch getBranch() {
+        return branch;
+    }
+    
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
+    
+    public User getSeller() {
+        return seller;
+    }
+    
+    public void setSeller(User seller) {
+        this.seller = seller;
     }
 }

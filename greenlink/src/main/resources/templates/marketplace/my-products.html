@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Produsele Mele - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-img {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .eco-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(40, 167, 69, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .action-buttons {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        
+        /* Toast styles */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .toast {
+            min-width: 250px;
+        }
+        
+        /* Edit modal styles */
+        .modal-xl {
+            max-width: 1140px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px dashed rgba(40, 167, 69, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .image-preview.has-image {
+            border: none;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container hero-content">
+            <h1 class="display-4 fw-bold mb-3">Produsele Mele</h1>
+            <p class="lead mb-0">Gestionează produsele tale listate în marketplace</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Actions Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Produsele tale (<span th:text="${products.size()}">0</span>)</h2>
+            <a href="/marketplace/sell" class="btn btn-success">
+                <i class="bi bi-plus-lg me-2"></i>
+                Adaugă Produs Nou
+            </a>
+        </div>
+
+        <!-- Products Grid -->
+        <div th:if="${!products.isEmpty()}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <div th:each="product : ${products}" class="col">
+                <div class="card product-card h-100">
+                    <div class="position-relative">
+                        <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
+                             class="card-img-top product-img" alt="Product Image">
+                        <img th:unless="${product.imageUrl}" src="/images/placeholder-product.jpg" 
+                             class="card-img-top product-img" alt="Product Image">
+                        
+                        <span th:if="${product.ecoFriendly}" class="eco-badge">
+                            <i class="bi bi-leaf-fill me-1"></i> Eco-Friendly
+                        </span>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                        <p class="card-text text-success fw-bold" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">0.00 RON</p>
+                        <p class="card-text text-truncate" th:text="${product.description}">Product description...</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="badge bg-light text-dark">
+                                <i class="bi bi-box-seam me-1"></i> 
+                                <span th:text="${product.stock}">0</span> în stoc
+                            </span>
+                            <span class="badge" th:classappend="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'bg-success' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'bg-warning text-dark' : 'bg-info text-dark')}">
+                                <span th:text="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Verde' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food' : 'Electro')}">Branch</span>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-white border-top-0">
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
+                               class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-eye me-1"></i> Vezi Produs
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-primary btn-sm me-1"
+                                        onclick="openEditModal(this)"
+                                        th:data-product-id="${product.id}"
+                                        th:data-product-name="${product.name}"
+                                        th:data-product-price="${product.price}"
+                                        th:data-product-description="${product.description}"
+                                        th:data-product-stock="${product.stock}"
+                                        th:data-product-category="${product.category}"
+                                        th:data-product-branch="${product.branch}"
+                                        th:data-product-eco-friendly="${product.ecoFriendly}"
+                                        th:data-product-image-url="${product.imageUrl}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                        onclick="confirmDelete(this)"
+                                        th:data-product-id="${product.id}"
+                                        th:data-product-name="${product.name}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${products.isEmpty()}" class="empty-state">
+            <i class="bi bi-box empty-icon"></i>
+            <h3>Nu ai niciun produs listat</h3>
+            <p class="text-muted mb-4">Începe să vinzi produse în marketplace-ul nostru</p>
+            <a href="/marketplace/sell" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-lg me-2"></i>
+                Adaugă Primul Produs
+            </a>
+        </div>
+    </div>
+
+    <!-- Global Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmare ștergere</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Ești sigur că vrei să ștergi produsul <strong id="productNameToDelete">Product Name</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <form id="deleteProductForm" method="post">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-danger">Șterge</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editează Produs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        
+                        <div class="row">
+                            <!-- Image Upload -->
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <img id="modalImagePreview" src="/images/placeholder-product.jpg" 
+                                         class="image-preview" alt="Product Image">
+                                    
+                                    <label class="form-label d-block">Imagine Produs</label>
+                                    <input type="file" name="imageFile" id="modalImageFile" 
+                                           class="form-control" accept="image/*"
+                                           onchange="previewModalImage(this)">
+                                    <div class="form-text">Lasă gol pentru a păstra imaginea actuală</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product Details -->
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nume Produs*</label>
+                                            <input type="text" class="form-control" name="name" id="modalName" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Preț (RON)*</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="price" id="modalPrice" 
+                                                       step="0.01" min="0" required>
+                                                <span class="input-group-text">RON</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Categorie*</label>
+                                            <select class="form-select" name="category" id="modalCategory" required>
+                                                <option value="">Selectează categoria</option>
+                                                <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
+                                                        th:value="${cat}"
+                                                        th:text="${cat.displayName}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Stoc Disponibil*</label>
+                                            <input type="number" class="form-control" name="stock" id="modalStock" 
+                                                   min="1" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Marketplace*</label>
+                                            <select class="form-select" name="branch" id="modalBranch" required>
+                                                <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                                        th:value="${branch}"
+                                                        th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion')}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Eco-Friendly</label>
+                                            <div class="form-check form-switch mt-2">
+                                                <input type="checkbox" class="form-check-input" name="ecoFriendly" id="modalEcoFriendly">
+                                                <label class="form-check-label">
+                                                    <i class="bi bi-leaf-fill text-success"></i> Produs Eco-Friendly
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Descriere Produs*</label>
+                                            <textarea class="form-control" name="description" id="modalDescription" 
+                                                      rows="4" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-success" onclick="submitEditForm()">
+                        <i class="bi bi-check-lg me-1"></i> Salvează Modificările
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete(button) {
+            const productId = button.getAttribute('data-product-id');
+            const productName = button.getAttribute('data-product-name');
+            
+            // Set product name in modal
+            document.getElementById('productNameToDelete').textContent = productName;
+            
+            // Set form action
+            const form = document.getElementById('deleteProductForm');
+            form.action = `/marketplace/product/delete/${productId}`;
+            
+            // Show modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            deleteModal.show();
+        }
+        
+        function openEditModal(button) {
+            // Get product data from button attributes
+            const productId = button.getAttribute('data-product-id');
+            const name = button.getAttribute('data-product-name');
+            const price = button.getAttribute('data-product-price');
+            const description = button.getAttribute('data-product-description');
+            const stock = button.getAttribute('data-product-stock');
+            const category = button.getAttribute('data-product-category');
+            const branch = button.getAttribute('data-product-branch');
+            const ecoFriendly = button.getAttribute('data-product-eco-friendly') === 'true';
+            const imageUrl = button.getAttribute('data-product-image-url');
+            
+            // Set form action
+            const form = document.getElementById('editProductForm');
+            form.action = `/marketplace/product/update/${productId}`;
+            
+            // Populate form fields
+            document.getElementById('modalName').value = name;
+            document.getElementById('modalPrice').value = price;
+            document.getElementById('modalDescription').value = description;
+            document.getElementById('modalStock').value = stock;
+            document.getElementById('modalCategory').value = category;
+            document.getElementById('modalBranch').value = branch;
+            document.getElementById('modalEcoFriendly').checked = ecoFriendly;
+            
+            // Set image preview if available
+            const imagePreview = document.getElementById('modalImagePreview');
+            if (imageUrl) {
+                imagePreview.src = imageUrl;
+                imagePreview.classList.add('has-image');
+            } else {
+                imagePreview.src = '/images/placeholder-product.jpg';
+                imagePreview.classList.remove('has-image');
+            }
+            
+            // Show modal
+            const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+            editModal.show();
+        }
+        
+        function previewModalImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('modalImagePreview');
+                    preview.src = e.target.result;
+                    preview.classList.add('has-image');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function submitEditForm() {
+            document.getElementById('editProductForm').submit();
+        }
+    </script>
+</body>
+</html> 

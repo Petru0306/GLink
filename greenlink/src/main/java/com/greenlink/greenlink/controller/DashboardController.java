@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/dashboard")
 public class DashboardController {
 
-    private final UserService userService;
-
-    public DashboardController(UserService userService) {
-        this.userService = userService;
+    public DashboardController(UserService userService) { 
     }
 
     @GetMapping

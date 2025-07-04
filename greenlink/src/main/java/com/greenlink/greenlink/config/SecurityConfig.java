@@ -1,7 +1,6 @@
 package com.greenlink.greenlink.config;
 
 import com.greenlink.greenlink.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import com.greenlink.greenlink.config.CustomAuthenticationSuccessHandler;
-import com.greenlink.greenlink.config.CustomAuthenticationFailureHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -45,7 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> {
                 logger.info("Configuring authorization rules");
                 auth
-                    .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/webjars/**", "/error",
+                    .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/files/**", "/webjars/**", "/error",
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
                                    "/provocari/**", "/contact/**").permitAll()
                     .anyRequest().authenticated();

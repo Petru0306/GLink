@@ -1,6 +1,7 @@
 package com.greenlink.greenlink.dto;
 
 import com.greenlink.greenlink.model.Product.Category;
+import com.greenlink.greenlink.model.Product.Branch;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,6 +16,9 @@ public class ProductDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private int stock;
+    private Long sellerId;
+    private String sellerName;
+    private Branch branch;
 
     // Constructori
     public ProductDto() {}
@@ -32,6 +36,25 @@ public class ProductDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.stock = stock;
+    }
+    
+    public ProductDto(Long id, String name, String description, double price,
+                      Category category, String imageUrl, boolean ecoFriendly,
+                      LocalDateTime createdAt, LocalDateTime updatedAt, int stock,
+                      Long sellerId, String sellerName, Branch branch) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.ecoFriendly = ecoFriendly;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.stock = stock;
+        this.sellerId = sellerId;
+        this.sellerName = sellerName;
+        this.branch = branch;
     }
 
     // Getteri și Setteri (la fel ca în Product)
@@ -114,6 +137,30 @@ public class ProductDto {
     public void setStock(int stock) {
         this.stock = stock;
     }
+    
+    public Long getSellerId() {
+        return sellerId;
+    }
+    
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
+    
+    public String getSellerName() {
+        return sellerName;
+    }
+    
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+    
+    public Branch getBranch() {
+        return branch;
+    }
+    
+    public void setBranch(Branch branch) {
+        this.branch = branch;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -148,6 +195,7 @@ public class ProductDto {
                 ", name='" + name + '\'' +
                 ", category=" + category +
                 ", price=" + price +
+                ", sellerId=" + sellerId +
                 '}';
     }
 }

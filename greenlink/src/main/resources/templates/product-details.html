@@ -146,6 +146,21 @@
             background: #28a745;
             border-radius: 2px;
         }
+        
+        .seller-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .seller-badge i {
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -183,6 +198,11 @@
             
             <h1 class="display-5 fw-bold mb-4" th:text="${product.name}">Nume Produs</h1>
             
+            <div th:if="${product.sellerName != null}" class="seller-badge">
+                <i class="bi bi-person-circle"></i>
+                <span>Vândut de <span th:text="${product.sellerName}">Nume vânzător</span></span>
+            </div>
+            
             <div class="price-tag">
                 <i class="bi bi-tag-fill me-2"></i>
                 <span th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
@@ -203,7 +223,7 @@
                             th:data-is-favorite="${isFavorite}">
                         <i class="bi" th:classappend="${isFavorite ? 'bi-heart-fill' : 'bi-heart'}"></i>
                         <span th:text="${isFavorite ? 'Elimină de la favorite' : 'Adaugă la favorite'}" class="ms-2"></span>
-                </button>
+                    </button>
                 </form>
                 <!-- Login prompt for unauthenticated users -->
                 <button th:unless="${#authorization.expression('isAuthenticated()')}"
@@ -357,6 +377,13 @@
                                     <span th:unless="${product.ecoFriendly}" class="text-muted">
                                         <i class="bi bi-x-lg me-2"></i> Nu
                                     </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Vânzător:</th>
+                                <td>
+                                    <span th:if="${product.sellerName != null}" th:text="${product.sellerName}">Nume vânzător</span>
+                                    <span th:unless="${product.sellerName != null}" class="text-muted">GreenLink</span>
                                 </td>
                             </tr>
                             <tr>

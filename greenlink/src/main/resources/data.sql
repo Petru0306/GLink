@@ -69,20 +69,20 @@ WHERE NOT EXISTS (
 );
 
 -- Insert sample recycling points
-INSERT INTO recycling_point (name, address)
-SELECT 'EcoRecycle Center', 'Strada Verde 123, București'
+INSERT INTO recycling_point (name, address, latitude, longitude)
+SELECT 'EcoRecycle Center', 'Strada Verde 123, București', 44.439663, 26.096306
 WHERE NOT EXISTS (
     SELECT 1 FROM recycling_point WHERE name = 'EcoRecycle Center'
 );
 
-INSERT INTO recycling_point (name, address)
-SELECT 'GreenPoint Recycling', 'Bulevardul Ecologic 45, București'
+INSERT INTO recycling_point (name, address, latitude, longitude)
+SELECT 'GreenPoint Recycling', 'Bulevardul Ecologic 45, București', 44.4268, 26.1027
 WHERE NOT EXISTS (
     SELECT 1 FROM recycling_point WHERE name = 'GreenPoint Recycling'
 );
 
-INSERT INTO recycling_point (name, address)
-SELECT 'Clean Earth Station', 'Aleea Reciclării 78, București'
+INSERT INTO recycling_point (name, address, latitude, longitude)
+SELECT 'Clean Earth Station', 'Aleea Reciclării 78, București', 44.4200, 26.1170
 WHERE NOT EXISTS (
     SELECT 1 FROM recycling_point WHERE name = 'Clean Earth Station'
 );

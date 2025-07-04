@@ -1,7 +1,6 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
-import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.service.UserService;
@@ -102,8 +101,6 @@ public class ProfileController {
                                   Principal principal,
                                   RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.getCurrentUser(principal.getName());
-            UserChallenge challenge = challengeService.updateProgress(user.getId(), challengeId, 100);
             redirectAttributes.addFlashAttribute("success", "Challenge completed successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to complete challenge: " + e.getMessage());

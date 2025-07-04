@@ -2,13 +2,18 @@ package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.model.Product;
+import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.Product.Category;
+import com.greenlink.greenlink.model.Product.Branch;
 import com.greenlink.greenlink.repository.ProductRepository;
+import com.greenlink.greenlink.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +29,15 @@ public class ProductService {
 
     @Autowired
     private FileStorageService fileStorageService;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     private ProductDto convertToDto(Product product) {
+        String sellerName = product.getSeller() != null ? 
+                product.getSeller().getFirstName() + " " + product.getSeller().getLastName() : null;
+        Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
+        
         return new ProductDto(
                 product.getId(),
                 product.getName(),
@@ -36,7 +48,10 @@ public class ProductService {
                 product.isEcoFriendly(),
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
-                product.getStock()
+                product.getStock(),
+                sellerId,
+                sellerName,
+                product.getBranch()
         );
     }
 
@@ -50,6 +65,16 @@ public class ProductService {
         product.setImageUrl(dto.getImageUrl());
         product.setEcoFriendly(dto.isEcoFriendly());
         product.setStock(dto.getStock());
+        
+        if (dto.getBranch() != null) {
+            product.setBranch(dto.getBranch());
+        }
+
+        // Set seller if sellerId is provided
+        if (dto.getSellerId() != null) {
+            userRepository.findById(dto.getSellerId())
+                    .ifPresent(product::setSeller);
+        }
 
         // Setăm timestamp-urile doar pentru produse noi
         if (dto.getId() == null) {
@@ -79,6 +104,15 @@ public class ProductService {
 
     public ProductDto addProduct(ProductDto productDto) {
         Product product = convertToEntity(productDto);
+        
+        // Set current user as seller if not specified
+        if (product.getSeller() == null) {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof User) {
+                product.setSeller((User) auth.getPrincipal());
+            }
+        }
+        
         Product savedProduct = productRepository.save(product);
         return convertToDto(savedProduct);
     }
@@ -94,6 +128,10 @@ public class ProductService {
         existingProduct.setCategory(productDto.getCategory());
         existingProduct.setEcoFriendly(productDto.isEcoFriendly());
         existingProduct.setStock(productDto.getStock());
+        
+        if (productDto.getBranch() != null) {
+            existingProduct.setBranch(productDto.getBranch());
+        }
 
         // Actualizăm imaginea doar dacă e furnizată una nouă
         if (productDto.getImageUrl() != null && !productDto.getImageUrl().equals(existingProduct.getImageUrl())) {
@@ -115,6 +153,13 @@ public class ProductService {
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+
+        // Remove product from all users' favorites before deleting
+        List<User> usersWithFavorite = userRepository.findByFavoriteProductsContains(product);
+        for (User user : usersWithFavorite) {
+            user.getFavoriteProducts().remove(product);
+            userRepository.save(user);
+        }
 
         // Ștergem imaginea asociată dacă există
         if (product.getImageUrl() != null) {
@@ -213,5 +258,12 @@ public class ProductService {
             .stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
+    }
+    
+    public List<ProductDto> getProductsBySeller(Long sellerId) {
+        return productRepository.findBySellerId(sellerId)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

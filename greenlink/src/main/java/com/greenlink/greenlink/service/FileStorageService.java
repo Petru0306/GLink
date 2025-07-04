@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
+import java.util.Objects;
 
 @Service
 public class FileStorageService {
@@ -42,9 +42,9 @@ public class FileStorageService {
             if (fileType != null && !fileType.startsWith("image/")) {
                 throw new RuntimeException("Doar imaginile sunt permise!");
             }
-
             // Generează un nume unic pentru fișier
-            String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
+            String originalFileName = StringUtils.cleanPath(
+                    Objects.requireNonNull(file.getOriginalFilename(), "Numele fișierului nu poate fi null"));
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
             String newFileName = UUID.randomUUID().toString() + fileExtension;
 

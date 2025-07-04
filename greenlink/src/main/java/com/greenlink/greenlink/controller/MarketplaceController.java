@@ -7,6 +7,8 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.FileStorageService;
 import com.greenlink.greenlink.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/marketplace")
 public class MarketplaceController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(MarketplaceController.class);
 
     @Autowired
     private ProductService productService;
@@ -161,6 +165,32 @@ public class MarketplaceController {
         model.addAttribute("product", new ProductDto());
         return "marketplace/product-form";
     }
+    
+    @GetMapping("/sell")
+    public String showSellForm(Model model, @RequestHeader(value = "Referer", required = false) String referer) {
+        ProductDto product = new ProductDto();
+        model.addAttribute("product", product);
+        model.addAttribute("isSelling", true);
+        
+        // Store the referer for the cancel button
+        if (referer != null) {
+            // Extract the path from the full URL
+            String path = referer;
+            try {
+                if (referer.contains("://")) {
+                    path = new java.net.URL(referer).getPath();
+                }
+            } catch (Exception e) {
+                // If URL parsing fails, use the full referer
+                logger.warn("Failed to parse referer URL: {}", referer, e);
+            }
+            model.addAttribute("refererPath", path);
+        } else {
+            model.addAttribute("refererPath", "/dashboard");
+        }
+        
+        return "marketplace/product-form";
+    }
 
     @GetMapping("/product/edit/{id}")
     public String showEditProductForm(@PathVariable Long id, Model model) {
@@ -180,7 +210,7 @@ public class MarketplaceController {
         try {
         if (!imageFile.isEmpty()) {
             String fileName = fileStorageService.storeFile(imageFile);
-            productDto.setImageUrl("/uploads/products/" + fileName);
+            productDto.setImageUrl("/files/products/" + fileName);
         }
 
         productService.addProduct(productDto);
@@ -190,39 +220,104 @@ public class MarketplaceController {
         }
         return "redirect:/marketplace";
     }
+    
+    @PostMapping("/sell")
+    public String sellProduct(@ModelAttribute ProductDto productDto,
+                            @RequestParam("imageFile") MultipartFile imageFile,
+                            @RequestParam(value = "refererPath", required = false) String refererPath,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            if (!imageFile.isEmpty()) {
+                String fileName = fileStorageService.storeFile(imageFile);
+                productDto.setImageUrl("/files/products/" + fileName);
+            }
+            
+            // Set current user as seller
+            User currentUser = userService.getCurrentUser();
+            productDto.setSellerId(currentUser.getId());
+            productDto.setSellerName(currentUser.getFirstName() + " " + currentUser.getLastName());
+            
+            productService.addProduct(productDto);
+            redirectAttributes.addFlashAttribute("success", "Produsul tău a fost listat cu succes în marketplace!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "A apărut o eroare la listarea produsului: " + e.getMessage());
+        }
+        
+        // Redirect to referer if available, otherwise to dashboard
+        if (refererPath != null && !refererPath.isEmpty()) {
+            // Check if refererPath is a valid path in our application
+            if (refererPath.startsWith("/marketplace") || refererPath.equals("/dashboard")) {
+                return "redirect:" + refererPath;
+            }
+        }
+        
+        return "redirect:/dashboard";
+    }
 
     @PostMapping("/product/update/{id}")
     public String updateProduct(@PathVariable Long id,
                                 @ModelAttribute ProductDto productDto,
                               @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes,
+                              @RequestHeader(value = "Referer", required = false) String referer) {
         try {
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String fileName = fileStorageService.storeFile(imageFile);
-            productDto.setImageUrl("/uploads/products/" + fileName);
-        }
+            if (imageFile != null && !imageFile.isEmpty()) {
+                String fileName = fileStorageService.storeFile(imageFile);
+                productDto.setImageUrl("/files/products/" + fileName);
+            }
 
-        productService.updateProduct(id, productDto);
+            productService.updateProduct(id, productDto);
             redirectAttributes.addFlashAttribute("success", "Produsul a fost actualizat cu succes!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la actualizarea produsului: " + e.getMessage());
         }
+        
+        // Check if the update request came from the my-products page
+        if (referer != null && referer.contains("/marketplace/my-products")) {
+            return "redirect:/marketplace/my-products";
+        }
+        
         return "redirect:/marketplace";
     }
 
     @PostMapping("/product/delete/{id}")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        logger.info("Attempting to delete product with ID: {}", id);
+        
         try {
+            // Get the product to verify it exists
+            ProductDto product = productService.getProductById(id);
+            logger.info("Found product to delete: {} (ID: {})", product.getName(), id);
+            
+            // Delete the product
             productService.deleteProduct(id);
+            logger.info("Product deleted successfully");
+            
             redirectAttributes.addFlashAttribute("success", "Produsul a fost șters cu succes!");
         } catch (Exception e) {
+            logger.error("Error deleting product with ID {}: {}", id, e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la ștergerea produsului: " + e.getMessage());
         }
-        return "redirect:/marketplace";
+        
+        // Always redirect to my-products page
+        return "redirect:/marketplace/my-products";
     }
 
     @GetMapping
     public String showMarketplaceSelector() {
         return "marketplace-selector";
+    }
+    
+    @GetMapping("/my-products")
+    public String showMyProducts(Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
+            model.addAttribute("products", userProducts);
+            model.addAttribute("isMyProducts", true);
+            return "marketplace/my-products";
+        } catch (Exception e) {
+            return "redirect:/login";
+        }
     }
 }
