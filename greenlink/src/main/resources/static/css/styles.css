@@ -204,3 +204,22 @@ a:hover {
 .quick-favorite-btn:hover .bi-heart {
     transform: scale(1.1);
 }
+
+/* Product price styling */
+.product-price {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #198754;
+}
+
+.product-price del {
+    font-weight: 400;
+    font-size: 1rem;
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+.product-price .ms-2 {
+    font-weight: 600;
+    font-size: 1.25rem;
+}

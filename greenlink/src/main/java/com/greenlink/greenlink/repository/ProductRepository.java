@@ -2,6 +2,7 @@ package com.greenlink.greenlink.repository;
 
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.Product.Category;
+import com.greenlink.greenlink.model.Product.Branch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,5 +38,19 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
             @Param("productId") Long productId,
             Pageable pageable);
 
-    List<Product> findBySellerId(Long sellerId);
+    @Query("SELECT p FROM Product p WHERE p.category = :category AND p.branch = :branch AND p.id != :productId ORDER BY p.createdAt DESC")
+    List<Product> findByCategoryAndBranchAndIdNot(
+            @Param("category") Category category,
+            @Param("branch") Branch branch,
+            @Param("productId") Long productId,
+            Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.branch = :branch AND p.id != :productId ORDER BY p.createdAt DESC")
+    List<Product> findByBranchAndIdNot(
+            @Param("branch") Branch branch,
+            @Param("productId") Long productId,
+            Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId")
+    List<Product> findBySellerId(@Param("sellerId") Long sellerId);
 }

@@ -228,6 +228,16 @@
         .seller-info i {
             margin-right: 0.25rem;
         }
+        
+        /* Spinner animation for loading state */
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -350,7 +360,9 @@
 
                     <!-- Product Cards -->
                     <div th:if="${not #lists.isEmpty(products)}" th:each="product : ${products}" class="col-md-6 col-lg-4">
-                        <div class="product-card card h-100">
+                        <div class="product-card card h-100" 
+                             th:data-product-url="@{'/marketplace/' + ${branch} + '/product/' + ${product.id}}"
+                             style="cursor: pointer;">
                             <!-- Quick Favorite Button -->
                             <form th:if="${#authorization.expression('isAuthenticated()')}"
                                   th:with="isFavorite=${favoriteIds != null and favoriteIds.contains(product.id)}"
@@ -395,19 +407,21 @@
                                     <span th:text="${product.sellerName}">Nume vânzător</span>
                                 </div>
                                 
-                                <p class="card-text text-muted" 
-                                   th:text="${#strings.length(product.description) > 100 ? #strings.substring(product.description, 0, 97) + '...' : product.description}">
-                                    Description
-                                </p>
+                                <p class="card-text text-truncate" th:text="${product.description}">Description</p>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="badge category-badge" 
                                           th:classappend="${#strings.toLowerCase(product.category)}"
                                           th:text="${product.category.displayName}">
                                         Category
                                     </span>
-                                    <span class="product-price" th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' RON'">
-                                        Price
-                                    </span>
+                                    <div class="price mb-3">
+                                        <!-- Show negotiated price with original price strikethrough if available -->
+                                        <span class="product-price" th:if="${product.hasNegotiatedPrice()}">
+                                            <del th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</del>
+                                            <span class="ms-2" th:text="${#numbers.formatDecimal(product.negotiatedPrice, 1, 2) + ' RON'}">79.99 RON</span>
+                                        </span>
+                                        <span class="product-price" th:unless="${product.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
+                                    </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
                                     <small class="stock-info">
@@ -480,6 +494,42 @@
             }
 
             const favoriteIds = /*[[${favoriteIds}]]*/ [];
+            
+            // Check localStorage for updated favorite status
+            try {
+                const storedFavorites = JSON.parse(localStorage.getItem('favorites') || '{}');
+                
+                // Update UI based on localStorage
+                if (storedFavorites) {
+                    $('.quick-favorite-form').each(function() {
+                        const form = $(this);
+                        const productId = form.attr('action').split('/').pop();
+                        const button = form.find('button');
+                        const icon = button.find('i');
+                        const isStoredFavorite = storedFavorites[productId] === true;
+                        const isServerFavorite = button.attr('data-is-favorite') === 'true';
+                        
+                        // If localStorage and server state don't match, update UI to match localStorage
+                        if (isStoredFavorite !== isServerFavorite) {
+                            if (isStoredFavorite) {
+                                // Should be favorite
+                                button.addClass('active');
+                                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                                button.attr('data-is-favorite', 'true');
+                                form.attr('action', '/marketplace/favorites/remove/' + productId);
+                            } else {
+                                // Should not be favorite
+                                button.removeClass('active');
+                                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                                button.attr('data-is-favorite', 'false');
+                                form.attr('action', '/marketplace/favorites/add/' + productId);
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error reading favorites from localStorage:', e);
+            }
 
             // Set up AJAX CSRF header
             const token = $("meta[name='_csrf']").attr("content");
@@ -487,6 +537,21 @@
             $.ajaxSetup({
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader(header, token);
+                }
+            });
+
+            // Make product cards clickable
+            $('.product-card').on('click', function(e) {
+                // Don't navigate if clicking on favorite button or details button
+                if ($(e.target).closest('.quick-favorite-form').length || 
+                    $(e.target).closest('.favorite-btn').length ||
+                    $(e.target).closest('.details-btn').length) {
+                    return;
+                }
+                
+                const productUrl = $(this).data('product-url');
+                if (productUrl) {
+                    window.location.href = productUrl;
                 }
             });
 
@@ -499,7 +564,14 @@
                 const icon = button.find('i');
                 const isCurrentlyFavorite = button.attr('data-is-favorite') === 'true';
                 const productId = form.attr('action').split('/').pop();
-
+                
+                // Save original icon class
+                const originalIconClass = icon.attr('class');
+                
+                // Show loading state
+                button.prop('disabled', true);
+                icon.attr('class', 'bi bi-arrow-repeat spin');
+                
                 $.ajax({
                     url: form.attr('action'),
                     type: 'POST',
@@ -515,27 +587,36 @@
                             button.attr('data-is-favorite', newIsFavorite);
                             if (newIsFavorite) {
                                 button.addClass('active');
-                                icon.removeClass('bi-heart').addClass('bi-heart-fill');
+                                icon.attr('class', 'bi bi-heart-fill');
                                 form.attr('action', '/marketplace/favorites/remove/' + productId);
                             } else {
                                 button.removeClass('active');
-                                icon.removeClass('bi-heart-fill').addClass('bi-heart');
+                                icon.attr('class', 'bi bi-heart');
                                 form.attr('action', '/marketplace/favorites/add/' + productId);
                             }
                             
                             // Show success message
                             showToast('success', newIsFavorite ? 'Produs adăugat la favorite' : 'Produs eliminat de la favorite');
                         } else {
+                            // Restore original icon
+                            icon.attr('class', originalIconClass);
                             showToast('error', response.message || 'A apărut o eroare');
                         }
                     },
                     error: function(xhr) {
+                        // Restore original icon
+                        icon.attr('class', originalIconClass);
+                        
                         let message = 'A apărut o eroare';
                         try {
                             const response = JSON.parse(xhr.responseText);
                             message = response.message || message;
                         } catch(e) {}
                         showToast('error', message);
+                    },
+                    complete: function() {
+                        // Re-enable button
+                        button.prop('disabled', false);
                     }
                 });
             });

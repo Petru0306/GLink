@@ -1,9 +1,11 @@
 package com.greenlink.greenlink.controller;
 
+import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
+import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marketplace/favorites")
@@ -36,6 +40,9 @@ public class FavoritesController {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private ProductService productService;
 
     /**
      * Shows the list of favourite products for the currently authenticated user.
@@ -63,7 +70,13 @@ public class FavoritesController {
         try {
             User currentUser = userService.getCurrentUser();
             List<Product> favoriteProducts = currentUser.getFavoriteProducts();
-            model.addAttribute("products", favoriteProducts);
+            
+            // Convert to DTOs with negotiated prices
+            List<ProductDto> favoriteProductDtos = favoriteProducts.stream()
+                .map(product -> productService.getProductById(product.getId(), currentUser))
+                .collect(Collectors.toList());
+            
+            model.addAttribute("products", favoriteProductDtos);
             return "favorites";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", 

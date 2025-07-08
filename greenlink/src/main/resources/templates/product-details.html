@@ -261,6 +261,9 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{'/marketplace/' + ${branch}}" class="text-white" th:text="${branchTitle}">Branch</a>
+                </li>
                 <li class="breadcrumb-item text-white" th:text="${product.category.displayName}">Categorie</li>
                 <li class="breadcrumb-item active text-white" aria-current="page" th:text="${product.name}">Produs</li>
             </ol>
@@ -297,34 +300,43 @@
             
             <div class="price-tag">
                 <i class="bi bi-tag-fill me-2"></i>
-                <span th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
+                <!-- Show negotiated price with original price strikethrough if available -->
+                <span class="product-price" th:if="${product.hasNegotiatedPrice()}">
+                    <del th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</del>
+                    <span class="ms-2" th:text="${#numbers.formatDecimal(product.negotiatedPrice, 1, 2) + ' RON'}">79.99 RON</span>
+                </span>
+                <!-- Show regular price if no negotiated price -->
+                <span class="product-price" th:unless="${product.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
             </div>
 
             <!-- Butoane acțiune -->
             <div class="d-grid gap-3">
-                <!-- Quick Favorite Button -->
-                <form th:if="${#authorization.expression('isAuthenticated()')}"
-                      th:with="isFavorite=${favoriteIds != null and favoriteIds.contains(product.id)}"
-                      th:action="${isFavorite ? '/marketplace/favorites/remove/' + product.id : '/marketplace/favorites/add/' + product.id}"
-                      method="POST" 
-                      class="quick-favorite-form">
-                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                    <button type="submit" 
-                            class="btn btn-action w-100"
-                            th:classappend="${isFavorite ? 'btn-success' : 'btn-outline-success'}"
-                            th:data-is-favorite="${isFavorite}">
-                        <i class="bi" th:classappend="${isFavorite ? 'bi-heart-fill' : 'bi-heart'}"></i>
-                        <span th:text="${isFavorite ? 'Elimină de la favorite' : 'Adaugă la favorite'}" class="ms-2"></span>
-                    </button>
-                </form>
+                <!-- Favorite button -->
+                <button th:if="${#authorization.expression('isAuthenticated()')}"
+                        th:class="${favoriteIds != null && favoriteIds.contains(product.id) ? 'btn btn-success btn-action' : 'btn btn-outline-success btn-action'}"
+                        th:onclick="'toggleFavorite(' + ${product.id} + ', this)'">
+                    <i class="bi bi-heart-fill me-2"></i>
+                    <span th:text="${favoriteIds != null && favoriteIds.contains(product.id) ? 'Elimină de la favorite' : 'Adaugă la favorite'}">
+                        Adaugă la favorite
+                    </span>
+                </button>
+                
+                <!-- Make an Offer Button - Show only if user is authenticated and not the seller -->
+                <a th:if="${#authorization.expression('isAuthenticated()') && !isCurrentUserSeller}"
+                   th:href="@{'/inbox/start/' + ${product.id}}"
+                   class="btn btn-primary btn-action">
+                    <i class="bi bi-chat-text me-2"></i>
+                    Fă o ofertă
+                </a>
+                
                 <!-- Login prompt for unauthenticated users -->
                 <button th:unless="${#authorization.expression('isAuthenticated()')}"
                         type="button"
-                        class="btn btn-outline-success btn-action"
+                        class="btn btn-outline-primary btn-action"
                         data-bs-toggle="modal"
                         data-bs-target="#loginModal">
-                    <i class="bi bi-heart"></i>
-                    <span class="ms-2">Adaugă la favorite</span>
+                    <i class="bi bi-chat-text me-2"></i>
+                    Fă o ofertă
                 </button>
             </div>
 
@@ -422,6 +434,102 @@
                         bsToast.show();
                     }
                 });
+
+                function toggleFavorite(productId, button) {
+                    // Get current state
+                    const isFavorite = button.classList.contains('btn-success');
+                    const url = isFavorite ? 
+                        '/marketplace/favorites/remove/' + productId : 
+                        '/marketplace/favorites/add/' + productId;
+                    
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+                    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+                    
+                    // Show loading state
+                    const buttonText = button.querySelector('span');
+                    const originalText = buttonText.textContent;
+                    const icon = button.querySelector('i');
+                    
+                    button.disabled = true;
+                    buttonText.textContent = 'Se procesează...';
+                    
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            [csrfHeader]: csrfToken
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Server error');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Toggle button appearance
+                            if (isFavorite) {
+                                // Was favorite, now remove
+                                button.classList.remove('btn-success');
+                                button.classList.add('btn-outline-success');
+                                buttonText.textContent = 'Adaugă la favorite';
+                            } else {
+                                // Was not favorite, now add
+                                button.classList.remove('btn-outline-success');
+                                button.classList.add('btn-success');
+                                buttonText.textContent = 'Elimină de la favorite';
+                            }
+                            
+                            // Show success toast
+                            showToast('success', isFavorite ? 
+                                'Produs eliminat de la favorite' : 
+                                'Produs adăugat la favorite');
+                        } else {
+                            // Restore original state
+                            buttonText.textContent = originalText;
+                            showToast('error', data.message || 'A apărut o eroare');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        buttonText.textContent = originalText;
+                        showToast('error', 'A apărut o eroare la procesarea cererii');
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                    });
+                }
+                
+                // Toast function
+                function showToast(type, message) {
+                    const toastHtml = `
+                        <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                                    ${message}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    const toastContainer = document.getElementById('toast-container');
+                    if (!toastContainer) {
+                        document.body.insertAdjacentHTML('beforeend', '<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+                    }
+                    
+                    const toastElement = document.createElement('div');
+                    toastElement.innerHTML = toastHtml;
+                    const toast = toastElement.firstChild;
+                    document.getElementById('toast-container').appendChild(toast);
+                    
+                    const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
+                    bsToast.show();
+                }
             </script>
         </div>
     </div>
@@ -528,8 +636,16 @@
                                     <div class="col-8">
                                         <div class="similar-product-body">
                                             <h6 class="similar-product-title" th:text="${similarProduct.name}">Nume Produs</h6>
-                                            <p class="similar-product-price mb-0" 
-                                               th:text="${#numbers.formatDecimal(similarProduct.price, 1, 2) + ' RON'}">99.99 RON</p>
+                                            <!-- Price display with negotiated price if available -->
+                                            <div class="similar-product-price mb-0">
+                                                <!-- Show negotiated price with original price strikethrough if available -->
+                                                <span th:if="${similarProduct.hasNegotiatedPrice()}">
+                                                    <del th:text="${#numbers.formatDecimal(similarProduct.price, 1, 2) + ' RON'}">99.99 RON</del>
+                                                    <span class="ms-2" th:text="${#numbers.formatDecimal(similarProduct.negotiatedPrice, 1, 2) + ' RON'}">79.99 RON</span>
+                                                </span>
+                                                <!-- Show regular price if no negotiated price -->
+                                                <span th:unless="${similarProduct.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(similarProduct.price, 1, 2) + ' RON'}">99.99 RON</span>
+                                            </div>
                                             <span th:if="${similarProduct.ecoFriendly}" class="badge bg-success rounded-pill">
                                                 <i class="bi bi-leaf-fill me-1"></i>Eco
                                             </span>
@@ -554,6 +670,10 @@
 
 <!-- Footer -->
 <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+<!-- Include login modal -->
+<div th:replace="fragments/login-modal :: loginModal"></div>
+<div th:replace="fragments/login-modal :: loginModalScript"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

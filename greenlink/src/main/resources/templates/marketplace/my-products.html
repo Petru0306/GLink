@@ -164,7 +164,9 @@
         <!-- Products Grid -->
         <div th:if="${!products.isEmpty()}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <div th:each="product : ${products}" class="col">
-                <div class="card product-card h-100">
+                <div class="card product-card h-100" 
+                     th:data-product-url="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}"
+                     style="cursor: pointer;">
                     <div class="position-relative">
                         <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
                              class="card-img-top product-img" alt="Product Image">
@@ -450,6 +452,26 @@
         function submitEditForm() {
             document.getElementById('editProductForm').submit();
         }
+
+        // Make product cards clickable
+        document.addEventListener('DOMContentLoaded', function() {
+            const productCards = document.querySelectorAll('.product-card');
+            
+            productCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't navigate if clicking on buttons or links
+                    if (e.target.closest('button') || e.target.closest('a') || 
+                        e.target.closest('.card-footer')) {
+                        return;
+                    }
+                    
+                    const productUrl = this.getAttribute('data-product-url');
+                    if (productUrl) {
+                        window.location.href = productUrl;
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html> 

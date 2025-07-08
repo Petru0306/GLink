@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/marketplace")
@@ -37,120 +40,157 @@ public class MarketplaceController {
     private UserService userService;
 
     @GetMapping("/{branch}")
-    public String showMarketplace(
-            @PathVariable(required = false) String branch,
-            Model model,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size,
+    public String showBranchMarketplace(
+            @PathVariable String branch,
             @RequestParam(required = false) Category category,
             @RequestParam(required = false) Boolean ecoFriendly,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String sort) {
-
-        Product.Branch selectedBranch;
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size,
+            Model model) {
+        
         try {
-            selectedBranch = branch == null ? Product.Branch.VERDE : Product.Branch.valueOf(branch.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            selectedBranch = Product.Branch.VERDE;
-        }
-
-        System.out.println("Entering showMarketplace method");
-
-        User currentUser = null;
-        try {
-            currentUser = userService.getCurrentUser();
-            System.out.println("Current user fetched via UserService: " + currentUser.getEmail());
-        } catch (Exception ex) {
-            System.out.println("No authenticated user.");
-        }
-
-        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt");
-        if (sort != null) {
-            switch (sort) {
-                case "price_asc":
-                    sorting = Sort.by(Sort.Direction.ASC, "price");
-                    break;
-                case "price_desc":
-                    sorting = Sort.by(Sort.Direction.DESC, "price");
-                    break;
-                case "newest":
-                    sorting = Sort.by(Sort.Direction.DESC, "createdAt");
-                    break;
-            }
-        }
-
-        PageRequest pageRequest = PageRequest.of(page, size, sorting);
-        Page<ProductDto> products;
-
-        // Apply all filters together
-        products = productService.getFilteredProducts(
-            selectedBranch,
-            category,
-            ecoFriendly,
-            search,
-            minPrice,
-            maxPrice,
-            pageRequest
-        );
-
-        System.out.println("Products fetched: " + products.getTotalElements());
-
-        // Add user and favorites to model if authenticated
-        if (currentUser != null) {
+            Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
+            
+            Pageable pageable = PageRequest.of(page, size);
+            Page<ProductDto> productsPage;
+            
+            // Get filtered products first
+            productsPage = productService.getFilteredProducts(
+                    branchEnum, category, ecoFriendly, search, minPrice, maxPrice, pageable);
+            
+            // Add products to model (will be updated with negotiated prices if user is authenticated)
+            List<ProductDto> products = new ArrayList<>(productsPage.getContent());
+            
+            // Try to get current user for personalized prices
             try {
-                System.out.println("Adding user favorites to model");
+                User currentUser = userService.getCurrentUser();
+                
+                // Add favorite IDs if user is authenticated
                 List<Long> favoriteIds = currentUser.getFavoriteProducts().stream()
-                    .map(Product::getId)
-                    .toList();
-                System.out.println("User favorite IDs: " + favoriteIds);
-                model.addAttribute("currentUser", currentUser);
+                        .map(Product::getId)
+                        .toList();
                 model.addAttribute("favoriteIds", favoriteIds);
-            } catch (Exception e) {
-                System.out.println("Error getting user favorites: " + e.getMessage());
-                e.printStackTrace();
+                
+                // Update products with negotiated prices
+                for (int i = 0; i < products.size(); i++) {
+                    ProductDto product = products.get(i);
+                    try {
+                        products.set(i, productService.getProductById(product.getId(), currentUser));
+                    } catch (Exception e) {
+                        // Keep original product if error occurs
+                    }
+                }
+                
+            } catch (Exception ex) {
+                // User not authenticated - use products without negotiated prices
             }
+            
+            model.addAttribute("products", products);
+            model.addAttribute("currentPage", productsPage.getNumber());
+            model.addAttribute("totalPages", productsPage.getTotalPages());
+            model.addAttribute("totalItems", productsPage.getTotalElements());
+            
+            model.addAttribute("branch", branchEnum);
+            model.addAttribute("selectedCategory", category);
+            model.addAttribute("selectedEcoFriendly", ecoFriendly);
+            model.addAttribute("searchTerm", search);
+            model.addAttribute("minPrice", minPrice);
+            model.addAttribute("maxPrice", maxPrice);
+            
+            // Set branch title based on branch parameter
+            String branchTitle;
+            switch (branchEnum) {
+                case VERDE -> branchTitle = "Marketplace Verde";
+                case FOOD -> branchTitle = "Food Market";
+                case ELECTRO -> branchTitle = "Electro & Fashion Market";
+                default -> branchTitle = "Marketplace";
+            }
+            model.addAttribute("branchTitle", branchTitle);
+            
+            // Add categories for filter
+            model.addAttribute("categories", Category.values());
+            
+            return "marketplace";
+            
+        } catch (IllegalArgumentException e) {
+            return "redirect:/marketplace";
         }
-
-        model.addAttribute("products", products.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", products.getTotalPages());
-        model.addAttribute("totalItems", products.getTotalElements());
-        model.addAttribute("categories", Category.values());
-        model.addAttribute("branch", selectedBranch.name().toLowerCase());
-
-        String branchTitle;
-        switch (selectedBranch) {
-            case VERDE -> branchTitle = "Marketplace Verde";
-            case FOOD -> branchTitle = "Food Market";
-            case ELECTRO -> branchTitle = "Electro & Fashion";
-            default -> branchTitle = "Marketplace";
-        }
-        model.addAttribute("branchTitle", branchTitle);
-
-        System.out.println("Model attributes added, returning marketplace template");
-        return "marketplace";
     }
 
     @GetMapping("/{branch}/product/{id}")
     public String showProduct(@PathVariable String branch, @PathVariable Long id, Model model) {
         try {
-            ProductDto product = productService.getProductById(id);
-            List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4); // Get 4 similar products
-            model.addAttribute("product", product);
-            model.addAttribute("similarProducts", similarProducts);
-            model.addAttribute("branch", branch);
+            // Default to false for unauthenticated users
+            model.addAttribute("isCurrentUserSeller", false);
 
-            // Add favourite IDs if user is authenticated
+            // Add product with negotiated price if user is authenticated
             try {
                 User currentUser = userService.getCurrentUser();
+                ProductDto product = productService.getProductById(id, currentUser);
+                List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4, currentUser); // Get 4 similar products with negotiated prices
+                model.addAttribute("product", product);
+                model.addAttribute("similarProducts", similarProducts);
+                model.addAttribute("branch", branch);
+                
+                // Debug info
+                logger.info("Product seller ID: {}", product.getSellerId());
+                logger.info("Current user ID: {}", currentUser.getId());
+                
                 List<Long> favoriteIds = currentUser.getFavoriteProducts().stream()
                         .map(Product::getId)
                         .toList();
                 model.addAttribute("favoriteIds", favoriteIds);
+                
+                // Add a flag indicating if the current user is the seller
+                boolean isCurrentUserSeller = false;
+                if (product.getSellerId() != null && currentUser.getId() != null) {
+                    isCurrentUserSeller = product.getSellerId().equals(currentUser.getId());
+                    logger.info("Current user is seller: {}", isCurrentUserSeller);
+                }
+                model.addAttribute("isCurrentUserSeller", isCurrentUserSeller);
+                
+                // Set branch title based on branch parameter
+                String branchTitle;
+                try {
+                    Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
+                    switch (branchEnum) {
+                        case VERDE -> branchTitle = "Marketplace Verde";
+                        case FOOD -> branchTitle = "Food Market";
+                        case ELECTRO -> branchTitle = "Electro Market";
+                        default -> branchTitle = "Marketplace";
+                    }
+                } catch (IllegalArgumentException e) {
+                    branchTitle = "Marketplace";
+                }
+                model.addAttribute("branchTitle", branchTitle);
+                
             } catch (Exception ex) {
-                // User not authenticated; favouriteIds remains null
+                // User not authenticated; get product without negotiated price
+                ProductDto product = productService.getProductById(id);
+                List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4);
+                model.addAttribute("product", product);
+                model.addAttribute("similarProducts", similarProducts);
+                model.addAttribute("branch", branch);
+                
+                // Set branch title based on branch parameter
+                String branchTitle;
+                try {
+                    Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
+                    switch (branchEnum) {
+                        case VERDE -> branchTitle = "Marketplace Verde";
+                        case FOOD -> branchTitle = "Food Market";
+                        case ELECTRO -> branchTitle = "Electro Market";
+                        default -> branchTitle = "Marketplace";
+                    }
+                } catch (IllegalArgumentException e) {
+                    branchTitle = "Marketplace";
+                }
+                model.addAttribute("branchTitle", branchTitle);
+                
+                logger.warn("User not authenticated or error getting user: {}", ex.getMessage());
             }
 
             return "product-details";

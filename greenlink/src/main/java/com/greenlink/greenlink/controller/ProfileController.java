@@ -128,21 +128,85 @@ public class ProfileController {
 
     @GetMapping("/public/{userId}")
     public String viewPublicProfile(@PathVariable Long userId, Model model) {
+        System.out.println("Accessing public profile for user ID: " + userId);
         try {
             // Get the user by ID
             User user = userService.getUserById(userId);
             if (user == null) {
+                System.out.println("User not found with ID: " + userId);
+                return "redirect:/marketplace";
+            }
+            
+            System.out.println("Found user: " + user.getFirstName() + " " + user.getLastName());
+            
+            // Get user's products
+            List<ProductDto> userProducts = productService.getProductsBySeller(userId);
+            System.out.println("Found " + userProducts.size() + " products for user");
+            
+            model.addAttribute("profileUser", user);
+            model.addAttribute("products", userProducts);
+            model.addAttribute("testFlag", "PROFILE_PAGE_V4"); // Updated version
+            model.addAttribute("timestamp", System.currentTimeMillis()); // Add timestamp to force reload
+            
+            return "profile/public-profile";
+        } catch (Exception e) {
+            System.out.println("Error in viewPublicProfile: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/marketplace";
+        }
+    }
+
+    @GetMapping("/public/test/{userId}")
+    public String testPublicProfile(@PathVariable Long userId, Model model) {
+        System.out.println("TEST ENDPOINT: Accessing public profile for user ID: " + userId);
+        try {
+            // Get the user by ID
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                System.out.println("User not found with ID: " + userId);
+                return "redirect:/marketplace";
+            }
+            
+            System.out.println("Found user: " + user.getFirstName() + " " + user.getLastName());
+            
+            // Get user's products
+            List<ProductDto> userProducts = productService.getProductsBySeller(userId);
+            System.out.println("Found " + userProducts.size() + " products for user");
+            
+            model.addAttribute("profileUser", user);
+            model.addAttribute("products", userProducts);
+            model.addAttribute("testFlag", "TEST_ENDPOINT_V3"); // Special test flag
+            
+            return "profile/public-profile";
+        } catch (Exception e) {
+            System.out.println("Error in testPublicProfile: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/marketplace";
+        }
+    }
+
+    @GetMapping("/public/test-template/{userId}")
+    public String testTemplatePublicProfile(@PathVariable Long userId, Model model) {
+        System.out.println("TEST TEMPLATE ENDPOINT: Accessing public profile for user ID: " + userId);
+        try {
+            // Get the user by ID
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                System.out.println("User not found with ID: " + userId);
                 return "redirect:/marketplace";
             }
             
             // Get user's products
             List<ProductDto> userProducts = productService.getProductsBySeller(userId);
+            System.out.println("Found " + userProducts.size() + " products for user");
             
             model.addAttribute("profileUser", user);
             model.addAttribute("products", userProducts);
             
-            return "profile/public-profile";
+            return "profile/public-profile-test";
         } catch (Exception e) {
+            System.out.println("Error in testTemplatePublicProfile: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/marketplace";
         }
     }

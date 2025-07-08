@@ -10,12 +10,34 @@
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
+        :root {
+            --primary: #28a745;
+            --primary-light: #20c997;
+            --primary-dark: #1e7e34;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 4rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 3rem 0;
             color: white;
             position: relative;
             overflow: hidden;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .hero-section::before {
@@ -33,61 +55,89 @@
             position: relative;
             z-index: 1;
         }
-
-        .stats-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            height: 100%;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
-        }
-
-        .quick-action-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            height: 100%;
-        }
-
-        .quick-action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.12);
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(32, 201, 151, 0.05) 100%);
-        }
-
-        .progress {
-            height: 0.8rem;
-            border-radius: 1rem;
-            background-color: rgba(40, 167, 69, 0.1);
-        }
-
-        .progress-bar {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border-radius: 1rem;
-        }
-
-        .stats-icon {
+        
+        .welcome-text {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
         }
 
+        /* User Profile Card */
+        .user-profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: -60px;
+            position: relative;
+            z-index: 10;
+            border: none;
+            margin-bottom: 2rem;
+        }
+        
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 4px solid white;
+        }
+        
+        .user-info {
+            text-align: center;
+        }
+        
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-email {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .points-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .points-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        /* Section Titles */
         .section-title {
             position: relative;
             display: inline-block;
             margin-bottom: 2rem;
             font-weight: 700;
+            font-size: 1.75rem;
+            color: var(--dark);
         }
 
         .section-title::after {
@@ -95,33 +145,303 @@
             position: absolute;
             left: 0;
             bottom: -10px;
-            width: 50px;
-            height: 3px;
-            background: #28a745;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
             border-radius: 2px;
         }
-
-        .points-badge {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1rem;
+        
+        /* Stats Cards */
+        .stats-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+            height: 100%;
+            overflow: hidden;
         }
 
-        .action-icon {
-            font-size: 2rem;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        .stats-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card-header {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .stats-card-body {
+            padding: 1.5rem;
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
+        
+        .stats-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .stats-subtitle {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .progress {
+            height: 0.8rem;
+            border-radius: 1rem;
+            background-color: rgba(40, 167, 69, 0.1);
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: 1rem;
+        }
+        
+        /* Quick Action Cards */
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .quick-action-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .quick-action-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .quick-action-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .action-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-card:hover .action-icon-wrapper {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        }
+
+        .action-icon {
+            font-size: 1.75rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-card:hover .action-icon {
+            color: white;
+        }
+        
+        .action-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-card:hover .action-title {
+            color: var(--primary);
+        }
+        
+        .action-description {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        /* Activity Feed */
+        .activity-feed {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon i {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+        
+        .activity-content {
+            flex-grow: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+        
+        /* Environmental Impact */
+        .impact-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .impact-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .impact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .impact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .impact-icon i {
+            color: var(--primary);
+            font-size: 1.25rem;
+        }
+        
+        .impact-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+        
+        .impact-label {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .user-profile-card {
+                margin-top: -40px;
+            }
+            
+            .welcome-text {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+                border-radius: 0 0 20px 20px;
+            }
+            
+            .user-profile-card {
+                margin-top: -30px;
+            }
+            
+            .welcome-text {
+                font-size: 1.75rem;
+            }
+            
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+            
+            .stats-value {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-light">
+<body>
 <!-- Navbar -->
 <nav th:replace="fragments/navbar :: navbar"></nav>
 
@@ -130,129 +450,261 @@
     <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">Welcome, <span th:text="${user.firstName}">User</span>!</h1>
-                <p class="lead fs-4 mb-0">Track your progress and make a positive impact on the environment.</p>
-            </div>
-            <div class="col-lg-4 text-center text-lg-end">
-                <span class="points-badge">
-                    <i class="bi bi-trophy-fill me-2"></i>
-                    <span th:text="${user.points}">0</span> Total Points
-                </span>
+                <h1 class="welcome-text">Welcome back, <span th:text="${user.firstName}">User</span>!</h1>
+                <p class="welcome-subtitle">Track your progress and make a positive impact on the environment.</p>
             </div>
         </div>
     </div>
 </header>
 
-<div class="container py-5">
+<div class="container">
+    <!-- User Profile Card -->
+    <div class="user-profile-card">
+        <div class="row align-items-center">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <div class="user-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="user-info">
+                    <h3 class="user-name" th:text="${user.firstName + ' ' + user.lastName}">User Name</h3>
+                    <p class="user-email" th:text="${user.email}">user@example.com</p>
+                </div>
+            </div>
+            <div class="col-lg-4 mb-4 mb-lg-0 text-center">
+                <span class="points-badge">
+                    <i class="bi bi-trophy-fill me-2"></i>
+                    <span th:text="${user.points}">0</span> GreenLink Points
+                </span>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" 
+                         th:style="'width: ' + ${user.points % 100} + '%'"
+                         th:attr="aria-valuenow=${user.points % 100}"
+                         aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <p class="text-muted mt-2">
+                    <span th:text="${100 - (user.points % 100)}">100</span> points until next level
+                </p>
+            </div>
+            <div class="col-lg-4 text-center text-lg-end">
+                <div class="d-flex justify-content-center justify-content-lg-end">
+                    <a th:href="@{'/profile/public/' + ${user.id}}" class="btn btn-outline-success rounded-pill px-4 py-2 me-2">
+                        <i class="bi bi-person-circle me-2"></i>View Public Profile
+                    </a>
+                    <a href="/calculator" class="btn btn-success rounded-pill px-4 py-2">
+                        <i class="bi bi-calculator me-2"></i>Calculate Impact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Stats Overview -->
     <h2 class="section-title mb-4">Your Progress</h2>
     <div class="row g-4 mb-5">
         <div class="col-md-4">
             <div class="stats-card">
-                <div class="card-body text-center p-4">
+                <div class="stats-card-header">
                     <i class="bi bi-trophy-fill stats-icon"></i>
-                    <h5 class="card-title mb-3">Level Progress</h5>
-                    <div class="progress mb-3">
+                    <h5 class="stats-title">Level Progress</h5>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-value" th:text="'Level ' + ${user.points / 100 + 1}">Level 1</div>
+                    <div class="stats-subtitle mb-2">Green Contributor</div>
+                    <div class="progress">
                         <div class="progress-bar" role="progressbar" 
                              th:style="'width: ' + ${user.points % 100} + '%'"
                              th:attr="aria-valuenow=${user.points % 100}"
                              aria-valuemin="0" aria-valuemax="100">
                         </div>
                     </div>
-                    <p class="text-muted mb-0">
-                        <span th:text="${100 - (user.points % 100)}">100</span> points until next level
+                    <p class="stats-subtitle mt-2">
+                        <span th:text="${user.points % 100}">0</span>/100 points to next level
                     </p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="stats-card">
-                <div class="card-body text-center p-4">
+                <div class="stats-card-header">
                     <i class="bi bi-check-circle-fill stats-icon"></i>
-                    <h5 class="card-title mb-3">Completed Challenges</h5>
-                    <p class="display-6 text-success mb-0 fw-bold" th:text="${completedChallenges ?: '0'}">0</p>
+                    <h5 class="stats-title">Completed Challenges</h5>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-value" th:text="${completedChallenges ?: '0'}">0</div>
+                    <div class="stats-subtitle">Total challenges completed</div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="stats-card">
-                <div class="card-body text-center p-4">
+                <div class="stats-card-header">
                     <i class="bi bi-lightning-fill stats-icon"></i>
-                    <h5 class="card-title mb-3">Current Streak</h5>
-                    <p class="display-6 text-success mb-0 fw-bold" th:text="${currentStreak ?: '0'} + ' days'">0 days</p>
+                    <h5 class="stats-title">Current Streak</h5>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stats-value" th:text="${currentStreak ?: '0'}">0</div>
+                    <div class="stats-subtitle">Days of consecutive activity</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Environmental Impact -->
+    <div class="impact-card mb-5">
+        <h3 class="impact-title">Your Environmental Impact</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="impact-item">
+                    <div class="impact-icon">
+                        <i class="bi bi-tree"></i>
+                    </div>
+                    <div>
+                        <span class="impact-value">2.5</span>
+                        <span class="impact-label">trees saved</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-item">
+                    <div class="impact-icon">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+                    <div>
+                        <span class="impact-value">150</span>
+                        <span class="impact-label">liters of water saved</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="impact-item">
+                    <div class="impact-icon">
+                        <i class="bi bi-cloud"></i>
+                    </div>
+                    <div>
+                        <span class="impact-value">75</span>
+                        <span class="impact-label">kg CO₂ emissions reduced</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Quick Actions -->
-    <h2 class="section-title">Quick Actions</h2>
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-3">
-            <a href="/provocari" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-trophy action-icon"></i>
-                        <h5 class="card-title text-dark">Challenges</h5>
-                        <p class="text-muted mb-0">Complete challenges to earn points</p>
+    <div class="row mb-5">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-action-grid">
+                <a href="/provocari" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-trophy action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Challenges</h5>
+                        <p class="action-description">Complete challenges to earn points</p>
                     </div>
-                </div>
-            </a>
+                </a>
+                <a href="/marketplace" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-shop action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Marketplace</h5>
+                        <p class="action-description">Shop eco-friendly products</p>
+                    </div>
+                </a>
+                <a href="/marketplace/sell" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-tags action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Sell Products</h5>
+                        <p class="action-description">List your products in marketplace</p>
+                    </div>
+                </a>
+                <a href="/marketplace/my-products" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-box-seam action-icon"></i>
+                        </div>
+                        <h5 class="action-title">My Products</h5>
+                        <p class="action-description">Manage your listed products</p>
+                    </div>
+                </a>
+                <a href="/educatie" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-book action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Learn</h5>
+                        <p class="action-description">Explore educational resources</p>
+                    </div>
+                </a>
+                <a href="/calculator" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-calculator action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Calculator</h5>
+                        <p class="action-description">Calculate your footprint</p>
+                    </div>
+                </a>
+                <a href="/inbox" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-chat-text action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Inbox</h5>
+                        <p class="action-description">Messages and offers</p>
+                        <span th:if="${unreadMessageCount != null && unreadMessageCount > 0}" 
+                              class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger mt-2 me-2"
+                              th:text="${unreadMessageCount}">
+                            0
+                        </span>
+                    </div>
+                </a>
+            </div>
         </div>
-        <div class="col-md-6 col-lg-3">
-            <a href="/marketplace" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-shop action-icon"></i>
-                        <h5 class="card-title text-dark">Marketplace</h5>
-                        <p class="text-muted mb-0">Shop eco-friendly products</p>
+        <div class="col-lg-4">
+            <h2 class="section-title">Recent Activity</h2>
+            <div class="activity-feed">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed Course: Ecologie și Biodiversitate</div>
+                        <div class="activity-time">Today</div>
                     </div>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <a href="/marketplace/sell" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-tags action-icon"></i>
-                        <h5 class="card-title text-dark">Sell Products</h5>
-                        <p class="text-muted mb-0">List your products in marketplace</p>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Earned 80 points from educational quizzes</div>
+                        <div class="activity-time">Today</div>
                     </div>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <a href="/marketplace/my-products" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-box-seam action-icon"></i>
-                        <h5 class="card-title text-dark">My Products</h5>
-                        <p class="text-muted mb-0">Manage your listed products</p>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed Challenge: Reduce Plastic</div>
+                        <div class="activity-time">Yesterday</div>
                     </div>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <a href="/educatie" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-book action-icon"></i>
-                        <h5 class="card-title text-dark">Learn</h5>
-                        <p class="text-muted mb-0">Explore educational resources</p>
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Purchased Eco-friendly Product</div>
+                        <div class="activity-time">3 days ago</div>
                     </div>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <a href="/calculator" class="text-decoration-none">
-                <div class="quick-action-card">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-calculator action-icon"></i>
-                        <h5 class="card-title text-dark">Calculator</h5>
-                        <p class="text-muted mb-0">Calculate your footprint</p>
-                    </div>
-                </div>
-            </a>
+            </div>
         </div>
     </div>
 </div>

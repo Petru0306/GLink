@@ -19,6 +19,7 @@ public class ProductDto {
     private Long sellerId;
     private String sellerName;
     private Branch branch;
+    private Double negotiatedPrice; // Price negotiated for the current user
 
     // Constructori
     public ProductDto() {}
@@ -55,6 +56,26 @@ public class ProductDto {
         this.sellerId = sellerId;
         this.sellerName = sellerName;
         this.branch = branch;
+    }
+    
+    public ProductDto(Long id, String name, String description, double price,
+                      Category category, String imageUrl, boolean ecoFriendly,
+                      LocalDateTime createdAt, LocalDateTime updatedAt, int stock,
+                      Long sellerId, String sellerName, Branch branch, Double negotiatedPrice) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+        this.imageUrl = imageUrl;
+        this.ecoFriendly = ecoFriendly;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.stock = stock;
+        this.sellerId = sellerId;
+        this.sellerName = sellerName;
+        this.branch = branch;
+        this.negotiatedPrice = negotiatedPrice;
     }
 
     // Getteri și Setteri (la fel ca în Product)
@@ -160,6 +181,19 @@ public class ProductDto {
     
     public void setBranch(Branch branch) {
         this.branch = branch;
+    }
+    
+    public Double getNegotiatedPrice() {
+        return negotiatedPrice;
+    }
+    
+    public void setNegotiatedPrice(Double negotiatedPrice) {
+        this.negotiatedPrice = negotiatedPrice;
+    }
+    
+    // Helper method to check if there's a negotiated price
+    public boolean hasNegotiatedPrice() {
+        return negotiatedPrice != null;
     }
 
     @Override

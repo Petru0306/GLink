@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import jakarta.persistence.criteria.Predicate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -52,6 +53,35 @@ public class ProductService {
                 sellerId,
                 sellerName,
                 product.getBranch()
+        );
+    }
+
+    private ProductDto convertToDto(Product product, User currentUser) {
+        String sellerName = product.getSeller() != null ? 
+                product.getSeller().getFirstName() + " " + product.getSeller().getLastName() : null;
+        Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
+        
+        // Get negotiated price for the current user if available
+        Double negotiatedPrice = null;
+        if (currentUser != null) {
+            negotiatedPrice = product.getNegotiatedPriceForUser(currentUser.getId());
+        }
+        
+        return new ProductDto(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getCategory(),
+                product.getImageUrl(),
+                product.isEcoFriendly(),
+                product.getCreatedAt(),
+                product.getUpdatedAt(),
+                product.getStock(),
+                sellerId,
+                sellerName,
+                product.getBranch(),
+                negotiatedPrice
         );
     }
 
@@ -100,6 +130,12 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
         return convertToDto(product);
+    }
+
+    public ProductDto getProductById(Long id, User currentUser) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+        return convertToDto(product, currentUser);
     }
 
     public ProductDto addProduct(ProductDto productDto) {
@@ -249,21 +285,74 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
 
-        // Get products from the same category, excluding the current product
-        return productRepository.findByCategoryAndIdNot(
-                product.getCategory(), 
+        // Get products from the same category and branch, excluding the current product
+        List<Product> similarProducts = productRepository.findByCategoryAndBranchAndIdNot(
+                product.getCategory(),
+                product.getBranch(),
                 productId, 
                 PageRequest.of(0, limit)
-            )
-            .stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+            );
+            
+        // If no products found in the same category and branch, get products just from the same branch
+        if (similarProducts.isEmpty()) {
+            similarProducts = productRepository.findByBranchAndIdNot(
+                product.getBranch(),
+                productId,
+                PageRequest.of(0, limit)
+            );
+        }
+        
+        return similarProducts.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+    
+    public List<ProductDto> getSimilarProducts(Long productId, int limit, User currentUser) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+
+        // Get products from the same category and branch, excluding the current product
+        List<Product> similarProducts = productRepository.findByCategoryAndBranchAndIdNot(
+                product.getCategory(),
+                product.getBranch(),
+                productId, 
+                PageRequest.of(0, limit)
+            );
+            
+        // If no products found in the same category and branch, get products just from the same branch
+        if (similarProducts.isEmpty()) {
+            similarProducts = productRepository.findByBranchAndIdNot(
+                product.getBranch(),
+                productId,
+                PageRequest.of(0, limit)
+            );
+        }
+        
+        return similarProducts.stream()
+                .map(p -> convertToDto(p, currentUser))
+                .collect(Collectors.toList());
     }
     
     public List<ProductDto> getProductsBySeller(Long sellerId) {
-        return productRepository.findBySellerId(sellerId)
-                .stream()
+        System.out.println("Getting products for seller ID: " + sellerId);
+        List<Product> products = productRepository.findBySellerId(sellerId);
+        System.out.println("Found " + products.size() + " products in repository");
+        
+        // Print details of each product
+        products.forEach(p -> System.out.println("Product: " + p.getId() + " - " + p.getName() + " - Seller ID: " + 
+                                                (p.getSeller() != null ? p.getSeller().getId() : "null")));
+        
+        return products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public void setNegotiatedPrice(Long productId, Long userId, Double price) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+        
+        product.setNegotiatedPriceForUser(userId, price);
+        productRepository.save(product);
     }
 }

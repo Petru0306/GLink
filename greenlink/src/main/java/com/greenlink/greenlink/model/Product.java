@@ -2,6 +2,8 @@ package com.greenlink.greenlink.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @Table(name = "products")
@@ -47,6 +49,14 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private User seller;
+    
+    // Map to store negotiated prices between users and this product
+    @ElementCollection
+    @CollectionTable(name = "negotiated_prices", 
+                    joinColumns = @JoinColumn(name = "product_id"))
+    @MapKeyColumn(name = "user_id")
+    @Column(name = "negotiated_price")
+    private Map<Long, Double> negotiatedPrices = new HashMap<>();
 
     public enum Category {
         BIO("Produse Bio"),
@@ -187,5 +197,21 @@ public class Product {
     
     public void setSeller(User seller) {
         this.seller = seller;
+    }
+    
+    public Map<Long, Double> getNegotiatedPrices() {
+        return negotiatedPrices;
+    }
+    
+    public void setNegotiatedPrices(Map<Long, Double> negotiatedPrices) {
+        this.negotiatedPrices = negotiatedPrices;
+    }
+    
+    public Double getNegotiatedPriceForUser(Long userId) {
+        return negotiatedPrices.get(userId);
+    }
+    
+    public void setNegotiatedPriceForUser(Long userId, Double price) {
+        negotiatedPrices.put(userId, price);
     }
 }

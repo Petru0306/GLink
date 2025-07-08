@@ -23,21 +23,21 @@
                     <form th:action="@{/login}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                         <div class="mb-3">
-                            <label for="username" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="username" name="username" required>
+                            <label for="usernameModal" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="usernameModal" name="username" required>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="passwordModal" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                                <input type="password" class="form-control" id="passwordModal" name="password" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleLoginPasswordModal">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
-                            <label class="form-check-label" for="remember-me">Remember me</label>
+                            <input type="checkbox" class="form-check-input" id="remember-me-modal" name="remember-me">
+                            <label class="form-check-label" for="remember-me-modal">Remember me</label>
                         </div>
                         <div class="mb-3 text-end">
                             <a href="/forgot-password" class="text-success">Forgot password?</a>
@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Password toggle for login form
-    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
-    const loginPasswordInput = document.getElementById('password');
+    const toggleLoginPassword = document.getElementById('toggleLoginPasswordModal');
+    const loginPasswordInput = document.getElementById('passwordModal');
     if (toggleLoginPassword && loginPasswordInput) {
         toggleLoginPassword.addEventListener('click', function() {
             const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
