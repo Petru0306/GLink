@@ -41,12 +41,15 @@ public class Conversation {
     private LocalDateTime updatedAt;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean isSellerRead = false;
     
     @Column(nullable = false)
+    @Builder.Default
     private boolean isBuyerRead = false;
     
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Message> messages = new ArrayList<>();
     
     @PrePersist

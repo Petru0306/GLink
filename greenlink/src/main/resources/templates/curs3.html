@@ -276,14 +276,14 @@
                     <!-- Question 1 -->
                     <div class="quiz-question" data-question-id="1">
                         <p class="fw-bold">1. De ce este importantă biodiversitatea?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Pentru că face natura mai frumoasă
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Pentru că menține echilibrul ecosistemelor și asigură supraviețuirea speciilor
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Pentru că oferă mai multe specii pentru grădini zoologice
+                <div class="quiz-option" data-correct="false">
+                    Pentru că face natura mai frumoasă
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    Pentru că menține echilibrul ecosistemelor și asigură supraviețuirea speciilor
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    Pentru că oferă mai multe specii pentru grădini zoologice
                         </div>
                         <div class="quiz-option" data-correct="false">
                             Pentru că face parte din programa școlară
@@ -451,10 +451,10 @@
                     <div class="progress-label">
                         <span>0 din 10 întrebări</span>
                         <span>0 puncte</span>
-                    </div>
                 </div>
+            </div>
                 
-                <div class="text-center mt-4">
+            <div class="text-center mt-4">
                     <button class="btn btn-success btn-lg" id="checkAnswers" disabled>Verifică răspunsurile</button>
                 </div>
                 
@@ -504,19 +504,19 @@
         if (isAuthenticated && authMessage) {
             authMessage.style.display = 'none';
         }
-        
+
         // Handle quiz option selection
         quizQuestions.forEach(question => {
             const questionId = question.getAttribute('data-question-id');
             const options = question.querySelectorAll('.quiz-option');
             
             options.forEach(option => {
-                option.addEventListener('click', () => {
+            option.addEventListener('click', () => {
                     // Remove selected class from all options in this question
                     options.forEach(opt => opt.classList.remove('selected'));
                     
                     // Add selected class to clicked option
-                    option.classList.add('selected');
+                option.classList.add('selected');
                     
                     // Store the answer
                     if (!selectedAnswers[questionId]) {
@@ -532,7 +532,7 @@
                 });
             });
         });
-        
+
         // Update progress bar and label
         function updateProgress() {
             const progress = (answeredQuestions / quizQuestions.length) * 100;

@@ -284,14 +284,14 @@
                     <!-- Question 1 -->
                     <div class="quiz-question" data-question-id="1">
                         <p class="fw-bold">1. Care este principalul avantaj al energiei regenerabile?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Este mai ieftină decât energia convențională
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Nu epuizează resursele naturale ale planetei
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Este disponibilă doar în țările dezvoltate
+                <div class="quiz-option" data-correct="false">
+                    Este mai ieftină decât energia convențională
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    Nu epuizează resursele naturale ale planetei
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    Este disponibilă doar în țările dezvoltate
                         </div>
                         <div class="quiz-option" data-correct="false">
                             Funcționează doar în condiții meteorologice ideale
@@ -459,10 +459,10 @@
                     <div class="progress-label">
                         <span>0 din 10 întrebări</span>
                         <span>0 puncte</span>
-                    </div>
                 </div>
+            </div>
                 
-                <div class="text-center mt-4">
+            <div class="text-center mt-4">
                     <button class="btn btn-warning btn-lg" id="checkAnswers" disabled>Verifică răspunsurile</button>
                 </div>
                 
@@ -512,19 +512,19 @@
         if (isAuthenticated && authMessage) {
             authMessage.style.display = 'none';
         }
-        
+
         // Handle quiz option selection
         quizQuestions.forEach(question => {
             const questionId = question.getAttribute('data-question-id');
             const options = question.querySelectorAll('.quiz-option');
             
             options.forEach(option => {
-                option.addEventListener('click', () => {
+            option.addEventListener('click', () => {
                     // Remove selected class from all options in this question
                     options.forEach(opt => opt.classList.remove('selected'));
                     
                     // Add selected class to clicked option
-                    option.classList.add('selected');
+                option.classList.add('selected');
                     
                     // Store the answer
                     if (!selectedAnswers[questionId]) {
@@ -540,7 +540,7 @@
                 });
             });
         });
-        
+
         // Update progress bar and label
         function updateProgress() {
             const progress = (answeredQuestions / quizQuestions.length) * 100;

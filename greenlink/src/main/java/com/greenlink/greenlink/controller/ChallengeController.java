@@ -1,5 +1,4 @@
 package com.greenlink.greenlink.controller;
-
 import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ChallengeService;

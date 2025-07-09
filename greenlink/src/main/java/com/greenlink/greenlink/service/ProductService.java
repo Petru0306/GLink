@@ -4,7 +4,6 @@ import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.Product.Category;
-import com.greenlink.greenlink.model.Product.Branch;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

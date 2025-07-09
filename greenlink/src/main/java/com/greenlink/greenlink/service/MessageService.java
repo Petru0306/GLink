@@ -3,7 +3,6 @@ package com.greenlink.greenlink.service;
 import com.greenlink.greenlink.dto.ConversationDto;
 import com.greenlink.greenlink.dto.MessageDto;
 import com.greenlink.greenlink.model.Conversation;
-import com.greenlink.greenlink.model.Message;
 import com.greenlink.greenlink.model.User;
 
 import java.util.List;

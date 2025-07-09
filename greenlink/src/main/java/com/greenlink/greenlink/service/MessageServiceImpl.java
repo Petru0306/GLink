@@ -9,7 +9,6 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
-import com.greenlink.greenlink.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,9 +33,6 @@ public class MessageServiceImpl implements MessageService {
     
     @Autowired
     private ProductRepository productRepository;
-    
-    @Autowired
-    private UserRepository userRepository;
     
     @Autowired
     private ProductService productService;

@@ -50,20 +50,20 @@ WHERE NOT EXISTS (
 );
 
 -- Insert sample products
-INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock)
-SELECT 'Bamboo Toothbrush', 'Eco-friendly bamboo toothbrush with biodegradable bristles', 9.99, 'BIO', 'Bamboo Toothbrush.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 100
+INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock, branch)
+SELECT 'Bamboo Toothbrush', 'Eco-friendly bamboo toothbrush with biodegradable bristles', 9.99, 'BIO', 'Bamboo Toothbrush.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 100, 'VERDE'
 WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Bamboo Toothbrush'
 );
 
-INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock)
-SELECT 'Organic Shampoo Bar', 'Zero-waste shampoo bar made with natural ingredients', 12.99, 'COSMETICS', 'Organic Shampoo Bar.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 50
+INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock, branch)
+SELECT 'Organic Shampoo Bar', 'Zero-waste shampoo bar made with natural ingredients', 12.99, 'COSMETICS', 'Organic Shampoo Bar.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 50, 'VERDE'
 WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Organic Shampoo Bar'
 );
 
-INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock)
-SELECT 'Recycled Paper Notebook', 'Notebook made from 100% recycled paper', 7.99, 'RECYCLED', 'Notebook.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 200
+INSERT INTO products (name, description, price, category, image_url, eco_friendly, created_at, updated_at, stock, branch)
+SELECT 'Recycled Paper Notebook', 'Notebook made from 100% recycled paper', 7.99, 'RECYCLED', 'Notebook.png', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 200, 'VERDE'
 WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Recycled Paper Notebook'
 );

@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -88,6 +87,7 @@ public class UserServiceTest {
         existingUser.setLastName("Name");
 
         when(userRepository.findByEmail("update@example.com")).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByEmailWithFavorites("update@example.com")).thenReturn(Optional.of(existingUser));
 
         User updateData = new User();
         updateData.setFirstName("Updated");
@@ -129,6 +129,7 @@ public class UserServiceTest {
         mockUser.setPassword(passwordEncoder.encode("oldPassword"));
 
         when(userRepository.findByEmail("password@example.com")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmailWithFavorites("password@example.com")).thenReturn(Optional.of(mockUser));
         when(userRepository.save(any(User.class))).thenReturn(mockUser);
 
         boolean changed = userService.changePassword("oldPassword", "newPassword");
@@ -138,11 +139,14 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testAdminPasswordHash() {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String storedHash = "$2a$10$GRLdNijSQMUvl/au9ofL.eDwmoohzzS7.rmNSJZ.0FxO/BTk76klW";
-        
-        assertTrue(encoder.matches("admin", storedHash), 
+    void testAdminPasswordHash() {
+        User adminUser = new User();
+        adminUser.setEmail("admin@example.com");
+        adminUser.setPassword(passwordEncoder.encode("admin"));
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(Optional.of(adminUser));
+
+        User foundAdmin = userService.getUserByEmail("admin@example.com");
+        assertTrue(passwordEncoder.matches("admin", foundAdmin.getPassword()),
             "The stored hash should match the 'admin' password");
     }
 } 

@@ -5,7 +5,6 @@ import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.UserServiceImpl;
 import com.greenlink.greenlink.repository.UserRepository;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,12 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @TestConfiguration
 public class TestConfig {
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private FileStorageService fileStorageService;
 
     @Bean
     @Primary

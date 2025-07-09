@@ -113,16 +113,6 @@
             border-radius: 1rem;
             margin: 2rem 0;
         }
-        
-        /* Spinner animation for loading state */
-        .spin {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-light">
@@ -271,21 +261,12 @@
             // Handle remove favorite form submission
             $('.remove-favorite-form').on('submit', function(e) {
                 e.preventDefault();
+                console.log('Remove form submitted');
                 
                 const form = $(this);
-                const button = form.find('button');
-                const icon = button.find('i');
                 const productCard = form.closest('.col-md-4');
-                
-                // Save original button text and icon
-                const originalText = button.text().trim();
-                const originalIconClass = icon.attr('class');
-                
-                // Show loading state
-                button.prop('disabled', true);
-                icon.attr('class', 'bi bi-arrow-repeat spin');
-                button.text(' Se procesează...');
-                
+                console.log('Form action:', form.attr('action'));
+
                 $.ajax({
                     url: form.attr('action'),
                     type: 'POST',
@@ -294,6 +275,7 @@
                         'X-Requested-With': 'XMLHttpRequest'
                     },
                     success: function(response) {
+                        console.log('Ajax success:', response);
                         if (response.success) {
                             // Animate removal
                             productCard.fadeOut(300, function() {
@@ -304,27 +286,20 @@
                                 }
                             });
                             // Show success toast
-                            showToast('success', 'Produs eliminat de la favorite');
+                            showToast('success', response.message);
                         } else {
-                            // Restore button state
-                            button.prop('disabled', false);
-                            icon.attr('class', originalIconClass);
-                            button.html('<i class="' + originalIconClass + '"></i>' + originalText);
-                            
-                            showToast('error', response.message || 'A apărut o eroare');
+                            showToast('error', response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Restore button state
-                        button.prop('disabled', false);
-                        icon.attr('class', originalIconClass);
-                        button.html('<i class="' + originalIconClass + '"></i>' + originalText);
-                        
+                        console.error('Ajax error:', {xhr, status, error});
                         let message = 'A apărut o eroare la eliminarea produsului.';
                         try {
                             const response = JSON.parse(xhr.responseText);
                             message = response.message || message;
-                        } catch(e) {}
+                        } catch(e) {
+                            console.error('Error parsing response:', e);
+                        }
                         showToast('error', message);
                     }
                 });
