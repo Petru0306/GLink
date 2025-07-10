@@ -10,6 +10,6 @@ RUN mvn package -DskipTests
 FROM openjdk:17-slim
 WORKDIR /app
 COPY --from=build /app/target/greenlink-0.0.1-SNAPSHOT.jar app.jar
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/uploads/products
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"] 

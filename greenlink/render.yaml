@@ -20,6 +20,10 @@ services:
         fromDatabase:
           name: greenlink-db
           property: password
+    disk:
+      name: uploads
+      mountPath: /app/uploads
+      sizeGB: 1
 
 databases:
   - name: greenlink-db

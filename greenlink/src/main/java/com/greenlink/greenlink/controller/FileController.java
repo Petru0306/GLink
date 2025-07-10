@@ -43,7 +43,16 @@ public class FileController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
-                return ResponseEntity.notFound().build();
+                // If the file doesn't exist in uploads, try serving a placeholder image
+                Resource placeholderResource = new ClassPathResource("static/images/placeholder-product.jpg");
+                if (placeholderResource.exists()) {
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType("image/jpeg"))
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"placeholder-product.jpg\"")
+                            .body(placeholderResource);
+                } else {
+                    return ResponseEntity.notFound().build();
+                }
             }
         } catch (MalformedURLException e) {
             return ResponseEntity.badRequest().build();
