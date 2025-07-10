@@ -19,6 +19,7 @@
             color: white;
             position: relative;
             overflow: hidden;
+            opacity: 1; /* Ensure visible by default */
         }
 
         .hero-section::before {
@@ -45,6 +46,7 @@
             overflow: hidden;
             height: 100%;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            opacity: 1; /* Ensure visible by default */
         }
 
         .feature-card:hover {
@@ -219,12 +221,28 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animate hero section on load
+    // Ensure content is visible even if script fails
+    setTimeout(() => {
+        const hero = document.querySelector('.hero-section');
+        if (hero && getComputedStyle(hero).opacity === "0") {
+            hero.style.opacity = '1';
+            hero.style.transform = 'translateY(0)';
+        }
+        
+        const cards = document.querySelectorAll('.feature-card');
+        cards.forEach(card => {
+            if (card && getComputedStyle(card).opacity === "0") {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+    }, 300);
+
+    // Animate hero section on load - but don't start with opacity 0
     const hero = document.querySelector('.hero-section');
-    hero.style.opacity = '0';
+    hero.style.transition = 'all 0.8s ease';
     hero.style.transform = 'translateY(20px)';
     setTimeout(() => {
-        hero.style.transition = 'all 0.8s ease';
         hero.style.opacity = '1';
         hero.style.transform = 'translateY(0)';
     }, 100);
