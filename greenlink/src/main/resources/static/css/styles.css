@@ -223,3 +223,39 @@ a:hover {
     font-weight: 600;
     font-size: 1.25rem;
 }
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0; /* Reduce padding on smaller screens */
+    }
+
+    .navbar-brand img {
+        max-height: 40px; /* Adjust logo size */
+    }
+
+    /* Adjust font sizes for better readability on mobile */
+    h1, .h1 {
+        font-size: 2rem;
+    }
+
+    h2, .h2 {
+        font-size: 1.75rem;
+    }
+
+    .product-price {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Further adjustments for very small screens */
+    .container, .container-fluid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
