@@ -265,9 +265,16 @@ public class MarketplaceController {
                             @RequestParam(value = "refererPath", required = false) String refererPath,
                             RedirectAttributes redirectAttributes) {
         try {
+            logger.info("Starting to process product listing with image: {}", 
+                      !imageFile.isEmpty() ? imageFile.getOriginalFilename() : "no image");
+                      
             if (!imageFile.isEmpty()) {
                 String fileName = fileStorageService.storeFile(imageFile);
+                logger.info("Image stored successfully with filename: {}", fileName);
                 productDto.setImageUrl("/files/products/" + fileName);
+                logger.info("Set image URL to: {}", productDto.getImageUrl());
+            } else {
+                logger.warn("No image file uploaded for product: {}", productDto.getName());
             }
             
             // Set current user as seller
@@ -276,8 +283,11 @@ public class MarketplaceController {
             productDto.setSellerName(currentUser.getFirstName() + " " + currentUser.getLastName());
             
             productService.addProduct(productDto);
+            logger.info("Product successfully added with ID: {} and imageUrl: {}", 
+                      productDto.getId(), productDto.getImageUrl());
             redirectAttributes.addFlashAttribute("success", "Produsul tău a fost listat cu succes în marketplace!");
         } catch (Exception e) {
+            logger.error("Error adding product: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la listarea produsului: " + e.getMessage());
         }
         

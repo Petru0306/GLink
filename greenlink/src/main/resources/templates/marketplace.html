@@ -378,9 +378,9 @@
                                 <i class="bi bi-heart"></i>
                             </button>
 
-                            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
+                            <img th:if="${product.imageUrl != null and !product.imageUrl.isEmpty()}" th:src="${product.imageUrl}" 
                                  class="product-image card-img-top" alt="Product Image">
-                            <img th:unless="${product.imageUrl}" src="/images/placeholder.jpg" 
+                            <img th:unless="${product.imageUrl != null and !product.imageUrl.isEmpty()}" src="/images/placeholder-product.jpg" 
                                  class="product-image card-img-top" alt="Product">
                             
                             <div class="card-body p-4">

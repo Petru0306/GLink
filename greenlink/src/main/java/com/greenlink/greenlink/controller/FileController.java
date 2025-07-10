@@ -1,5 +1,7 @@
 package com.greenlink.greenlink.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +21,8 @@ import java.nio.file.Paths;
 @Controller
 @RequestMapping("/files")
 public class FileController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
     private final Path fileStorageLocation;
 
@@ -26,16 +30,20 @@ public class FileController {
         this.fileStorageLocation = Paths.get(uploadDir)
                 .toAbsolutePath()
                 .normalize();
+        logger.info("FileController initialized with storage location: {}", this.fileStorageLocation);
     }
 
     @GetMapping("/products/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveProductImage(@PathVariable String fileName) {
         try {
+            logger.info("Request to serve product image: {}", fileName);
             Path filePath = this.fileStorageLocation.resolve("products").resolve(fileName);
+            logger.info("Looking for file at: {}", filePath.toAbsolutePath());
             Resource resource = new UrlResource(filePath.toUri());
             
             if (resource.exists()) {
+                logger.info("File exists, serving: {}", fileName);
                 String contentType = determineContentType(fileName);
                 
                 return ResponseEntity.ok()
@@ -44,17 +52,21 @@ public class FileController {
                         .body(resource);
             } else {
                 // If the file doesn't exist in uploads, try serving a placeholder image
+                logger.warn("File not found: {}, serving placeholder", fileName);
                 Resource placeholderResource = new ClassPathResource("static/images/placeholder-product.jpg");
                 if (placeholderResource.exists()) {
+                    logger.info("Serving placeholder image instead");
                     return ResponseEntity.ok()
                             .contentType(MediaType.parseMediaType("image/jpeg"))
                             .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"placeholder-product.jpg\"")
                             .body(placeholderResource);
                 } else {
+                    logger.error("Placeholder image not found either!");
                     return ResponseEntity.notFound().build();
                 }
             }
         } catch (MalformedURLException e) {
+            logger.error("Error serving file {}: {}", fileName, e.getMessage(), e);
             return ResponseEntity.badRequest().build();
         }
     }
@@ -62,9 +74,11 @@ public class FileController {
     @GetMapping("/images/products/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveStaticProductImage(@PathVariable String fileName) {
+        logger.info("Request to serve static product image: {}", fileName);
         Resource resource = new ClassPathResource("static/images/products/" + fileName);
         
         if (resource.exists()) {
+            logger.info("Static image exists, serving: {}", fileName);
             String contentType = determineContentType(fileName);
             
             return ResponseEntity.ok()
@@ -72,6 +86,7 @@ public class FileController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         } else {
+            logger.warn("Static image not found: {}", fileName);
             return ResponseEntity.notFound().build();
         }
     }

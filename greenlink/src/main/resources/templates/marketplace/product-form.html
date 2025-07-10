@@ -256,9 +256,9 @@
 
                     <!-- Image Upload -->
                     <div class="mb-4">
-                        <img th:if="*{imageUrl}" th:src="*{imageUrl}" 
+                        <img th:if="*{imageUrl != null and !imageUrl.isEmpty()}" th:src="*{imageUrl}" 
                              class="image-preview has-image" id="imagePreview" alt="Product Image">
-                        <img th:unless="*{imageUrl}" src="/images/placeholder-product.jpg" 
+                        <img th:unless="*{imageUrl != null and !imageUrl.isEmpty()}" src="/images/placeholder-product.jpg" 
                              class="image-preview" id="imagePreview" alt="Product Image">
                         
                         <label class="upload-label">
