@@ -333,13 +333,7 @@ public class ProductService {
     }
     
     public List<ProductDto> getProductsBySeller(Long sellerId) {
-        System.out.println("Getting products for seller ID: " + sellerId);
         List<Product> products = productRepository.findBySellerId(sellerId);
-        System.out.println("Found " + products.size() + " products in repository");
-        
-        // Print details of each product
-        products.forEach(p -> System.out.println("Product: " + p.getId() + " - " + p.getName() + " - Seller ID: " + 
-                                                (p.getSeller() != null ? p.getSeller().getId() : "null")));
         
         return products.stream()
                 .map(this::convertToDto)

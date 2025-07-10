@@ -77,18 +77,4 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMP NOT NULL,
     stock INTEGER NOT NULL,
     image_path VARCHAR(255)
-);
-
--- Create recycling_point table
-CREATE TABLE IF NOT EXISTS recycling_point (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    address VARCHAR(255) NOT NULL
-);
-
--- Create materials_accepted table for recycling points
-CREATE TABLE IF NOT EXISTS materials_accepted (
-    recycling_point_id BIGINT NOT NULL,
-    material VARCHAR(255) NOT NULL,
-    FOREIGN KEY (recycling_point_id) REFERENCES recycling_point(id)
 ); 
