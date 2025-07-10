@@ -19,7 +19,7 @@
             color: white;
             position: relative;
             overflow: hidden;
-            opacity: 1; /* Ensure visible by default */
+            opacity: 1; /* Always visible by default */
         }
 
         .hero-section::before {
@@ -46,7 +46,7 @@
             overflow: hidden;
             height: 100%;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            opacity: 1; /* Ensure visible by default */
+            opacity: 1; /* Always visible by default */
         }
 
         .feature-card:hover {
@@ -128,6 +128,26 @@
             height: 3px;
             background: #28a745;
             border-radius: 2px;
+        }
+        
+        /* Animation classes - applied after page loads */
+        .animate-hero {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .animate-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0.7;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
     <noscript>
@@ -221,47 +241,31 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Ensure content is visible even if script fails
+    // Add animation classes after content is already visible
     setTimeout(() => {
         const hero = document.querySelector('.hero-section');
-        if (hero && getComputedStyle(hero).opacity === "0") {
-            hero.style.opacity = '1';
-            hero.style.transform = 'translateY(0)';
+        if (hero) {
+            hero.classList.add('animate-hero');
         }
         
         const cards = document.querySelectorAll('.feature-card');
-        cards.forEach(card => {
-            if (card && getComputedStyle(card).opacity === "0") {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('animate-card');
+            }, 100 * (index + 1)); // Stagger card animations
         });
-    }, 300);
-
-    // Animate hero section on load - but don't start with opacity 0
-    const hero = document.querySelector('.hero-section');
-    hero.style.transition = 'all 0.8s ease';
-    hero.style.transform = 'translateY(20px)';
-    setTimeout(() => {
-        hero.style.opacity = '1';
-        hero.style.transform = 'translateY(0)';
     }, 100);
-
-    // Animate feature cards on scroll
-    const cards = document.querySelectorAll('.feature-card');
+    
+    // Add intersection observer for cards that might be below the fold
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+            if (entry.isIntersecting && !entry.target.classList.contains('animate-card')) {
+                entry.target.classList.add('animate-card');
             }
         });
     }, { threshold: 0.1 });
 
-    cards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'all 0.5s ease';
+    document.querySelectorAll('.feature-card').forEach(card => {
         observer.observe(card);
     });
 });
