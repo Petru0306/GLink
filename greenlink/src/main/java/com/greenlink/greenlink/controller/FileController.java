@@ -1,6 +1,7 @@
 package com.greenlink.greenlink.controller;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -46,6 +47,23 @@ public class FileController {
             }
         } catch (MalformedURLException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @GetMapping("/images/products/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveStaticProductImage(@PathVariable String fileName) {
+        Resource resource = new ClassPathResource("static/images/products/" + fileName);
+        
+        if (resource.exists()) {
+            String contentType = determineContentType(fileName);
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
     
