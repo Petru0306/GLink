@@ -17,10 +17,19 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-        Path uploadPath = Paths.get(uploadDir);
+        // Servirea resurselor statice din classpath (ex: CSS, JS)
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");
+
+        // Servirea imaginilor încărcate de utilizatori
+        exposeDirectory(uploadDir, registry);
+    }
+
+    private void exposeDirectory(String dirName, ResourceHandlerRegistry registry) {
+        Path uploadPath = Paths.get(dirName);
         String uploadAbsolutePath = uploadPath.toFile().getAbsolutePath();
-        
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadAbsolutePath + "/");
+
+        registry.addResourceHandler("/" + dirName + "/**")
+                .addResourceLocations("file:/" + uploadAbsolutePath + "/");
     }
 } 
