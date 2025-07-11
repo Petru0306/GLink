@@ -105,7 +105,15 @@ public class MessageController {
             return "redirect:/inbox/conversation/" + conversation.getId();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error starting conversation", e);
-            return "redirect:/marketplace?error=" + e.getMessage();
+            try {
+                // Get the product to determine the branch for proper redirection
+                ProductDto product = productService.getProductById(productId);
+                String branch = product.getBranch().toString().toLowerCase();
+                return "redirect:/marketplace/" + branch + "/product/" + productId + "?error=" + e.getMessage();
+            } catch (Exception ex) {
+                // If we can't get the product, redirect to marketplace
+                return "redirect:/marketplace?error=" + e.getMessage();
+            }
         }
     }
     
