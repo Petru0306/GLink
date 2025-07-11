@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <!-- SockJS and STOMP WebSocket libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <!-- SockJS and STOMP WebSocket libraries - using specific versions -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
     <style>
         .hero-section {
@@ -406,19 +406,30 @@
         // Connect to WebSocket
         function connect() {
             console.log("Attempting WebSocket connection...");
+            
+            // Force disconnect if already connected
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            
+            // Create new connection
             const socket = new SockJS('/ws-messages');
             stompClient = Stomp.over(socket);
             
-            // Enable debug logs for STOMP
-            stompClient.debug = function(str) {
-                console.log("STOMP: " + str);
-            };
+            // Disable debug logs in production to avoid console spam
+            stompClient.debug = null;
             
-            // Add CSRF headers for WebSocket connections
+            // Add CSRF headers for WebSocket connections - this is crucial
             const headers = {};
             headers[header] = token;
             
-            stompClient.connect(headers, onConnected, onError);
+            try {
+                stompClient.connect(headers, onConnected, onError);
+            } catch (error) {
+                console.error("Connection error:", error);
+                showConnectionStatus('disconnected');
+                setTimeout(connect, 5000);
+            }
         }
         
         function onConnected() {
@@ -534,6 +545,9 @@
             
             // Connect to WebSocket
             connect();
+            
+            // Add health check to verify connection every 30 seconds
+            setInterval(checkConnectionHealth, 30000);
             
             // Send message on Enter key
             $("#message-input").on('keydown', function(e) {
@@ -851,6 +865,17 @@
             
             messageDiv.innerHTML = messageContent + messageTime;
             chatContainer.appendChild(messageDiv);
+        }
+
+        // Check WebSocket connection health
+        function checkConnectionHealth() {
+            if (!stompClient || !stompClient.connected) {
+                console.log("Connection check failed - reconnecting...");
+                showConnectionStatus('connecting');
+                connect();
+            } else {
+                console.log("Connection health check passed");
+            }
         }
     </script>
 </body>

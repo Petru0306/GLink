@@ -26,7 +26,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register STOMP endpoints for client connection, enable SockJS fallback
-        registry.addEndpoint("/ws-messages").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws-messages")
+               .setAllowedOriginPatterns("*") // More permissive for development
+               .withSockJS()
+               .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js");
+        
         logger.info("WebSocket STOMP endpoints registered");
     }
 } 
