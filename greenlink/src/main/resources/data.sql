@@ -1,6 +1,6 @@
 -- Check if admin user doesn't exist before inserting
 INSERT INTO users (email, password, first_name, last_name, enabled, active, role, created_at, points)
-SELECT 'admin@greenlink.com', '$2a$10$dL4mR07/RW2VdgzUn9iQYOjp.vWkR1y4EzrabWR/YHhDhe0Y5EJ.O', 'Admin', 'User', true, true, 'ADMIN', CURRENT_TIMESTAMP, 0
+SELECT 'admin@greenlink.com', '$2a$12$r7vlvYOz2bkxGZC4Env95ugHx.NQWMLyMoE8lfU9QsvK8zmPd17Dm', 'Admin', 'User', true, true, 'ADMIN', CURRENT_TIMESTAMP, 0
 WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'admin@greenlink.com'
 );
@@ -104,3 +104,8 @@ SELECT 'Dried Fruit Mix', 'Organic mixed dried fruits with no added sugar', 12.9
 WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Dried Fruit Mix'
 ); 
+
+-- Set admin as the seller for all products
+UPDATE products
+SET seller_id = (SELECT id FROM users WHERE email = 'admin@greenlink.com')
+WHERE seller_id IS NULL; 
