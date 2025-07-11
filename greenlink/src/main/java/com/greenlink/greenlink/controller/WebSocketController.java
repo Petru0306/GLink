@@ -71,6 +71,11 @@ public class WebSocketController {
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
             
+            // If client provided a tempId, include it in response for tracking
+            if (chatMessage.getTempId() != null) {
+                responseMessage.setTempId(chatMessage.getTempId());
+            }
+            
             // Broadcast to conversation topic - this will send to all subscribers including the sender
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(), 
@@ -99,6 +104,11 @@ public class WebSocketController {
             
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
+            
+            // If client provided a tempId, include it in response for tracking
+            if (chatMessage.getTempId() != null) {
+                responseMessage.setTempId(chatMessage.getTempId());
+            }
             
             // Broadcast to conversation topic
             messagingTemplate.convertAndSend(
@@ -130,10 +140,29 @@ public class WebSocketController {
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
             
-            // Broadcast to conversation topic
+            // If client provided a tempId, include it in response for tracking
+            if (chatMessage.getTempId() != null) {
+                responseMessage.setTempId(chatMessage.getTempId());
+            }
+            
+            // We need to broadcast both the response message (which is a new message)
+            // and a status update for the original offer
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(),
                     responseMessage
+            );
+            
+            // Create a status update message for the original offer
+            ChatMessageDto statusUpdate = new ChatMessageDto();
+            statusUpdate.setMessageId(chatMessage.getMessageId());
+            statusUpdate.setConversationId(chatMessage.getConversationId());
+            statusUpdate.setOfferStatus(chatMessage.getOfferStatus());
+            statusUpdate.setOffer(true);
+            
+            // Send status update separately
+            messagingTemplate.convertAndSend(
+                    "/topic/conversation." + chatMessage.getConversationId(),
+                    statusUpdate
             );
             
             logger.info("Offer response sent via WebSocket: " + responseMessage.getOfferStatus());

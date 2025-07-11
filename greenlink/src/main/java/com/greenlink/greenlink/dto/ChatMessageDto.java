@@ -22,6 +22,7 @@ public class ChatMessageDto {
     private Double offerAmount;
     private String offerStatus;
     private Long messageId;
+    private String tempId; // Temporary ID for client-side tracking
     
     public static ChatMessageDto fromMessageDto(MessageDto messageDto) {
         return ChatMessageDto.builder()
