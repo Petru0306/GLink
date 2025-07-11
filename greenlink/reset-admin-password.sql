@@ -1,4 +1,4 @@
 -- Replace the hash with the one generated from /auth-test/generate-password?password=yourNewPassword
 UPDATE users 
-SET password = '$2a$12$r7vlvYOz2bkxGZC4Env95ugHx.NQWMLyMoE8lfU9QsvK8zmPd17Dm'
+SET password = '$2a$10$mxddSR78Gl7K9hoXEZ2ahuTcJ/l3xToczgTiIFqOx951pK9CLX7Pe'
 WHERE email = 'admin@greenlink.com'; 

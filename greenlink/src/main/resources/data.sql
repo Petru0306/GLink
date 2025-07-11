@@ -1,6 +1,6 @@
 -- Check if admin user doesn't exist before inserting
 INSERT INTO users (email, password, first_name, last_name, enabled, active, role, created_at, points)
-SELECT 'admin@greenlink.com', '$2a$10$lNzgv0ne5AGOCsKxrrW6sOETnTs6SLZENFGV7gLVnPJt1pD91V.U6', 'Admin', 'User', true, true, 'ADMIN', CURRENT_TIMESTAMP, 0
+SELECT 'admin@greenlink.com', '$2a$10$mxddSR78Gl7K9hoXEZ2ahuTcJ/l3xToczgTiIFqOx951pK9CLX7Pe', 'Admin', 'User', true, true, 'ADMIN', CURRENT_TIMESTAMP, 0
 WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'admin@greenlink.com'
 );
