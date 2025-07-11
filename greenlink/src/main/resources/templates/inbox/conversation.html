@@ -623,29 +623,29 @@
                 scrollToBottom();
             } else {
                 // Fallback to AJAX
-                $.ajax({
-                    url: `/inbox/conversation/${conversationId}/message`,
-                    type: 'POST',
-                    data: {
-                        content: content
-                    },
-                    success: function(response) {
-                        appendMessage(response);
-                        messageInput.val('');
-                        scrollToBottom();
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'A apărut o eroare la trimiterea mesajului.';
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.error) {
-                                errorMessage = response.error;
-                            }
-                        } catch (e) {}
-                        
-                        alert(errorMessage);
-                    }
-                });
+            $.ajax({
+                url: `/inbox/conversation/${conversationId}/message`,
+                type: 'POST',
+                data: {
+                    content: content
+                },
+                success: function(response) {
+                    appendMessage(response);
+                    messageInput.val('');
+                    scrollToBottom();
+                },
+                error: function(xhr) {
+                    let errorMessage = 'A apărut o eroare la trimiterea mesajului.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {}
+                    
+                    alert(errorMessage);
+                }
+            });
             }
         }
         
@@ -686,32 +686,32 @@
                 bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
             } else {
                 // Fallback to AJAX
-                $.ajax({
-                    url: `/inbox/conversation/${conversationId}/offer`,
-                    type: 'POST',
-                    data: {
-                        offerAmount: offerAmount
-                    },
-                    success: function(response) {
-                        // Close modal
-                        bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
-                        
-                        // Add message to chat
-                        appendMessage(response);
-                        scrollToBottom();
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'A apărut o eroare la trimiterea ofertei.';
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.error) {
-                                errorMessage = response.error;
-                            }
-                        } catch (e) {}
-                        
-                        alert(errorMessage);
-                    }
-                });
+            $.ajax({
+                url: `/inbox/conversation/${conversationId}/offer`,
+                type: 'POST',
+                data: {
+                    offerAmount: offerAmount
+                },
+                success: function(response) {
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
+                    
+                    // Add message to chat
+                    appendMessage(response);
+                    scrollToBottom();
+                },
+                error: function(xhr) {
+                    let errorMessage = 'A apărut o eroare la trimiterea ofertei.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {}
+                    
+                    alert(errorMessage);
+                }
+            });
             }
         }
         
@@ -751,33 +751,33 @@
                 bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
             } else {
                 // Fallback to AJAX
-                $.ajax({
-                    url: `/inbox/message/${messageId}/respond`,
-                    type: 'POST',
-                    data: {
-                        action: 'COUNTER',
-                        counterOfferAmount: counterOfferAmount
-                    },
-                    success: function(response) {
-                        // Close modal
-                        bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
-                        
-                        // Add message to chat
-                        appendMessage(response);
-                        scrollToBottom();
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'A apărut o eroare la trimiterea contraofertei.';
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.error) {
-                                errorMessage = response.error;
-                            }
-                        } catch (e) {}
-                        
-                        alert(errorMessage);
-                    }
-                });
+            $.ajax({
+                url: `/inbox/message/${messageId}/respond`,
+                type: 'POST',
+                data: {
+                    action: 'COUNTER',
+                    counterOfferAmount: counterOfferAmount
+                },
+                success: function(response) {
+                    // Close modal
+                    bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
+                    
+                    // Add message to chat
+                    appendMessage(response);
+                    scrollToBottom();
+                },
+                error: function(xhr) {
+                    let errorMessage = 'A apărut o eroare la trimiterea contraofertei.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {}
+                    
+                    alert(errorMessage);
+                }
+            });
             }
         }
         
@@ -793,34 +793,34 @@
                 stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
             } else {
                 // Fallback to AJAX
-                $.ajax({
-                    url: `/inbox/message/${messageId}/respond`,
-                    type: 'POST',
-                    data: {
-                        action: action
-                    },
-                    success: function(response) {
-                        // Add message to chat
-                        appendMessage(response);
-                        scrollToBottom();
-                        
-                        // Refresh the page to update the offer status
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    },
-                    error: function(xhr) {
-                        let errorMessage = 'A apărut o eroare la răspunsul la ofertă.';
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            if (response.error) {
-                                errorMessage = response.error;
-                            }
-                        } catch (e) {}
-                        
-                        alert(errorMessage);
-                    }
-                });
+            $.ajax({
+                url: `/inbox/message/${messageId}/respond`,
+                type: 'POST',
+                data: {
+                    action: action
+                },
+                success: function(response) {
+                    // Add message to chat
+                    appendMessage(response);
+                    scrollToBottom();
+                    
+                    // Refresh the page to update the offer status
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                },
+                error: function(xhr) {
+                    let errorMessage = 'A apărut o eroare la răspunsul la ofertă.';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = response.error;
+                        }
+                    } catch (e) {}
+                    
+                    alert(errorMessage);
+                }
+            });
             }
         }
         
