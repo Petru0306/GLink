@@ -13,6 +13,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +31,29 @@ public class WebSocketController {
 
     @Autowired
     private MessageService messageService;
+    
+    /**
+     * Handle ping messages to confirm WebSocket connectivity
+     */
+    @MessageMapping("/chat.ping")
+    public void handlePing(@Payload Map<String, Object> payload) {
+        try {
+            Long conversationId = payload.get("conversationId") != null ? 
+                    Long.parseLong(payload.get("conversationId").toString()) : null;
+                    
+            if (conversationId != null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("type", "PING");
+                response.put("timestamp", System.currentTimeMillis());
+                
+                // Echo back to conversation topic
+                messagingTemplate.convertAndSend("/topic/conversation." + conversationId, response);
+                logger.info("Ping response sent to conversation: " + conversationId);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error handling ping message", e);
+        }
+    }
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessageDto chatMessage, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
@@ -46,11 +71,13 @@ public class WebSocketController {
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
             
-            // Broadcast to conversation topic
+            // Broadcast to conversation topic - this will send to all subscribers including the sender
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(), 
                     responseMessage
             );
+            
+            logger.info("Message sent via WebSocket: " + responseMessage.getContent());
             
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in WebSocket message handling", e);
@@ -79,6 +106,8 @@ public class WebSocketController {
                     responseMessage
             );
             
+            logger.info("Offer sent via WebSocket: " + responseMessage.getOfferAmount());
+            
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in WebSocket offer handling", e);
         }
@@ -106,6 +135,8 @@ public class WebSocketController {
                     "/topic/conversation." + chatMessage.getConversationId(),
                     responseMessage
             );
+            
+            logger.info("Offer response sent via WebSocket: " + responseMessage.getOfferStatus());
             
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in WebSocket offer response handling", e);

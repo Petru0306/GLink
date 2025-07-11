@@ -393,6 +393,8 @@
         const token = $("meta[name='_csrf']").attr("content");
         const header = $("meta[name='_csrf_header']").attr("content");
         let stompClient = null;
+        let reconnectCount = 0;
+        let processedMessageIds = new Set(); // Track processed messages to prevent duplicates
         
         // Set up AJAX CSRF header
         $.ajaxSetup({
@@ -403,8 +405,14 @@
         
         // Connect to WebSocket
         function connect() {
+            console.log("Attempting WebSocket connection...");
             const socket = new SockJS('/ws-messages');
             stompClient = Stomp.over(socket);
+            
+            // Enable debug logs for STOMP
+            stompClient.debug = function(str) {
+                console.log("STOMP: " + str);
+            };
             
             // Add CSRF headers for WebSocket connections
             const headers = {};
@@ -414,29 +422,97 @@
         }
         
         function onConnected() {
+            // Reset reconnect count on successful connection
+            reconnectCount = 0;
+            
             // Subscribe to the conversation channel
             stompClient.subscribe('/topic/conversation.' + conversationId, onMessageReceived);
             
             console.log('Connected to WebSocket');
+            showConnectionStatus('connected');
+            
+            // Send a ping message to check if connection is actually working
+            setTimeout(() => {
+                if (stompClient && stompClient.connected) {
+                    stompClient.send("/app/chat.ping", {}, JSON.stringify({conversationId: conversationId}));
+                }
+            }, 1000);
         }
         
         function onError(error) {
             console.error('WebSocket connection error:', error);
+            // Implement exponential backoff for reconnection attempts
+            const delay = Math.min(5000 * Math.pow(1.5, reconnectCount), 30000); // Cap at 30 seconds
+            reconnectCount++;
+            
+            console.log(`Attempting to reconnect in ${delay/1000} seconds... (Attempt ${reconnectCount})`);
+            
             // Fallback to AJAX polling if WebSocket fails
             setTimeout(() => {
-                connect();
-            }, 5000);
+                if (reconnectCount < 10) { // Limit reconnection attempts
+                    connect();
+                } else {
+                    console.error('Failed to reconnect after multiple attempts. Using AJAX fallback.');
+                    // Add visual indicator for connection status
+                    showConnectionStatus('disconnected');
+                }
+            }, delay);
+        }
+        
+        function showConnectionStatus(status) {
+            // Remove any existing status indicators
+            $('.connection-status').remove();
+            
+            let statusHtml = '';
+            if (status === 'connected') {
+                statusHtml = '<div class="connection-status text-success"><i class="bi bi-wifi"></i> Live chat active</div>';
+            } else if (status === 'disconnected') {
+                statusHtml = '<div class="connection-status text-danger"><i class="bi bi-wifi-off"></i> Offline mode - refresh to reconnect</div>';
+            } else if (status === 'connecting') {
+                statusHtml = '<div class="connection-status text-warning"><i class="bi bi-wifi"></i> Connecting...</div>';
+            }
+            
+            // Add status indicator above the chat
+            $('#chat-container').before(statusHtml);
         }
         
         function onMessageReceived(payload) {
             const message = JSON.parse(payload.body);
+            console.log("WebSocket message received:", message);
             
-            // Only append if not from current user (they already see their own messages)
-            if (!message.currentUserSender) {
-                appendMessage(message);
-                scrollToBottom();
+            // Skip if this is a ping message
+            if (message.type === 'PING') {
+                console.log("Ping received, connection confirmed");
+                return;
+            }
+            
+            // Check if we've already processed this message to avoid duplicates
+            if (message.id && processedMessageIds.has(message.id)) {
+                console.log("Skipping duplicate message:", message.id);
+                return;
+            }
+            
+            // Add to processed set if it has an ID
+            if (message.id) {
+                processedMessageIds.add(message.id);
                 
-                // Mark conversation as read (optional)
+                // Limit the size of the set to avoid memory issues
+                if (processedMessageIds.size > 100) {
+                    // Remove oldest entries (convert to array, slice, convert back to set)
+                    processedMessageIds = new Set([...processedMessageIds].slice(-50));
+                }
+            }
+            
+            // Always append the message to ensure both sides see updates
+            appendMessage(message);
+            scrollToBottom();
+            
+            // Play notification sound if message is from other user
+            if (!message.currentUserSender) {
+                // Play sound
+                playNotificationSound();
+                
+                // Mark conversation as read
                 $.ajax({
                     url: `/inbox/conversation/${conversationId}/read`,
                     type: 'POST'
@@ -444,8 +520,16 @@
             }
         }
         
-        // Scroll to bottom of chat on load
+        function playNotificationSound() {
+            // Create audio element for message notification
+            const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAADIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+            audio.play().catch(e => console.log("Audio playback error:", e));
+        }
+        
+        // Connect to WebSocket when page loads
         $(document).ready(function() {
+            // Show connecting status
+            showConnectionStatus('connecting');
             scrollToBottom();
             
             // Connect to WebSocket
@@ -468,6 +552,12 @@
             updateUnreadMessageCount();
         });
         
+        // Function to scroll chat to bottom
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
         // Function to update the unread message count in the navbar
         function updateUnreadMessageCount() {
             $.ajax({
@@ -489,11 +579,6 @@
             });
         }
         
-        function scrollToBottom() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-        
         function sendMessage() {
             const messageInput = $("#message-input");
             const content = messageInput.val().trim();
@@ -511,6 +596,17 @@
                 
                 stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
                 messageInput.val('');
+                
+                // Also display message locally immediately for better UX
+                // We'll create a temporary message that will be replaced when server confirms
+                const tempMessage = {
+                    content: content,
+                    sentAt: new Date(),
+                    currentUserSender: true,
+                    isOffer: false
+                };
+                appendMessage(tempMessage);
+                scrollToBottom();
             } else {
                 // Fallback to AJAX
                 $.ajax({
@@ -560,6 +656,17 @@
                 };
                 
                 stompClient.send("/app/chat.offer", {}, JSON.stringify(chatMessage));
+                
+                // Show temporary offer message immediately
+                const tempMessage = {
+                    offerAmount: offerAmount,
+                    offerStatus: 'PENDING',
+                    sentAt: new Date(),
+                    currentUserSender: true,
+                    isOffer: true
+                };
+                appendMessage(tempMessage);
+                scrollToBottom();
                 
                 // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();

@@ -6,9 +6,13 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import java.util.logging.Logger;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private static final Logger logger = Logger.getLogger(WebSocketConfig.class.getName());
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -16,11 +20,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // Messages whose destination starts with /app will be routed to @MessageMapping methods
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
+        logger.info("WebSocket message broker configured");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register STOMP endpoints for client connection, enable SockJS fallback
-        registry.addEndpoint("/ws-messages").withSockJS();
+        registry.addEndpoint("/ws-messages").setAllowedOrigins("*").withSockJS();
+        logger.info("WebSocket STOMP endpoints registered");
     }
 } 
