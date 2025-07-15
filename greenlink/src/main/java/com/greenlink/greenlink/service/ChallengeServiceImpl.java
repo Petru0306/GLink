@@ -11,11 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
 
+    private static final Logger logger = Logger.getLogger(ChallengeServiceImpl.class.getName());
     private final ChallengeRepository challengeRepository;
     private final UserChallengeRepository userChallengeRepository;
     private final UserRepository userRepository;
@@ -30,7 +33,14 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public List<Challenge> getAllChallenges() {
-        return challengeRepository.findAll();
+        try {
+            List<Challenge> challenges = challengeRepository.findAll();
+            logger.info("Found " + challenges.size() + " challenges in database");
+            return challenges;
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting all challenges", e);
+            throw e;
+        }
     }
 
     @Override
@@ -128,339 +138,394 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     @Transactional
     public void createDefaultChallenges() {
-        if (challengeRepository.count() == 0) {
-            // Default Challenges
-            challengeRepository.save(new Challenge(
-                "Create Your Eco Avatar",
-                "A weirdo from another planet who only eats leftovers",
-                5,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Captain Compostface",
-                "🌱",
-                1,
-                "avatar_created"
-            ));
+        try {
+            long existingCount = challengeRepository.count();
+            logger.info("Creating default challenges. Existing challenges count: " + existingCount);
+            
+            if (existingCount == 0) {
+                logger.info("No challenges exist, creating default challenges...");
+                
+                // Default Challenges
+                challengeRepository.save(new Challenge(
+                    "Create Your Eco Avatar",
+                    "A weirdo from another planet who only eats leftovers",
+                    5,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Captain Compostface",
+                    "🌱",
+                    1,
+                    "avatar_created"
+                ));
+                logger.info("Created challenge: Create Your Eco Avatar");
+
+                challengeRepository.save(new Challenge(
+                    "Complete Your First Lesson",
+                    "Understands plants better than people",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "The Leaf Whisperer",
+                    "📚",
+                    1,
+                    "lesson_completed"
+                ));
+                logger.info("Created challenge: Complete Your First Lesson");
+
+                challengeRepository.save(new Challenge(
+                    "Upload Your First Photo",
+                    "Snaps pics faster than trash hits the ground",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Shutter the Litter",
+                    "📸",
+                    1,
+                    "photo_uploaded"
+                ));
+                logger.info("Created challenge: Upload Your First Photo");
+
+                challengeRepository.save(new Challenge(
+                    "Take the Eco Personality Quiz",
+                    "Thinks Buzzfeed quizzes are spiritual experiences",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "The Sorting Sprout",
+                    "🧠",
+                    1,
+                    "quiz_completed"
+                ));
+                logger.info("Created challenge: Take the Eco Personality Quiz");
+
+                challengeRepository.save(new Challenge(
+                    "First Item Listed",
+                    "Lives for shiny reusable objects",
+                    15,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Eco-Barter Goblin",
+                    "🏷️",
+                    1,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: First Item Listed");
+
+                challengeRepository.save(new Challenge(
+                    "Use Carbon Calculator",
+                    "Knows what size carbon shoe you wear",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Footprint Prophet",
+                    "👣",
+                    1,
+                    "carbon_calculated"
+                ));
+                logger.info("Created challenge: Use Carbon Calculator");
+
+                challengeRepository.save(new Challenge(
+                    "Explore the Recycling Map",
+                    "Opened the ancient map of hidden recycling lore",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "The Bin Seeker",
+                    "🗺️",
+                    1,
+                    "map_explored"
+                ));
+                logger.info("Created challenge: Explore the Recycling Map");
+
+                challengeRepository.save(new Challenge(
+                    "Make an Offer on the Marketplace",
+                    "Bartered like it's the Shire Flea Market",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "The Haggle Hobbit",
+                    "💰",
+                    1,
+                    "offer_made"
+                ));
+                logger.info("Created challenge: Make an Offer on the Marketplace");
+
+                challengeRepository.save(new Challenge(
+                    "Send Your First Message",
+                    "The ecosystem thanks you for breaking the silence",
+                    10,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Messenger of the Green Gods",
+                    "💬",
+                    1,
+                    "message_sent"
+                ));
+                logger.info("Created challenge: Send Your First Message");
+
+                challengeRepository.save(new Challenge(
+                    "Add an Item to Favorites",
+                    "You liked it, so you should've put a leaf on it",
+                    5,
+                    Challenge.ChallengeCategory.DEFAULT,
+                    "Heart of Cartness",
+                    "❤️",
+                    1,
+                    "item_favorited"
+                ));
+                logger.info("Created challenge: Add an Item to Favorites");
+
+                // Ambassador Challenges
+                challengeRepository.save(new Challenge(
+                    "First Friend",
+                    "Probably just messaged you",
+                    10,
+                    Challenge.ChallengeCategory.AMBASSADOR,
+                    "The Green Recruiter",
+                    "🤝",
+                    1,
+                    "friend_added"
+                ));
+                logger.info("Created challenge: First Friend");
+
+                challengeRepository.save(new Challenge(
+                    "Three Friends",
+                    "Can't stop talking about compost at parties",
+                    15,
+                    Challenge.ChallengeCategory.AMBASSADOR,
+                    "Sir Shares-a-Lot",
+                    "👥",
+                    3,
+                    "friend_added"
+                ));
+                logger.info("Created challenge: Three Friends");
+
+                challengeRepository.save(new Challenge(
+                    "Five Friends",
+                    "Granting green wishes one DM at a time",
+                    25,
+                    Challenge.ChallengeCategory.AMBASSADOR,
+                    "Influensir",
+                    "🌟",
+                    5,
+                    "friend_added"
+                ));
+                logger.info("Created challenge: Five Friends");
+
+                challengeRepository.save(new Challenge(
+                    "Ten Friends",
+                    "Rules the realm of referrals",
+                    50,
+                    Challenge.ChallengeCategory.AMBASSADOR,
+                    "The Sustainabili-Tyrant",
+                    "👑",
+                    10,
+                    "friend_added"
+                ));
+                logger.info("Created challenge: Ten Friends");
+
+                challengeRepository.save(new Challenge(
+                    "Fifteen Friends",
+                    "Fifteen converts and counting",
+                    75,
+                    Challenge.ChallengeCategory.AMBASSADOR,
+                    "The Eco Cult Leader",
+                    "🔥",
+                    15,
+                    "friend_added"
+                ));
+                logger.info("Created challenge: Fifteen Friends");
+
+                // Maester Challenges
+                challengeRepository.save(new Challenge(
+                    "Complete 1 Lesson",
+                    "Just left the Shire with a reusable cup",
+                    10,
+                    Challenge.ChallengeCategory.MAESTER,
+                    "The Green Hobbit",
+                    "📖",
+                    1,
+                    "lesson_completed"
+                ));
+                logger.info("Created challenge: Complete 1 Lesson");
+
+                challengeRepository.save(new Challenge(
+                    "Complete 3 Lessons",
+                    "Carries a wand made of cardboard tubes",
+                    30,
+                    Challenge.ChallengeCategory.MAESTER,
+                    "Recyclas the Wise",
+                    "🧙‍♂️",
+                    3,
+                    "lesson_completed"
+                ));
+                logger.info("Created challenge: Complete 3 Lessons");
 
             challengeRepository.save(new Challenge(
-                "Complete Your First Lesson",
-                "Understands plants better than people",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "The Leaf Whisperer",
-                "📚",
-                1,
-                "lesson_completed"
-            ));
+                    "Complete 6 Lessons",
+                    "Always knows what bait to use for eco-activism",
+                    50,
+                    Challenge.ChallengeCategory.MAESTER,
+                    "Master Baitor",
+                    "🎣",
+                    6,
+                    "lesson_completed"
+                ));
+                logger.info("Created challenge: Complete 6 Lessons");
+
+                // Shelf Whisperer Challenges
+                challengeRepository.save(new Challenge(
+                    "List First Item",
+                    "Found treasure in a pile of old Tupperware",
+                    20,
+                    Challenge.ChallengeCategory.SHELF_WHISPERER,
+                    "Thrift Gremlin",
+                    "🏪",
+                    1,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: List First Item");
+
+                challengeRepository.save(new Challenge(
+                    "List 3 Items",
+                    "Part dragon, part Facebook Marketplace admin",
+                    35,
+                    Challenge.ChallengeCategory.SHELF_WHISPERER,
+                    "Dealzard",
+                    "🐉",
+                    3,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: List 3 Items");
+
+                challengeRepository.save(new Challenge(
+                    "List 5 Items",
+                    "Sells only reused jewelry",
+                    75,
+                    Challenge.ChallengeCategory.SHELF_WHISPERER,
+                    "Lord of the Re-Rings",
+                    "💍",
+                    5,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: List 5 Items");
+
+                challengeRepository.save(new Challenge(
+                    "List 10 Items",
+                    "Hasn't bought anything new since 2018",
+                    100,
+                    Challenge.ChallengeCategory.SHELF_WHISPERER,
+                    "The Resale Rogue",
+                    "🦹‍♂️",
+                    10,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: List 10 Items");
+
+                challengeRepository.save(new Challenge(
+                    "List 15 Items",
+                    "Reigns supreme in the secondhand kingdom",
+                    150,
+                    Challenge.ChallengeCategory.SHELF_WHISPERER,
+                    "King Cash-for-Trash",
+                    "👑",
+                    15,
+                    "item_listed"
+                ));
+                logger.info("Created challenge: List 15 Items");
+
+                // Cart Goblin Challenges
+                challengeRepository.save(new Challenge(
+                    "Buy First Item",
+                    "Finds deals greener than your kale smoothie",
+                    20,
+                    Challenge.ChallengeCategory.CART_GOBLIN,
+                    "Bargain Broccoli",
+                    "🥦",
+                    1,
+                    "item_purchased"
+                ));
+                logger.info("Created challenge: Buy First Item");
+
+                challengeRepository.save(new Challenge(
+                    "Buy 3 Items",
+                    "Shops only during moon cycles and zero-waste sales",
+                    35,
+                    Challenge.ChallengeCategory.CART_GOBLIN,
+                    "The Ethical Witch",
+                    "🧙‍♀️",
+                    3,
+                    "item_purchased"
+                ));
+                logger.info("Created challenge: Buy 3 Items");
 
             challengeRepository.save(new Challenge(
-                "Upload Your First Photo",
-                "Snaps pics faster than trash hits the ground",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Shutter the Litter",
-                "📸",
-                1,
-                "photo_uploaded"
-            ));
+                    "Buy 5 Items",
+                    "Flies from cart to cart, pecking eco deals",
+                    75,
+                    Challenge.ChallengeCategory.CART_GOBLIN,
+                    "Swipe Sparrow",
+                    "🐦",
+                    5,
+                    "item_purchased"
+                ));
+                logger.info("Created challenge: Buy 5 Items");
 
             challengeRepository.save(new Challenge(
-                "Take the Eco Personality Quiz",
-                "Thinks Buzzfeed quizzes are spiritual experiences",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "The Sorting Sprout",
-                "🧠",
-                1,
-                "quiz_completed"
-            ));
+                    "Buy 10 Items",
+                    "Sees through fake eco marketing like Neo in the Matrix",
+                    100,
+                    Challenge.ChallengeCategory.CART_GOBLIN,
+                    "Greenwashing Slayer",
+                    "🕶️",
+                    10,
+                    "item_purchased"
+                ));
+                logger.info("Created challenge: Buy 10 Items");
 
             challengeRepository.save(new Challenge(
-                "First Item Listed",
-                "Lives for shiny reusable objects",
-                15,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Eco-Barter Goblin",
-                "🏷️",
-                1,
-                "item_listed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Use Carbon Calculator",
-                "Knows what size carbon shoe you wear",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Footprint Prophet",
-                "👣",
-                1,
-                "carbon_calculated"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Explore the Recycling Map",
-                "Opened the ancient map of hidden recycling lore",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "The Bin Seeker",
-                "🗺️",
-                1,
-                "map_explored"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Make an Offer on the Marketplace",
-                "Bartered like it's the Shire Flea Market",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "The Haggle Hobbit",
-                "💰",
-                1,
-                "offer_made"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Send Your First Message",
-                "The ecosystem thanks you for breaking the silence",
-                10,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Messenger of the Green Gods",
-                "💬",
-                1,
-                "message_sent"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Add an Item to Favorites",
-                "You liked it, so you should've put a leaf on it",
-                5,
-                Challenge.ChallengeCategory.DEFAULT,
-                "Heart of Cartness",
-                "❤️",
-                1,
-                "item_favorited"
-            ));
-
-            // Ambassador Challenges
-            challengeRepository.save(new Challenge(
-                "First Friend",
-                "Probably just messaged you",
-                10,
-                Challenge.ChallengeCategory.AMBASSADOR,
-                "The Green Recruiter",
-                "🤝",
-                1,
-                "friend_added"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Three Friends",
-                "Can't stop talking about compost at parties",
-                15,
-                Challenge.ChallengeCategory.AMBASSADOR,
-                "Sir Shares-a-Lot",
-                "👥",
-                3,
-                "friend_added"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Five Friends",
-                "Granting green wishes one DM at a time",
-                25,
-                Challenge.ChallengeCategory.AMBASSADOR,
-                "Influensir",
-                "🌟",
-                5,
-                "friend_added"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Ten Friends",
-                "Rules the realm of referrals",
-                50,
-                Challenge.ChallengeCategory.AMBASSADOR,
-                "The Sustainabili-Tyrant",
-                "👑",
-                10,
-                "friend_added"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Fifteen Friends",
-                "Fifteen converts and counting",
-                75,
-                Challenge.ChallengeCategory.AMBASSADOR,
-                "The Eco Cult Leader",
-                "🔥",
-                15,
-                "friend_added"
-            ));
-
-            // Maester Challenges
-            challengeRepository.save(new Challenge(
-                "Complete 1 Lesson",
-                "Just left the Shire with a reusable cup",
-                10,
-                Challenge.ChallengeCategory.MAESTER,
-                "The Green Hobbit",
-                "📖",
-                1,
-                "lesson_completed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Complete 3 Lessons",
-                "Carries a wand made of cardboard tubes",
-                30,
-                Challenge.ChallengeCategory.MAESTER,
-                "Recyclas the Wise",
-                "🧙‍♂️",
-                3,
-                "lesson_completed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Complete 6 Lessons",
-                "Always knows what bait to use for eco-activism",
-                50,
-                Challenge.ChallengeCategory.MAESTER,
-                "Master Baitor",
-                "🎣",
-                6,
-                "lesson_completed"
-            ));
-
-            // Shelf Whisperer Challenges
-            challengeRepository.save(new Challenge(
-                "List First Item",
-                "Found treasure in a pile of old Tupperware",
-                20,
-                Challenge.ChallengeCategory.SHELF_WHISPERER,
-                "Thrift Gremlin",
-                "🏪",
-                1,
-                "item_listed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "List 3 Items",
-                "Part dragon, part Facebook Marketplace admin",
-                35,
-                Challenge.ChallengeCategory.SHELF_WHISPERER,
-                "Dealzard",
-                "🐉",
-                3,
-                "item_listed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "List 5 Items",
-                "Sells only reused jewelry",
-                75,
-                Challenge.ChallengeCategory.SHELF_WHISPERER,
-                "Lord of the Re-Rings",
-                "💍",
-                5,
-                "item_listed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "List 10 Items",
-                "Hasn't bought anything new since 2018",
-                100,
-                Challenge.ChallengeCategory.SHELF_WHISPERER,
-                "The Resale Rogue",
-                "🦹‍♂️",
-                10,
-                "item_listed"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "List 15 Items",
-                "Reigns supreme in the secondhand kingdom",
-                150,
-                Challenge.ChallengeCategory.SHELF_WHISPERER,
-                "King Cash-for-Trash",
-                "👑",
-                15,
-                "item_listed"
-            ));
-
-            // Cart Goblin Challenges
-            challengeRepository.save(new Challenge(
-                "Buy First Item",
-                "Finds deals greener than your kale smoothie",
-                20,
-                Challenge.ChallengeCategory.CART_GOBLIN,
-                "Bargain Broccoli",
-                "🥦",
-                1,
-                "item_purchased"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Buy 3 Items",
-                "Shops only during moon cycles and zero-waste sales",
-                35,
-                Challenge.ChallengeCategory.CART_GOBLIN,
-                "The Ethical Witch",
-                "🧙‍♀️",
-                3,
-                "item_purchased"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Buy 5 Items",
-                "Flies from cart to cart, pecking eco deals",
-                75,
-                Challenge.ChallengeCategory.CART_GOBLIN,
-                "Swipe Sparrow",
-                "🐦",
-                5,
-                "item_purchased"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Buy 10 Items",
-                "Sees through fake eco marketing like Neo in the Matrix",
-                100,
-                Challenge.ChallengeCategory.CART_GOBLIN,
-                "Greenwashing Slayer",
-                "🕶️",
-                10,
-                "item_purchased"
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Buy 15 Items",
-                "No plastic survives their scroll",
-                150,
-                Challenge.ChallengeCategory.CART_GOBLIN,
-                "The Cart Crusader",
-                "⚔️",
-                15,
-                "item_purchased"
-            ));
+                    "Buy 15 Items",
+                    "No plastic survives their scroll",
+                    150,
+                    Challenge.ChallengeCategory.CART_GOBLIN,
+                    "The Cart Crusader",
+                    "⚔️",
+                    15,
+                    "item_purchased"
+                ));
+                logger.info("Created challenge: Buy 15 Items");
+            } else {
+                logger.info("Challenges already exist. Skipping creation of default challenges.");
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error creating default challenges", e);
+            throw e;
         }
     }
 
     @Override
     @Transactional
     public void initializeUserChallenges(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            logger.info("Initializing user challenges for user ID: " + userId);
+            
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Challenge> allChallenges = getAllChallenges();
-        List<UserChallenge> existingChallenges = getUserChallenges(userId);
+            List<Challenge> allChallenges = getAllChallenges();
+            logger.info("Found " + allChallenges.size() + " total challenges to initialize");
+            
+            List<UserChallenge> existingChallenges = getUserChallenges(userId);
+            logger.info("Found " + existingChallenges.size() + " existing user challenges");
 
-        for (Challenge challenge : allChallenges) {
-            boolean alreadyExists = existingChallenges.stream()
-                    .anyMatch(uc -> uc.getChallenge().getId().equals(challenge.getId()));
+            int newChallengesCreated = 0;
+            for (Challenge challenge : allChallenges) {
+                boolean alreadyExists = existingChallenges.stream()
+                        .anyMatch(uc -> uc.getChallenge().getId().equals(challenge.getId()));
 
-            if (!alreadyExists) {
-                UserChallenge userChallenge = new UserChallenge(user, challenge);
-                userChallengeRepository.save(userChallenge);
+                if (!alreadyExists) {
+                    UserChallenge userChallenge = new UserChallenge(user, challenge);
+                    userChallengeRepository.save(userChallenge);
+                    newChallengesCreated++;
+                    logger.info("Created new user challenge: " + challenge.getTitle() + " for user ID: " + userId);
+                }
             }
+            
+            logger.info("Initialization complete. Created " + newChallengesCreated + " new user challenges for user ID: " + userId);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error initializing user challenges for user ID: " + userId, e);
+            throw e;
         }
     }
 } 

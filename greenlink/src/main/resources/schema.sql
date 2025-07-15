@@ -1,13 +1,3 @@
--- -- Drop tables if they exist
--- DROP TABLE IF EXISTS materials_accepted;
--- DROP TABLE IF EXISTS user_challenges;
--- DROP TABLE IF EXISTS challenges;
--- DROP TABLE IF EXISTS quiz_results;
--- DROP TABLE IF EXISTS users;
--- DROP TABLE IF EXISTS course;
--- DROP TABLE IF EXISTS products;
--- DROP TABLE IF EXISTS recycling_point;
-
 -- Create users table if not exists
 CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -50,8 +40,7 @@ CREATE TABLE IF NOT EXISTS user_challenges (
     completed_at TIMESTAMP NULL,
     status VARCHAR(20) DEFAULT 'NOT_STARTED',
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (challenge_id) REFERENCES challenges(id),
-    UNIQUE (user_id, challenge_id)
+    FOREIGN KEY (challenge_id) REFERENCES challenges(id)
 );
 
 -- Create course table
@@ -132,7 +121,7 @@ CREATE TABLE IF NOT EXISTS messages (
     content TEXT NOT NULL,
     sent_at TIMESTAMP NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
-    offer_amount DOUBLE PRECISION,
+    offer_amount DOUBLE,
     offer_status VARCHAR(20),
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (sender_id) REFERENCES users(id)
@@ -142,7 +131,7 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS negotiated_prices (
     product_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
-    negotiated_price DOUBLE PRECISION NOT NULL,
+    negotiated_price DOUBLE NOT NULL,
     PRIMARY KEY (product_id, user_id),
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
@@ -155,23 +144,4 @@ CREATE TABLE IF NOT EXISTS favorite_products (
     PRIMARY KEY (user_id, product_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
-);
-
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-CREATE INDEX IF NOT EXISTS idx_challenges_category ON challenges(category);
-CREATE INDEX IF NOT EXISTS idx_challenges_progress_event ON challenges(progress_event);
-CREATE INDEX IF NOT EXISTS idx_user_challenges_user_id ON user_challenges(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_challenges_status ON user_challenges(status);
-CREATE INDEX IF NOT EXISTS idx_user_challenges_completed_at ON user_challenges(completed_at);
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
-CREATE INDEX IF NOT EXISTS idx_products_seller_id ON products(seller_id);
-CREATE INDEX IF NOT EXISTS idx_products_eco_friendly ON products(eco_friendly);
-CREATE INDEX IF NOT EXISTS idx_quiz_results_user_id ON quiz_results(user_id);
-CREATE INDEX IF NOT EXISTS idx_quiz_results_quiz_id ON quiz_results(quiz_id);
-CREATE INDEX IF NOT EXISTS idx_conversations_product_id ON conversations(product_id);
-CREATE INDEX IF NOT EXISTS idx_conversations_seller_id ON conversations(seller_id);
-CREATE INDEX IF NOT EXISTS idx_conversations_buyer_id ON conversations(buyer_id);
-CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id);
-CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id); 
+); 

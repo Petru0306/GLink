@@ -9,8 +9,6 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
-import com.greenlink.greenlink.service.ChallengeService;
-import com.greenlink.greenlink.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

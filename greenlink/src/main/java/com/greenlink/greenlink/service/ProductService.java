@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.transaction.annotation.Transactional;
-import com.greenlink.greenlink.service.ChallengeService;
 
 @Service
 public class ProductService {

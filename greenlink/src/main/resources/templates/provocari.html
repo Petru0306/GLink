@@ -189,6 +189,7 @@
             font-size: 2.5rem;
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             -webkit-background-clip: text;
+        background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
@@ -234,13 +235,6 @@
 </header>
 
 <div class="container py-5">
-    <!-- Error Alert -->
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <span th:text="${error}">Error message</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-
     <!-- Progress Overview -->
     <div class="row g-4 mb-5">
         <div class="col-md-4">
@@ -289,22 +283,22 @@
                         <div class="text-center mb-3">
                             <div class="challenge-emoji" th:text="${userChallenge.challenge.emoji}">🌱</div>
                             <div class="badge-name" th:text="${userChallenge.challenge.badgeName}">Badge Name</div>
-                        </div>
-                        
+    </div>
+
                         <h5 class="card-title text-center mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
                         <p class="challenge-description text-center" th:text="${userChallenge.challenge.description}">Challenge description</p>
                         
                         <div class="text-center mb-3">
-                            <span class="points-badge">
-                                <i class="bi bi-coin me-2"></i>
-                                <span th:text="${userChallenge.challenge.points}">50</span> points
-                            </span>
-                        </div>
+                        <span class="points-badge">
+                            <i class="bi bi-coin me-2"></i>
+                            <span th:text="${userChallenge.challenge.points}">50</span> points
+                        </span>
+                    </div>
 
                         <div class="progress">
-                            <div class="progress-bar" role="progressbar" 
-                                 th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
-                                 th:attr="aria-valuenow=${userChallenge.progressPercentage}"
+                        <div class="progress-bar" role="progressbar" 
+                             th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
+                             th:attr="aria-valuenow=${userChallenge.progressPercentage}"
                                  aria-valuemin="0" aria-valuemax="100">
                             </div>
                         </div>
