@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findByCategory(Challenge.ChallengeCategory category);
-    List<Challenge> findByUserId(Long userId);
-    Optional<Challenge> findByIdAndUserId(Long id, Long userId);
     List<Challenge> findByProgressEvent(String progressEvent);
 }

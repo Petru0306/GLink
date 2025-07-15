@@ -18,12 +18,13 @@ public interface UserChallengeRepository extends JpaRepository<UserChallenge, Lo
     @Query("SELECT COUNT(uc) FROM UserChallenge uc WHERE uc.user.id = ?1 AND uc.status = 'COMPLETED'")
     long countCompletedChallengesByUserId(Long userId);
     
-    @Query(value = "SELECT COUNT(DISTINCT DATE(completed_at)) FROM user_challenges " +
+    @Query(value = "SELECT COALESCE(COUNT(DISTINCT DATE(completed_at)), 0) FROM user_challenges " +
            "WHERE user_id = ?1 AND status = 'COMPLETED' " +
+           "AND completed_at IS NOT NULL " +
            "AND completed_at >= CURRENT_DATE - INTERVAL '30 days'", nativeQuery = true)
     int getCurrentStreak(Long userId);
     
-    @Query("SELECT SUM(c.points) FROM UserChallenge uc JOIN uc.challenge c " +
+    @Query("SELECT COALESCE(SUM(c.points), 0) FROM UserChallenge uc JOIN uc.challenge c " +
            "WHERE uc.user.id = ?1 AND uc.status = 'COMPLETED'")
     Integer getTotalPoints(Long userId);
 } 

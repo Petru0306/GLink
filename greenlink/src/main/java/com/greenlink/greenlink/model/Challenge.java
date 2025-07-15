@@ -37,10 +37,6 @@ public class Challenge {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     public enum ChallengeCategory {
         DEFAULT("Default Challenges", "🌱", "Basic onboarding challenges"),
         AMBASSADOR("Ambassador", "🤝", "Friends-based challenges"),
@@ -178,13 +174,5 @@ public class Challenge {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

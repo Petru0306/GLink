@@ -7,10 +7,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.logging.Logger;
+
 @Controller
 @RequestMapping("/provocari")
 public class ChallengeController {
 
+    private static final Logger logger = Logger.getLogger(ChallengeController.class.getName());
     private final ChallengeService challengeService;
 
     public ChallengeController(ChallengeService challengeService) {
@@ -19,17 +22,30 @@ public class ChallengeController {
 
     @GetMapping
     public String showChallenges(Model model, @AuthenticationPrincipal User user) {
-        if (user != null) {
-            // Initialize user challenges if they don't exist
-            challengeService.initializeUserChallenges(user.getId());
-            
-            model.addAttribute("userChallengesByCategory", challengeService.getUserChallengesByCategory(user.getId()));
-            model.addAttribute("totalPoints", challengeService.getTotalPoints(user.getId()));
-            model.addAttribute("completedCount", challengeService.getCompletedChallengesCount(user.getId()));
-            model.addAttribute("currentStreak", challengeService.getCurrentStreak(user.getId()));
-            model.addAttribute("categories", Challenge.ChallengeCategory.values());
+        try {
+            if (user != null) {
+                logger.info("Loading challenges for user: " + user.getId());
+                
+                // Initialize user challenges if they don't exist
+                challengeService.initializeUserChallenges(user.getId());
+                
+                model.addAttribute("userChallengesByCategory", challengeService.getUserChallengesByCategory(user.getId()));
+                model.addAttribute("totalPoints", challengeService.getTotalPoints(user.getId()));
+                model.addAttribute("completedCount", challengeService.getCompletedChallengesCount(user.getId()));
+                model.addAttribute("currentStreak", challengeService.getCurrentStreak(user.getId()));
+                model.addAttribute("categories", Challenge.ChallengeCategory.values());
+                
+                logger.info("Successfully loaded challenges for user: " + user.getId());
+            } else {
+                logger.info("No authenticated user, showing empty challenges page");
+            }
+            return "provocari";
+        } catch (Exception e) {
+            logger.severe("Error loading challenges: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Failed to load challenges: " + e.getMessage());
+            return "provocari";
         }
-        return "provocari";
     }
 
     @PostMapping("/{challengeId}/start")
@@ -39,6 +55,7 @@ public class ChallengeController {
             challengeService.startChallenge(user.getId(), challengeId);
             return "success";
         } catch (Exception e) {
+            logger.severe("Error starting challenge: " + e.getMessage());
             return "error: " + e.getMessage();
         }
     }
@@ -53,26 +70,36 @@ public class ChallengeController {
             challengeService.updateProgress(user.getId(), challengeId, progress);
             return "success";
         } catch (Exception e) {
+            logger.severe("Error updating progress: " + e.getMessage());
             return "error: " + e.getMessage();
         }
     }
 
     @GetMapping("/category/{category}")
     public String getChallengesByCategory(@PathVariable Challenge.ChallengeCategory category, Model model, @AuthenticationPrincipal User user) {
-        if (user != null) {
-            model.addAttribute("category", category);
-            model.addAttribute("userChallenges", challengeService.getUserChallengesByStatus(user.getId(), null));
+        try {
+            if (user != null) {
+                model.addAttribute("category", category);
+                model.addAttribute("userChallenges", challengeService.getUserChallengesByStatus(user.getId(), null));
+            }
+            return "provocari :: challengeList";
+        } catch (Exception e) {
+            logger.severe("Error loading challenges by category: " + e.getMessage());
+            return "provocari :: challengeList";
         }
-        return "provocari :: challengeList";
     }
 
     @PostMapping("/event/{event}")
     @ResponseBody
     public String triggerEvent(@PathVariable String event, @RequestParam(defaultValue = "1") int increment, @AuthenticationPrincipal User user) {
         try {
+            if (user == null) {
+                return "error: User not authenticated";
+            }
             challengeService.updateProgressByEvent(user.getId(), event, increment);
             return "success";
         } catch (Exception e) {
+            logger.severe("Error triggering event: " + e.getMessage());
             return "error: " + e.getMessage();
         }
     }

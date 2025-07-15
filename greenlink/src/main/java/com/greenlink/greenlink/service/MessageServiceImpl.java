@@ -202,6 +202,9 @@ public class MessageServiceImpl implements MessageService {
             
             conversationRepository.save(conversation);
             
+            // Trigger challenge event for making an offer
+            challengeService.updateProgressByEvent(sender.getId(), "offer_made", 1);
+            
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error making offer", e);

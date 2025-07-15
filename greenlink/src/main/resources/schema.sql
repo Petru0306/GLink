@@ -37,9 +37,7 @@ CREATE TABLE IF NOT EXISTS challenges (
     target_value INTEGER NOT NULL,
     progress_event VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id BIGINT,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create user_challenges table (new structure)
@@ -62,6 +60,24 @@ CREATE TABLE IF NOT EXISTS course (
     title VARCHAR(255) NOT NULL,
     description VARCHAR(1000),
     duration INTEGER NOT NULL
+);
+
+-- Create quizzes table
+CREATE TABLE IF NOT EXISTS quizzes (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(1000),
+    points_value INTEGER NOT NULL
+);
+
+-- Create questions table
+CREATE TABLE IF NOT EXISTS questions (
+    id BIGSERIAL PRIMARY KEY,
+    quiz_id BIGINT NOT NULL,
+    question_text TEXT NOT NULL,
+    correct_answer VARCHAR(255) NOT NULL,
+    points INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
 );
 
 -- Create products table
@@ -139,4 +155,23 @@ CREATE TABLE IF NOT EXISTS favorite_products (
     PRIMARY KEY (user_id, product_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
-); 
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_challenges_category ON challenges(category);
+CREATE INDEX IF NOT EXISTS idx_challenges_progress_event ON challenges(progress_event);
+CREATE INDEX IF NOT EXISTS idx_user_challenges_user_id ON user_challenges(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_challenges_status ON user_challenges(status);
+CREATE INDEX IF NOT EXISTS idx_user_challenges_completed_at ON user_challenges(completed_at);
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_seller_id ON products(seller_id);
+CREATE INDEX IF NOT EXISTS idx_products_eco_friendly ON products(eco_friendly);
+CREATE INDEX IF NOT EXISTS idx_quiz_results_user_id ON quiz_results(user_id);
+CREATE INDEX IF NOT EXISTS idx_quiz_results_quiz_id ON quiz_results(quiz_id);
+CREATE INDEX IF NOT EXISTS idx_conversations_product_id ON conversations(product_id);
+CREATE INDEX IF NOT EXISTS idx_conversations_seller_id ON conversations(seller_id);
+CREATE INDEX IF NOT EXISTS idx_conversations_buyer_id ON conversations(buyer_id);
+CREATE INDEX IF NOT EXISTS idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id); 
