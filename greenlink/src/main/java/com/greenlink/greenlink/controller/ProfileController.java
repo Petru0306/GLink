@@ -47,9 +47,9 @@ public class ProfileController {
             List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
             model.addAttribute("quizResults", quizResults);
 
-            // Get challenges using new service methods
-            List<UserChallenge> activeChallenges = challengeService.getUserChallengesByStatus(user.getId(), UserChallenge.ChallengeStatus.IN_PROGRESS);
-            List<UserChallenge> completedChallenges = challengeService.getUserChallengesByStatus(user.getId(), UserChallenge.ChallengeStatus.COMPLETED);
+            // Get challenges
+            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
             model.addAttribute("activeChallenges", activeChallenges);
             model.addAttribute("completedChallenges", completedChallenges);
 
@@ -84,6 +84,33 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("error", "Failed to update profile: " + e.getMessage());
         }
         return "redirect:/profile";
+    }
+
+    @GetMapping("/challenges")
+    public String showChallenges(Model model, Principal principal) {
+        try {
+            User user = userService.getCurrentUser(principal.getName());
+            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
+            model.addAttribute("activeChallenges", activeChallenges);
+            model.addAttribute("completedChallenges", completedChallenges);
+            return "profile/challenges";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load challenges: " + e.getMessage());
+            return "error";
+        }
+    }
+
+    @PostMapping("/challenges/{challengeId}/complete")
+    public String completeChallenge(@PathVariable Long challengeId,
+                                  Principal principal,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            redirectAttributes.addFlashAttribute("success", "Challenge completed successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to complete challenge: " + e.getMessage());
+        }
+        return "redirect:/profile/challenges";
     }
 
     @GetMapping("/quizzes")

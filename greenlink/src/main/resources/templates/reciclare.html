@@ -87,12 +87,7 @@
         </iframe>
     </div>
 
-    <!-- Footer -->
-    <footer th:replace="fragments/footer :: footer"></footer>
-
-    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         // Add loading indicator and error handling
         const iframe = document.querySelector('.map-iframe');
@@ -111,35 +106,6 @@
             `;
         });
 
-        // Trigger challenge event for map exploration
-        document.addEventListener('DOMContentLoaded', function() {
-            triggerMapExploredEvent();
-        });
-
-        function triggerMapExploredEvent() {
-            // Check if user is authenticated
-            const isAuthenticated = document.querySelector('[sec\\:authorize="isAuthenticated()"]') !== null;
-            if (isAuthenticated) {
-                fetch('/provocari/event/map_explored?increment=1', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.text())
-                .then(result => {
-                    if (result === 'success') {
-                        console.log('Recycling map exploration challenge event triggered');
-                    } else {
-                        console.error('Failed to trigger map exploration event:', result);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error triggering map exploration event:', error);
-                });
-            }
-        }
-
         // Highlight active nav item
         document.addEventListener('DOMContentLoaded', function() {
             const currentPath = window.location.pathname;
@@ -151,7 +117,5 @@
             });
         });
     </script>
-    <!-- Include the login modal script -->
-    <div th:replace="fragments/login-modal :: loginModalScript"></div>
 </body>
 </html>

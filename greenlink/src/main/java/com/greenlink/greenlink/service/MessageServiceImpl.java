@@ -37,9 +37,6 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private ChallengeService challengeService;
-
     @Override
     public List<ConversationDto> getUserConversations(User user) {
         try {
@@ -151,9 +148,6 @@ public class MessageServiceImpl implements MessageService {
             
             conversationRepository.save(conversation);
             
-            // Trigger challenge event for first message
-            challengeService.updateProgressByEvent(sender.getId(), "message_sent", 1);
-            
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error sending message", e);
@@ -199,9 +193,6 @@ public class MessageServiceImpl implements MessageService {
             }
             
             conversationRepository.save(conversation);
-            
-            // Trigger challenge event for making an offer
-            challengeService.updateProgressByEvent(sender.getId(), "offer_made", 1);
             
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {

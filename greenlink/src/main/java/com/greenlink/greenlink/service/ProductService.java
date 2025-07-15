@@ -33,9 +33,6 @@ public class ProductService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ChallengeService challengeService;
-
     private ProductDto convertToDto(Product product) {
         String sellerName = product.getSeller() != null ? 
                 product.getSeller().getFirstName() + " " + product.getSeller().getLastName() : null;
@@ -152,12 +149,6 @@ public class ProductService {
         }
         
         Product savedProduct = productRepository.save(product);
-        
-        // Trigger challenge event for item listing
-        if (savedProduct.getSeller() != null) {
-            challengeService.updateProgressByEvent(savedProduct.getSeller().getId(), "item_listed", 1);
-        }
-        
         return convertToDto(savedProduct);
     }
 

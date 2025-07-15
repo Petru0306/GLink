@@ -20,71 +20,47 @@ public class Challenge {
     private int points;
 
     @Enumerated(EnumType.STRING)
-    private ChallengeCategory category;
+    private ChallengeType type;
 
-    @Column(nullable = false)
-    private String badgeName;
+    @Enumerated(EnumType.STRING)
+    private ChallengeStatus status;
 
-    @Column(nullable = false)
-    private String emoji;
-
-    @Column(nullable = false)
-    private int targetValue;
-
-    @Column(nullable = false)
-    private String progressEvent;
-
-    private LocalDateTime createdAt;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private LocalDateTime completedAt;
     private LocalDateTime updatedAt;
+    private int progressPercentage;
 
-    public enum ChallengeCategory {
-        DEFAULT("Default Challenges", "🌱", "Basic onboarding challenges"),
-        AMBASSADOR("Ambassador", "🤝", "Friends-based challenges"),
-        MAESTER("Maester", "📚", "Lesson-based challenges"),
-        SHELF_WHISPERER("Shelf Whisperer", "🏪", "Seller challenges"),
-        CART_GOBLIN("Cart Goblin", "🛒", "Buyer challenges");
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-        private final String displayName;
-        private final String icon;
-        private final String description;
+    public enum ChallengeType {
+        DEFAULT, AMBASADOOR, MAESTER, SHELF_WHISPERER, CART_GOBLIN
+    }
 
-        ChallengeCategory(String displayName, String icon, String description) {
-            this.displayName = displayName;
-            this.icon = icon;
-            this.description = description;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public String getIcon() {
-            return icon;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+    public enum ChallengeStatus {
+        ACTIVE, IN_PROGRESS, COMPLETED, EXPIRED
     }
 
     // Constructors
-    public Challenge() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
+    public Challenge() {}
 
-    public Challenge(String title, String description, int points, ChallengeCategory category, 
-                    String badgeName, String emoji, int targetValue, String progressEvent) {
+    public Challenge(String title, String description, int points, ChallengeType type) {
         this.title = title;
         this.description = description;
         this.points = points;
-        this.category = category;
-        this.badgeName = badgeName;
-        this.emoji = emoji;
-        this.targetValue = targetValue;
-        this.progressEvent = progressEvent;
-        this.createdAt = LocalDateTime.now();
+        this.type = type;
+        this.status = ChallengeStatus.ACTIVE;
+        this.progressPercentage = 0;
+        this.startDate = LocalDateTime.now();
+        this.endDate = calculateEndDate();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    private LocalDateTime calculateEndDate() {
+        // All challenges are unlimited duration
+        return null;
     }
 
     // Getters and Setters
@@ -120,52 +96,47 @@ public class Challenge {
         this.points = points;
     }
 
-    public ChallengeCategory getCategory() {
-        return category;
+    public ChallengeType getType() {
+        return type;
     }
 
-    public void setCategory(ChallengeCategory category) {
-        this.category = category;
+    public void setType(ChallengeType type) {
+        this.type = type;
     }
 
-    public String getBadgeName() {
-        return badgeName;
+    public ChallengeStatus getStatus() {
+        return status;
     }
 
-    public void setBadgeName(String badgeName) {
-        this.badgeName = badgeName;
+    public void setStatus(ChallengeStatus status) {
+        this.status = status;
+        if (status == ChallengeStatus.COMPLETED && this.completedAt == null) {
+            this.completedAt = LocalDateTime.now();
+        }
     }
 
-    public String getEmoji() {
-        return emoji;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setEmoji(String emoji) {
-        this.emoji = emoji;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
 
-    public int getTargetValue() {
-        return targetValue;
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 
-    public void setTargetValue(int targetValue) {
-        this.targetValue = targetValue;
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
-    public String getProgressEvent() {
-        return progressEvent;
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
     }
 
-    public void setProgressEvent(String progressEvent) {
-        this.progressEvent = progressEvent;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -174,5 +145,26 @@ public class Challenge {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getProgressPercentage() {
+        return progressPercentage;
+    }
+
+    public void setProgressPercentage(int progressPercentage) {
+        this.progressPercentage = Math.min(100, Math.max(0, progressPercentage));
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void setProgress(int progress) {
+        setProgressPercentage(progress);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

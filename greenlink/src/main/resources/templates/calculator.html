@@ -300,9 +300,6 @@ document.getElementById('carbonCalculator').addEventListener('submit', function(
 
     // Generează recomandări
     generateRecommendations();
-    
-    // Trigger challenge event for carbon calculator usage
-    triggerCarbonCalculatorEvent();
 });
 
 function calculateCarbonFootprint() {
@@ -394,30 +391,6 @@ function generateRecommendations() {
             recommendationsDiv.appendChild(div);
         }
     });
-}
-
-function triggerCarbonCalculatorEvent() {
-    // Check if user is authenticated
-    const isAuthenticated = document.querySelector('[sec\\:authorize="isAuthenticated()"]') !== null;
-    if (isAuthenticated) {
-        fetch('/provocari/event/carbon_calculated?increment=1', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.text())
-        .then(result => {
-            if (result === 'success') {
-                console.log('Carbon calculator challenge event triggered');
-            } else {
-                console.error('Failed to trigger carbon calculator event:', result);
-            }
-        })
-        .catch(error => {
-            console.error('Error triggering carbon calculator event:', error);
-        });
-    }
 }
 </script>
 </body>

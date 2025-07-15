@@ -10,12 +10,12 @@ LIMIT 1;
 
 -- Add sample messages
 INSERT INTO messages (conversation_id, sender_id, content, sent_at, is_read)
-SELECT c.id, c.buyer_id, 'Hello, I am interested in this product!', NOW() - INTERVAL '2 hours', true
+SELECT c.id, c.buyer_id, 'Hello, I am interested in this product!', NOW() - INTERVAL 2 HOUR, true
 FROM conversations c
 LIMIT 1;
 
 INSERT INTO messages (conversation_id, sender_id, content, sent_at, is_read)
-SELECT c.id, c.seller_id, 'Hi there! Thank you for your interest. Do you have any questions?', NOW() - INTERVAL '1 hour', false
+SELECT c.id, c.seller_id, 'Hi there! Thank you for your interest. Do you have any questions?', NOW() - INTERVAL 1 HOUR, false
 FROM conversations c
 LIMIT 1;
 

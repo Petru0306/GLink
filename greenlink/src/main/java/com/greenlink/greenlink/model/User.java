@@ -55,6 +55,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<QuizResult> quizResults;
 
+    @OneToMany(mappedBy = "user")
+    private List<Challenge> challenges;
+    
     @OneToMany(mappedBy = "seller")
     private List<Product> products = new ArrayList<>();
 
@@ -205,6 +208,14 @@ public class User implements UserDetails {
 
     public void setQuizResults(List<QuizResult> quizResults) {
         this.quizResults = quizResults;
+    }
+
+    public List<Challenge> getChallenges() {
+        return challenges;
+    }
+
+    public void setChallenges(List<Challenge> challenges) {
+        this.challenges = challenges;
     }
     
     public List<Product> getProducts() {

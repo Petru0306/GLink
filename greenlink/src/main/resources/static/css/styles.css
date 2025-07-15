@@ -108,6 +108,7 @@ a:hover {
 /* Header backgrounds */
 .hero-section {
     background: linear-gradient(rgba(46, 204, 113, 0.9), rgba(39, 174, 96, 0.9));
+    background-clip: border-box;
     color: var(--white);
 }
 
@@ -150,6 +151,7 @@ a:hover {
 /* Favorite Button Styles */
 .quick-favorite-btn {
     background: none;
+    background-clip: border-box;
     border: none;
     padding: 8px;
     cursor: pointer;

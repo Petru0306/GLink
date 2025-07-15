@@ -1,6 +1,6 @@
 -- Create conversations table
 CREATE TABLE conversations (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     product_id BIGINT NOT NULL,
     seller_id BIGINT NOT NULL,
     buyer_id BIGINT NOT NULL,
@@ -15,13 +15,13 @@ CREATE TABLE conversations (
 
 -- Create messages table
 CREATE TABLE messages (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     conversation_id BIGINT NOT NULL,
     sender_id BIGINT NOT NULL,
     content TEXT NOT NULL,
     sent_at TIMESTAMP NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
-    offer_amount DOUBLE PRECISION,
+    offer_amount DOUBLE,
     offer_status VARCHAR(20),
     FOREIGN KEY (conversation_id) REFERENCES conversations(id),
     FOREIGN KEY (sender_id) REFERENCES users(id)
