@@ -9,6 +9,8 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
+import com.greenlink.greenlink.service.ChallengeService;
+import com.greenlink.greenlink.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ public class MessageServiceImpl implements MessageService {
     
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ChallengeService challengeService;
 
     @Override
     public List<ConversationDto> getUserConversations(User user) {
@@ -147,6 +152,9 @@ public class MessageServiceImpl implements MessageService {
             }
             
             conversationRepository.save(conversation);
+            
+            // Trigger challenge event for first message
+            challengeService.updateProgressByEvent(sender.getId(), "message_sent", 1);
             
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {

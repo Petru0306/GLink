@@ -51,9 +51,11 @@
             border: none;
             border-radius: 15px;
             box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             background: white;
             height: 100%;
+            position: relative;
+            overflow: hidden;
         }
 
         .challenge-card:hover {
@@ -62,83 +64,78 @@
         }
 
         .challenge-card.completed {
-            background: rgba(40, 167, 69, 0.05);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(32, 201, 151, 0.05) 100%);
+            border: 2px solid rgba(40, 167, 69, 0.2);
         }
 
-        .btn-category {
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-category:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .btn-category.active {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border: none;
+        .challenge-card.completed::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
             color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 10;
         }
 
-        .btn-start {
-            padding: 0.75rem 1.5rem;
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+        .challenge-card.in-progress {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.05) 0%, rgba(255, 152, 0, 0.05) 100%);
+            border: 2px solid rgba(255, 193, 7, 0.2);
+        }
+
+        .category-header {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border: none;
-        }
-
-        .btn-start:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
-        }
-
-        .progress {
-            height: 0.8rem;
-            border-radius: 1rem;
-            background-color: rgba(40, 167, 69, 0.1);
-            margin: 1rem 0;
-        }
-
-        .progress-bar {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border-radius: 1rem;
-        }
-
-        .section-title {
-            position: relative;
-            display: inline-block;
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
             margin-bottom: 2rem;
-            font-weight: 700;
+            position: relative;
+            overflow: hidden;
         }
 
-        .section-title::after {
+        .category-header::before {
             content: '';
             position: absolute;
+            top: 0;
             left: 0;
-            bottom: -10px;
-            width: 50px;
-            height: 3px;
-            background: #28a745;
-            border-radius: 2px;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
         }
 
-        .badge {
+        .category-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge-name {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
             padding: 0.5rem 1rem;
             border-radius: 50px;
             font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
         }
 
-        .badge.bg-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        .challenge-emoji {
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
 
         .points-badge {
@@ -147,6 +144,45 @@
             padding: 0.5rem 1rem;
             border-radius: 50px;
             font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .progress {
+            height: 0.8rem;
+            border-radius: 1rem;
+            background-color: rgba(40, 167, 69, 0.1);
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 1rem;
+            transition: width 0.5s ease;
+        }
+
+        .status-indicator {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-not-started {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .status-in-progress {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-completed {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
         }
 
         .stats-icon {
@@ -155,6 +191,29 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
+        }
+
+        .challenge-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .challenge-card.completed {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -175,19 +234,6 @@
 </header>
 
 <div class="container py-5">
-    <!-- Challenge Categories -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="d-flex gap-3 flex-wrap justify-content-center">
-                <button class="btn btn-category active" data-challenge-type="ALL">All Challenges</button>
-                <button class="btn btn-category btn-outline-success" data-challenge-type="DAILY">Daily</button>
-                <button class="btn btn-category btn-outline-success" data-challenge-type="WEEKLY">Weekly</button>
-                <button class="btn btn-category btn-outline-success" data-challenge-type="MONTHLY">Monthly</button>
-                <button class="btn btn-category btn-outline-success" data-challenge-type="SPECIAL">Special</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Progress Overview -->
     <div class="row g-4 mb-5">
         <div class="col-md-4">
@@ -219,87 +265,63 @@
         </div>
     </div>
 
-    <!-- Available Challenges -->
-    <h2 class="section-title">Available Challenges</h2>
-    <div id="challengeList" class="row g-4">
-        <div th:if="${allChallenges}" th:each="challenge : ${allChallenges}" class="col-md-6">
-            <div class="challenge-card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge bg-success" th:text="${challenge.type}">Daily</span>
-                        <span class="points-badge">
-                            <i class="bi bi-coin me-2"></i>
-                            <span th:text="${challenge.points}">50</span> points
-                        </span>
-                    </div>
-                    <h5 class="card-title mb-3" th:text="${challenge.title}">Challenge Title</h5>
-                    <p class="card-text text-muted mb-4" th:text="${challenge.description}">Challenge description</p>
-                    <button class="btn btn-start w-100" 
-                            th:data-challenge-id="${challenge.id}"
-                            onclick="startChallenge(this)">
-                        <i class="bi bi-play-circle me-2"></i>Start Challenge
-                    </button>
-                </div>
+    <!-- Challenge Categories -->
+    <div th:if="${userChallengesByCategory}" th:each="categoryEntry : ${userChallengesByCategory}">
+        <div class="category-header">
+            <div class="category-content text-center">
+                <div class="category-icon" th:text="${categoryEntry.key.icon}">🌱</div>
+                <h2 class="mb-2" th:text="${categoryEntry.key.displayName}">Default Challenges</h2>
+                <p class="mb-0 opacity-75" th:text="${categoryEntry.key.description}">Basic onboarding challenges</p>
             </div>
         </div>
-    </div>
 
-    <!-- Active Challenges -->
-    <h2 class="section-title mt-5">Active Challenges</h2>
-    <div class="row g-4">
-        <div th:if="${activeChallenges}" th:each="userChallenge : ${activeChallenges}" class="col-md-6">
-            <div class="challenge-card">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge bg-success" th:text="${userChallenge.challenge.type}">Daily</span>
-                        <span class="points-badge">
-                            <i class="bi bi-coin me-2"></i>
-                            <span th:text="${userChallenge.challenge.points}">50</span> points
-                        </span>
-                    </div>
-                    <h5 class="card-title mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
-                    <p class="card-text text-muted mb-4" th:text="${userChallenge.challenge.description}">Challenge description</p>
-                    <div class="progress mb-3">
-                        <div class="progress-bar" role="progressbar" 
-                             th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
-                             th:attr="aria-valuenow=${userChallenge.progressPercentage}"
-                             aria-valuemin="0" aria-valuemax="100"
-                             th:text="${userChallenge.progressPercentage + '%'}">
+        <div class="row g-4 mb-5">
+            <div th:each="userChallenge : ${categoryEntry.value}" class="col-md-6 col-lg-4">
+                <div class="challenge-card" th:classappend="${userChallenge.status.name().toLowerCase()}">
+                    <div class="card-body p-4">
+                        <div class="text-center mb-3">
+                            <div class="challenge-emoji" th:text="${userChallenge.challenge.emoji}">🌱</div>
+                            <div class="badge-name" th:text="${userChallenge.challenge.badgeName}">Badge Name</div>
+                        </div>
+                        
+                        <h5 class="card-title text-center mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
+                        <p class="challenge-description text-center" th:text="${userChallenge.challenge.description}">Challenge description</p>
+                        
+                        <div class="text-center mb-3">
+                            <span class="points-badge">
+                                <i class="bi bi-coin me-2"></i>
+                                <span th:text="${userChallenge.challenge.points}">50</span> points
+                            </span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
+                                 th:attr="aria-valuenow=${userChallenge.progressPercentage}"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <span class="status-indicator" 
+                                  th:classappend="'status-' + ${userChallenge.status.name().toLowerCase().replace('_', '-')}"
+                                  th:text="${userChallenge.status.displayName}">Not started</span>
+                        </div>
+                        
+                        <div class="progress-text text-center">
+                            <span th:text="${userChallenge.currentValue}">0</span> / <span th:text="${userChallenge.challenge.targetValue}">1</span>
                         </div>
                     </div>
-                    <button class="btn btn-start w-100" 
-                            th:data-challenge-id="${userChallenge.id}"
-                            onclick="updateProgress(this)"
-                            th:text="${userChallenge.progressPercentage < 100 ? 'Update Progress' : 'Mark as Complete'}">
-                        Update Progress
-                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Completed Challenges -->
-    <h2 class="section-title mt-5">Completed Challenges</h2>
-    <div class="row g-4">
-        <div th:if="${completedChallenges}" th:each="userChallenge : ${completedChallenges}" class="col-md-6">
-            <div class="challenge-card completed">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge bg-success" th:text="${userChallenge.challenge.type}">Daily</span>
-                        <span class="points-badge">
-                            <i class="bi bi-check-circle-fill me-2"></i>
-                            <span th:text="${userChallenge.challenge.points}">50</span> points earned
-                        </span>
-                    </div>
-                    <h5 class="card-title mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
-                    <p class="card-text text-muted mb-4" th:text="${userChallenge.challenge.description}">Challenge description</p>
-                    <small class="text-success">
-                        <i class="bi bi-calendar-check me-2"></i>
-                        Completed on <span th:text="${#temporals.format(userChallenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
-                    </small>
-                </div>
-            </div>
-        </div>
+    <!-- Empty State -->
+    <div th:if="${!userChallengesByCategory || userChallengesByCategory.isEmpty()}" class="text-center py-5">
+        <i class="bi bi-emoji-smile display-1 text-muted mb-4"></i>
+        <h3 class="text-muted">No challenges available yet</h3>
+        <p class="text-muted">Challenges will appear here once they're set up.</p>
     </div>
 </div>
 
@@ -311,9 +333,26 @@
 
 <!-- Challenge Scripts -->
 <script>
-function startChallenge(button) {
-    const challengeId = button.getAttribute('data-challenge-id');
-    fetch(`/provocari/${challengeId}/start`, {
+// Auto-refresh progress bars with animation
+function animateProgressBars() {
+    const progressBars = document.querySelectorAll('.progress-bar');
+    progressBars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 100);
+    });
+}
+
+// Initialize animations when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    animateProgressBars();
+});
+
+// Function to trigger challenge events (for testing)
+function triggerEvent(event, increment = 1) {
+    fetch(`/provocari/event/${event}?increment=${increment}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -324,76 +363,19 @@ function startChallenge(button) {
         if (result === 'success') {
             window.location.reload();
         } else {
-            alert('Failed to start challenge: ' + result);
+            console.error('Failed to trigger event:', result);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Failed to start challenge');
     });
 }
 
-function updateProgress(button) {
-    const challengeId = button.getAttribute('data-challenge-id');
-    const progress = prompt('Enter progress percentage (0-100):', '0');
-    
-    if (progress === null) return;
-    
-    const progressValue = parseInt(progress);
-    if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
-        alert('Please enter a valid number between 0 and 100');
-        return;
-    }
-
-    fetch(`/provocari/${challengeId}/progress`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `progress=${progressValue}`
-    })
-    .then(response => response.text())
-    .then(result => {
-        if (result === 'success') {
-            window.location.reload();
-        } else {
-            alert('Failed to update progress: ' + result);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update progress');
-    });
-}
-
-// Category filter functionality
-document.querySelectorAll('[data-challenge-type]').forEach(button => {
-    button.addEventListener('click', function() {
-        // Remove active class from all buttons
-        document.querySelectorAll('[data-challenge-type]').forEach(btn => {
-            btn.classList.remove('active');
-            btn.classList.add('btn-outline-success');
-        });
-        
-        // Add active class to clicked button
-        this.classList.add('active');
-        this.classList.remove('btn-outline-success');
-        
-        const type = this.getAttribute('data-challenge-type');
-        filterChallenges(type);
-    });
-});
-
-function filterChallenges(type) {
-    const challenges = document.querySelectorAll('#challengeList .challenge-card');
-    challenges.forEach(challenge => {
-        const challengeType = challenge.querySelector('.badge').textContent;
-        if (type === 'ALL' || challengeType === type) {
-            challenge.closest('.col-md-6').style.display = '';
-        } else {
-            challenge.closest('.col-md-6').style.display = 'none';
-        }
-    });
+// Add some test buttons for development (remove in production)
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('Development mode: Challenge events can be triggered via console');
+    console.log('Example: triggerEvent("lesson_completed", 1)');
+    console.log('Available events: avatar_created, lesson_completed, photo_uploaded, quiz_completed, item_listed, carbon_calculated, map_explored, offer_made, message_sent, item_favorited, friend_added, item_purchased');
 }
 </script>
 

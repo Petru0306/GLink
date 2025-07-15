@@ -20,51 +20,75 @@ public class Challenge {
     private int points;
 
     @Enumerated(EnumType.STRING)
-    private ChallengeType type;
+    private ChallengeCategory category;
 
-    @Enumerated(EnumType.STRING)
-    private ChallengeStatus status;
+    @Column(nullable = false)
+    private String badgeName;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private LocalDateTime completedAt;
+    @Column(nullable = false)
+    private String emoji;
+
+    @Column(nullable = false)
+    private int targetValue;
+
+    @Column(nullable = false)
+    private String progressEvent;
+
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int progressPercentage;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public enum ChallengeType {
-        DAILY, WEEKLY, MONTHLY, SPECIAL
-    }
+    public enum ChallengeCategory {
+        DEFAULT("Default Challenges", "🌱", "Basic onboarding challenges"),
+        AMBASSADOR("Ambassador", "🤝", "Friends-based challenges"),
+        MAESTER("Maester", "📚", "Lesson-based challenges"),
+        SHELF_WHISPERER("Shelf Whisperer", "🏪", "Seller challenges"),
+        CART_GOBLIN("Cart Goblin", "🛒", "Buyer challenges");
 
-    public enum ChallengeStatus {
-        ACTIVE, IN_PROGRESS, COMPLETED, EXPIRED
+        private final String displayName;
+        private final String icon;
+        private final String description;
+
+        ChallengeCategory(String displayName, String icon, String description) {
+            this.displayName = displayName;
+            this.icon = icon;
+            this.description = description;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     // Constructors
-    public Challenge() {}
-
-    public Challenge(String title, String description, int points, ChallengeType type) {
-        this.title = title;
-        this.description = description;
-        this.points = points;
-        this.type = type;
-        this.status = ChallengeStatus.ACTIVE;
-        this.progressPercentage = 0;
-        this.startDate = LocalDateTime.now();
-        this.endDate = calculateEndDate();
+    public Challenge() {
+        this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    private LocalDateTime calculateEndDate() {
-        return switch (type) {
-            case DAILY -> startDate.plusDays(1);
-            case WEEKLY -> startDate.plusWeeks(1);
-            case MONTHLY -> startDate.plusMonths(1);
-            case SPECIAL -> startDate.plusMonths(3); // Special challenges last 3 months by default
-        };
+    public Challenge(String title, String description, int points, ChallengeCategory category, 
+                    String badgeName, String emoji, int targetValue, String progressEvent) {
+        this.title = title;
+        this.description = description;
+        this.points = points;
+        this.category = category;
+        this.badgeName = badgeName;
+        this.emoji = emoji;
+        this.targetValue = targetValue;
+        this.progressEvent = progressEvent;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -100,47 +124,52 @@ public class Challenge {
         this.points = points;
     }
 
-    public ChallengeType getType() {
-        return type;
+    public ChallengeCategory getCategory() {
+        return category;
     }
 
-    public void setType(ChallengeType type) {
-        this.type = type;
+    public void setCategory(ChallengeCategory category) {
+        this.category = category;
     }
 
-    public ChallengeStatus getStatus() {
-        return status;
+    public String getBadgeName() {
+        return badgeName;
     }
 
-    public void setStatus(ChallengeStatus status) {
-        this.status = status;
-        if (status == ChallengeStatus.COMPLETED && this.completedAt == null) {
-            this.completedAt = LocalDateTime.now();
-        }
+    public void setBadgeName(String badgeName) {
+        this.badgeName = badgeName;
     }
 
-    public LocalDateTime getStartDate() {
-        return startDate;
+    public String getEmoji() {
+        return emoji;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
+    public void setEmoji(String emoji) {
+        this.emoji = emoji;
     }
 
-    public LocalDateTime getEndDate() {
-        return endDate;
+    public int getTargetValue() {
+        return targetValue;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
+    public void setTargetValue(int targetValue) {
+        this.targetValue = targetValue;
     }
 
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
+    public String getProgressEvent() {
+        return progressEvent;
     }
 
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
+    public void setProgressEvent(String progressEvent) {
+        this.progressEvent = progressEvent;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
@@ -149,19 +178,6 @@ public class Challenge {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public int getProgressPercentage() {
-        return progressPercentage;
-    }
-
-    public void setProgressPercentage(int progressPercentage) {
-        this.progressPercentage = Math.min(100, Math.max(0, progressPercentage));
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void setProgress(int progress) {
-        setProgressPercentage(progress);
     }
 
     public User getUser() {

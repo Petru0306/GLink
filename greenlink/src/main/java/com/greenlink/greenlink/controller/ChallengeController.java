@@ -20,12 +20,14 @@ public class ChallengeController {
     @GetMapping
     public String showChallenges(Model model, @AuthenticationPrincipal User user) {
         if (user != null) {
-            model.addAttribute("activeChallenges", challengeService.getUserActiveChallenges(user.getId()));
-            model.addAttribute("completedChallenges", challengeService.getUserCompletedChallenges(user.getId()));
+            // Initialize user challenges if they don't exist
+            challengeService.initializeUserChallenges(user.getId());
+            
+            model.addAttribute("userChallengesByCategory", challengeService.getUserChallengesByCategory(user.getId()));
             model.addAttribute("totalPoints", challengeService.getTotalPoints(user.getId()));
             model.addAttribute("completedCount", challengeService.getCompletedChallengesCount(user.getId()));
             model.addAttribute("currentStreak", challengeService.getCurrentStreak(user.getId()));
-            model.addAttribute("allChallenges", challengeService.getAllChallenges());
+            model.addAttribute("categories", Challenge.ChallengeCategory.values());
         }
         return "provocari";
     }
@@ -55,9 +57,23 @@ public class ChallengeController {
         }
     }
 
-    @GetMapping("/type/{type}")
-    public String getChallengesByType(@PathVariable Challenge.ChallengeType type, Model model) {
-        model.addAttribute("challenges", challengeService.getChallengesByType(type));
+    @GetMapping("/category/{category}")
+    public String getChallengesByCategory(@PathVariable Challenge.ChallengeCategory category, Model model, @AuthenticationPrincipal User user) {
+        if (user != null) {
+            model.addAttribute("category", category);
+            model.addAttribute("userChallenges", challengeService.getUserChallengesByStatus(user.getId(), null));
+        }
         return "provocari :: challengeList";
+    }
+
+    @PostMapping("/event/{event}")
+    @ResponseBody
+    public String triggerEvent(@PathVariable String event, @RequestParam(defaultValue = "1") int increment, @AuthenticationPrincipal User user) {
+        try {
+            challengeService.updateProgressByEvent(user.getId(), event, increment);
+            return "success";
+        } catch (Exception e) {
+            return "error: " + e.getMessage();
+        }
     }
 } 

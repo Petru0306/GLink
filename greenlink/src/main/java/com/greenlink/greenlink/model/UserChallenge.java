@@ -19,16 +19,32 @@ public class UserChallenge {
     @JoinColumn(name = "challenge_id", nullable = false)
     private Challenge challenge;
 
-    private int progressPercentage;
+    private int currentValue;
     
-    @Column(name = "start_date")
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
     
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
     @Enumerated(EnumType.STRING)
-    private Challenge.ChallengeStatus status;
+    private ChallengeStatus status;
+
+    public enum ChallengeStatus {
+        NOT_STARTED("Not started"),
+        IN_PROGRESS("In progress"),
+        COMPLETED("Completed");
+
+        private final String displayName;
+
+        ChallengeStatus(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
 
     // Constructors
     public UserChallenge() {}
@@ -36,9 +52,9 @@ public class UserChallenge {
     public UserChallenge(User user, Challenge challenge) {
         this.user = user;
         this.challenge = challenge;
-        this.progressPercentage = 0;
+        this.currentValue = 0;
         this.startedAt = LocalDateTime.now();
-        this.status = Challenge.ChallengeStatus.ACTIVE;
+        this.status = ChallengeStatus.NOT_STARTED;
     }
 
     // Getters and Setters
@@ -66,16 +82,18 @@ public class UserChallenge {
         this.challenge = challenge;
     }
 
-    public int getProgressPercentage() {
-        return progressPercentage;
+    public int getCurrentValue() {
+        return currentValue;
     }
 
-    public void setProgressPercentage(int progressPercentage) {
-        this.progressPercentage = Math.min(100, Math.max(0, progressPercentage));
-        if (this.progressPercentage == 100 && this.status != Challenge.ChallengeStatus.COMPLETED) {
-            this.status = Challenge.ChallengeStatus.COMPLETED;
-            this.completedAt = LocalDateTime.now();
-        }
+    public void setCurrentValue(int currentValue) {
+        this.currentValue = currentValue;
+        this.updateStatus();
+    }
+
+    public int getProgressPercentage() {
+        if (challenge.getTargetValue() == 0) return 0;
+        return Math.min(100, (currentValue * 100) / challenge.getTargetValue());
     }
 
     public LocalDateTime getStartedAt() {
@@ -94,14 +112,27 @@ public class UserChallenge {
         this.completedAt = completedAt;
     }
 
-    public Challenge.ChallengeStatus getStatus() {
+    public ChallengeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Challenge.ChallengeStatus status) {
+    public void setStatus(ChallengeStatus status) {
         this.status = status;
-        if (status == Challenge.ChallengeStatus.COMPLETED && this.completedAt == null) {
+        if (status == ChallengeStatus.COMPLETED && this.completedAt == null) {
             this.completedAt = LocalDateTime.now();
+        }
+    }
+
+    private void updateStatus() {
+        if (currentValue >= challenge.getTargetValue()) {
+            this.status = ChallengeStatus.COMPLETED;
+            if (this.completedAt == null) {
+                this.completedAt = LocalDateTime.now();
+            }
+        } else if (currentValue > 0) {
+            this.status = ChallengeStatus.IN_PROGRESS;
+        } else {
+            this.status = ChallengeStatus.NOT_STARTED;
         }
     }
 } 

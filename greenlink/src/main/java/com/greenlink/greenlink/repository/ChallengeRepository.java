@@ -9,8 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
-    List<Challenge> findByUserIdAndStatus(Long userId, Challenge.ChallengeStatus status);
+    List<Challenge> findByCategory(Challenge.ChallengeCategory category);
+    List<Challenge> findByUserId(Long userId);
     Optional<Challenge> findByIdAndUserId(Long id, Long userId);
-    List<Challenge> findByType(Challenge.ChallengeType type);
-    List<Challenge> findByStatus(Challenge.ChallengeStatus status);
+    List<Challenge> findByProgressEvent(String progressEvent);
 }

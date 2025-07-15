@@ -7,6 +7,7 @@ import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,9 @@ public class FavoritesController {
     
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ChallengeService challengeService;
 
     /**
      * Shows the list of favourite products for the currently authenticated user.
@@ -110,6 +114,9 @@ public class FavoritesController {
                 currentUser.getFavoriteProducts().add(product);
                 userRepository.save(currentUser);
                 wasAdded = true;
+                
+                // Trigger challenge event for favoriting
+                challengeService.updateProgressByEvent(currentUser.getId(), "item_favorited", 1);
             }
             
             Map<String, Object> response = new HashMap<>();
