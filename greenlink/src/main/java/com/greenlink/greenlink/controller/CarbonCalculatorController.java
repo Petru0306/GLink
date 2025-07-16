@@ -18,8 +18,20 @@ public class CarbonCalculatorController {
     private ChallengeTrackingService challengeTrackingService;
 
     @GetMapping
-    public String showCalculator(Model model) {
+    public String showCalculator(Model model, @AuthenticationPrincipal User user) {
         model.addAttribute("pageTitle", "Calculator Amprentă de Carbon");
+        
+        // Track carbon calculator usage for challenges when user visits the page
+        if (user != null) {
+            try {
+                challengeTrackingService.trackUserAction(user.getId(), "CARBON_CALCULATOR_USED", null);
+                System.out.println("Successfully tracked carbon calculator visit for user: " + user.getId());
+            } catch (Exception e) {
+                System.err.println("Error tracking carbon calculator visit: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+        
         return "calculator";
     }
 
@@ -27,7 +39,15 @@ public class CarbonCalculatorController {
     public String calculateCarbonFootprint(@AuthenticationPrincipal User user) {
         if (user != null) {
             // Track carbon calculator usage for challenges
-            challengeTrackingService.trackUserAction(user.getId(), "CARBON_CALCULATOR_USED", null);
+            try {
+                challengeTrackingService.trackUserAction(user.getId(), "CARBON_CALCULATOR_USED", null);
+                System.out.println("Successfully tracked carbon calculator usage for user: " + user.getId());
+            } catch (Exception e) {
+                System.err.println("Error tracking carbon calculator usage: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("User is not authenticated when calculating carbon footprint");
         }
         return "redirect:/calculator";
     }
