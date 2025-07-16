@@ -53,37 +53,6 @@ public class DataInitializationConfig implements CommandLineRunner {
     private void createDefaultChallengesIfNeeded() {
         if (challengeRepository.count() == 0) {
             // Default Challenges
-            challengeRepository.save(new Challenge(
-                "Create Your Eco Avatar",
-                "A weirdo from another planet who only eats leftovers",
-                5,
-                "Captain Compostface",
-                Challenge.ChallengeType.DEFAULT_CHALLENGES
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Complete Your First Lesson",
-                "Understands plants better than people",
-                10,
-                "The Leaf Whisperer",
-                Challenge.ChallengeType.DEFAULT_CHALLENGES
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Upload Your First Photo",
-                "Snaps pics faster than trash hits the ground",
-                10,
-                "Shutter the Litter",
-                Challenge.ChallengeType.DEFAULT_CHALLENGES
-            ));
-
-            challengeRepository.save(new Challenge(
-                "Take the Eco Personality Quiz",
-                "Thinks Buzzfeed quizzes are spiritual experiences",
-                10,
-                "The Sorting Sprout",
-                Challenge.ChallengeType.DEFAULT_CHALLENGES
-            ));
 
             challengeRepository.save(new Challenge(
                 "First Item Listed",

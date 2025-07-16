@@ -290,6 +290,106 @@
 <script>
 document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    // Calculate carbon footprint...
+    calculateCarbonFootprint();
+    
+    // Send POST request to track challenge completion
+    fetch('/calculator/calculate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.getAttribute('content')
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        // Success - challenge tracked
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+function calculateCarbonFootprint() {
+    // Get form values
+    const carKm = parseFloat(document.getElementById('carKm').value) || 0;
+    const flights = parseFloat(document.getElementById('flights').value) || 0;
+    const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+    const gas = parseFloat(document.getElementById('gas').value) || 0;
+    const wasteGenerated = parseFloat(document.getElementById('wasteGenerated').value) || 0;
+    
+    // Calculate total carbon footprint (simplified example)
+    let totalCarbon = 0;
+    
+    // Transport emissions
+    const fuelType = document.getElementById('fuelType').value;
+    const carEmissionFactor = {
+        petrol: 0.2,
+        diesel: 0.25,
+        hybrid: 0.1,
+        electric: 0.05
+    }[fuelType];
+    
+    totalCarbon += (carKm * 52 * carEmissionFactor); // Yearly car emissions
+    totalCarbon += (flights * 0.9); // Flight emissions
+    
+    // Energy emissions
+    const renewableEnergy = document.getElementById('renewableEnergy').checked;
+    const energyFactor = renewableEnergy ? 0.5 : 1;
+    totalCarbon += (electricity * 12 * 0.4 * energyFactor); // Yearly electricity emissions
+    totalCarbon += (gas * 12 * 0.2); // Yearly gas emissions
+    
+    // Diet emissions
+    const diet = document.getElementById('diet').value;
+    const dietFactor = {
+        meat: 2.5,
+        flexitarian: 1.5,
+        vegetarian: 1.0,
+        vegan: 0.8
+    }[diet];
+    
+    const homeMeals = parseFloat(document.getElementById('homeMeals').value) || 0;
+    const foodWaste = parseFloat(document.getElementById('foodWaste').value) || 0;
+    
+    totalCarbon += (dietFactor * 1.5); // Diet emissions
+    totalCarbon += (foodWaste * 12 * 0.1); // Food waste emissions
+    
+    // Waste emissions
+    const recycleTypes = ['recyclePlastic', 'recyclePaper', 'recycleGlass', 'recycleMetal']
+        .filter(id => document.getElementById(id).checked).length;
+    const recyclingFactor = 1 - (recycleTypes * 0.1); // 10% reduction per type recycled
+    
+    totalCarbon += (wasteGenerated * 12 * 0.1 * recyclingFactor); // Yearly waste emissions
+    
+    // Convert to tonnes and round to 2 decimal places
+    const totalTonnes = (totalCarbon / 1000).toFixed(2);
+    
+    // Show results
+    document.getElementById('resultCard').classList.remove('d-none');
+    document.getElementById('carbonResult').textContent = totalTonnes;
+    
+    // Generate recommendations
+    const recommendations = [];
+    if (carKm > 100) recommendations.push('Consider using public transport or cycling for shorter journeys.');
+    if (!renewableEnergy) recommendations.push('Switch to a renewable energy provider to reduce your carbon footprint.');
+    if (diet === 'meat') recommendations.push('Try incorporating more plant-based meals into your diet.');
+    if (recycleTypes < 4) recommendations.push('Increase your recycling efforts to reduce waste emissions.');
+    if (foodWaste > 2) recommendations.push('Plan your meals to reduce food waste.');
+    
+    const recommendationsHtml = recommendations
+        .map(rec => `<div class="recommendation-item p-3"><i class="bi bi-lightbulb me-2 text-success"></i>${rec}</div>`)
+        .join('');
+    
+    document.getElementById('recommendations').innerHTML = recommendationsHtml;
+}
+</script>
+
+<script>
+document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
+    e.preventDefault();
 
     // Aici va fi logica de calcul
     const result = calculateCarbonFootprint();
