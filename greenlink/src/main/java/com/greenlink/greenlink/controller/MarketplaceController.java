@@ -7,6 +7,7 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.FileStorageService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class MarketplaceController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
 
     @GetMapping("/{branch}")
     public String showBranchMarketplace(
@@ -246,12 +250,12 @@ public class MarketplaceController {
                            @RequestParam("imageFile") MultipartFile imageFile,
                            RedirectAttributes redirectAttributes) {
         try {
-        if (!imageFile.isEmpty()) {
-            String fileName = fileStorageService.storeFile(imageFile);
-            productDto.setImageUrl("/files/products/" + fileName);
-        }
+            if (!imageFile.isEmpty()) {
+                String fileName = fileStorageService.storeFile(imageFile);
+                productDto.setImageUrl("/files/products/" + fileName);
+            }
 
-        productService.addProduct(productDto);
+            productService.addProduct(productDto);
             redirectAttributes.addFlashAttribute("success", "Produsul a fost adăugat cu succes!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la adăugarea produsului: " + e.getMessage());
@@ -285,6 +289,10 @@ public class MarketplaceController {
             productService.addProduct(productDto);
             logger.info("Product successfully added with ID: {} and imageUrl: {}", 
                       productDto.getId(), productDto.getImageUrl());
+            
+            // Track marketplace item listing for challenges
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_ITEM_LISTED", productDto);
+            
             redirectAttributes.addFlashAttribute("success", "Produsul tău a fost listat cu succes în marketplace!");
         } catch (Exception e) {
             logger.error("Error adding product: {}", e.getMessage(), e);

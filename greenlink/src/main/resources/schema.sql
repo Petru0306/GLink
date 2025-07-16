@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS challenges (
     title VARCHAR(255) NOT NULL,
     description VARCHAR(1000),
     points INTEGER NOT NULL,
+    badge VARCHAR(100),
     type VARCHAR(50),
     status VARCHAR(50),
     start_date TIMESTAMP,

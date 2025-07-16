@@ -21,6 +21,9 @@ public class UserChallenge {
 
     private int progressPercentage;
     
+    @Column(name = "current_value")
+    private Integer currentValue;
+    
     @Column(name = "start_date")
     private LocalDateTime startedAt;
     
@@ -37,8 +40,9 @@ public class UserChallenge {
         this.user = user;
         this.challenge = challenge;
         this.progressPercentage = 0;
+        this.currentValue = 0;
         this.startedAt = LocalDateTime.now();
-        this.status = Challenge.ChallengeStatus.ACTIVE;
+        this.status = Challenge.ChallengeStatus.IN_PROGRESS;
     }
 
     // Getters and Setters
@@ -76,6 +80,14 @@ public class UserChallenge {
             this.status = Challenge.ChallengeStatus.COMPLETED;
             this.completedAt = LocalDateTime.now();
         }
+    }
+
+    public Integer getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(Integer currentValue) {
+        this.currentValue = currentValue;
     }
 
     public LocalDateTime getStartedAt() {

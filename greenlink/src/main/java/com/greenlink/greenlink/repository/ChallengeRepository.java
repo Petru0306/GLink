@@ -13,4 +13,5 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Optional<Challenge> findByIdAndUserId(Long id, Long userId);
     List<Challenge> findByType(Challenge.ChallengeType type);
     List<Challenge> findByStatus(Challenge.ChallengeStatus status);
+    List<Challenge> findByTitle(String title);
 }

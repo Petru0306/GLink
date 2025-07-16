@@ -5,6 +5,7 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.service.CourseService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,9 @@ public class EducationController {
     
     @Autowired
     private QuizResultRepository quizResultRepository;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
 
     @GetMapping
     public String getAllCourses(Model model) {
@@ -95,6 +99,9 @@ public class EducationController {
             
             // Create a quiz result record
             courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, pointsEarned);
+            
+            // Track lesson completion for challenges
+            challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
             
             // Calculate new level
             int oldLevel = (currentUser.getPoints() - pointsEarned) / 50 + 1;

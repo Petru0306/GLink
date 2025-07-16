@@ -60,8 +60,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     @Transactional
-    public UserChallenge updateProgress(Long userId, Long challengeId, int progress) {
-        UserChallenge userChallenge = userChallengeRepository.findById(challengeId)
+    public UserChallenge updateProgress(Long userId, Long userChallengeId, int progress) {
+        UserChallenge userChallenge = userChallengeRepository.findById(userChallengeId)
                 .orElseThrow(() -> new RuntimeException("Challenge progress not found"));
 
         if (!userChallenge.getUser().getId().equals(userId)) {
@@ -86,51 +86,5 @@ public class ChallengeServiceImpl implements ChallengeService {
     public int getTotalPoints(Long userId) {
         Integer points = userChallengeRepository.getTotalPoints(userId);
         return points != null ? points : 0;
-    }
-
-    @Override
-    @Transactional
-    public void createDefaultChallenges() {
-        if (challengeRepository.count() == 0) {
-            // Default Challenges
-            challengeRepository.save(new Challenge(
-                "Create Your Eco Avatar",
-                "A weirdo from another planet who only eats leftovers",
-                5,
-                Challenge.ChallengeType.DEFAULT
-            ));
-
-            // Ambasadoor Challenges
-            challengeRepository.save(new Challenge(
-                "First Friend",
-                "Probably just messaged you",
-                10,
-                Challenge.ChallengeType.AMBASADOOR
-            ));
-
-            // Maester Challenges
-            challengeRepository.save(new Challenge(
-                "Complete 1 Lesson",
-                "Just left the Shire with a reusable cup",
-                10,
-                Challenge.ChallengeType.MAESTER
-            ));
-
-            // Shelf Whisperer Challenges
-            challengeRepository.save(new Challenge(
-                "List First Item",
-                "Found treasure in a pile of old Tupperware",
-                20,
-                Challenge.ChallengeType.SHELF_WHISPERER
-            ));
-
-            // Cart Goblin Challenges
-            challengeRepository.save(new Challenge(
-                "Buy First Item",
-                "Finds deals greener than your kale smoothie",
-                20,
-                Challenge.ChallengeType.CART_GOBLIN
-            ));
-        }
     }
 } 

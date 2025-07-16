@@ -8,6 +8,7 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,9 @@ public class MessageController {
     
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
     
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -129,6 +133,10 @@ public class MessageController {
             User currentUser = userService.getUserByEmail(principal.getName());
             
             MessageDto message = messageService.sendMessage(conversationId, currentUser, content);
+            
+            // Track message sending for challenges
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
+            
             return ResponseEntity.ok(message);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error sending message", e);
@@ -150,6 +158,10 @@ public class MessageController {
             User currentUser = userService.getUserByEmail(principal.getName());
             
             MessageDto message = messageService.makeOffer(conversationId, currentUser, offerAmount);
+            
+            // Track marketplace offer for challenges
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_OFFER_MADE", null);
+            
             return ResponseEntity.ok(message);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error making offer", e);

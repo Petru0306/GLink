@@ -19,6 +19,9 @@ public class Challenge {
     @Column(nullable = false)
     private int points;
 
+    @Column(length = 100)
+    private String badge;
+
     @Enumerated(EnumType.STRING)
     private ChallengeType type;
 
@@ -30,13 +33,19 @@ public class Challenge {
     private LocalDateTime completedAt;
     private LocalDateTime updatedAt;
     private int progressPercentage;
+    
+    @Column(name = "target_value")
+    private int targetValue = 1;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     public enum ChallengeType {
-        DEFAULT, AMBASADOOR, MAESTER, SHELF_WHISPERER, CART_GOBLIN
+        DEFAULT_CHALLENGES, AMBASSADOR, MAESTER, SHELF_WHISPERER, CART_GOBLIN
     }
 
     public enum ChallengeStatus {
@@ -58,8 +67,21 @@ public class Challenge {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public Challenge(String title, String description, int points, String badge, ChallengeType type) {
+        this.title = title;
+        this.description = description;
+        this.points = points;
+        this.badge = badge;
+        this.type = type;
+        this.status = ChallengeStatus.ACTIVE;
+        this.progressPercentage = 0;
+        this.startDate = LocalDateTime.now();
+        this.endDate = calculateEndDate();
+        this.updatedAt = LocalDateTime.now();
+    }
+
     private LocalDateTime calculateEndDate() {
-        // All challenges are unlimited duration
+        // All challenges are now unlimited (no end date)
         return null;
     }
 
@@ -166,5 +188,29 @@ public class Challenge {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getBadge() {
+        return badge;
+    }
+
+    public void setBadge(String badge) {
+        this.badge = badge;
+    }
+    
+    public int getTargetValue() {
+        return targetValue;
+    }
+    
+    public void setTargetValue(int targetValue) {
+        this.targetValue = targetValue;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

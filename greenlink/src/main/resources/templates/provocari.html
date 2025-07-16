@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Challenges - GreenLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -66,63 +68,22 @@
         }
 
         .btn-category {
-            padding: 1rem 1.5rem;
-            border-radius: 15px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
             font-weight: 600;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .btn-category:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
         .btn-category.active {
-            border: 2px solid currentColor;
-            transform: translateY(-2px);
-        }
-
-        .btn-category.default {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
             color: white;
-        }
-
-        .btn-category.ambasadoor {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .btn-category.maester {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-category.shelf-whisperer {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: white;
-        }
-
-        .btn-category.cart-goblin {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .btn-category.outline {
-            background: white;
-            color: #6c757d;
-            border: 2px solid #e9ecef;
-        }
-
-        .btn-category.outline:hover {
-            background: #f8f9fa;
-            color: #495057;
         }
 
         .btn-start {
@@ -182,31 +143,6 @@
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
         }
 
-        .badge.default {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white;
-        }
-
-        .badge.ambasadoor {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-            color: white;
-        }
-
-        .badge.maester {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
-            color: white;
-        }
-
-        .badge.shelf-whisperer {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
-            color: white;
-        }
-
-        .badge.cart-goblin {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-            color: white;
-        }
-
         .points-badge {
             background: rgba(40, 167, 69, 0.1);
             color: #28a745;
@@ -218,8 +154,8 @@
         .stats-icon {
             font-size: 2.5rem;
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            -webkit-background-clip: text;
             background-clip: text;
+            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
@@ -241,41 +177,23 @@
     </div>
 </header>
 
-<div class="container py-5">
+<div class="container py-5" th:attr="data-user-logged-in=${totalPoints != null ? 'true' : null}">
     <!-- Challenge Categories -->
     <div class="row mb-5">
         <div class="col-12">
             <div class="d-flex gap-3 flex-wrap justify-content-center">
-                <button class="btn btn-category default active" data-challenge-type="ALL">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                    All Challenges
-                </button>
-                <button class="btn btn-category default outline" data-challenge-type="DEFAULT">
-                    <i class="bi bi-person-circle"></i>
-                    Default
-                </button>
-                <button class="btn btn-category ambasadoor outline" data-challenge-type="AMBASADOOR">
-                    <i class="bi bi-people-fill"></i>
-                    Ambasadoor
-                </button>
-                <button class="btn btn-category maester outline" data-challenge-type="MAESTER">
-                    <i class="bi bi-mortarboard-fill"></i>
-                    Maester
-                </button>
-                <button class="btn btn-category shelf-whisperer outline" data-challenge-type="SHELF_WHISPERER">
-                    <i class="bi bi-shop"></i>
-                    Shelf Whisperer
-                </button>
-                <button class="btn btn-category cart-goblin outline" data-challenge-type="CART_GOBLIN">
-                    <i class="bi bi-cart3"></i>
-                    Cart Goblin
-                </button>
+                <button class="btn btn-category active" data-challenge-type="ALL">All Challenges</button>
+                <button class="btn btn-category btn-outline-success" data-challenge-type="DEFAULT_CHALLENGES">Default Challenges</button>
+                <button class="btn btn-category btn-outline-success" data-challenge-type="AMBASSADOR">Ambassador</button>
+                <button class="btn btn-category btn-outline-success" data-challenge-type="MAESTER">Maester</button>
+                <button class="btn btn-category btn-outline-success" data-challenge-type="SHELF_WHISPERER">Shelf Whisperer</button>
+                <button class="btn btn-category btn-outline-success" data-challenge-type="CART_GOBLIN">Cart Goblin</button>
             </div>
         </div>
     </div>
 
     <!-- Progress Overview -->
-    <div class="row g-4 mb-5">
+    <div class="row g-4 mb-5" th:if="${totalPoints != null}">
         <div class="col-md-4">
             <div class="stats-card">
                 <div class="card-body text-center p-4">
@@ -305,6 +223,19 @@
         </div>
     </div>
 
+    <!-- Login prompt for non-logged in users -->
+    <div class="row mb-5" th:if="${totalPoints == null}">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Login to track your progress!</strong> Sign in to start challenges, track your progress, and earn points.
+                <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-success ms-3">
+                    <i class="bi bi-person-circle me-2"></i>Login
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Available Challenges -->
     <h2 class="section-title">Available Challenges</h2>
     <div id="challengeList" class="row g-4">
@@ -312,19 +243,38 @@
             <div class="challenge-card">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge" th:class="${'badge ' + #strings.toLowerCase(challenge.type).replace('_', '-')}" th:text="${challenge.type}">Default</span>
-                        <span class="points-badge">
+                        <span class="badge bg-success" th:text="${challenge.type}">Default Challenges</span>
+                        <div class="text-end">
+                            <div class="points-badge mb-1">
                             <i class="bi bi-coin me-2"></i>
-                            <span th:text="${challenge.points}">5</span> points
-                        </span>
+                            <span th:text="${challenge.points}">50</span> points
+                            </div>
+                            <div class="badge bg-warning text-dark" th:if="${challenge.badge}" th:text="${challenge.badge}">
+                                Badge Name
+                            </div>
+                        </div>
                     </div>
                     <h5 class="card-title mb-3" th:text="${challenge.title}">Challenge Title</h5>
                     <p class="card-text text-muted mb-4" th:text="${challenge.description}">Challenge description</p>
-                    <button class="btn btn-start w-100" 
-                            th:data-challenge-id="${challenge.id}"
-                            onclick="startChallenge(this)">
-                        <i class="bi bi-play-circle me-2"></i>Start Challenge
-                    </button>
+                    
+                    <!-- Progress Bar for Available Challenges -->
+                    <div class="progress mb-3" th:attr="data-challenge-id=${challenge.id}">
+                        <div class="progress-bar challenge-progress" role="progressbar" 
+                             style="width: 0%"
+                             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <span class="progress-text">0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Challenge Status -->
+                    <div class="challenge-status text-center">
+                        <small class="text-muted">Complete the action to earn points and badge!</small>
+                        <div th:if="${totalPoints == null}" class="mt-3">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>Login to track your progress
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,33 +282,68 @@
 
     <!-- Active Challenges -->
     <h2 class="section-title mt-5">Active Challenges</h2>
-    <div class="row g-4">
+    <div class="row g-4 active-challenges-section">
         <div th:if="${activeChallenges}" th:each="userChallenge : ${activeChallenges}" class="col-md-6">
             <div class="challenge-card">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge" th:class="${'badge ' + #strings.toLowerCase(userChallenge.challenge.type).replace('_', '-')}" th:text="${userChallenge.challenge.type}">Default</span>
-                        <span class="points-badge">
+                        <span class="badge bg-success" th:text="${userChallenge.challenge.type}">Default Challenges</span>
+                        <div class="text-end">
+                            <div class="points-badge mb-1">
                             <i class="bi bi-coin me-2"></i>
-                            <span th:text="${userChallenge.challenge.points}">5</span> points
-                        </span>
+                            <span th:text="${userChallenge.challenge.points}">50</span> points
+                            </div>
+                            <div class="badge bg-warning text-dark" th:if="${userChallenge.challenge.badge}" th:text="${userChallenge.challenge.badge}">
+                                Badge Name
+                            </div>
+                        </div>
                     </div>
                     <h5 class="card-title mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
                     <p class="card-text text-muted mb-4" th:text="${userChallenge.challenge.description}">Challenge description</p>
                     <div class="progress mb-3">
                         <div class="progress-bar" role="progressbar" 
                              th:style="'width: ' + ${userChallenge.progressPercentage} + '%'"
-                             th:attr="aria-valuenow=${userChallenge.progressPercentage}"
-                             aria-valuemin="0" aria-valuemax="100"
-                             th:text="${userChallenge.progressPercentage + '%'}">
+                             th:attr="aria-valuenow=${userChallenge.progressPercentage}, data-challenge-id=${userChallenge.challenge.id}"
+                             aria-valuemin="0" aria-valuemax="100">
                         </div>
                     </div>
-                    <button class="btn btn-start w-100" 
-                            th:data-challenge-id="${userChallenge.id}"
-                            onclick="updateProgress(this)"
-                            th:text="${userChallenge.progressPercentage < 100 ? 'Update Progress' : 'Mark as Complete'}">
-                        Update Progress
-                    </button>
+                    <div class="progress-info text-center">
+                        <small class="text-muted">
+                            <span th:text="${userChallenge.currentValue}">0</span>  out of 
+                            " <span th:text="${#strings.toLowerCase(userChallenge.challenge.title)}">actions completed</span> "
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Section for Debugging (remove in production) -->
+    <div class="row mt-5" th:if="${totalPoints != null}">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Debug Challenge Tracking</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Test challenge tracking by triggering different actions:</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="testSimpleEndpoint()">Test Controller Access</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="testDebugEndpoint()">Debug Challenges</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="checkExistingData()">Check Existing Data</button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="checkDatabase()">Check Database</button>
+                        <button class="btn btn-outline-success btn-sm" onclick="activateChallenges()">Activate Challenges</button>
+                        <button class="btn btn-outline-info btn-sm" onclick="checkDuplicates()">Check Duplicates</button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="removeDuplicates()">Remove Duplicates</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="checkSpecificChallenges()">Check Specific Challenges</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('LESSON_COMPLETED')">Test Lesson Completed</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('MARKETPLACE_ITEM_LISTED')">Test Item Listed</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('PROFILE_PHOTO_UPLOADED')">Test Photo Upload</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('CARBON_CALCULATOR_USED')">Test Carbon Calculator</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('RECYCLING_MAP_EXPLORED')">Test Recycling Map</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('MESSAGE_SENT')">Test Message Sent</button>
+                        <button class="btn btn-outline-primary btn-sm" onclick="testTracking('MARKETPLACE_OFFER_MADE')">Test Offer Made</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -366,16 +351,21 @@
 
     <!-- Completed Challenges -->
     <h2 class="section-title mt-5">Completed Challenges</h2>
-    <div class="row g-4">
+    <div class="row g-4 completed-challenges-section">
         <div th:if="${completedChallenges}" th:each="userChallenge : ${completedChallenges}" class="col-md-6">
             <div class="challenge-card completed">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="badge" th:class="${'badge ' + #strings.toLowerCase(userChallenge.challenge.type).replace('_', '-')}" th:text="${userChallenge.challenge.type}">Default</span>
-                        <span class="points-badge">
+                        <span class="badge bg-success" th:text="${userChallenge.challenge.type}">Default Challenges</span>
+                        <div class="text-end">
+                            <div class="points-badge mb-1">
                             <i class="bi bi-check-circle-fill me-2"></i>
-                            <span th:text="${userChallenge.challenge.points}">5</span> points earned
-                        </span>
+                            <span th:text="${userChallenge.challenge.points}">50</span> points earned
+                            </div>
+                            <div class="badge bg-warning text-dark" th:if="${userChallenge.challenge.badge}" th:text="${userChallenge.challenge.badge}">
+                                Badge Name
+                            </div>
+                        </div>
                     </div>
                     <h5 class="card-title mb-3" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
                     <p class="card-text text-muted mb-4" th:text="${userChallenge.challenge.description}">Challenge description</p>
@@ -396,82 +386,457 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Challenge Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
 <script>
-function startChallenge(button) {
-    const challengeId = button.getAttribute('data-challenge-id');
-    fetch(`/provocari/${challengeId}/start`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.text())
-    .then(result => {
-        if (result === 'success') {
-            window.location.reload();
-        } else {
-            alert('Failed to start challenge: ' + result);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to start challenge');
+let stompClient = null;
+let isConnected = false;
+
+// WebSocket Connection
+function connectWebSocket() {
+    const hasUserData = document.querySelector('[data-user-logged-in]') !== null;
+    if (!hasUserData) return; // Only connect if user is logged in
+    
+    const socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    
+    stompClient.connect({}, function (frame) {
+        console.log('Connected to WebSocket: ' + frame);
+        isConnected = true;
+        
+        // Subscribe to challenge progress updates
+        stompClient.subscribe('/user/queue/challenge-progress', function (message) {
+            const update = JSON.parse(message.body);
+            updateChallengeProgress(update);
+        });
+        
+        // Subscribe to new challenge activations
+        stompClient.subscribe('/user/queue/challenge-activated', function (message) {
+            const challenge = JSON.parse(message.body);
+            showNewChallengeActivated(challenge);
+        });
+        
+        // Subscribe to challenge completion events
+        stompClient.subscribe('/user/queue/challenge-completed', function (message) {
+            const event = JSON.parse(message.body);
+            showChallengeCompleted(event);
+        });
+    }, function (error) {
+        console.log('WebSocket connection error: ' + error);
+        isConnected = false;
+        // Retry connection after 5 seconds
+        setTimeout(connectWebSocket, 5000);
     });
 }
 
-function updateProgress(button) {
-    const challengeId = button.getAttribute('data-challenge-id');
-    const progress = prompt('Enter progress percentage (0-100):', '0');
+// Update challenge progress in real-time
+function updateChallengeProgress(update) {
+    const progressBar = document.querySelector(`[data-challenge-id="${update.challengeId}"] .progress-bar`);
+    if (progressBar) {
+        const progressText = progressBar.querySelector('.progress-text');
+        progressBar.style.width = update.progress + '%';
+        progressBar.setAttribute('aria-valuenow', update.progress);
+        if (progressText) {
+            progressText.textContent = update.progress + '%';
+        }
+        
+        // Add animation class
+        progressBar.classList.add('progress-animated');
+        setTimeout(() => {
+            progressBar.classList.remove('progress-animated');
+        }, 1000);
+    }
+}
+
+// Show challenge completion celebration
+function showChallengeCompleted(event) {
+    // Create celebration modal
+    const celebrationModal = document.createElement('div');
+    celebrationModal.className = 'modal fade';
+    celebrationModal.id = 'celebrationModal';
+    celebrationModal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-success text-white">
+                <div class="modal-body text-center p-5">
+                    <div class="celebration-animation mb-4">
+                        <i class="bi bi-trophy-fill display-1 text-warning"></i>
+                        <div class="confetti-container"></div>
+                    </div>
+                    <h3 class="mb-3">🎉 Challenge Completed! 🎉</h3>
+                    <h5 class="mb-3">${event.title}</h5>
+                    <div class="badge bg-warning text-dark fs-5 mb-3">${event.badge}</div>
+                    <p class="fs-4 mb-0">+${event.points} points earned!</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Awesome!</button>
+                </div>
+            </div>
+        </div>
+    `;
     
-    if (progress === null) return;
+    document.body.appendChild(celebrationModal);
     
-    const progressValue = parseInt(progress);
-    if (isNaN(progressValue) || progressValue < 0 || progressValue > 100) {
-        alert('Please enter a valid number between 0 and 100');
+    // Show modal
+    const modal = new bootstrap.Modal(celebrationModal);
+    modal.show();
+    
+    // Remove modal from DOM after hiding
+    celebrationModal.addEventListener('hidden.bs.modal', function () {
+        document.body.removeChild(celebrationModal);
+    });
+    
+    // Update the challenge card to show completion
+    const challengeCard = document.querySelector(`[data-challenge-id="${event.challengeId}"]`);
+    if (challengeCard) {
+        challengeCard.classList.add('completed');
+        const progressBar = challengeCard.querySelector('.progress-bar');
+        if (progressBar) {
+            progressBar.style.width = '100%';
+            progressBar.classList.add('bg-success');
+        }
+    }
+    
+    // Update user points display
+    updateUserPoints(event.points);
+}
+
+// Update user points display
+function updateUserPoints(earnedPoints) {
+    const pointsElement = document.querySelector('.display-6.text-success');
+    if (pointsElement) {
+        const currentPoints = parseInt(pointsElement.textContent) || 0;
+        const newPoints = currentPoints + earnedPoints;
+        pointsElement.textContent = newPoints;
+        
+        // Add animation
+        pointsElement.classList.add('points-animated');
+        setTimeout(() => {
+            pointsElement.classList.remove('points-animated');
+        }, 1000);
+    }
+}
+
+// Test challenge tracking function
+function testTracking(actionType) {
+    console.log('Testing tracking for action:', actionType);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+    
+    const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+    
+    if (csrfToken) {
+        headers[csrfHeader] = csrfToken;
+    }
+    
+    fetch('/provocari/test-tracking', {
+        method: 'POST',
+        headers: headers,
+        body: 'actionType=' + encodeURIComponent(actionType)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(result => {
+        console.log('Test tracking result:', result);
+        alert('Test result: ' + result);
+    })
+    .catch(error => {
+        console.error('Error testing tracking:', error);
+        alert('Error: ' + error.message);
+    });
+}
+
+// Show notification when a new challenge is activated
+function showNewChallengeActivated(challenge) {
+    console.log('New challenge activated:', challenge);
+    
+    // Create a toast notification
+    const toast = document.createElement('div');
+    toast.className = 'toast show position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none;';
+    toast.innerHTML = `
+        <div class="toast-header" style="background: transparent; color: white; border-bottom: 1px solid rgba(255,255,255,0.2);">
+            <i class="bi bi-star-fill me-2"></i>
+            <strong class="me-auto">New Challenge!</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            <strong>${challenge.title}</strong><br>
+            <small>${challenge.description}</small>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+}
+
+// Real-time challenge progress update function
+function updateChallengeProgress(update) {
+    console.log('Updating challenge progress:', update);
+    
+    // Find the progress bar for this challenge
+    const progressBar = document.querySelector(`[data-challenge-id="${update.challengeId}"]`);
+    if (progressBar) {
+        // Update progress bar width
+        progressBar.style.width = update.progress + '%';
+        progressBar.setAttribute('aria-valuenow', update.progress);
+        
+        // Update progress info text
+        const progressInfo = progressBar.closest('.challenge-card').querySelector('.progress-info small');
+        if (progressInfo) {
+            const currentValue = Math.round((update.progress / 100) * update.targetValue);
+            progressInfo.innerHTML = `<span>${currentValue}</span> / <span>${update.targetValue}</span> actions completed`;
+        }
+        
+        // Add animation class
+        progressBar.classList.add('progress-animated');
+        setTimeout(() => {
+            progressBar.classList.remove('progress-animated');
+        }, 1000);
+        
+        // If challenge is completed, move it to completed section
+        if (update.progress >= 100) {
+            setTimeout(() => {
+                window.location.reload(); // Reload to show updated sections
+            }, 2000);
+        }
+    } else {
+        // If challenge is not found in active challenges, it might be a new activation
+        console.log('Challenge not found in active challenges - might be newly activated');
+    }
+}
+
+// Test simple endpoint function
+function testSimpleEndpoint() {
+    console.log('Testing simple endpoint...');
+    fetch('/provocari/test')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(result => {
+            console.log('Test endpoint result:', result);
+            alert('Test endpoint result: ' + result);
+        })
+        .catch(error => {
+            console.error('Error testing endpoint:', error);
+            alert('Error: ' + error.message);
+        });
+}
+
+// Test debug endpoint function
+function testDebugEndpoint() {
+    console.log('Testing debug endpoint...');
+    fetch('/provocari/debug')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('Debug endpoint result:', data);
+            alert('Debug endpoint result:\n' + data);
+    })
+    .catch(error => {
+            console.error('Error testing debug endpoint:', error);
+            alert('Error: ' + error.message);
+    });
+}
+
+// Check existing data and update challenges
+function checkExistingData() {
+    console.log('Checking existing data and updating challenges...');
+    fetch('/provocari/check-existing-data')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(result => {
+            console.log('Existing data check result:', result);
+            alert('Existing data check result:\n' + result);
+            // Optionally, reload the page to reflect updated challenges
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error checking existing data:', error);
+            alert('Error: ' + error.message);
+        });
+}
+
+// Activate challenges based on existing user data
+function activateChallenges() {
+    console.log('Activating challenges based on existing data...');
+    fetch('/provocari/activate-challenges', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(result => {
+        console.log('Activate challenges result:', result);
+        alert('Challenges activated successfully!\n' + result);
+        // Reload the page to show updated challenges
+            window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error activating challenges:', error);
+        alert('Error: ' + error.message);
+    });
+}
+
+// Check database state
+function checkDatabase() {
+    console.log('Checking database state...');
+    fetch('/provocari/check-database')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(result => {
+            console.log('Database check result:', result);
+            alert('Database state:\n' + result);
+        })
+        .catch(error => {
+            console.error('Error checking database:', error);
+            alert('Error: ' + error.message);
+        });
+}
+
+// Check for duplicate challenges
+function checkDuplicates() {
+    console.log('Checking for duplicate challenges...');
+    fetch('/provocari/check-duplicates')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(result => {
+            console.log('Duplicate check result:', result);
+            alert('Duplicate check result:\n' + result);
+        })
+        .catch(error => {
+            console.error('Error checking duplicates:', error);
+            alert('Error: ' + error.message);
+        });
+}
+
+// Remove duplicate challenges
+function removeDuplicates() {
+    console.log('Removing duplicate challenges...');
+    if (!confirm('This will remove duplicate challenge records. Continue?')) {
         return;
     }
 
-    fetch(`/provocari/${challengeId}/progress`, {
+    fetch('/provocari/remove-duplicates', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: `progress=${progressValue}`
-    })
-    .then(response => response.text())
-    .then(result => {
-        if (result === 'success') {
-            window.location.reload();
-        } else {
-            alert('Failed to update progress: ' + result);
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
         }
     })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(result => {
+        console.log('Remove duplicates result:', result);
+        alert('Duplicates removed successfully!\n' + result);
+        // Reload the page to show updated challenges
+            window.location.reload();
+    })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update progress');
+        console.error('Error removing duplicates:', error);
+        alert('Error: ' + error.message);
     });
 }
+
+// Check for specific challenges
+function checkSpecificChallenges() {
+    console.log('Checking for specific challenges...');
+    fetch('/provocari/check-specific-challenges')
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(result => {
+            console.log('Specific challenges check result:', result);
+            alert('Specific challenges check result:\n' + result);
+        })
+        .catch(error => {
+            console.error('Error checking specific challenges:', error);
+            alert('Error: ' + error.message);
+        });
+}
+
+// Initialize WebSocket connection when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    connectWebSocket();
 
 // Category filter functionality
 document.querySelectorAll('[data-challenge-type]').forEach(button => {
     button.addEventListener('click', function() {
-        // Remove active class and outline from all buttons
+        // Remove active class from all buttons
         document.querySelectorAll('[data-challenge-type]').forEach(btn => {
             btn.classList.remove('active');
-            btn.classList.add('outline');
+            btn.classList.add('btn-outline-success');
         });
         
-        // Add active class and remove outline from clicked button
+        // Add active class to clicked button
         this.classList.add('active');
-        this.classList.remove('outline');
+        this.classList.remove('btn-outline-success');
         
         const type = this.getAttribute('data-challenge-type');
         filterChallenges(type);
+        });
     });
 });
 
 function filterChallenges(type) {
-    const challenges = document.querySelectorAll('#challengeList .challenge-card');
+    // Target all challenge cards across all sections (Available, Active, Completed)
+    const challenges = document.querySelectorAll('.challenge-card');
     challenges.forEach(challenge => {
         const challengeType = challenge.querySelector('.badge').textContent;
         if (type === 'ALL' || challengeType === type) {
@@ -480,10 +845,119 @@ function filterChallenges(type) {
             challenge.closest('.col-md-6').style.display = 'none';
         }
     });
+    
+    // Also hide section headers if no challenges are visible in that section
+    hideEmptySections();
 }
+
+function hideEmptySections() {
+    // Check each section and hide if no challenges are visible
+    const sections = [
+        { title: 'Available Challenges', selector: '#challengeList' },
+        { title: 'Active Challenges', selector: '.active-challenges-section' },
+        { title: 'Completed Challenges', selector: '.completed-challenges-section' }
+    ];
+    
+    sections.forEach(section => {
+        const sectionElement = document.querySelector(section.selector);
+        if (sectionElement) {
+            const visibleChallenges = sectionElement.querySelectorAll('.col-md-6:not([style*="display: none"])');
+            
+            // Find section title by looking for h2 elements with the specific text
+            const sectionTitles = document.querySelectorAll('h2.section-title');
+            let sectionTitle = null;
+            sectionTitles.forEach(title => {
+                if (title.textContent.trim() === section.title) {
+                    sectionTitle = title;
+                }
+            });
+            
+            if (visibleChallenges.length === 0) {
+                // Hide the section title if it exists
+                if (sectionTitle) {
+                    sectionTitle.style.display = 'none';
+                }
+            } else {
+                // Show the section title
+                if (sectionTitle) {
+                    sectionTitle.style.display = '';
+                }
+            }
+        }
+    });
+}
+
+// Clean up WebSocket connection when page unloads
+window.addEventListener('pagehide', function() {
+    if (stompClient) {
+        stompClient.disconnect();
+    }
+});
 </script>
+
+<style>
+/* Progress bar animations */
+.progress-animated {
+    transition: width 0.8s ease-in-out;
+}
+
+.points-animated {
+    animation: pointsPulse 1s ease-in-out;
+}
+
+@keyframes pointsPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Celebration animations */
+.celebration-animation {
+    position: relative;
+    overflow: hidden;
+}
+
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ffd700;
+    animation: confettiFall 3s linear infinite;
+}
+
+@keyframes confettiFall {
+    0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Challenge card completion state */
+.challenge-card.completed {
+    background: rgba(40, 167, 69, 0.05);
+    border: 2px solid #28a745;
+}
+
+.challenge-card.completed .progress-bar {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+</style>
 
 <!-- Include the login modal script -->
 <div th:replace="fragments/login-modal :: loginModalScript"></div>
 </body>
 </html>
+

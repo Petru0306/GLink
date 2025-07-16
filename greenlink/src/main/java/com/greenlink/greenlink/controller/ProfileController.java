@@ -6,6 +6,7 @@ import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.greenlink.greenlink.service.QuizService;
 import com.greenlink.greenlink.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ProfileController {
 
     @Autowired
     private ChallengeService challengeService;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
 
     @Autowired
     private QuizService quizService;
@@ -78,7 +82,13 @@ public class ProfileController {
                               Principal principal,
                               RedirectAttributes redirectAttributes) {
         try {
-            userService.updateProfile(principal.getName(), userUpdate, profilePicture);
+            User user = userService.updateProfile(principal.getName(), userUpdate, profilePicture);
+            
+            // Track profile photo upload for challenges
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                challengeTrackingService.trackUserAction(user.getId(), "PROFILE_PHOTO_UPLOADED", null);
+            }
+            
             redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to update profile: " + e.getMessage());

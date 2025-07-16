@@ -20,9 +20,14 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 
 @Service
 public class ProductService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -32,6 +37,9 @@ public class ProductService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
 
     private ProductDto convertToDto(Product product) {
         String sellerName = product.getSeller() != null ? 
@@ -149,7 +157,20 @@ public class ProductService {
         }
         
         Product savedProduct = productRepository.save(product);
-        return convertToDto(savedProduct);
+        ProductDto savedProductDto = convertToDto(savedProduct);
+        
+        // Track marketplace item listing for challenges
+        if (savedProduct.getSeller() != null) {
+            try {
+                logger.info("Tracking marketplace item listing for user: {}", savedProduct.getSeller().getId());
+                challengeTrackingService.trackUserAction(savedProduct.getSeller().getId(), "MARKETPLACE_ITEM_LISTED", savedProductDto);
+            } catch (Exception e) {
+                logger.error("Error tracking marketplace item listing: {}", e.getMessage(), e);
+                // Don't throw the exception - challenge tracking failure shouldn't break product creation
+            }
+        }
+        
+        return savedProductDto;
     }
 
     public ProductDto updateProduct(Long id, ProductDto productDto) {

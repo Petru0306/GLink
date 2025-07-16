@@ -7,10 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserChallengeRepository extends JpaRepository<UserChallenge, Long> {
     List<UserChallenge> findByUserIdAndStatus(Long userId, Challenge.ChallengeStatus status);
+    
+    List<UserChallenge> findByUserId(Long userId);
+    
+    Optional<UserChallenge> findByUserIdAndChallengeId(Long userId, Long challengeId);
     
     @Query("SELECT COUNT(uc) FROM UserChallenge uc WHERE uc.user.id = ?1 AND uc.status = 'COMPLETED'")
     long countCompletedChallengesByUserId(Long userId);

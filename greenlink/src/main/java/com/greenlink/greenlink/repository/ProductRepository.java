@@ -53,4 +53,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId")
     List<Product> findBySellerId(@Param("sellerId") Long sellerId);
+
+    // Numără câte produse a listat un vânzător
+    long countBySellerId(Long sellerId);
 }

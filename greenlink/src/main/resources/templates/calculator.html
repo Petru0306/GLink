@@ -300,6 +300,14 @@ document.getElementById('carbonCalculator').addEventListener('submit', function(
 
     // Generează recomandări
     generateRecommendations();
+    
+    // Submit to server for challenge tracking
+    fetch('/calculator/calculate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    }).catch(error => console.error('Error tracking calculator usage:', error));
 });
 
 function calculateCarbonFootprint() {

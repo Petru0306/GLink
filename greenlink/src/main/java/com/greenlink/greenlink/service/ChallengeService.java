@@ -14,5 +14,4 @@ public interface ChallengeService {
     long getCompletedChallengesCount(Long userId);
     int getCurrentStreak(Long userId);
     int getTotalPoints(Long userId);
-    void createDefaultChallenges();
 }

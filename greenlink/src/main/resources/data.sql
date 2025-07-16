@@ -5,37 +5,6 @@ WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'admin@greenlink.com'
 );
 
--- Insert default challenges if they don't exist
-INSERT INTO challenges (title, description, points, type, status, start_date, end_date, updated_at, progress_percentage)
-SELECT 'Create Your Eco Avatar', 'A weirdo from another planet who only eats leftovers', 5, 'DEFAULT', 'ACTIVE', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 0
-WHERE NOT EXISTS (
-    SELECT 1 FROM challenges WHERE title = 'Create Your Eco Avatar'
-);
-
-INSERT INTO challenges (title, description, points, type, status, start_date, end_date, updated_at, progress_percentage)
-SELECT 'First Friend', 'Probably just messaged you', 10, 'AMBASADOOR', 'ACTIVE', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 0
-WHERE NOT EXISTS (
-    SELECT 1 FROM challenges WHERE title = 'First Friend'
-);
-
-INSERT INTO challenges (title, description, points, type, status, start_date, end_date, updated_at, progress_percentage)
-SELECT 'Complete 1 Lesson', 'Just left the Shire with a reusable cup', 10, 'MAESTER', 'ACTIVE', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 0
-WHERE NOT EXISTS (
-    SELECT 1 FROM challenges WHERE title = 'Complete 1 Lesson'
-);
-
-INSERT INTO challenges (title, description, points, type, status, start_date, end_date, updated_at, progress_percentage)
-SELECT 'List First Item', 'Found treasure in a pile of old Tupperware', 20, 'SHELF_WHISPERER', 'ACTIVE', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 0
-WHERE NOT EXISTS (
-    SELECT 1 FROM challenges WHERE title = 'List First Item'
-);
-
-INSERT INTO challenges (title, description, points, type, status, start_date, end_date, updated_at, progress_percentage)
-SELECT 'Buy First Item', 'Finds deals greener than your kale smoothie', 20, 'CART_GOBLIN', 'ACTIVE', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP, 0
-WHERE NOT EXISTS (
-    SELECT 1 FROM challenges WHERE title = 'Buy First Item'
-);
-
 -- Insert sample courses
 INSERT INTO course (title, description, duration)
 SELECT 'Introduction to Recycling', 'Learn the basics of recycling and how to properly sort different materials.', 60

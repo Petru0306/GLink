@@ -40,4 +40,7 @@ public interface QuizResultRepository extends JpaRepository<QuizResult, Long> {
 
     // Verifică dacă un utilizator a completat un quiz
     boolean existsByUserIdAndQuizId(Long userId, Long quizId);
+
+    // Numără câte quiz-uri a completat un utilizator
+    long countByUserId(Long userId);
 }
