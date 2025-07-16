@@ -54,13 +54,7 @@ public class DataInitializationConfig implements CommandLineRunner {
         if (challengeRepository.count() == 0) {
             // Default Challenges
 
-            challengeRepository.save(new Challenge(
-                "First Item Listed",
-                "Lives for shiny reusable objects",
-                15,
-                "Eco-Barter Goblin",
-                Challenge.ChallengeType.DEFAULT_CHALLENGES
-            ));
+            // First Item Listed challenge removed as requested
 
             challengeRepository.save(new Challenge(
                 "Use Carbon Calculator",
