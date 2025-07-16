@@ -135,13 +135,6 @@ public class DataInitializationConfig implements CommandLineRunner {
                 Challenge.ChallengeType.AMBASSADOR
             ));
 
-            challengeRepository.save(new Challenge(
-                "Fifteen Friends",
-                "Fifteen converts and counting",
-                75,
-                "The Eco Cult Leader",
-                Challenge.ChallengeType.AMBASSADOR
-            ));
 
             // Maester Challenges (Lessons)
             challengeRepository.save(new Challenge(
