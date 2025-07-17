@@ -211,6 +211,9 @@
         .lesson-button.completed {
             background: rgba(39, 174, 96, 0.3);
             animation: pulse 2s infinite;
+            border: 2px solid #28a745;
+            color: white;
+            font-size: 30px;
         }
         
         .lesson-button.completed:hover {
@@ -481,25 +484,35 @@
         
         // Check for completed lessons with user-specific logic
         function checkProgress() {
-            if (!isUserLoggedIn) {
-                // For non-authenticated users, don't show any completed lessons
-                updateProgressDisplay();
-                return;
+            // Check localStorage for completed lessons (works for both authenticated and non-authenticated users)
+            const localCompletedLessons = [];
+            
+            // Check each lesson's completion status in localStorage
+            for (let i = 1; i <= totalLessons; i++) {
+                const lessonCompleted = localStorage.getItem(`lesson_${i}_completed`);
+                if (lessonCompleted === 'true') {
+                    localCompletedLessons.push(i);
+                }
             }
             
-            // For authenticated users, use the server-provided completed lessons
-            if (serverCompletedLessons && serverCompletedLessons.length > 0) {
-                completedLessons = serverCompletedLessons.length;
-                
-                // Mark lessons as completed based on server data
-                serverCompletedLessons.forEach(lessonId => {
-                    const lessonButton = document.querySelector(`[data-lesson="${lessonId}"]`);
-                    if (lessonButton) {
-                        lessonButton.classList.remove('locked');
-                        lessonButton.classList.add('completed');
-                    }
-                });
+            // If user is authenticated and has server data, merge with localStorage
+            let allCompletedLessons = localCompletedLessons;
+            if (isUserLoggedIn && serverCompletedLessons && serverCompletedLessons.length > 0) {
+                // Merge server data with localStorage data (remove duplicates)
+                allCompletedLessons = [...new Set([...localCompletedLessons, ...serverCompletedLessons])];
             }
+            
+            completedLessons = allCompletedLessons.length;
+            
+            // Mark lessons as completed based on combined data
+            allCompletedLessons.forEach(lessonId => {
+                const lessonButton = document.querySelector(`[data-lesson="${lessonId}"]`);
+                if (lessonButton) {
+                    lessonButton.classList.remove('locked');
+                    lessonButton.classList.add('completed');
+                    lessonButton.innerHTML = `✓`;
+                }
+            });
             
             updateProgressDisplay();
         }
@@ -516,7 +529,20 @@
         // Lesson completion tracking
         function markLessonComplete(lessonNumber) {
             if (isUserLoggedIn) {
-                completedLessons++;
+                // Mark the completed lesson as completed immediately
+                const completedLesson = document.querySelector(`[data-lesson="${lessonNumber}"]`);
+                if (completedLesson && !completedLesson.classList.contains('completed')) {
+                    completedLesson.classList.remove('locked');
+                    completedLesson.classList.add('completed');
+                    completedLesson.innerHTML = `✓`;
+                    
+                    // Add to server completed lessons if not already there
+                    if (!serverCompletedLessons.includes(parseInt(lessonNumber))) {
+                        serverCompletedLessons.push(parseInt(lessonNumber));
+                        completedLessons = serverCompletedLessons.length;
+                    }
+                }
+                
                 updateProgressDisplay();
                 
                 // Unlock next lesson if available

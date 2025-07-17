@@ -27,6 +27,9 @@ public class QuizService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
+
     // Metode pentru Quiz
     public Quiz createQuiz(Quiz quiz) {
         return quizRepository.save(quiz);
@@ -80,6 +83,20 @@ public class QuizService {
         QuizResult savedResult = quizResultRepository.save(result);
         userService.addPoints(userId, pointsEarned);
 
+        
+        // Save each answer
+        for(Map.Entry<Long, String> entry : answers.entrySet()) {
+            Long questionId = entry.getKey();
+            String userAnswer = entry.getValue();
+            
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new RuntimeException("Intrebarea nu a fost gasita"));
+            
+            boolean isCorrect = isCorrectAnswer(question, userAnswer);
+            
+            QuizAnswer quizAnswer = new QuizAnswer(savedResult, questionId.intValue(), question.getQuestionText(), userAnswer, isCorrect);
+            quizAnswerRepository.save(quizAnswer);
+        }
         return savedResult;
     }
 
