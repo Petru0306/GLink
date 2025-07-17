@@ -5,16 +5,12 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.UserRepository;
 import com.greenlink.greenlink.service.FriendService;
 import com.greenlink.greenlink.service.UserService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/friends")
@@ -44,18 +40,23 @@ public class FriendController {
         List<User> friends = friendService.getFriendsList(currentUser);
         List<User> searchResults = userRepository.searchUsers(query, currentUser.getId());
         
+        // Create a map to store friend status for each user
+        java.util.Map<Long, Boolean> isFriendMap = new java.util.HashMap<>();
+        java.util.Map<Long, Boolean> requestSentMap = new java.util.HashMap<>();
+        
         // Mark which users are already friends and which have pending requests
         for (User user : searchResults) {
-            if (friends.stream().anyMatch(f -> f.getId().equals(user.getId()))) {
-                user.setAdditionalProperty("isFriend", true);
-            } else {
-                user.setAdditionalProperty("isFriend", false);
-                user.setAdditionalProperty("requestSent", friendService.hasPendingRequestTo(currentUser, user));
-            }
+            boolean isFriend = friends.stream().anyMatch(f -> f.getId().equals(user.getId()));
+            boolean requestSent = !isFriend && friendService.hasPendingRequestTo(currentUser, user);
+            
+            isFriendMap.put(user.getId(), isFriend);
+            requestSentMap.put(user.getId(), requestSent);
         }
         
         model.addAttribute("searchResults", searchResults);
         model.addAttribute("friends", friends);
+        model.addAttribute("isFriendMap", isFriendMap);
+        model.addAttribute("requestSentMap", requestSentMap);
         return "friends";
     }
 

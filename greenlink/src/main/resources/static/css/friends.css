@@ -122,6 +122,36 @@
     font-weight: 700;
 }
 
+/* Your Friends subtitle - make it black */
+.section-title:has(i.bi-people) {
+    color: #000000 !important;
+}
+
+/* Friend Requests subtitle - make it black */
+.section-title:has(i.bi-person-plus) {
+    color: #000000 !important;
+}
+
+/* Clickable Card Styling */
+.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Prevent button clicks from triggering card click */
+.clickable-card button,
+.clickable-card form,
+.clickable-card .btn,
+.clickable-card .status-badge {
+    position: relative;
+    z-index: 10;
+}
+
 .section-title::after {
     content: '';
     position: absolute;
@@ -209,6 +239,14 @@
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
 }
 
+.friends-card h5 {
+    color: #000000 !important;
+}
+
+.search-results-card h5 {
+    color: #000000 !important;
+}
+
 /* Search Results Card - High specificity to override any conflicts */
 .user-card.search-results-card,
 div.user-card.search-results-card,
@@ -238,35 +276,39 @@ div.user-card.search-results-card .user-avatar {
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, #9dda9d 0%, #7ee67e 100%) !important;
+    border: 2px solid #28a745;
     border-radius: 20px;
     margin: 2rem 0;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(49, 201, 85, 0.1);
 }
 
 .empty-state:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.2);
+    border-color: #20c997;
 }
 
 .empty-icon {
     font-size: 4rem;
-    color: #6c757d;
+    color: #28a745;
     margin-bottom: 1rem;
-    opacity: 0.7;
+    opacity: 0.8;
     transition: all 0.3s ease;
 }
 
 .empty-state:hover .empty-icon {
     opacity: 1;
     transform: scale(1.1);
+    color: #20c997;
 }
 
 /* Alert Styling */
 .alert-custom {
     border-radius: 15px;
     border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(30, 182, 93, 0.1);
     animation: slideInDown 0.5s ease;
 }
 
@@ -329,7 +371,7 @@ div.user-card.search-results-card .user-avatar {
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .user-card {
-        background: #2c3e50;
+        background: #2c5036;
         color: white;
         border-color: #34495e;
     }

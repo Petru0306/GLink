@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ public class FriendService {
 
     @Transactional
     public void addFriend(User user, User friendUser) {
-        if (user.equals(friendUser)) {
+        if (user.getId().equals(friendUser.getId())) {
             throw new IllegalArgumentException("Cannot add yourself as a friend");
         }
 
@@ -51,14 +50,14 @@ public class FriendService {
     public void removeFriend(User user, User friendUser) {
         List<Friend> friendships = friendRepository.findAllFriendships(user);
         friendships.stream()
-                .filter(f -> (f.getUser().equals(user) && f.getFriendUser().equals(friendUser)) ||
-                           (f.getUser().equals(friendUser) && f.getFriendUser().equals(user)))
+                .filter(f -> (f.getUser().getId().equals(user.getId()) && f.getFriendUser().getId().equals(friendUser.getId())) ||
+                           (f.getUser().getId().equals(friendUser.getId()) && f.getFriendUser().getId().equals(user.getId())))
                 .forEach(friendRepository::delete);
     }
 
     public List<User> getFriendsList(User user) {
         return friendRepository.findAllFriendships(user).stream()
-                .map(f -> f.getUser().equals(user) ? f.getFriendUser() : f.getUser())
+                .map(f -> f.getUser().getId().equals(user.getId()) ? f.getFriendUser() : f.getUser())
                 .collect(Collectors.toList());
     }
 
@@ -69,7 +68,7 @@ public class FriendService {
     // Friend Request Methods
     @Transactional
     public void sendFriendRequest(User sender, User receiver) {
-        if (sender.equals(receiver)) {
+        if (sender.getId().equals(receiver.getId())) {
             throw new IllegalArgumentException("Cannot send friend request to yourself");
         }
         
@@ -99,7 +98,7 @@ public class FriendService {
         FriendRequest request = friendRequestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("Friend request not found"));
                 
-        if (!request.getReceiver().equals(receiver)) {
+        if (!request.getReceiver().getId().equals(receiver.getId())) {
             throw new IllegalArgumentException("You cannot accept this request");
         }
         
@@ -121,7 +120,7 @@ public class FriendService {
         FriendRequest request = friendRequestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("Friend request not found"));
                 
-        if (!request.getReceiver().equals(receiver)) {
+        if (!request.getReceiver().getId().equals(receiver.getId())) {
             throw new IllegalArgumentException("You cannot decline this request");
         }
         

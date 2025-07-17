@@ -64,7 +64,7 @@
             </h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="request : ${friendRequests}">
-                    <div class="user-card p-4 friend-request-card">
+                    <div class="user-card p-4 friend-request-card clickable-card" th:data-user-id="${request.sender.id}">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
@@ -94,14 +94,14 @@
         </div>
 
         <!-- Friends List -->
-        <div th:if="${!#lists.isEmpty(friends)}" class="mb-5">
+        <div th:if="${!#lists.isEmpty(friends) && #lists.isEmpty(searchResults)}" class="mb-5">
             <h2 class="section-title">
                 <i class="bi bi-people me-2"></i>Your Friends
                 <span class="badge bg-success ms-2" th:text="${#lists.size(friends)}"></span>
             </h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="friend : ${friends}">
-                    <div class="user-card p-4 friends-card">
+                    <div class="user-card p-4 friends-card clickable-card" th:data-user-id="${friend.id}">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
@@ -113,14 +113,6 @@
                                     <i class="bi bi-star-fill me-1"></i>
                                     <span th:text="${friend.points + ' points'}">100 points</span>
                                 </p>
-                                <div class="d-flex gap-2">
-                                    <a th:href="@{'/profile/public/' + ${friend.id}}" class="btn btn-outline-success btn-action flex-grow-1">
-                                        <i class="bi bi-person me-1"></i>Profile
-                                    </a>
-                                    <a th:href="@{'/messages/' + ${friend.id}}" class="btn btn-primary btn-action flex-grow-1">
-                                        <i class="bi bi-chat me-1"></i>Message
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -130,13 +122,18 @@
         
         <!-- Search Results -->
         <div th:if="${!#lists.isEmpty(searchResults)}" class="mb-5">
-            <h2 class="section-title text-dark">
-                <i class="bi bi-search me-2"></i>Search Results
-                <span class="badge bg-success ms-2" th:text="${#lists.size(searchResults)}"></span>
-            </h2>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-title text-dark mb-0">
+                    <i class="bi bi-search me-2"></i>Search Results
+                    <span class="badge bg-success ms-2" th:text="${#lists.size(searchResults)}"></span>
+                </h2>
+                <a href="/friends" class="btn btn-outline-secondary btn-action">
+                    <i class="bi bi-arrow-left me-2"></i>Înapoi
+                </a>
+            </div>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="user : ${searchResults}">
-                    <div class="user-card p-4 search-results-card">
+                    <div class="user-card p-4 search-results-card clickable-card" th:data-user-id="${user.id}">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
@@ -149,19 +146,16 @@
                                     <span th:text="${user.points + ' points'}">50 points</span>
                                 </p>
                                 <div class="d-flex align-items-center gap-2">
-                                    <a th:href="@{'/profile/public/' + ${user.id}}" class="btn btn-outline-info btn-action">
-                                        <i class="bi bi-person me-1"></i>Profile
-                                    </a>
-                                    <form th:action="@{/friends/send-request}" method="POST" th:if="${!user.isFriend}" class="flex-grow-1">
+                                    <form th:action="@{/friends/send-request}" method="POST" th:if="${!isFriendMap.get(user.id)}" class="flex-grow-1">
                                         <input type="hidden" name="userId" th:value="${user.id}">
                                         <button type="submit" class="btn btn-success btn-action w-100" 
-                                                th:disabled="${user.requestSent}">
-                                            <i class="bi bi-person-plus me-1" th:if="${!user.requestSent}"></i>
-                                            <i class="bi bi-clock me-1" th:if="${user.requestSent}"></i>
-                                            <span th:text="${user.requestSent ? 'Request Sent' : 'Add Friend'}">Add Friend</span>
+                                                th:disabled="${requestSentMap.get(user.id)}">
+                                            <i class="bi bi-person-plus me-1" th:if="${!requestSentMap.get(user.id)}"></i>
+                                            <i class="bi bi-clock me-1" th:if="${requestSentMap.get(user.id)}"></i>
+                                            <span th:text="${requestSentMap.get(user.id) ? 'Request Sent' : 'Add Friend'}">Add Friend</span>
                                         </button>
                                     </form>
-                                    <span th:if="${user.isFriend}" class="status-badge status-friends">
+                                    <span th:if="${isFriendMap.get(user.id)}" class="status-badge status-friends">
                                         <i class="bi bi-check-circle-fill me-1"></i>Friends
                                     </span>
                                 </div>
@@ -203,6 +197,30 @@
                     bsAlert.close();
                 });
             }, 5000);
+            
+            // Handle clickable cards
+            const clickableCards = document.querySelectorAll('.clickable-card');
+            clickableCards.forEach(function(card) {
+                card.addEventListener('click', function(event) {
+                    // Don't redirect if clicking on buttons, forms, or status badges
+                    if (event.target.closest('button') || 
+                        event.target.closest('form') || 
+                        event.target.closest('.btn') || 
+                        event.target.closest('.status-badge') ||
+                        event.target.tagName === 'BUTTON' ||
+                        event.target.tagName === 'FORM' ||
+                        event.target.classList.contains('btn') ||
+                        event.target.classList.contains('status-badge')) {
+                        return;
+                    }
+                    
+                    // Get user ID and redirect to profile
+                    const userId = this.getAttribute('data-user-id');
+                    if (userId) {
+                        window.location.href = '/profile/public/' + userId;
+                    }
+                });
+            });
         });
     </script>
 </body>
