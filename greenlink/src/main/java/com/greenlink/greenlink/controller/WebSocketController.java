@@ -2,6 +2,7 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.ChatMessageDto;
 import com.greenlink.greenlink.dto.MessageDto;
+import com.greenlink.greenlink.model.Conversation;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -85,6 +87,7 @@ public class WebSocketController {
     }
 
     @MessageMapping("/chat.sendMessage")
+    @Transactional
     public void sendMessage(@Payload ChatMessageDto chatMessage, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         try {
             // Get user from principal
@@ -119,6 +122,7 @@ public class WebSocketController {
     }
     
     @MessageMapping("/chat.offer")
+    @Transactional
     public void sendOffer(@Payload ChatMessageDto chatMessage, Principal principal) {
         try {
             // Get user from principal
@@ -153,6 +157,7 @@ public class WebSocketController {
     }
     
     @MessageMapping("/chat.respondOffer")
+    @Transactional
     public void respondToOffer(@Payload ChatMessageDto chatMessage, Principal principal) {
         try {
             // Get user from principal

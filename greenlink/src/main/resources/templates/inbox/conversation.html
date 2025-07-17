@@ -419,6 +419,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:inline="javascript">
         const conversationId = /*[[${conversation.id}]]*/ '0';
+        const currentUserId = /*[[${currentUser.id}]]*/ '0';
         const token = $("meta[name='_csrf']").attr("content");
         const header = $("meta[name='_csrf_header']").attr("content");
         let stompClient = null;
@@ -474,7 +475,8 @@
             // Subscribe to user-specific queue for join confirmations
             stompClient.subscribe('/user/queue/chat.joined', onJoinConfirmation);
             
-            console.log('Connected to WebSocket');
+            console.log('Connected to WebSocket for conversation:', conversationId);
+            console.log('Current user ID:', currentUserId);
             showConnectionStatus('connected');
             
             // Join the conversation
@@ -557,6 +559,7 @@
         function onMessageReceived(payload) {
             const message = JSON.parse(payload.body);
             console.log("WebSocket message received:", message);
+            console.log("Current user ID:", currentUserId, "Sender ID:", message.senderId);
             
             // Skip if this is a ping message
             if (message.type === 'PING') {
@@ -616,6 +619,12 @@
                 }
             }
             
+            // Determine if current user is the sender
+            const isCurrentUserSender = message.senderId == currentUserId;
+            
+            // Override the isCurrentUserSender field with the correct value
+            message.currentUserSender = isCurrentUserSender;
+            
             // Only display messages from the correct sender
             // If it's from the server and has isCurrentUserSender true, it should be shown as sent by current user
             // If it's from the server and has isCurrentUserSender false, it should be shown as sent by the other user
@@ -623,7 +632,7 @@
             scrollToBottom();
             
             // Play notification sound ONLY if message is from other user
-            if (!message.currentUserSender) {
+            if (!isCurrentUserSender) {
                 // Play sound
                 playNotificationSound();
                 
@@ -728,6 +737,8 @@
                     content: content
                 };
                 
+                console.log("Sending message via WebSocket:", chatMessage);
+                
                 // Create a temporary ID to track this message
                 const tempId = 'temp-' + Date.now();
                 chatMessage.tempId = tempId;
@@ -737,6 +748,7 @@
                     id: tempId,  // Add ID for deduplication
                     content: content,
                     sentAt: new Date(),
+                    senderId: currentUserId,
                     currentUserSender: true,
                     isOffer: false,
                     isTemporary: true  // Mark as temporary
@@ -812,6 +824,7 @@
                     offerAmount: offerAmount,
                     offerStatus: 'PENDING',
                     sentAt: new Date(),
+                    senderId: currentUserId,
                     currentUserSender: true,
                     isOffer: true,
                     isTemporary: true  // Mark as temporary
