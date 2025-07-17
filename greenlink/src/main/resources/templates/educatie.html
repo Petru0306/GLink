@@ -24,11 +24,19 @@
         
         .display-4 {
             letter-spacing: -0.5px; /* Slightly tighter letter spacing for the main heading */
+            font-weight: 700; /* Make the main heading bolder */
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); /* Add subtle text shadow for emphasis */
+        }
+        
+        .lead {
+            font-weight: 500; /* Make lead text bolder */
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Add subtle text shadow */
+            font-size: 1.3rem; /* Slightly larger font size */
         }
         
         .page-header {
             background: linear-gradient(135deg, #28a745, #20c997);
-            padding: 5rem 0;
+            padding: 7rem 0; /* Increase padding to make header taller */
             color: white;
             margin-bottom: 2rem;
             position: relative;
@@ -54,50 +62,79 @@
         .page-header .bubble {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15); /* Slightly more visible */
             animation: float 8s ease-in-out infinite;
             z-index: 1;
+            backdrop-filter: blur(3px); /* Add subtle blur effect */
+            -webkit-backdrop-filter: blur(3px);
         }
         
         .page-header .bubble:nth-child(1) {
-            width: 120px;
-            height: 120px;
-            top: 20%;
-            left: 10%;
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
             animation-delay: 0s;
-            animation-duration: 8s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
         }
         
         .page-header .bubble:nth-child(2) {
-            width: 80px;
-            height: 80px;
-            top: 60%;
-            left: 20%;
-            animation-delay: 1s;
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
             animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
         }
         
         .page-header .bubble:nth-child(3) {
-            width: 60px;
-            height: 60px;
-            top: 40%;
-            right: 30%;
-            animation-delay: 2s;
-            animation-duration: 12s;
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
         }
         
         .page-header .bubble:nth-child(4) {
-            width: 100px;
-            height: 100px;
+            width: 160px;
+            height: 160px;
             top: 70%;
-            right: 15%;
+            right: 10%;
             animation-delay: 3s;
             animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+        
+        .page-header .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+        
+        .page-header .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 0.5s;
+            animation-duration: 18s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
+            0% { transform: translateY(0) scale(1) rotate(0); }
+            25% { transform: translateY(-25px) scale(1.05) rotate(2deg); }
+            50% { transform: translateY(-40px) scale(1.1) rotate(0); }
+            75% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+            100% { transform: translateY(0) scale(1) rotate(0); }
         }
         
         .page-header::after {
@@ -328,11 +365,13 @@
         <div class="bubble"></div>
         <div class="bubble"></div>
         <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
         
         <div class="container header-content">
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="display-4 mb-3 animate__animated animate__fadeInDown">Cursuri Educaționale</h1>
+<h1 class="display-4 mb-4 animate__animated animate__fadeInDown">Cursuri Educaționale</h1>
 <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s">Explorează insula cunoștințelor și descoperă secretele sustenabilității</p>
                 </div>
             </div>
