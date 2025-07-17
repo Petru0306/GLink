@@ -223,7 +223,6 @@ public class MessageController {
     @PreAuthorize("isAuthenticated()")
     public String markSystemMessageAsRead(@RequestParam Long messageId, Principal principal) {
         try {
-            User currentUser = userService.getUserByEmail(principal.getName());
             systemMessageService.markAsRead(messageId);
             return "redirect:/inbox?success=Message+marked+as+read";
         } catch (Exception e) {

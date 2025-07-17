@@ -587,9 +587,10 @@ body {
     .empty-state-title {
         font-size: 1.5rem;
     }
-}
-    overflow: hidden;
-    position: relative;
+    
+    .empty-state-text {
+        font-size: 0.9rem;
+    }
 }
 
 .product-image {

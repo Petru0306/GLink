@@ -7,7 +7,6 @@ import com.greenlink.greenlink.model.QuizAnswer;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.CourseRepository;
-import com.greenlink.greenlink.repository.QuizAnswerRepository;
 import com.greenlink.greenlink.repository.QuizRepository;
 import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.repository.UserRepository;
@@ -32,9 +31,6 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
     
-@Autowired
-    private QuizAnswerRepository quizAnswerRepository;
-
     @Autowired
     private QuizRepository quizRepository;
 

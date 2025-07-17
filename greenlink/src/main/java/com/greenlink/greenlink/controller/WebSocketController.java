@@ -2,7 +2,6 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.ChatMessageDto;
 import com.greenlink.greenlink.dto.MessageDto;
-import com.greenlink.greenlink.model.Conversation;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.UserService;
@@ -11,7 +10,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,7 +68,10 @@ public class WebSocketController {
                     
             if (conversationId != null) {
                 // Add user to conversation room
-                headerAccessor.getSessionAttributes().put("conversationId", conversationId);
+                var sessionAttributes = headerAccessor.getSessionAttributes();
+                if (sessionAttributes != null) {
+                    sessionAttributes.put("conversationId", conversationId);
+                }
                 
                 // Send confirmation to user
                 Map<String, Object> response = new HashMap<>();

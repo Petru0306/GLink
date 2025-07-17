@@ -115,7 +115,7 @@ public class UserProgressRestController {
             Map<String, Object> answersData = (Map<String, Object>) completionData.getOrDefault("answers", new HashMap<>());
             
             // Save the quiz result with all data
-            QuizResult result = courseService.saveQuizResult(
+            courseService.saveQuizResult(
                 currentUser.getId(), lessonId, correctAnswers, totalQuestions, pointsEarned, reflectionText, answersData
             );
             

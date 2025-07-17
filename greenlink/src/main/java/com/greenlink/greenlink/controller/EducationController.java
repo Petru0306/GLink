@@ -2,7 +2,6 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.CourseDto;
 import com.greenlink.greenlink.model.User;
-import com.greenlink.greenlink.repository.QuizAnswerRepository;
 import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.service.CourseService;
 import com.greenlink.greenlink.service.UserService;
