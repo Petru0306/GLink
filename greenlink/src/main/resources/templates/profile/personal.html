@@ -165,28 +165,52 @@
                     <!-- Quizzes Tab -->
                     <div class="tab-pane fade" id="quizzes" role="tabpanel" aria-labelledby="quizzes-tab">
                         <div class="main-content">
-                            <h2 class="mb-4">Quiz Results</h2>
+                            <h2 class="mb-4">Lecții Completate</h2>
                             
-                            <!-- Quiz Results -->
-                            <div th:if="${not #lists.isEmpty(quizResults)}" class="mb-4">
-                                <div class="list-group">
-                                    <div th:each="result : ${quizResults}" class="list-group-item">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <h6 class="mb-1" th:text="${result.quiz.name}">Quiz Name</h6>
-                                            <small th:text="${result.score + '%'}">85%</small>
+                            <!-- Completed Lessons Cards -->
+                            <div th:if="${not #lists.isEmpty(completedLessons)}" class="mb-4">
+                                <div class="row g-4">
+                                    <div th:each="lesson : ${completedLessons}" class="col-md-6 col-lg-4">
+                                        <div class="card lesson-completion-card h-100">
+                                            <div class="position-relative">
+                                                <img th:if="${lesson.imageUrl}" th:src="${lesson.imageUrl}" 
+                                                     class="card-img-top lesson-image" alt="Lesson Image">
+                                                <img th:unless="${lesson.imageUrl}" src="/images/lesson-default.jpg" 
+                                                     class="card-img-top lesson-image" alt="Lesson Image">
+                                                
+                                                <!-- Points Badge -->
+                                                <span class="points-badge position-absolute top-0 end-0 m-3">
+                                                    <i class="bi bi-star-fill me-1"></i>
+                                                    <span th:text="${lesson.pointsEarned}">0</span> puncte
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="card-body">
+                                                <h5 class="card-title" th:text="${lesson.title}">Lesson Title</h5>
+                                                
+                                                <!-- Reflection Text (Scrie section) -->
+                                                <div th:if="${lesson.reflectionText != null and !lesson.reflectionText.isEmpty()}" class="mt-3">
+                                                    <h6 class="text-muted mb-2">Reflecțiile tale:</h6>
+                                                    <p class="card-text reflection-text" th:text="${lesson.reflectionText}">User reflection text...</p>
+                                                </div>
+                                                
+                                                <!-- Completion Date -->
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar-check me-1"></i>
+                                                    Completat pe <span th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">Jan 15, 2023</span>
+                                                </small>
+                                            </div>
                                         </div>
-                                        <p class="mb-1" th:text="${result.quiz.description}">Quiz description...</p>
-                                        <small th:text="${#dates.format(result.completedAt, 'MMM dd, yyyy')}">Jan 15, 2023</small>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- No Quiz Results -->
-                            <div th:if="${#lists.isEmpty(quizResults)}" class="empty-state">
-                                <i class="bi bi-question-circle empty-state-icon"></i>
-                                <h3 class="empty-state-title">No Quiz Results Yet</h3>
-                                <p class="empty-state-text">Test your knowledge by taking some educational quizzes!</p>
-                                <a href="/educatie" class="btn btn-success">Take Quizzes</a>
+                            <!-- No Completed Lessons -->
+                            <div th:if="${#lists.isEmpty(completedLessons)}" class="empty-state">
+                                <i class="bi bi-book empty-state-icon"></i>
+                                <h3 class="empty-state-title">Nu ai completat nicio lecție încă</h3>
+                                <p class="empty-state-text">Începe să înveți despre sustenabilitate și obține puncte!</p>
+                                <a href="/educatie" class="btn btn-success">Începe Lecțiile</a>
                             </div>
                         </div>
                     </div>

@@ -402,6 +402,196 @@ body {
     position: relative;
 }
 
+/* Lesson Completion Cards */
+.lesson-completion-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+    overflow: hidden;
+    transition: var(--transition);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    position: relative;
+    cursor: pointer;
+}
+
+.lesson-completion-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.lesson-completion-card:hover::before {
+    transform: scaleX(1);
+}
+
+.lesson-completion-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.lesson-image {
+    height: 200px;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.lesson-completion-card:hover .lesson-image {
+    transform: scale(1.05);
+}
+
+.points-badge {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: var(--shadow-light);
+    backdrop-filter: blur(10px);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: var(--transition);
+}
+
+.lesson-completion-card:hover .points-badge {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-medium);
+}
+
+.lesson-completion-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.reflection-text {
+    background: rgba(40, 167, 69, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+    font-style: italic;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 0.95rem;
+}
+
+.reflection-text::-webkit-scrollbar {
+    width: 4px;
+}
+
+.reflection-text::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+.reflection-text::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.lesson-completion-card .card-body {
+    padding: 1.5rem;
+}
+
+.lesson-completion-card small {
+    font-size: 0.85rem;
+    color: var(--secondary);
+    font-weight: 500;
+}
+
+.lesson-completion-card .text-muted {
+    color: var(--secondary) !important;
+}
+
+/* Enhanced Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--secondary);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    color: var(--primary);
+    margin-bottom: 2rem;
+    opacity: 0.7;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+.empty-state-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1rem;
+}
+
+.empty-state-text {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .lesson-completion-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .lesson-image {
+        height: 180px;
+    }
+    
+    .points-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .lesson-completion-card .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .reflection-text {
+        font-size: 0.9rem;
+        max-height: 100px;
+    }
+    
+    .empty-state {
+        padding: 3rem 1rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+    }
+    
+    .empty-state-title {
+        font-size: 1.5rem;
+    }
+}
+    overflow: hidden;
+    position: relative;
+}
+
 .product-image {
     width: 100%;
     height: 100%;
