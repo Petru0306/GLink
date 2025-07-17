@@ -302,7 +302,7 @@
             background: #f8f9fa;
             border: none;
             padding: 2rem;
-            text-align: center;
+            text-align: left;
         }
         
         .completion-modal .btn-continue {
@@ -394,25 +394,6 @@
             <strong>Felicitări!</strong> Ai completat această lecție cu succes!
         </div>
 
-        <!-- Completion Modal -->
-        <div class="modal fade completion-modal" id="completionModal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2 class="modal-title" id="completionModalLabel">Felicitări!</h2>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Lecția 1: Ce este sustenabilitatea?</strong></p>
-                        <p>Ai completat această lecție cu succes!</p>
-                        <div class="score-highlight" id="finalScore">Puncte finale: 0/40</div>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="/educatie?completed=1" class="btn btn-continue">Continuă</a>
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <!-- Hidden authentication status indicator -->
         <input type="hidden" id="authenticated-status" sec:authorize="isAuthenticated()" value="true">
@@ -720,7 +701,6 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/lesson-completion.js"></script>
     
     <script>
         let attemptedQuestions = 0;
@@ -883,15 +863,42 @@
                 if (imageUploaded) finalScore += 10; // Image upload points
                 
                 // User is authenticated, proceed with completion
-                document.getElementById('finalScore').innerHTML = `Puncte finale: ${finalScore}/40`;
+                // Show completion modal
+                const completionModalHTML = `
+                    <div class="modal completion-modal" tabindex="-1" role="dialog" id="completionModal">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        Lecția 1: Ce este sustenabilitatea?
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Felicitări! Ai completat cu succes această lecție importantă!</p>
+                                    <p>Ai învățat bazele sustenabilității și cum să începi să ai un impact pozitiv asupra mediului prin acțiuni simple!</p>
+                                    <div class="score-highlight">Scor final: ${finalScore}/50</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-continue" data-bs-dismiss="modal" onclick="window.location.href = '/educatie?completed=1'">Continuă către harta educativă</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Append modal to the body
+                document.body.insertAdjacentHTML('beforeend', completionModalHTML);
+
+                // Show the modal
+                const completionModal = new bootstrap.Modal(document.getElementById('completionModal'));
+                completionModal.show();
                 
                 // Mark lesson as completed in localStorage
                 localStorage.setItem('lesson_1_completed', 'true');
                 localStorage.setItem('lesson_1_score', finalScore);
-                
-                // Show the custom modal instead of alert
-                const completionModal = new bootstrap.Modal(document.getElementById('completionModal'));
-                completionModal.show();
             }
         });
 
