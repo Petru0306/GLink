@@ -641,7 +641,7 @@
             <h2 class="text-center mb-4">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>Foto</h4>
+                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
                 <p>
                     Fă o poză cu reciclarea ta corect sortată — sticle, hârtie sau plastic curat și aranjat într-un coș sau într-o pungă.
                 </p>
@@ -653,7 +653,7 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>Scrie</h4>
+                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
                 <p class="mb-3">
                     Scrie o propoziție despre ce te-a surprins cel mai mult în legătură cu reciclarea corectă.
                 </p>
@@ -669,7 +669,6 @@
                     <i class="bi bi-check-circle me-2"></i>
                     Completează lecția
                 </button>
-                <p class="mt-2" id="score-display">Puncte: 0/40</p>
             </div>
         </section>
     </main>
@@ -815,7 +814,7 @@
             const reflectionText = document.getElementById('reflection-text').value.trim();
             const imageUploaded = document.getElementById('image-upload').files.length > 0;
             const completeButton = document.getElementById('complete-lesson');
-            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0 && imageUploaded);
+            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0);
         }
 
         function updateScoreDisplay() {
@@ -853,7 +852,7 @@
             const reflectionText = document.getElementById('reflection-text').value.trim();
             const imageUploaded = document.getElementById('image-upload').files.length > 0;
             
-            if (attemptedQuestions === totalQuestions && reflectionText.length > 0 && imageUploaded) {
+            if (attemptedQuestions === totalQuestions && reflectionText.length > 0) {
                 // Check if user is authenticated
                 if (!isAuthenticated()) {
                     // Show login modal
