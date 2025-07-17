@@ -861,43 +861,75 @@
                 if (reflectionText.length > 0) finalScore += 5; // Scrie points
                 if (imageUploaded) finalScore += 10; // Foto points
                 
-                // User is authenticated, proceed with completion
-                // Show completion modal
-                const completionModalHTML = `
-                    <div class="modal completion-modal" tabindex="-1" role="dialog" id="completionModal">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">
-                                        Lecția 1: Ce este sustenabilitatea?
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>Felicitări! Ai completat cu succes această lecție importantă!</p>
-                                    <p>Ai învățat bazele sustenabilității și cum să începi să ai un impact pozitiv asupra mediului prin acțiuni simple!</p>
-                                    <div class="score-highlight">Scor final: ${finalScore}/40</div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-continue" data-bs-dismiss="modal" onclick="window.location.href = '/educatie?completed=1'">Continuă către harta educativă</button>
+                // User is authenticated, submit lesson completion to server
+                const submissionData = {
+                    correctAnswers: totalScore / 5, // Convert score to correct answers
+                    totalQuestions: totalQuestions,
+                    reflectionText: reflectionText,
+                    imageUploaded: imageUploaded
+                };
+                
+                // Get CSRF token
+                const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+                const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                
+                // Submit to server
+                fetch('/educatie/quiz/1/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [csrfHeader]: csrfToken
+                    },
+                    body: JSON.stringify(submissionData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show completion modal
+                        const completionModalHTML = `
+                            <div class="modal completion-modal" tabindex="-1" role="dialog" id="completionModal">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                Lecția 1: Ce este sustenabilitatea?
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Felicitări! Ai completat cu succes această lecție importantă!</p>
+                                            <p>Ai învățat bazele sustenabilității și cum să începi să ai un impact pozitiv asupra mediului prin acțiuni simple!</p>
+                                            <div class="score-highlight">Scor final: ${finalScore}/40</div>
+                                            <div class="score-highlight">Puncte câștigate: ${data.pointsEarned}</div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-continue" data-bs-dismiss="modal" onclick="window.location.href = '/educatie?completed=1'">Continuă către harta educativă</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `;
-                
-                // Append modal to the body
-                document.body.insertAdjacentHTML('beforeend', completionModalHTML);
+                        `;
+                        
+                        // Append modal to the body
+                        document.body.insertAdjacentHTML('beforeend', completionModalHTML);
 
-                // Show the modal
-                const completionModal = new bootstrap.Modal(document.getElementById('completionModal'));
-                completionModal.show();
-                
-                // Mark lesson as completed in localStorage
-                localStorage.setItem('lesson_1_completed', 'true');
-                localStorage.setItem('lesson_1_score', finalScore);
+                        // Show the modal
+                        const completionModal = new bootstrap.Modal(document.getElementById('completionModal'));
+                        completionModal.show();
+                        
+                        // Mark lesson as completed in localStorage
+                        localStorage.setItem('lesson_1_completed', 'true');
+                        localStorage.setItem('lesson_1_score', finalScore);
+                    } else {
+                        alert('Eroare la salvarea lecției: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Eroare la comunicarea cu serverul');
+                });
             }
         });
 

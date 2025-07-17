@@ -198,14 +198,28 @@ public class EducationController {
             int correctAnswers = Integer.parseInt(answers.get("correctAnswers"));
             int totalQuestions = Integer.parseInt(answers.get("totalQuestions"));
             
+            // Get reflection text if provided
+            String reflectionText = answers.get("reflectionText");
+            
             // Award points - 10 points per correct answer
             int pointsEarned = correctAnswers * 10;
+            
+            // Add extra points for reflection text
+            if (reflectionText != null && !reflectionText.trim().isEmpty()) {
+                pointsEarned += 5; // Reflection points
+            }
+            
+            // Add extra points for image upload
+            String imageUploaded = answers.get("imageUploaded");
+            if ("true".equals(imageUploaded)) {
+                pointsEarned += 10; // Image points
+            }
             
             // Update user points
             userService.addPoints(currentUser.getId(), pointsEarned);
             
-            // Create a quiz result record
-            courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, pointsEarned);
+            // Create a quiz result record with reflection text
+            courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, pointsEarned, reflectionText, null);
             
             // Track lesson completion for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
