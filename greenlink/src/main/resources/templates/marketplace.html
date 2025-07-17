@@ -14,10 +14,11 @@
     <style>
         .hero-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 4rem 0;
+            padding: 5rem 0;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         
         .hero-section::before {
@@ -38,9 +39,10 @@
 
         .filter-card {
             border: none;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border-radius: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
             transition: all 0.3s ease;
+            background: #ffffff;
         }
 
         .filter-card:hover {
@@ -49,22 +51,25 @@
 
         .product-card {
             border: none;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            border-radius: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             overflow: hidden;
+            background: #ffffff;
+            position: relative;
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .product-image {
-            height: 200px;
+            height: 250px;
             object-fit: cover;
-            border-top-left-radius: 1rem;
-            border-top-right-radius: 1rem;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            transition: transform 0.5s ease;
         }
 
         .badge {
@@ -230,7 +235,7 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-light" th:classappend="'branch-' + ${branch.toString().toLowerCase()}">
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
@@ -385,7 +390,7 @@
                             
                             <div class="card-body p-4">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="card-title" th:text="${product.name}">Product Name</h5>
+                                    <h5 class="card-title text-dark fw-bold" th:text="${product.name}">Product Name</h5>
                                     <span th:if="${product.ecoFriendly}" 
                                           class="badge eco-badge">
                                         <i class="bi bi-leaf-fill me-1"></i>Eco
@@ -406,11 +411,11 @@
                                     </span>
                                     <div class="price mb-3">
                                         <!-- Show negotiated price with original price strikethrough if available -->
-                                        <span class="product-price" th:if="${product.hasNegotiatedPrice()}">
-                                            <del th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</del>
-                                            <span class="ms-2" th:text="${#numbers.formatDecimal(product.negotiatedPrice, 1, 2) + ' RON'}">79.99 RON</span>
+                                        <span class="product-price fw-bold" th:if="${product.hasNegotiatedPrice()}">
+                                            <del class="text-muted" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</del>
+                                            <span class="ms-2 text-success" th:text="${#numbers.formatDecimal(product.negotiatedPrice, 1, 2) + ' RON'}">79.99 RON</span>
                                         </span>
-                                        <span class="product-price" th:unless="${product.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
+                                        <span class="product-price fw-bold text-success" th:unless="${product.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
