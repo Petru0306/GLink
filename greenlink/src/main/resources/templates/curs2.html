@@ -641,7 +641,7 @@
             <h2 class="text-center mb-4">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>📷 Prompt foto (opțional)</h4>
+                <h4><i class="bi bi-camera me-2"></i>Foto</h4>
                 <p>
                     Fă o poză cu reciclarea ta corect sortată — sticle, hârtie sau plastic curat și aranjat într-un coș sau într-o pungă.
                 </p>
@@ -653,7 +653,7 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>✍️ Prompt de reflecție scrisă (obligatoriu)</h4>
+                <h4><i class="bi bi-pencil me-2"></i>Scrie</h4>
                 <p class="mb-3">
                     Scrie o propoziție despre ce te-a surprins cel mai mult în legătură cu reciclarea corectă.
                 </p>
@@ -811,11 +811,11 @@
                 finalTask.style.pointerEvents = 'auto';
             }
             
-            // Enable complete button if all questions attempted and reflection written
+            // Enable complete button if all questions attempted and both tasks completed
             const reflectionText = document.getElementById('reflection-text').value.trim();
             const imageUploaded = document.getElementById('image-upload').files.length > 0;
             const completeButton = document.getElementById('complete-lesson');
-            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0);
+            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0 && imageUploaded);
         }
 
         function updateScoreDisplay() {
@@ -853,7 +853,7 @@
             const reflectionText = document.getElementById('reflection-text').value.trim();
             const imageUploaded = document.getElementById('image-upload').files.length > 0;
             
-            if (attemptedQuestions === totalQuestions && reflectionText.length > 0) {
+            if (attemptedQuestions === totalQuestions && reflectionText.length > 0 && imageUploaded) {
                 // Check if user is authenticated
                 if (!isAuthenticated()) {
                     // Show login modal
@@ -864,8 +864,8 @@
                 
                 // Calculate final score
                 let finalScore = totalScore;
-                if (reflectionText.length > 0) finalScore += 5; // Reflection points
-                if (imageUploaded) finalScore += 10; // Image upload points
+                if (reflectionText.length > 0) finalScore += 5; // Scrie points
+                if (imageUploaded) finalScore += 10; // Foto points
                 
                 // User is authenticated, proceed with completion
                 // Show completion modal
@@ -884,7 +884,7 @@
                                 <div class="modal-body">
                                     <p>Felicitări! Ai completat cu succes această lecție importantă!</p>
                                     <p>Ai învățat regulile de bază pentru reciclarea corectă și impactul pozitiv pe care îl poți avea!</p>
-                                    <div class="score-highlight">Scor final: ${finalScore}/50</div>
+                                    <div class="score-highlight">Scor final: ${finalScore}/40</div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-continue" data-bs-dismiss="modal" onclick="window.location.href = '/educatie?completed=2'">Continuă către harta educativă</button>
