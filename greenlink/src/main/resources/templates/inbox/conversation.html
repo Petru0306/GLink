@@ -189,6 +189,35 @@
             border-radius: 15px;
             padding: 0.5rem 1rem;
         }
+        
+        /* Connection status styles */
+        .connection-status {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .connection-status.alert-success {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border-left: 4px solid #198754;
+        }
+        
+        .connection-status.alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .connection-status.alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .connection-status .btn-close {
+            filter: invert(1);
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -436,11 +465,20 @@
             // Reset reconnect count on successful connection
             reconnectCount = 0;
             
+            // Stop AJAX polling if it was running
+            stopAjaxPolling();
+            
             // Subscribe to the conversation channel
             stompClient.subscribe('/topic/conversation.' + conversationId, onMessageReceived);
             
+            // Subscribe to user-specific queue for join confirmations
+            stompClient.subscribe('/user/queue/chat.joined', onJoinConfirmation);
+            
             console.log('Connected to WebSocket');
             showConnectionStatus('connected');
+            
+            // Join the conversation
+            stompClient.send("/app/chat.join", {}, JSON.stringify({conversationId: conversationId}));
             
             // Send a ping message to check if connection is actually working
             setTimeout(() => {
@@ -452,6 +490,8 @@
         
         function onError(error) {
             console.error('WebSocket connection error:', error);
+            showConnectionStatus('disconnected');
+            
             // Implement exponential backoff for reconnection attempts
             const delay = Math.min(5000 * Math.pow(1.5, reconnectCount), 30000); // Cap at 30 seconds
             reconnectCount++;
@@ -461,11 +501,14 @@
             // Fallback to AJAX polling if WebSocket fails
             setTimeout(() => {
                 if (reconnectCount < 10) { // Limit reconnection attempts
+                    showConnectionStatus('connecting');
                     connect();
                 } else {
                     console.error('Failed to reconnect after multiple attempts. Using AJAX fallback.');
-                    // Add visual indicator for connection status
                     showConnectionStatus('disconnected');
+                    
+                    // Start AJAX polling as fallback
+                    startAjaxPolling();
                 }
             }, delay);
         }
@@ -476,15 +519,39 @@
             
             let statusHtml = '';
             if (status === 'connected') {
-                statusHtml = '<div class="connection-status text-success"><i class="bi bi-wifi"></i> Live chat active</div>';
+                statusHtml = '<div class="connection-status alert alert-success alert-dismissible fade show" role="alert">' +
+                    '<i class="bi bi-wifi"></i> <strong>Live chat active</strong> - Messages are being sent and received in real-time.' +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
+                
+                // Auto-hide success status after 3 seconds
+                setTimeout(() => {
+                    $('.connection-status.alert-success').fadeOut();
+                }, 3000);
             } else if (status === 'disconnected') {
-                statusHtml = '<div class="connection-status text-danger"><i class="bi bi-wifi-off"></i> Offline mode - refresh to reconnect</div>';
+                statusHtml = '<div class="connection-status alert alert-danger alert-dismissible fade show" role="alert">' +
+                    '<i class="bi bi-wifi-off"></i> <strong>Offline mode</strong> - Messages will be sent when connection is restored. ' +
+                    '<button type="button" class="btn btn-sm btn-outline-light ms-2" onclick="connect()">Reconnect</button>' +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
             } else if (status === 'connecting') {
-                statusHtml = '<div class="connection-status text-warning"><i class="bi bi-wifi"></i> Connecting...</div>';
+                statusHtml = '<div class="connection-status alert alert-warning alert-dismissible fade show" role="alert">' +
+                    '<i class="bi bi-wifi"></i> <strong>Connecting...</strong> - Establishing real-time connection.' +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                    '</div>';
             }
             
             // Add status indicator above the chat
             $('#chat-container').before(statusHtml);
+        }
+        
+        function onJoinConfirmation(payload) {
+            const response = JSON.parse(payload.body);
+            console.log("Join confirmation received:", response);
+            
+            if (response.type === 'JOINED') {
+                console.log("Successfully joined conversation:", response.conversationId);
+            }
         }
         
         function onMessageReceived(payload) {
@@ -497,6 +564,12 @@
                 return;
             }
             
+            // Skip if this is a join confirmation
+            if (message.type === 'JOINED') {
+                console.log("Join confirmation received in topic");
+                return;
+            }
+            
             // Add message ID to our tracking set
             const messageId = message.id || message.messageId;
             
@@ -504,6 +577,20 @@
             if (messageId && processedMessageIds.has(messageId)) {
                 console.log("Skipping duplicate message:", messageId);
                 return;
+            }
+            
+            // Check if this is a response to a temporary message we sent
+            if (message.tempId && processedMessageIds.has(message.tempId)) {
+                console.log("Replacing temporary message with real message:", message.tempId);
+                
+                // Remove the temporary message from the UI
+                const tempMessageElement = document.querySelector(`[data-message-id="${message.tempId}"]`);
+                if (tempMessageElement) {
+                    tempMessageElement.closest('.message').remove();
+                }
+                
+                // Remove temp ID from processed set
+                processedMessageIds.delete(message.tempId);
             }
             
             // Add to processed set if it has an ID
@@ -525,6 +612,7 @@
                     
                     // Update the existing offer UI without adding a new message
                     updateOfferStatus(message.messageId, message.offerStatus);
+                    return; // Don't append a new message for status updates
                 }
             }
             
@@ -580,6 +668,22 @@
             
             // Update unread message count in navbar
             updateUnreadMessageCount();
+            
+            // Handle page visibility changes
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Page is hidden, pause polling if active
+                    if (ajaxPollingInterval) {
+                        clearInterval(ajaxPollingInterval);
+                        ajaxPollingInterval = null;
+                    }
+                } else {
+                    // Page is visible again, resume polling if WebSocket is not connected
+                    if (!stompClient || !stompClient.connected) {
+                        startAjaxPolling();
+                    }
+                }
+            });
         });
         
         // Function to scroll chat to bottom
@@ -634,7 +738,8 @@
                     content: content,
                     sentAt: new Date(),
                     currentUserSender: true,
-                    isOffer: false
+                    isOffer: false,
+                    isTemporary: true  // Mark as temporary
                 };
                 
                 // Track the temp message ID to avoid duplication
@@ -708,7 +813,8 @@
                     offerStatus: 'PENDING',
                     sentAt: new Date(),
                     currentUserSender: true,
-                    isOffer: true
+                    isOffer: true,
+                    isTemporary: true  // Mark as temporary
                 };
                 
                 // Track the temp message ID
@@ -945,6 +1051,12 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.currentUserSender ? 'message-sent' : 'message-received'}`;
             
+            // Add message ID as data attribute for targeting
+            const messageId = message.id || message.messageId;
+            if (messageId) {
+                messageDiv.setAttribute('data-message-id', messageId);
+            }
+            
             let messageContent = '';
             
             if (message.isOffer) {
@@ -957,9 +1069,6 @@
                 }
                 
                 priceDisplay += `<span>${parseFloat(message.offerAmount).toFixed(2)} RON</span></div>`;
-                
-                // Include message ID as data attribute for targeting with updateOfferStatus
-                const messageId = message.id || message.messageId;
                 
                 messageContent = `
                     <div class="offer-message" data-message-id="${messageId}">
@@ -994,6 +1103,60 @@
                 connect();
             } else {
                 console.log("Connection health check passed");
+            }
+        }
+        
+        // AJAX polling fallback when WebSocket fails
+        let ajaxPollingInterval = null;
+        
+        function startAjaxPolling() {
+            if (ajaxPollingInterval) {
+                clearInterval(ajaxPollingInterval);
+            }
+            
+            console.log("Starting AJAX polling fallback");
+            
+            // Poll for new messages every 3 seconds
+            ajaxPollingInterval = setInterval(() => {
+                $.ajax({
+                    url: `/inbox/conversation/${conversationId}/messages`,
+                    type: 'GET',
+                    success: function(response) {
+                        // Process new messages
+                        response.forEach(message => {
+                            const messageId = message.id || message.messageId;
+                            
+                            // Skip if we've already displayed this message
+                            if (messageId && processedMessageIds.has(messageId)) {
+                                return;
+                            }
+                            
+                            // Add to processed set
+                            if (messageId) {
+                                processedMessageIds.add(messageId);
+                            }
+                            
+                            // Display message
+                            appendMessage(message);
+                        });
+                        
+                        // Scroll to bottom if new messages were added
+                        if (response.length > 0) {
+                            scrollToBottom();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error("AJAX polling error:", xhr);
+                    }
+                });
+            }, 3000);
+        }
+        
+        function stopAjaxPolling() {
+            if (ajaxPollingInterval) {
+                clearInterval(ajaxPollingInterval);
+                ajaxPollingInterval = null;
+                console.log("Stopped AJAX polling");
             }
         }
     </script>

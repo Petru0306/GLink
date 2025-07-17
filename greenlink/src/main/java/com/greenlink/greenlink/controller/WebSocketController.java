@@ -10,6 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -36,7 +37,7 @@ public class WebSocketController {
      * Handle ping messages to confirm WebSocket connectivity
      */
     @MessageMapping("/chat.ping")
-    public void handlePing(@Payload Map<String, Object> payload) {
+    public void handlePing(@Payload Map<String, Object> payload, Principal principal) {
         try {
             Long conversationId = payload.get("conversationId") != null ? 
                     Long.parseLong(payload.get("conversationId").toString()) : null;
@@ -45,13 +46,41 @@ public class WebSocketController {
                 Map<String, Object> response = new HashMap<>();
                 response.put("type", "PING");
                 response.put("timestamp", System.currentTimeMillis());
+                response.put("conversationId", conversationId);
                 
                 // Echo back to conversation topic
                 messagingTemplate.convertAndSend("/topic/conversation." + conversationId, response);
-                logger.info("Ping response sent to conversation: " + conversationId);
+                logger.info("Ping response sent to conversation: " + conversationId + " by user: " + principal.getName());
             }
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error handling ping message", e);
+        }
+    }
+    
+    /**
+     * Handle user joining a conversation
+     */
+    @MessageMapping("/chat.join")
+    public void joinConversation(@Payload Map<String, Object> payload, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
+        try {
+            Long conversationId = payload.get("conversationId") != null ? 
+                    Long.parseLong(payload.get("conversationId").toString()) : null;
+                    
+            if (conversationId != null) {
+                // Add user to conversation room
+                headerAccessor.getSessionAttributes().put("conversationId", conversationId);
+                
+                // Send confirmation to user
+                Map<String, Object> response = new HashMap<>();
+                response.put("type", "JOINED");
+                response.put("conversationId", conversationId);
+                response.put("timestamp", System.currentTimeMillis());
+                
+                messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/chat.joined", response);
+                logger.info("User " + principal.getName() + " joined conversation: " + conversationId);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Error handling join message", e);
         }
     }
 
