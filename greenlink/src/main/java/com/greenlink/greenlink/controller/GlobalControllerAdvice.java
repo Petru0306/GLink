@@ -3,6 +3,7 @@ package com.greenlink.greenlink.controller;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.SystemMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,9 @@ public class GlobalControllerAdvice {
     @Autowired
     private UserService userService;
     
+    @Autowired
+    private SystemMessageService systemMessageService;
+    
     @ModelAttribute
     public void addAttributes(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -28,7 +32,8 @@ public class GlobalControllerAdvice {
                 User currentUser = userService.getUserByEmail(auth.getName());
                 if (currentUser != null) {
                     long unreadMessageCount = messageService.countUnreadMessages(currentUser);
-                    model.addAttribute("unreadMessageCount", unreadMessageCount);
+                    long unreadSystemCount = systemMessageService.countUnreadMessages(currentUser);
+                    model.addAttribute("unreadMessageCount", unreadMessageCount + unreadSystemCount);
                 }
             } catch (Exception e) {
                 // If any error occurs, just don't add the attribute

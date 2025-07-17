@@ -4,6 +4,7 @@ import com.greenlink.greenlink.model.MessageType;
 import com.greenlink.greenlink.model.SystemMessage;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.SystemMessageRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,5 +43,13 @@ public class SystemMessageService {
                 message.setRead(true);
                 systemMessageRepository.save(message);
             });
+    }
+    
+    public List<SystemMessage> getUnreadMessages(User user) {
+        return systemMessageRepository.findByRecipientAndReadOrderByCreatedAtDesc(user, false);
+    }
+    
+    public long countUnreadMessages(User user) {
+        return systemMessageRepository.countByRecipientAndRead(user, false);
     }
 }

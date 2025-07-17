@@ -649,18 +649,13 @@
                         <p class="action-description">Calculate your footprint</p>
                     </div>
                 </a>
-                <a href="/inbox" class="text-decoration-none">
+                <a href="/friends" class="text-decoration-none">
                     <div class="quick-action-card p-4">
                         <div class="action-icon-wrapper">
-                            <i class="bi bi-chat-text action-icon"></i>
+                            <i class="bi bi-people action-icon"></i>
                         </div>
-                        <h5 class="action-title">Inbox</h5>
-                        <p class="action-description">Messages and offers</p>
-                        <span th:if="${unreadMessageCount != null && unreadMessageCount > 0}" 
-                              class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger mt-2 me-2"
-                              th:text="${unreadMessageCount}">
-                            0
-                        </span>
+                        <h5 class="action-title">Friends</h5>
+                        <p class="action-description">Connect with other users</p>
                     </div>
                 </a>
             </div>
