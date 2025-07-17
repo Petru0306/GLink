@@ -13,54 +13,201 @@
             background: linear-gradient(135deg, #28a745, #20c997);
             padding: 3rem 0;
             color: white;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
-        .course-card {
-            border: none;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            background: white;
+        
+        .interactive-map-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8E8 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 100%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .course-card:hover {
-            transform: translateY(-5px);
+        
+        .island-map {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: url('/images/education/tropical-island-map.png') no-repeat center center;
+            background-size: cover;
+            border-radius: 15px;
         }
-        .course-card .card-img-top {
-            height: 200px;
-            object-fit: cover;
-        }
-        .course-card .card-body {
-            padding: 1.5rem;
-        }
-        .course-stats {
-            font-size: 0.9rem;
-            color: #6c757d;
+        
+        .lesson-button {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: rgba(226, 76, 59, 0.3);
+            border: 2px solid rgba(72, 21, 21, 0.6);
+            color: transparent;
+            font-weight: bold;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
-        }
-        .course-stats i {
-            color: #28a745;
-        }
-        .course-level {
-            display: inline-block;
-            padding: 0.35rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            background: #e8f5e9;
-            color: #28a745;
-        }
-        .btn-start {
-            border-radius: 30px;
-            padding: 0.8rem 1.5rem;
-            font-weight: 500;
+            justify-content: center;
+            cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            text-decoration: none;
+            z-index: 10;
         }
-        .btn-start:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        
+        .lesson-button:hover {
+            transform: scale(1.05);
+            background: rgba(226, 76, 59, 0.3);
+            border: 2px solid rgba(72, 21, 21, 0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .lesson-button.completed {
+            background: rgba(39, 174, 96, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        .lesson-button.completed:hover {
+            background: rgba(39, 174, 96, 0.5);
+            color: white;
+        }
+        
+        .lesson-button.locked {
+            background: rgba(149, 165, 166, 0.3);
+            cursor: not-allowed;
+        }
+        
+        .lesson-button.locked:hover {
+            transform: none;
+            background: rgba(149, 165, 166, 0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            color: transparent;
+        }
+        
+        /* Remove ripple effect to not interfere with original markers */
+        .lesson-button::before {
+            display: none;
+        }
+        
+        .lesson-button.completed::before {
+            background: rgba(39, 174, 96, 0.3);
+        }
+        
+        /* Lesson button positions - positioned over the numbered markers in the image */
+        .lesson-1 { top: 358px; left: 121px; }   /* Far left of foreground island */
+        .lesson-2 { top: 408px; left: 390px; }   /* Right of marker 1 on foreground island */
+        .lesson-3 { top: 426px; left: 660px; }   /* Continuing on foreground island */
+        .lesson-4 { top: 384px; left: 852px; }   /* Where path crosses water */
+        .lesson-5 { top: 252px; left: 828px; }   /* On elevated island */
+        .lesson-6 { top: 156px; left: 744px; }   /* Near trophy on elevated island */
+        
+        /* Remove path lines since they're already in the image */
+        .path-line {
+            display: none;
+        }
+        
+        .lesson-info {
+            position: absolute;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            max-width: 250px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .lesson-button:hover + .lesson-info,
+        .lesson-info:hover {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .lesson-info h6 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-dark);
+        }
+        
+        .lesson-info p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        .progress-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .interactive-map-container {
+                padding: 1rem;
+            }
+            
+            .island-map {
+                height: 400px;
+            }
+            
+            .lesson-button {
+                width: 50px;
+                height: 50px;
+                font-size: 1rem;
+            }
+            
+            .trophy {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .palm-tree {
+                font-size: 2rem;
+            }
+            
+            .cloud {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -74,57 +221,82 @@
             <div class="row align-items-center">
                 <div class="col-lg-8">
                     <h1 class="display-4 mb-3">Cursuri Educaționale</h1>
-                    <p class="lead mb-0">Descoperă cursurile noastre despre reciclare și protecția mediului</p>
+                    <p class="lead mb-0">Explorează insula cunoștințelor și descoperă secretele sustenabilității</p>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Courses Section -->
+    <!-- Interactive Map Section -->
     <main class="container mb-5">
-        <div class="row g-4">
-            <!-- Course Card 1 -->
-            <div class="col-md-6 col-lg-4">
-                <div class="course-card">
-                    <img src="/images/education/Introducere in reciclare.png" class="card-img-top" alt="Curs Reciclare">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Introducere în Reciclare</h5>
-                        <p class="card-text text-muted mb-4">Învață principiile fundamentale ale reciclării și cum poți contribui la un viitor mai sustenabil.</p>
-                        <a href="/educatie/curs/1" class="btn btn-success btn-start w-100">
-                            <i class="bi bi-play-circle me-2"></i>
-                            Începe cursul
-                        </a>
-                    </div>
+        <div class="interactive-map-container">
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-text">Progres: <span id="progress-text">0/6</span> cursuri</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                 </div>
             </div>
-
-            <!-- Course Card 2 -->
-            <div class="col-md-6 col-lg-4">
-                <div class="course-card">
-                    <img src="/images/education/Energie Verde si Sustenabilitate.png" class="card-img-top" alt="Curs Energie">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Energie Verde și Sustenabilitate</h5>
-                        <p class="card-text text-muted mb-4">Explorează sursele de energie regenerabilă și impactul lor asupra mediului.</p>
-                        <a href="/educatie/curs/2" class="btn btn-success btn-start w-100">
-                            <i class="bi bi-play-circle me-2"></i>
-                            Începe cursul
-                        </a>
+            
+            <!-- Island Map -->
+            <div class="island-map">
+                <!-- Lesson Buttons -->
+                <a href="/educatie/curs/1" class="lesson-button lesson-1" data-lesson="1">
+                    1
+                    <div class="lesson-info">
+                        <h6>Ce este sustenabilitatea?</h6>
+                        <p>Învață principiile fundamentale ale sustenabilității</p>
                     </div>
-                </div>
+                </a>
+                
+                <a href="/educatie/curs2" class="lesson-button lesson-2" data-lesson="2">
+                    2
+                    <div class="lesson-info">
+                        <h6>Cum să reciclezi corect</h6>
+                        <p>Învață regulile de bază pentru o reciclare eficientă</p>
+                    </div>
+                </a>
+                
+                <a href="/educatie/curs/3" class="lesson-button lesson-3" data-lesson="3">
+                    3
+                    <div class="lesson-info">
+                        <h6>Redu deșeurile cu un singur schimb simplu</h6>
+                        <p>Descoperă puterea schimbărilor mici pentru un impact mare</p>
+                    </div>
+                </a>
+                
+                <a href="/educatie/curs/4" class="lesson-button lesson-4" data-lesson="4">
+                    4
+                    <div class="lesson-info">
+                        <h6>Începe un mini-compost acasă</h6>
+                        <p>Transformă resturile în viață nouă</p>
+                    </div>
+                </a>
+                
+                <a href="/educatie/curs/5" class="lesson-button lesson-5" data-lesson="5">
+                    5
+                    <div class="lesson-info">
+                        <h6>Plantează ceva (chiar și într-un ghiveci!)</h6>
+                        <p>Conectează-te cu natura prin plantat</p>
+                    </div>
+                </a>
+                
+                <a href="/educatie/curs/6" class="lesson-button lesson-6" data-lesson="6">
+                    6
+                    <div class="lesson-info">
+                        <h6>Adună gunoiul din cartierul tău</h6>
+                        <p>Fă diferența în comunitatea ta</p>
+                    </div>
+                </a>
             </div>
-
-            <!-- Course Card 3 -->
-            <div class="col-md-6 col-lg-4">
-                <div class="course-card">
-                    <img src="/images/education/Ecologie si Biodiversitate.png" class="card-img-top" alt="Curs Ecologie">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">Ecologie și Biodiversitate</h5>
-                        <p class="card-text text-muted mb-4">Descoperă importanța biodiversității și cum putem proteja ecosistemele.</p>
-                        <a href="/educatie/curs/3" class="btn btn-success btn-start w-100">
-                            <i class="bi bi-play-circle me-2"></i>
-                            Începe cursul
-                        </a>
-                    </div>
+        </div>
+        
+        <!-- Instructions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    <h5><i class="bi bi-info-circle me-2"></i>Cum să navighezi</h5>
+                    <p class="mb-0">Apasă pe numerele roșii pentru a accesa cursurile. Parcurge cursurile în ordine pentru a debloca următoarele nivele și a câștiga trofeul final!</p>
                 </div>
             </div>
         </div>
@@ -135,5 +307,88 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Progress tracking
+        let completedLessons = 0;
+        const totalLessons = 6;
+        
+        // Check for completed lessons in localStorage
+        function checkProgress() {
+            for (let i = 1; i <= totalLessons; i++) {
+                if (localStorage.getItem(`lesson_${i}_completed`)) {
+                    completedLessons++;
+                    const lessonButton = document.querySelector(`[data-lesson="${i}"]`);
+                    if (lessonButton) {
+                        lessonButton.classList.remove('locked');
+                        lessonButton.classList.add('completed');
+                        lessonButton.href = `/educatie/curs/${i}`;
+                    }
+                }
+            }
+            updateProgressDisplay();
+        }
+        
+        function updateProgressDisplay() {
+            const progressText = document.getElementById('progress-text');
+            const progressFill = document.getElementById('progress-fill');
+            const percentage = (completedLessons / totalLessons) * 100;
+            
+            progressText.textContent = `${completedLessons}/${totalLessons}`;
+            progressFill.style.width = `${percentage}%`;
+        }
+        
+        // Lesson completion tracking
+        function markLessonComplete(lessonNumber) {
+            if (!localStorage.getItem(`lesson_${lessonNumber}_completed`)) {
+                localStorage.setItem(`lesson_${lessonNumber}_completed`, 'true');
+                completedLessons++;
+                updateProgressDisplay();
+                
+                // Unlock next lesson if available
+                if (lessonNumber < totalLessons) {
+                    const nextLesson = document.querySelector(`[data-lesson="${lessonNumber + 1}"]`);
+                    if (nextLesson) {
+                        nextLesson.classList.remove('locked');
+                        nextLesson.classList.add('completed');
+                        // Set correct URL for next lesson
+                        if (lessonNumber + 1 === 2) {
+                            nextLesson.href = `/educatie/curs2`;
+                        } else if (lessonNumber + 1 === 4) {
+                            nextLesson.href = `/educatie/curs/4`;
+                        } else if (lessonNumber + 1 === 5) {
+                            nextLesson.href = `/educatie/curs/5`;
+                        } else if (lessonNumber + 1 === 6) {
+                            nextLesson.href = `/educatie/curs/6`;
+                        } else {
+                            nextLesson.href = `/educatie/curs/${lessonNumber + 1}`;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Add click handlers for lesson buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            checkProgress();
+            
+            // Add click handlers for lesson buttons
+            document.querySelectorAll('.lesson-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    if (this.classList.contains('locked')) {
+                        e.preventDefault();
+                        alert('Completează cursurile anterioare pentru a debloca acest curs!');
+                    }
+                });
+            });
+        });
+        
+        // Check if user is returning from a lesson page
+        const urlParams = new URLSearchParams(window.location.search);
+        const completedLesson = urlParams.get('completed');
+        if (completedLesson) {
+            markLessonComplete(parseInt(completedLesson));
+        }
+    </script>
 </body>
 </html>

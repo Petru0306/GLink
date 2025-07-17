@@ -275,6 +275,11 @@
                             <!-- Recomandările vor fi adăugate dinamic -->
                         </div>
                     </div>
+                    <div class="mt-4 text-center">
+                        <button type="button" id="completeChallenge" class="btn btn-outline-success">
+                            <i class="bi bi-trophy me-2"></i>Completează provocarea Carbon Calculator
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -291,25 +296,46 @@
 document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    // Calculate carbon footprint...
-    calculateCarbonFootprint();
+    // Calculate carbon footprint
+    const totalTonnes = calculateCarbonFootprint();
     
-    // Send POST request to track challenge completion
-    fetch('/calculator/calculate', {
+    // Show results
+    document.getElementById('resultCard').classList.remove('d-none');
+    document.getElementById('carbonResult').textContent = totalTonnes;
+    
+    // Generate recommendations
+    generateRecommendations();
+    
+    // Method 1: Use the direct test-tracking endpoint which we know works
+    fetch('/provocari/test-tracking?actionType=CARBON_CALCULATOR_USED', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.getAttribute('content')
+            'Content-Type': 'application/x-www-form-urlencoded',
         }
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+    .then(response => response.text())
+    .then(text => {
+        console.log('Challenge test tracking response:', text);
+        if (text.includes('success')) {
+            console.log('Challenge completed successfully!');
         }
-        // Success - challenge tracked
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error with test tracking:', error);
+        
+        // Fallback to standard method if test-tracking fails
+        fetch('/calculator/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => {
+            console.log('Standard POST response status:', response.status);
+        })
+        .catch(error => {
+            console.error('Error with standard POST:', error);
+        });
     });
 });
 
@@ -321,10 +347,7 @@ function calculateCarbonFootprint() {
     const gas = parseFloat(document.getElementById('gas').value) || 0;
     const wasteGenerated = parseFloat(document.getElementById('wasteGenerated').value) || 0;
     
-    // Calculate total carbon footprint (simplified example)
-    let totalCarbon = 0;
-    
-    // Transport emissions
+    // Transport
     const fuelType = document.getElementById('fuelType').value;
     const carEmissionFactor = {
         petrol: 0.2,
@@ -333,6 +356,7 @@ function calculateCarbonFootprint() {
         electric: 0.05
     }[fuelType];
     
+    let totalCarbon = 0;
     totalCarbon += (carKm * 52 * carEmissionFactor); // Yearly car emissions
     totalCarbon += (flights * 0.9); // Flight emissions
     
@@ -365,139 +389,32 @@ function calculateCarbonFootprint() {
     totalCarbon += (wasteGenerated * 12 * 0.1 * recyclingFactor); // Yearly waste emissions
     
     // Convert to tonnes and round to 2 decimal places
-    const totalTonnes = (totalCarbon / 1000).toFixed(2);
-    
-    // Show results
-    document.getElementById('resultCard').classList.remove('d-none');
-    document.getElementById('carbonResult').textContent = totalTonnes;
-    
-    // Generate recommendations
-    const recommendations = [];
-    if (carKm > 100) recommendations.push('Consider using public transport or cycling for shorter journeys.');
-    if (!renewableEnergy) recommendations.push('Switch to a renewable energy provider to reduce your carbon footprint.');
-    if (diet === 'meat') recommendations.push('Try incorporating more plant-based meals into your diet.');
-    if (recycleTypes < 4) recommendations.push('Increase your recycling efforts to reduce waste emissions.');
-    if (foodWaste > 2) recommendations.push('Plan your meals to reduce food waste.');
-    
-    const recommendationsHtml = recommendations
-        .map(rec => `<div class="recommendation-item p-3"><i class="bi bi-lightbulb me-2 text-success"></i>${rec}</div>`)
-        .join('');
-    
-    document.getElementById('recommendations').innerHTML = recommendationsHtml;
-}
-</script>
-
-<script>
-document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    // Aici va fi logica de calcul
-    const result = calculateCarbonFootprint();
-
-    // Afișează rezultatul
-    document.getElementById('resultCard').classList.remove('d-none');
-    document.getElementById('carbonResult').textContent = result.toFixed(2);
-
-    // Generează recomandări
-    generateRecommendations();
-    
-    // Submit to server for challenge tracking
-    fetch('/calculator/calculate', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        }
-    }).catch(error => console.error('Error tracking calculator usage:', error));
-});
-
-function calculateCarbonFootprint() {
-    // Transport
-    const carKm = parseFloat(document.getElementById('carKm').value || 0) * 52; // anual
-    const fuelType = document.getElementById('fuelType').value;
-    const flights = parseFloat(document.getElementById('flights').value || 0);
-
-    // Energie
-    const electricity = parseFloat(document.getElementById('electricity').value || 0) * 12; // anual
-    const gas = parseFloat(document.getElementById('gas').value || 0) * 12; // anual
-    const renewableEnergy = document.getElementById('renewableEnergy').checked;
-
-    // Alimentație
-    const diet = document.getElementById('diet').value;
-    const homeMeals = parseFloat(document.getElementById('homeMeals').value || 0) * 52; // anual
-    const foodWaste = parseFloat(document.getElementById('foodWaste').value || 0) * 12; // anual
-
-    // Deșeuri
-    const wasteGenerated = parseFloat(document.getElementById('wasteGenerated').value || 0) * 12; // anual
-    const recycling = (document.getElementById('recyclePlastic').checked ? 1 : 0) +
-                     (document.getElementById('recyclePaper').checked ? 1 : 0) +
-                     (document.getElementById('recycleGlass').checked ? 1 : 0) +
-                     (document.getElementById('recycleMetal').checked ? 1 : 0);
-
-    // Factori de emisie simplificați (tone CO2e)
-    let total = 0;
-
-    // Transport
-    const carEmissions = {
-        petrol: 0.00023,
-        diesel: 0.00027,
-        hybrid: 0.00015,
-        electric: 0.00005
-    };
-    total += carKm * carEmissions[fuelType];
-    total += flights * 0.9; // Emisii medii per zbor
-
-    // Energie
-    total += electricity * (renewableEnergy ? 0.0002 : 0.0005);
-    total += gas * 0.002;
-
-    // Alimentație
-    const dietFactors = {
-        meat: 2.5,
-        flexitarian: 1.8,
-        vegetarian: 1.3,
-        vegan: 1
-    };
-    total += dietFactors[diet];
-    total -= homeMeals * 0.001; // Reducere pentru gătitul acasă
-    total += foodWaste * 0.005;
-
-    // Deșeuri
-    total += wasteGenerated * 0.003;
-    total -= recycling * 0.1; // Reducere pentru fiecare tip de material reciclat
-
-    return Math.max(0, total);
+    return (totalCarbon / 1000).toFixed(2);
 }
 
 function generateRecommendations() {
     const recommendationsDiv = document.getElementById('recommendations');
     recommendationsDiv.innerHTML = '';
+    
+    const carKm = parseFloat(document.getElementById('carKm').value) || 0;
+    const renewableEnergy = document.getElementById('renewableEnergy').checked;
+    const diet = document.getElementById('diet').value;
+    const foodWaste = parseFloat(document.getElementById('foodWaste').value) || 0;
+    const recycleTypes = ['recyclePlastic', 'recyclePaper', 'recycleGlass', 'recycleMetal']
+        .filter(id => document.getElementById(id).checked).length;
 
-    const recommendations = [
-        {
-            condition: document.getElementById('carKm').value > 100,
-            text: "Încearcă să reduci călătoriile cu mașina folosind transportul public sau bicicleta pentru distanțe scurte."
-        },
-        {
-            condition: !document.getElementById('renewableEnergy').checked,
-            text: "Consideră trecerea la energie din surse regenerabile pentru a reduce semnificativ amprenta de carbon."
-        },
-        {
-            condition: document.getElementById('diet').value === 'meat',
-            text: "Reducerea consumului de carne poate avea un impact major asupra amprentei tale de carbon."
-        },
-        {
-            condition: document.getElementById('foodWaste').value > 2,
-            text: "Planifică-ți mai bine cumpărăturile și porțiile pentru a reduce risipa alimentară."
-        }
-    ];
-
+    const recommendations = [];
+    if (carKm > 100) recommendations.push('Încearcă să reduci călătoriile cu mașina folosind transportul public sau bicicleta pentru distanțe scurte.');
+    if (!renewableEnergy) recommendations.push('Consideră trecerea la energie din surse regenerabile pentru a reduce semnificativ amprenta de carbon.');
+    if (diet === 'meat') recommendations.push('Reducerea consumului de carne poate avea un impact major asupra amprentei tale de carbon.');
+    if (recycleTypes < 4) recommendations.push('Creșterea nivelului de reciclare poate reduce semnificativ amprenta de carbon.');
+    if (foodWaste > 2) recommendations.push('Planifică-ți mai bine cumpărăturile și porțiile pentru a reduce risipa alimentară.');
+    
     recommendations.forEach(rec => {
-        if (rec.condition) {
-            const div = document.createElement('div');
-            div.className = 'recommendation-item';
-            div.innerHTML = `<i class="bi bi-lightbulb text-success me-2"></i>${rec.text}`;
-            recommendationsDiv.appendChild(div);
-        }
+        const div = document.createElement('div');
+        div.className = 'recommendation-item';
+        div.innerHTML = `<i class="bi bi-lightbulb text-success me-2"></i>${rec}`;
+        recommendationsDiv.appendChild(div);
     });
 }
 </script>

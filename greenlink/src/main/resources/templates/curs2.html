@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Energie Verde și Sustenabilitate</title>
+    <title>GreenLink - Lecția 2: Cum să reciclezi corect</title>
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,79 +12,108 @@
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
         .course-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
         }
         .course-header {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 3rem 0;
             margin-bottom: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
         }
-        .content-section {
+        .lesson-section {
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
+            border-radius: 15px;
+            padding: 2.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #28a745;
         }
-        .content-section img {
-            max-width: 100%;
-            max-height: 300px; /* Limit image height */
-            border-radius: 8px;
-            margin: 1rem auto;
-            display: block;
+        .paragraph-number {
+            background: #28a745;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
         }
         .quiz-section {
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 2rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
+            border: 2px solid #e9ecef;
         }
         .quiz-option {
             background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1.2rem;
             margin-bottom: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         .quiz-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #28a745;
         }
         .quiz-option.selected {
-            border-color: #ffc107;
-            background-color: #fff3cd;
+            border-color: #28a745;
+            background-color: #d4edda;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        .quiz-option.correct {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .quiz-option.incorrect {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .quiz-section.locked .quiz-option {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .quiz-section.locked .quiz-option:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #dee2e6;
         }
         .highlight-box {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
+            background: linear-gradient(135deg, #e8f5e9, #f0f8f0);
+            border-left: 5px solid #28a745;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
         }
         .bullet-list {
             padding-left: 1.5rem;
             margin-bottom: 1.5rem;
         }
         .bullet-list li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             position: relative;
             padding-left: 0.5rem;
+            line-height: 1.6;
         }
         .section-subtitle {
-            color: #fd7e14;
+            color: #28a745;
             font-weight: 600;
-            margin: 1.5rem 0 1rem;
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
         }
         .quiz-question {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e9ecef;
         }
         .quiz-question:last-child {
             border-bottom: none;
@@ -92,53 +121,106 @@
         .quiz-result {
             text-align: center;
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
             margin-top: 2rem;
             display: none;
         }
         .quiz-result.success {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #28a745;
+            color: #155724;
         }
         .quiz-result.warning {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 2px solid #ffc107;
+            color: #856404;
         }
         .progress-container {
             margin: 2rem 0;
         }
         .progress {
-            height: 10px;
-            border-radius: 5px;
+            height: 12px;
+            border-radius: 6px;
             margin-bottom: 0.5rem;
+            background-color: #e9ecef;
         }
         .progress-bar {
-            background-color: #ffc107;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 6px;
         }
         .progress-label {
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
             color: #6c757d;
+            font-weight: 500;
         }
         .points-badge {
-            background: #ffc107;
-            color: #212529;
-            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 0.6rem 1.2rem;
             border-radius: 50px;
             font-weight: 600;
             display: inline-block;
             margin-bottom: 1rem;
             font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
-        .quiz-completed-message {
-            background-color: #fff3cd;
-            color: #856404;
-            padding: 1rem;
-            border-radius: 8px;
+        .final-task {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            border: 2px solid #dee2e6;
+        }
+        .task-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid #ffeeba;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .back-button:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        .lesson-completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid #28a745;
             text-align: center;
+        }
+        .reflection-input {
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1rem;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .reflection-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            outline: none;
         }
     </style>
 </head>
@@ -149,335 +231,309 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4">Energie Verde și Sustenabilitate</h1>
-            <p class="lead">Descoperă viitorul energiei regenerabile</p>
+            <h1 class="display-4">♻️ Lecția 2: Cum să reciclezi corect</h1>
+            <p class="lead">Învață regulile de bază pentru o reciclare eficientă</p>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="course-container">
-        <!-- Quiz already completed message -->
-        <div class="quiz-completed-message" th:if="${quizCompleted}" sec:authorize="isAuthenticated()">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            Felicitări! Ai completat deja acest quiz și ai primit punctele.
+        <!-- Back Button -->
+        <a href="/educatie" class="back-button">
+            <i class="bi bi-arrow-left"></i>
+            Înapoi la harta cursurilor
+        </a>
+
+        <!-- Lesson completed message -->
+        <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
+            <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
+            <strong>Felicitări!</strong> Ai completat această lecție cu succes!
         </div>
-    
-        <!-- Introduction Section -->
-        <section class="content-section">
-            <h2>Ce este energia verde?</h2>
-            <div class="highlight-box">
-                <p class="mb-0">
-                    <i class="bi bi-lightbulb-fill me-2"></i>
-                    Energia verde este energia obținută din surse naturale regenerabile, care nu epuizează resursele Pământului.
-                </p>
-            </div>
-            
-            <p>
-                În contextul schimbărilor climatice și al necesității de a reduce emisiile de carbon, 
-                energia regenerabilă reprezintă soluția pentru un viitor sustenabil. Sursele de energie verde 
-                includ energia solară, eoliană, hidroelectrică și geotermală, toate oferind alternative 
-                curate la combustibilii fosili.
-            </p>
-            
-            <img src="/images/education/Energie Regenerabila.png" alt="Surse de energie regenerabilă" class="img-fluid">
-            
-            <h3 class="section-subtitle">De ce este importantă energia verde?</h3>
-            <ul class="bullet-list">
-                <li><strong>Reducerea emisiilor de carbon</strong> - Energia verde nu produce gaze cu efect de seră sau poluanți atmosferici.</li>
-                <li><strong>Resurse inepuizabile</strong> - Spre deosebire de combustibilii fosili, sursele regenerabile nu se vor epuiza niciodată.</li>
-                <li><strong>Independență energetică</strong> - Reduce dependența de importurile de combustibili fosili și crește securitatea energetică.</li>
-                <li><strong>Costuri reduse pe termen lung</strong> - Deși investiția inițială poate fi mare, costurile de operare sunt mult mai mici.</li>
-                <li><strong>Crearea de locuri de muncă</strong> - Sectorul energiei regenerabile creează de trei ori mai multe locuri de muncă decât industria combustibililor fosili.</li>
-                <li><strong>Protejarea ecosistemelor</strong> - Reduce poluarea aerului, apei și solului, protejând biodiversitatea.</li>
-            </ul>
-        </section>
-
-        <!-- Main Points Section -->
-        <section class="content-section">
-            <h2>Tipuri de energie regenerabilă</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-sun text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Energie Solară</h5>
-                        <p>Captarea și transformarea energiei solare în electricitate</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-wind text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Energie Eoliană</h5>
-                        <p>Utilizarea forței vântului pentru generarea energiei</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-water text-warning" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Hidroenergie</h5>
-                        <p>Producerea energiei din forța apei</p>
-                    </div>
-                </div>
-            </div>
-            
-            <h3 class="section-subtitle">Energia Solară</h3>
-            <ul class="bullet-list">
-                <li><strong>Panouri fotovoltaice</strong> - Transformă direct lumina soarelui în electricitate folosind celule solare.</li>
-                <li><strong>Sisteme termice solare</strong> - Captează căldura soarelui pentru încălzirea apei sau a spațiilor.</li>
-                <li><strong>Centrale solare</strong> - Utilizează oglinzi sau lentile pentru a concentra radiația solară și a produce abur care acționează turbine.</li>
-                <li><strong>Eficiență</strong> - Panourile moderne ating eficiențe de conversie de până la 22%.</li>
-                <li><strong>Aplicații</strong> - De la alimentarea locuințelor individuale până la centrale electrice de mare capacitate.</li>
-            </ul>
-            
-            <h3 class="section-subtitle">Energia Eoliană</h3>
-            <ul class="bullet-list">
-                <li><strong>Turbine eoliene</strong> - Convertesc energia cinetică a vântului în energie electrică.</li>
-                <li><strong>Parcuri eoliene terestre</strong> - Amplasate în zone cu vânt constant, pe uscat.</li>
-                <li><strong>Parcuri eoliene offshore</strong> - Construite în mare, unde vântul este mai puternic și mai constant.</li>
-                <li><strong>Capacitate</strong> - O singură turbină modernă poate alimenta până la 1.500 de gospodării.</li>
-                <li><strong>Avantaje</strong> - Nu produce emisii, ocupă puțin spațiu terestru, permite utilizarea terenului pentru agricultură.</li>
-            </ul>
-            
-            <h3 class="section-subtitle">Hidroenergia</h3>
-            <ul class="bullet-list">
-                <li><strong>Baraje hidroelectrice</strong> - Utilizează energia potențială a apei acumulate pentru a acționa turbine.</li>
-                <li><strong>Microhidrocentrale</strong> - Sisteme la scară mică pentru alimentarea comunităților izolate.</li>
-                <li><strong>Energie mareomotrică</strong> - Valorifică energia mareelor și a curenților oceanici.</li>
-                <li><strong>Eficiență</strong> - Cea mai eficientă formă de energie regenerabilă, cu randamente de peste 90%.</li>
-                <li><strong>Impact</strong> - Poate afecta ecosistemele acvatice și necesită gestionarea atentă a resurselor de apă.</li>
-            </ul>
-        </section>
         
-        <section class="content-section">
-            <h2>Energia Verde în România</h2>
-            
-            <h3 class="section-subtitle">Potențialul și Dezvoltarea</h3>
-            <ul class="bullet-list">
-                <li>România are un potențial semnificativ pentru energia regenerabilă, în special hidroenergie, energie eoliană și solară.</li>
-                <li>Dobrogea este una dintre cele mai bune regiuni din Europa pentru energia eoliană.</li>
-                <li>Sudul țării beneficiază de o radiație solară ridicată, ideală pentru panouri fotovoltaice.</li>
-                <li>În 2020, aproximativ 43% din electricitatea României a provenit din surse regenerabile.</li>
-                <li>Hidroenergia reprezintă cea mai mare parte a producției de energie regenerabilă din România.</li>
-                <li>Parcul eolian Fântânele-Cogealac din Dobrogea este unul dintre cele mai mari din Europa.</li>
-            </ul>
-            
-            <h3 class="section-subtitle">Beneficii pentru Consumatori</h3>
-            <ul class="bullet-list">
-                <li><strong>Reducerea facturilor</strong> - Instalarea panourilor solare poate reduce costurile cu energia electrică cu până la 90%.</li>
-                <li><strong>Independență energetică</strong> - Posibilitatea de a produce propria energie și chiar de a vinde surplusul.</li>
-                <li><strong>Subvenții și programe</strong> - Programul "Casa Verde" oferă finanțare pentru instalarea sistemelor de energie regenerabilă.</li>
-                <li><strong>Creșterea valorii proprietății</strong> - Casele cu sisteme de energie verde au o valoare de piață mai mare.</li>
-                <li><strong>Amprenta de carbon redusă</strong> - Contribuie la combaterea schimbărilor climatice la nivel individual.</li>
-                <li><strong>Comunități energetice</strong> - Posibilitatea de a forma grupuri locale pentru producerea și distribuirea energiei verzi.</li>
-            </ul>
-        </section>
+        <!-- Hidden authentication status indicator -->
+        <input type="hidden" id="authenticated-status" sec:authorize="isAuthenticated()" value="true">
 
-        <!-- Quiz Section -->
-        <section class="quiz-section" id="quiz">
-            <h2 class="text-center mb-4">Verifică ce ai învățat</h2>
-            
-            <div th:if="${quizCompleted}" sec:authorize="isAuthenticated()" class="alert alert-success text-center">
-                Ai completat deja acest quiz și ai primit punctele.
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progresul lecției</span>
+                <span id="progress-text">0/5</span>
             </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Paragraph 1 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">1</div>
+            <h2>Ce este reciclarea și de ce contează</h2>
             
-            <div th:unless="${quizCompleted}">
-                <div class="quiz-questions">
-                    <!-- Question 1 -->
-                    <div class="quiz-question" data-question-id="1">
-                        <p class="fw-bold">1. Care este principalul avantaj al energiei regenerabile?</p>
+            <p class="lead mb-4">
+                Reciclarea înseamnă să transformi materiale vechi sau folosite — cum ar fi hârtia, plasticul și metalul — în produse noi, în loc să le arunci la gunoi. Este una dintre cele mai simple și eficiente moduri de a reduce poluarea, de a economisi resurse naturale și de a preveni supraîncărcarea gropilor de gunoi.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Când reciclăm corect:</h4>
+                <ul class="bullet-list">
+                    <li><strong>♻️ Salvăm energie</strong> (ex: reciclarea aluminiului folosește cu 95% mai puțină energie decât producerea lui de la zero).</li>
+                    <li><strong>🌲 Salvăm resurse naturale</strong>, cum ar fi lemnul și apa.</li>
+                    <li><strong>🐢 Protejăm natura</strong> — mai puține deșeuri ajung în râuri și oceane.</li>
+                </ul>
+            </div>
+
+            <p>
+                Însă reciclarea funcționează doar când este făcută corect. Aruncarea obiectelor greșite în coșul de reciclare poate contamina tot lotul, iar totul ajunge la gunoi.
+            </p>
+
+            <!-- Quiz for Paragraph 1 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
+                <p class="mb-3"><strong>Ce este reciclarea?</strong></p>
+                
                 <div class="quiz-option" data-correct="false">
-                    Este mai ieftină decât energia convențională
+                    <strong>A)</strong> Aruncarea obiectelor în natură
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Arderea deșeurilor pentru energie
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    Nu epuizează resursele naturale ale planetei
+                    <strong>C)</strong> Transformarea materialelor folosite în produse noi
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    Este disponibilă doar în țările dezvoltate
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Funcționează doar în condiții meteorologice ideale
-                        </div>
-                    </div>
-                    
-                    <!-- Question 2 -->
-                    <div class="quiz-question" data-question-id="2">
-                        <p class="fw-bold">2. Care dintre următoarele NU este o sursă de energie regenerabilă?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Energia solară
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia geotermală
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Energia nucleară
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia eoliană
-                        </div>
-                    </div>
-                    
-                    <!-- Question 3 -->
-                    <div class="quiz-question" data-question-id="3">
-                        <p class="fw-bold">3. Ce transformă panourile fotovoltaice în electricitate?</p>
-                        <div class="quiz-option" data-correct="true">
-                            Lumina soarelui
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Căldura soarelui
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Radiațiile ultraviolete
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Radiațiile infraroșii
-                        </div>
-                    </div>
-                    
-                    <!-- Question 4 -->
-                    <div class="quiz-question" data-question-id="4">
-                        <p class="fw-bold">4. Care regiune din România este considerată ideală pentru energia eoliană?</p>
-                        <div class="quiz-option" data-correct="true">
-                            Dobrogea
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Transilvania
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Banat
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Maramureș
-                        </div>
-                    </div>
-                    
-                    <!-- Question 5 -->
-                    <div class="quiz-question" data-question-id="5">
-                        <p class="fw-bold">5. Aproximativ ce procent din electricitatea României provine din surse regenerabile?</p>
-                        <div class="quiz-option" data-correct="false">
-                            15%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            30%
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            43%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            60%
-                        </div>
-                    </div>
-                    
-                    <!-- Question 6 -->
-                    <div class="quiz-question" data-question-id="6">
-                        <p class="fw-bold">6. Care este cea mai eficientă formă de energie regenerabilă?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Energia solară
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia eoliană
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Hidroenergia
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia geotermală
-                        </div>
-                    </div>
-                    
-                    <!-- Question 7 -->
-                    <div class="quiz-question" data-question-id="7">
-                        <p class="fw-bold">7. Ce program oferă finanțare în România pentru instalarea sistemelor de energie regenerabilă?</p>
-                        <div class="quiz-option" data-correct="true">
-                            Casa Verde
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energie pentru Toți
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            România Sustenabilă
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Viitorul Verde
-                        </div>
-                    </div>
-                    
-                    <!-- Question 8 -->
-                    <div class="quiz-question" data-question-id="8">
-                        <p class="fw-bold">8. Cu cât poate reduce instalarea panourilor solare costurile cu energia electrică?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Cu până la 50%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Cu până la 70%
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Cu până la 90%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Cu 100% (eliminare completă)
-                        </div>
-                    </div>
-                    
-                    <!-- Question 9 -->
-                    <div class="quiz-question" data-question-id="9">
-                        <p class="fw-bold">9. Ce tip de energie regenerabilă valorifică energia mareelor?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Energia solară
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia eoliană offshore
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Energia mareomotrică
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Energia geotermală
-                        </div>
-                    </div>
-                    
-                    <!-- Question 10 -->
-                    <div class="quiz-question" data-question-id="10">
-                        <p class="fw-bold">10. De câte ori mai multe locuri de muncă creează sectorul energiei regenerabile față de industria combustibililor fosili?</p>
-                        <div class="quiz-option" data-correct="false">
-                            De două ori mai multe
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            De trei ori mai multe
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            De cinci ori mai multe
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            De zece ori mai multe
-                        </div>
-                    </div>
+                    <strong>D)</strong> Depozitarea gunoiului în subteran
                 </div>
-                
-                <div class="progress-container">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+                <div class="quiz-result" id="result-1"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 2 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">2</div>
+            <h2>Ce se poate și ce nu se poate recicla</h2>
+            
+            <p class="lead mb-4">
+                Mulți oameni cred că tot ce „pare reciclabil" merge în coșul de reciclare, dar nu e chiar așa. Reguli de reciclare pot fi diferite în funcție de zona în care locuiești, așa că este important să te informezi local.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">În general:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="text-success">✅ Se pot recicla:</h5>
+                        <ul class="bullet-list">
+                            <li>Sticle și borcane din sticlă</li>
+                            <li>PET-uri și recipiente curate din plastic</li>
+                            <li>Doze de aluminiu</li>
+                            <li>Carton curat și hârtie</li>
+                        </ul>
                     </div>
-                    <div class="progress-label">
-                        <span>0 din 10 întrebări</span>
-                        <span>0 puncte</span>
+                    <div class="col-md-6">
+                        <h5 class="text-danger">❌ Nu se pot recicla:</h5>
+                        <ul class="bullet-list">
+                            <li>Cutii de pizza unse</li>
+                            <li>Hârtie cerată sau plastifiată</li>
+                            <li>Sticle sparte</li>
+                            <li>Ambalaje contaminate cu mâncare</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+            <p>
+                Un lucru murdar poate strica tot coșul. De aceea e important să clătești recipientele înainte de a le recicla.
+            </p>
+
+            <!-- Quiz for Paragraph 2 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
+                <p class="mb-3"><strong>Care dintre următoarele NU poate fi reciclată?</strong></p>
                 
-            <div class="text-center mt-4">
-                    <button class="btn btn-warning btn-lg" id="checkAnswers" disabled>Verifică răspunsurile</button>
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Doză de aluminiu
                 </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Sticlă curată
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>C)</strong> Cutie de pizza unsă
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> PET clătit
+                </div>
+
+                <div class="quiz-result" id="result-2"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 3 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">3</div>
+            <h2>Pașii simpli pentru a recicla corect</h2>
+            
+            <p class="lead mb-4">
+                Reciclarea eficientă începe acasă. Nu ai nevoie de echipamente speciale, doar de atenție și bună organizare.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Urmează acești pași simpli:</h4>
+                <ol class="bullet-list">
+                    <li><strong>Separă:</strong> ține un coș de reciclare diferit de cel de gunoi.</li>
+                    <li><strong>Curăță:</strong> clătește recipientele de iaurt, conservele sau sticlele.</li>
+                    <li><strong>Verifică</strong> simbolul ♻️ pe ambalaje.</li>
+                    <li><strong>Comprimă</strong> ambalajele ușoare (ex: sticle) ca să economisești spațiu.</li>
+                </ol>
+            </div>
+
+            <p>
+                Poți începe prin a sorta gunoiul dintr-o singură zi. Vei fi surprins(ă) câte lucruri reciclabile arunci fără să-ți dai seama.
+            </p>
+
+            <!-- Quiz for Paragraph 3 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
+                <p class="mb-3"><strong>Ce trebuie să faci înainte să reciclezi o cutie de iaurt?</strong></p>
                 
-                <div class="quiz-result" id="quizResult">
-                    <h3 class="mb-3">Rezultatul tău</h3>
-                    <div class="points-badge">
-                        <i class="bi bi-trophy-fill me-2"></i>
-                        <span id="pointsEarned">0</span> puncte câștigate
-                    </div>
-                    <p class="mb-4" id="resultMessage"></p>
-                    <div id="authMessage" sec:authorize="!isAuthenticated()">
-                        <p class="mb-2">Autentifică-te pentru a-ți salva punctele!</p>
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Autentificare</a>
-                    </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> S-o umpli cu apă
                 </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>B)</strong> S-o clătești
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>C)</strong> S-o spargi
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> S-o pui direct în gunoi
+                </div>
+
+                <div class="quiz-result" id="result-3"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 4 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">4</div>
+            <h2>Impactul reciclării asupra planetei</h2>
+            
+            <p class="lead mb-4">
+                Reciclarea ajută în mod direct la reducerea emisiilor de carbon, la conservarea resurselor și la protejarea ecosistemelor.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">De exemplu:</h4>
+                <ul class="bullet-list">
+                    <li><strong>Reciclarea unei singure doze de aluminiu</strong> economisește suficientă energie pentru a ține un laptop pornit timp de 3 ore.</li>
+                    <li><strong>Fiecare tonă de hârtie reciclată</strong> salvează aproximativ 17 copaci.</li>
+                    <li><strong>Reciclarea sticlei</strong> reduce poluarea aerului cu până la 20%.</li>
+                </ul>
+            </div>
+
+            <p>
+                Cu cât reciclăm mai bine, cu atât industria are nevoie de mai puține resurse noi. Și da — contează chiar și acea sticlă de plastic pe care o reciclezi azi.
+            </p>
+
+            <!-- Quiz for Paragraph 4 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
+                <p class="mb-3"><strong>Ce economisește reciclarea unei doze de aluminiu?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Hârtie
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Apă potabilă
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>C)</strong> Energie
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Hârtie cerată
+                </div>
+
+                <div class="quiz-result" id="result-4"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 5 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">5</div>
+            <h2>Învață, greșește, dar continuă</h2>
+            
+            <p class="lead mb-4">
+                Toată lumea face greșeli când începe să recicleze. Poate ai aruncat ceva greșit — e OK. Important este să înveți din asta și să te informezi mai bine.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Lucruri care te pot ajuta:</h4>
+                <ul class="bullet-list">
+                    <li><strong>Află regulile de reciclare</strong> din orașul tău (site-ul primăriei sau al firmei de salubritate).</li>
+                    <li><strong>Întreabă la școală, la birou</strong> sau în comunitatea ta dacă există puncte de colectare.</li>
+                    <li><strong>Fă-ți un obicei</strong> din a verifica simbolurile ♻️.</li>
+                </ul>
+            </div>
+
+            <p>
+                Reciclarea corectă este un obicei care devine tot mai ușor cu timpul. Poți chiar să-i înveți pe alții și să devii un exemplu în familie sau între prieteni.
+            </p>
+
+            <!-- Quiz for Paragraph 5 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
+                <p class="mb-3"><strong>Ce ar trebui să faci dacă greșești când reciclezi?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Să te oprești complet
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Să arunci totul la gunoi
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>C)</strong> Să înveți din greșeli și să continui
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Să pui totul în același coș
+                </div>
+
+                <div class="quiz-result" id="result-5"></div>
+            </div>
+        </section>
+
+        <!-- Final Task -->
+        <section class="final-task">
+            <h2 class="text-center mb-4">✅ Sarcina finală</h2>
+            
+            <div class="task-section">
+                <h4><i class="bi bi-camera me-2"></i>📷 Prompt foto (opțional)</h4>
+                <p>
+                    Fă o poză cu reciclarea ta corect sortată — sticle, hârtie sau plastic curat și aranjat într-un coș sau într-o pungă.
+                </p>
+                <input type="file" class="form-control" id="image-upload" accept="image/*">
+                <div class="mt-2">
+                    <label id="upload-label">Nu ai încă încărcat nicio imagine.</label>
+                    <img id="image-preview" src="" alt="Imagine propusă" style="display: none; max-width: 100%; height: auto; margin-top: 10px;">
+                </div>
+            </div>
+
+            <div class="task-section">
+                <h4><i class="bi bi-pencil me-2"></i>✍️ Prompt de reflecție scrisă (obligatoriu)</h4>
+                <p class="mb-3">
+                    Scrie o propoziție despre ce te-a surprins cel mai mult în legătură cu reciclarea corectă.
+                </p>
+                <textarea 
+                    class="reflection-input" 
+                    id="reflection-text" 
+                    placeholder="Scrie aici reflecția ta..."
+                    rows="4"></textarea>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-success btn-lg" id="complete-lesson" disabled>
+                    <i class="bi bi-check-circle me-2"></i>
+                    Completează lecția
+                </button>
+                <p class="mt-2" id="score-display">Puncte: 0/40</p>
             </div>
         </section>
     </main>
@@ -485,164 +541,238 @@
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
 
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">
+                        <i class="bi bi-lock me-2"></i>Autentificare necesară
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>De ce?</strong> Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                        <a href="/login?redirect=curs2" class="btn btn-success">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Autentificare
+                        </a>
+                    </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Quiz functionality
-        const quizQuestions = document.querySelectorAll('.quiz-question');
-        const checkButton = document.getElementById('checkAnswers');
-        const progressBar = document.querySelector('.progress-bar');
-        const progressLabel = document.querySelector('.progress-label span:first-child');
-        const pointsLabel = document.querySelector('.progress-label span:last-child');
-        const quizResult = document.getElementById('quizResult');
-        const pointsEarned = document.getElementById('pointsEarned');
-        const resultMessage = document.getElementById('resultMessage');
-        const authMessage = document.getElementById('authMessage');
-        
-        let selectedAnswers = {};
-        let answeredQuestions = 0;
-        let correctAnswers = 0;
-        
-        // Check if user is authenticated - more reliable method
-        const isAuthenticated = document.querySelector('[sec\\:authorize="isAuthenticated()"]') !== null;
-        
-        // Always hide auth message for logged in users
-        if (isAuthenticated && authMessage) {
-            authMessage.style.display = 'none';
+        let attemptedQuestions = 0;
+        const totalQuestions = 5;
+        let answers = {};
+        let questionScores = {};
+        let totalScore = 0;
+
+        // Check if user is authenticated
+        function isAuthenticated() {
+            // Use a hidden input field that's only rendered for authenticated users
+            return document.getElementById('authenticated-status') !== null;
         }
 
-        // Handle quiz option selection
-        quizQuestions.forEach(question => {
-            const questionId = question.getAttribute('data-question-id');
-            const options = question.querySelectorAll('.quiz-option');
-            
-            options.forEach(option => {
-            option.addEventListener('click', () => {
-                    // Remove selected class from all options in this question
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
-                option.classList.add('selected');
-                    
-                    // Store the answer
-                    if (!selectedAnswers[questionId]) {
-                        answeredQuestions++;
-                    }
-                    selectedAnswers[questionId] = option.getAttribute('data-correct') === 'true';
-                    
-                    // Update progress
-                    updateProgress();
-                    
-                    // Enable check button if all questions are answered
-                    checkButton.disabled = answeredQuestions < quizQuestions.length;
-                });
-            });
-        });
-
-        // Update progress bar and label
-        function updateProgress() {
-            const progress = (answeredQuestions / quizQuestions.length) * 100;
-            progressBar.style.width = progress + '%';
-            progressBar.setAttribute('aria-valuenow', progress);
-            progressLabel.textContent = answeredQuestions + ' din ' + quizQuestions.length + ' întrebări';
-        }
-        
-        // Handle check answers button
-        checkButton.addEventListener('click', () => {
-            // Calculate score
-            correctAnswers = Object.values(selectedAnswers).filter(correct => correct).length;
-            const totalQuestions = quizQuestions.length;
-            const points = correctAnswers * 10;
-            
-            // Update result display
-            pointsEarned.textContent = points;
-            resultMessage.textContent = 'Ai răspuns corect la ' + correctAnswers + ' din ' + totalQuestions + ' întrebări!';
-            pointsLabel.textContent = points + ' puncte';
-            
-            // Show result
-            quizResult.style.display = 'block';
-            quizResult.classList.add(correctAnswers > totalQuestions / 2 ? 'success' : 'warning');
-            
-            // Highlight correct/incorrect answers
-            quizQuestions.forEach(question => {
-                const questionId = question.getAttribute('data-question-id');
-                const options = question.querySelectorAll('.quiz-option');
+        // Quiz functionality with enhanced scoring
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionSection = this.closest('.quiz-section');
+                const questionNumber = Array.from(document.querySelectorAll('.quiz-section')).indexOf(questionSection) + 1;
+                const questionId = `question_${questionNumber}`;
                 
-                options.forEach(option => {
-                    const isCorrect = option.getAttribute('data-correct') === 'true';
-                    const isSelected = option.classList.contains('selected');
+                // Check if this question is locked (after second wrong attempt)
+                if (questionSection.classList.contains('locked')) {
+                    return; // Question is locked, no more attempts allowed
+                }
+                
+                // Check if this question was already answered correctly
+                if (questionScores[questionId] === 5) {
+                    return; // Question already completed with points
+                }
+                
+                // Remove previous selections in this question
+                questionSection.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                // Select this option
+                this.classList.add('selected');
+                
+                // Check if correct
+                const isCorrect = this.getAttribute('data-correct') === 'true';
+                
+                if (isCorrect) {
+                    this.classList.add('correct');
                     
-                    if (isCorrect) {
-                        option.classList.add('border-success');
-                        option.style.borderWidth = '2px';
-                    } else if (isSelected) {
-                        option.classList.add('border-danger');
-                        option.style.borderWidth = '2px';
+                    // Award points based on attempt number
+                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0);
+                    const points = attempts === 0 ? 5 : 5; // Both attempts give 5 points
+                    
+                    questionScores[questionId] = points;
+                    totalScore += points;
+                    
+                    if (!answers[questionNumber]) {
+                        attemptedQuestions++;
+                        answers[questionNumber] = true;
+                        updateProgress();
                     }
                     
-                    // Disable further selection
-                    option.style.pointerEvents = 'none';
-                });
+                    // Show success message
+                    const resultDiv = questionSection.querySelector('.quiz-result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = 'quiz-result success';
+                    resultDiv.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i>Corect! +${points} puncte!`;
+                    
+                } else {
+                    this.classList.add('incorrect');
+                    
+                    // Increment attempt counter
+                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0) + 1;
+                    questionSection.setAttribute('data-attempts', attempts);
+                    
+                    if (attempts === 1) {
+                        // First wrong attempt - show correct answer and allow second try
+                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
+                        
+                        const resultDiv = questionSection.querySelector('.quiz-result');
+                        resultDiv.style.display = 'block';
+                        resultDiv.className = 'quiz-result warning';
+                        resultDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Greșit! Încearcă din nou. Răspunsul corect este evidențiat.';
+                        
+                        // Highlight the paragraph with correct information
+                        const paragraphSection = questionSection.closest('.lesson-section');
+                        paragraphSection.style.backgroundColor = '#fff3cd';
+                        paragraphSection.style.borderLeft = '5px solid #ffc107';
+                        
+                        // Reset after 3 seconds
+                        setTimeout(() => {
+                            paragraphSection.style.backgroundColor = '';
+                            paragraphSection.style.borderLeft = '5px solid #28a745';
+                        }, 3000);
+                        
+                    } else {
+                        // Second wrong attempt - no points, show correct answer, lock question
+                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
+                        questionSection.classList.add('locked'); // Lock the question
+                        
+                        const resultDiv = questionSection.querySelector('.quiz-result');
+                        resultDiv.style.display = 'block';
+                        resultDiv.className = 'quiz-result warning';
+                        resultDiv.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>0 puncte. Răspunsul corect este evidențiat.';
+                        
+                        // Mark as attempted but with 0 points
+                        if (!answers[questionNumber]) {
+                            attemptedQuestions++;
+                            answers[questionNumber] = true;
+                            updateProgress();
+                        }
+                    }
+                }
+                
+                updateScoreDisplay();
             });
+        });
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const percentage = (attemptedQuestions / totalQuestions) * 100;
             
-            // Disable check button
-            checkButton.disabled = true;
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${attemptedQuestions}/${totalQuestions}`;
             
-            // If user is authenticated, submit the result to the server
-            if (isAuthenticated) {
-                submitQuizResult(correctAnswers, totalQuestions);
+            // Enable final task if all questions attempted (regardless of points)
+            const finalTask = document.querySelector('.final-task');
+            if (attemptedQuestions === totalQuestions) {
+                finalTask.style.opacity = '1';
+                finalTask.style.pointerEvents = 'auto';
+            }
+            
+            // Enable complete button if all questions attempted and reflection written
+            const reflectionText = document.getElementById('reflection-text').value.trim();
+            const imageUploaded = document.getElementById('image-upload').files.length > 0;
+            const completeButton = document.getElementById('complete-lesson');
+            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0);
+        }
+
+        function updateScoreDisplay() {
+            const scoreDisplay = document.getElementById('score-display');
+            if (scoreDisplay) {
+                scoreDisplay.textContent = `Puncte: ${totalScore}/40`;
+            }
+        }
+
+        // Reflection text input
+        document.getElementById('reflection-text').addEventListener('input', function() {
+            updateProgress();
+        });
+
+        // Image upload handling
+        document.getElementById('image-upload').addEventListener('change', function() {
+            const file = this.files[0];
+            const imagePreview = document.getElementById('image-preview');
+            const uploadLabel = document.getElementById('upload-label');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadLabel.textContent = 'Imagine încărcată ✓';
+                    uploadLabel.style.color = '#28a745';
+                };
+                reader.readAsDataURL(file);
             }
         });
-        
-        // Submit quiz result to server
-        function submitQuizResult(correctAnswers, totalQuestions) {
-            // Get CSRF token
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+
+        // Complete lesson
+        document.getElementById('complete-lesson').addEventListener('click', function() {
+            const reflectionText = document.getElementById('reflection-text').value.trim();
+            const imageUploaded = document.getElementById('image-upload').files.length > 0;
             
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            
-            if (csrfToken) {
-                headers[csrfHeader] = csrfToken;
-            }
-            
-            fetch('/educatie/quiz/2/submit', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    correctAnswers: correctAnswers,
-                    totalQuestions: totalQuestions
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    resultMessage.textContent = data.message;
-                    
-                    // If user leveled up, show a special message
-                    if (data.leveledUp) {
-                        // Create level up notification
-                        const levelUpDiv = document.createElement('div');
-                        levelUpDiv.className = 'alert alert-success mt-3 text-center';
-                        levelUpDiv.innerHTML = '<i class="bi bi-stars me-2"></i><strong>Felicitări!</strong> Ai avansat la nivelul ' + data.newLevel + '!';
-                        quizResult.appendChild(levelUpDiv);
-                    }
-                    
-                    // Refresh the page after 3 seconds to show updated points
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
+            if (attemptedQuestions === totalQuestions && reflectionText.length > 0) {
+                // Check if user is authenticated
+                if (!isAuthenticated()) {
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    return;
                 }
-            })
-            .catch(error => {
-                console.error('Error submitting quiz result:', error);
-            });
-        }
-    });
+                
+                // Calculate final score
+                let finalScore = totalScore;
+                if (reflectionText.length > 0) finalScore += 5; // Reflection points
+                if (imageUploaded) finalScore += 10; // Image upload points
+                
+                // User is authenticated, proceed with completion
+                alert(`Felicitări! Ai completat lecția cu succes! 🎉\nPuncte finale: ${finalScore}/40`);
+                
+                // Mark lesson as completed in localStorage
+                localStorage.setItem('lesson_2_completed', 'true');
+                localStorage.setItem('lesson_2_score', finalScore);
+                
+                // Redirect back to education map with completion parameter
+                window.location.href = '/educatie?completed=2';
+            }
+        });
+
+        // Initialize final task as disabled
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalTask = document.querySelector('.final-task');
+            finalTask.style.opacity = '0.5';
+            finalTask.style.pointerEvents = 'none';
+        });
     </script>
 </body>
 </html> 
