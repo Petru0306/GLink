@@ -79,3 +79,14 @@ CREATE TABLE IF NOT EXISTS products (
     stock INTEGER NOT NULL,
     image_path VARCHAR(255)
 ); 
+
+-- Create friends table
+CREATE TABLE IF NOT EXISTS friends (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    friend_id BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (friend_id) REFERENCES users(id),
+    UNIQUE (user_id, friend_id)
+);

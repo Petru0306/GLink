@@ -136,8 +136,53 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
+        <!-- System Messages Section -->
+        <div th:if="${not #lists.isEmpty(systemMessages)}" class="mb-5">
+            <h2 class="h4 mb-4">
+                <i class="bi bi-bell me-2"></i>
+                Notifications
+                <span th:if="${unreadSystemCount > 0}" class="badge bg-warning ms-2" th:text="${unreadSystemCount}"></span>
+            </h2>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <div class="conversation-list p-3">
+                                <div th:each="message : ${systemMessages}" 
+                                     th:classappend="${!message.read ? 'unread' : ''}"
+                                     class="conversation-card card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="bi bi-person-plus-fill text-success" style="font-size: 1.5rem;"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="conversation-title" th:text="${message.content}">Notification content</h6>
+                                                <small class="conversation-time" 
+                                                       th:text="${#temporals.format(message.createdAt, 'dd MMM, HH:mm')}">
+                                                    Time
+                                                </small>
+                                            </div>
+                                            <div class="text-end">
+                                                <form th:action="@{/inbox/mark-read}" method="POST" class="d-inline">
+                                                    <input type="hidden" name="messageId" th:value="${message.id}">
+                                                    <button type="submit" class="btn btn-outline-success btn-sm">
+                                                        <i class="bi bi-check"></i> Mark as Read
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Empty State -->
-        <div th:if="${#lists.isEmpty(conversations)}" class="empty-state">
+        <div th:if="${#lists.isEmpty(conversations) && #lists.isEmpty(systemMessages)}" class="empty-state">
             <i class="bi bi-chat-left-text empty-icon"></i>
             <h3 class="mt-3">Nu ai nicio conversație</h3>
             <p class="text-muted mb-4">Vizitează marketplace-ul pentru a începe conversații cu vânzătorii.</p>

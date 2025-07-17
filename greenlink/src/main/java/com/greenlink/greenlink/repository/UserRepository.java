@@ -23,4 +23,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     
     @Query("SELECT u FROM User u JOIN u.favoriteProducts fp WHERE fp = :product")
     List<User> findByFavoriteProductsContains(@Param("product") Product product);
+
+    List<User> findByEmailContainingIgnoreCase(String email);
+    
+    List<User> findByEmailContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+        String email, String firstName, String lastName);
+        
+    @Query("SELECT u FROM User u WHERE u.id != :currentUserId AND "
+          + "(LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')) OR "
+          + "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR "
+          + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%')))")
+    List<User> searchUsers(@Param("query") String query, @Param("currentUserId") Long currentUserId);
 }

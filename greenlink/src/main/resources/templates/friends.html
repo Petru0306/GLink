@@ -7,104 +7,83 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/friends.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
-    <style>
-        .search-bar {
-            max-width: 600px;
-            margin: 2rem auto;
-        }
 
-        .user-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin-bottom: 1.5rem;
-        }
-
-        .user-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .user-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-right: 1rem;
-        }
-
-        .friend-request-badge {
-            background-color: #ffc107;
-            color: #000;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            margin-left: 0.5rem;
-        }
-
-        .section-title {
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
-            padding-bottom: 0.5rem;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 60px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 2px;
-        }
-    </style>
 </head>
-<body>
+<body class="bg-light">
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Friends</h1>
+                    <p class="lead mb-0">Connect with eco-conscious people and build a sustainable community</p>
+                </div>
+                <div class="col-lg-4 text-end">
+                    <i class="bi bi-people-fill display-1 opacity-75"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
     <div class="container py-5">
-        <h1 class="section-title">Friends</h1>
+        <!-- Success/Error Messages -->
+        <div th:if="${param.success}" class="alert alert-success alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${param.success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <span th:text="${param.error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
         <!-- Search Bar -->
         <div class="search-bar">
             <form class="d-flex" action="/friends/search" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Search users..." name="q" 
+                <input class="form-control me-3" type="search" placeholder="Search for users by name or email..." name="q" 
                        th:value="${param.q}" aria-label="Search">
-                <button class="btn btn-success" type="submit">Search</button>
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-search me-2"></i>Search
+                </button>
             </form>
         </div>
 
         <!-- Friend Requests Section -->
         <div class="mb-5" th:if="${!#lists.isEmpty(friendRequests)}">
-            <h2 class="h4 mb-4">Friend Requests</h2>
+            <h2 class="section-title">
+                <i class="bi bi-person-plus me-2"></i>Friend Requests
+                <span class="badge bg-warning ms-2" th:text="${#lists.size(friendRequests)}"></span>
+            </h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="request : ${friendRequests}">
-                    <div class="user-card p-3">
+                    <div class="user-card p-4 friend-request-card">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h5 class="mb-1" th:text="${request.sender.firstName + ' ' + request.sender.lastName}">User Name</h5>
-                                <div class="d-flex mt-2">
-                                    <form th:action="@{/friends/accept}" method="POST" class="me-2">
+                                <h5 class="mb-1 fw-bold" th:text="${request.sender.firstName + ' ' + request.sender.lastName}">User Name</h5>
+                                <p class="text-muted mb-3" th:text="${request.sender.email}">user@example.com</p>
+                                <div class="d-flex gap-2">
+                                    <form th:action="@{/friends/accept}" method="POST" class="flex-grow-1">
                                         <input type="hidden" name="requestId" th:value="${request.id}">
-                                        <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                                        <button type="submit" class="btn btn-success btn-action w-100">
+                                            <i class="bi bi-check me-1"></i>Accept
+                                        </button>
                                     </form>
-                                    <form th:action="@{/friends/decline}" method="POST">
+                                    <form th:action="@{/friends/decline}" method="POST" class="flex-grow-1">
                                         <input type="hidden" name="requestId" th:value="${request.id}">
-                                        <button type="submit" class="btn btn-outline-danger btn-sm">Decline</button>
+                                        <button type="submit" class="btn btn-outline-danger btn-action w-100">
+                                            <i class="bi bi-x me-1"></i>Decline
+                                        </button>
                                     </form>
                                 </div>
                             </div>
@@ -115,19 +94,33 @@
         </div>
 
         <!-- Friends List -->
-        <div th:if="${!#lists.isEmpty(friends)}">
-            <h2 class="h4 mb-4">Your Friends</h2>
+        <div th:if="${!#lists.isEmpty(friends)}" class="mb-5">
+            <h2 class="section-title">
+                <i class="bi bi-people me-2"></i>Your Friends
+                <span class="badge bg-success ms-2" th:text="${#lists.size(friends)}"></span>
+            </h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="friend : ${friends}">
-                    <div class="user-card p-3">
+                    <div class="user-card p-4 friends-card">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h5 class="mb-1" th:text="${friend.firstName + ' ' + friend.lastName}">Friend Name</h5>
+                                <h5 class="mb-1 fw-bold" th:text="${friend.firstName + ' ' + friend.lastName}">Friend Name</h5>
                                 <p class="text-muted mb-2" th:text="${friend.email}">friend@example.com</p>
-                                <a th:href="@{'/profile/public/' + ${friend.id}}" class="btn btn-outline-success btn-sm">View Profile</a>
+                                <p class="text-success mb-3">
+                                    <i class="bi bi-star-fill me-1"></i>
+                                    <span th:text="${friend.points + ' points'}">100 points</span>
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{'/profile/public/' + ${friend.id}}" class="btn btn-outline-success btn-action flex-grow-1">
+                                        <i class="bi bi-person me-1"></i>Profile
+                                    </a>
+                                    <a th:href="@{'/messages/' + ${friend.id}}" class="btn btn-primary btn-action flex-grow-1">
+                                        <i class="bi bi-chat me-1"></i>Message
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -136,29 +129,40 @@
         </div>
         
         <!-- Search Results -->
-        <div th:if="${!#lists.isEmpty(searchResults)}">
-            <h2 class="h4 mb-4">Search Results</h2>
+        <div th:if="${!#lists.isEmpty(searchResults)}" class="mb-5">
+            <h2 class="section-title text-dark">
+                <i class="bi bi-search me-2"></i>Search Results
+                <span class="badge bg-success ms-2" th:text="${#lists.size(searchResults)}"></span>
+            </h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4" th:each="user : ${searchResults}">
-                    <div class="user-card p-3">
+                    <div class="user-card p-4 search-results-card">
                         <div class="d-flex align-items-center">
                             <div class="user-avatar">
                                 <i class="bi bi-person"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h5 class="mb-1" th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
+                                <h5 class="mb-1 fw-bold" th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
                                 <p class="text-muted mb-2" th:text="${user.email}">user@example.com</p>
-                                <div class="d-flex align-items-center">
-                                    <a th:href="@{'/profile/public/' + ${user.id}}" class="btn btn-outline-success btn-sm me-2">View Profile</a>
-                                    <form th:action="@{/friends/send-request}" method="POST" th:if="${!user.isFriend}">
+                                <p class="text-info mb-3">
+                                    <i class="bi bi-star-fill me-1"></i>
+                                    <span th:text="${user.points + ' points'}">50 points</span>
+                                </p>
+                                <div class="d-flex align-items-center gap-2">
+                                    <a th:href="@{'/profile/public/' + ${user.id}}" class="btn btn-outline-info btn-action">
+                                        <i class="bi bi-person me-1"></i>Profile
+                                    </a>
+                                    <form th:action="@{/friends/send-request}" method="POST" th:if="${!user.isFriend}" class="flex-grow-1">
                                         <input type="hidden" name="userId" th:value="${user.id}">
-                                        <button type="submit" class="btn btn-success btn-sm" 
+                                        <button type="submit" class="btn btn-success btn-action w-100" 
                                                 th:disabled="${user.requestSent}">
+                                            <i class="bi bi-person-plus me-1" th:if="${!user.requestSent}"></i>
+                                            <i class="bi bi-clock me-1" th:if="${user.requestSent}"></i>
                                             <span th:text="${user.requestSent ? 'Request Sent' : 'Add Friend'}">Add Friend</span>
                                         </button>
                                     </form>
-                                    <span th:if="${user.isFriend}" class="text-success">
-                                        <i class="bi bi-check-circle-fill"></i> Friends
+                                    <span th:if="${user.isFriend}" class="status-badge status-friends">
+                                        <i class="bi bi-check-circle-fill me-1"></i>Friends
                                     </span>
                                 </div>
                             </div>
@@ -169,10 +173,17 @@
         </div>
 
         <!-- Empty States -->
-        <div th:if="${#lists.isEmpty(friends) && #lists.isEmpty(searchResults)}" class="text-center py-5">
-            <i class="bi bi-people display-1 text-muted"></i>
-            <h3 class="mt-3">No Friends Yet</h3>
-            <p class="text-muted">Search for users to add them as friends!</p>
+        <div th:if="${#lists.isEmpty(friends) && #lists.isEmpty(searchResults) && #lists.isEmpty(friendRequests)}" class="empty-state">
+            <i class="bi bi-people empty-icon"></i>
+            <h3 class="mt-3 text-muted">No Friends Yet</h3>
+            <p class="text-muted mb-4">Start building your eco-friendly community by searching for users and sending friend requests!</p>
+        </div>
+
+        <!-- No Search Results -->
+        <div th:if="${!#lists.isEmpty(searchResults) && #lists.size(searchResults) == 0 && param.q != null}" class="empty-state">
+            <i class="bi bi-search empty-icon"></i>
+            <h3 class="mt-3 text-muted">No Users Found</h3>
+            <p class="text-muted mb-4">Try searching with a different name or email address.</p>
         </div>
     </div>
 
@@ -181,5 +192,18 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
 </body>
 </html>

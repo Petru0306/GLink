@@ -4,7 +4,6 @@ import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
-import com.greenlink.greenlink.repository.UserRepository;
 import com.greenlink.greenlink.repository.UserChallengeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,6 @@ public class ChallengeTrackingService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserChallengeRepository userChallengeRepository;
@@ -217,7 +214,6 @@ public class ChallengeTrackingService {
         Optional<UserChallenge> existingUserChallenge = userChallengeRepository.findByUserIdAndChallengeId(userId, challenge.getId());
 
         UserChallenge userChallenge;
-        boolean isNewChallenge = false;
         
         if (existingUserChallenge.isPresent()) {
             userChallenge = existingUserChallenge.get();
@@ -226,7 +222,6 @@ public class ChallengeTrackingService {
             // Create new user challenge automatically
             logger.info("Creating new user challenge automatically");
             userChallenge = challengeService.startChallenge(userId, challenge.getId());
-            isNewChallenge = true;
             
             // Send notification for new challenge activation
             sendChallengeActivated(userId, challenge);

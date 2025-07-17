@@ -9,6 +9,8 @@ import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
+import com.greenlink.greenlink.service.SystemMessageService;
+import com.greenlink.greenlink.model.SystemMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,15 +43,21 @@ public class MessageController {
     @Autowired
     private ChallengeTrackingService challengeTrackingService;
     
+    @Autowired
+    private SystemMessageService systemMessageService;
+    
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public String getInbox(Model model, Principal principal) {
         try {
             User currentUser = userService.getUserByEmail(principal.getName());
             List<ConversationDto> conversations = messageService.getUserConversations(currentUser);
+            List<SystemMessage> systemMessages = systemMessageService.getUnreadMessages(currentUser);
             
             model.addAttribute("conversations", conversations);
+            model.addAttribute("systemMessages", systemMessages);
             model.addAttribute("unreadCount", messageService.countUnreadMessages(currentUser));
+            model.addAttribute("unreadSystemCount", systemMessageService.countUnreadMessages(currentUser));
             
             return "inbox/inbox";
         } catch (Exception e) {
@@ -208,6 +216,19 @@ public class MessageController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error getting unread count", e);
             return ResponseEntity.ok(Map.of("count", 0L));
+        }
+    }
+    
+    @PostMapping("/mark-read")
+    @PreAuthorize("isAuthenticated()")
+    public String markSystemMessageAsRead(@RequestParam Long messageId, Principal principal) {
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            systemMessageService.markAsRead(messageId);
+            return "redirect:/inbox?success=Message+marked+as+read";
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error marking message as read", e);
+            return "redirect:/inbox?error=" + e.getMessage();
         }
     }
 } 

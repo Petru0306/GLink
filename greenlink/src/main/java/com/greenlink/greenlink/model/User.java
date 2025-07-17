@@ -7,7 +7,9 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -55,6 +57,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<QuizResult> quizResults;
 
+    @Transient
+    private Map<String, Object> additionalProperties = new HashMap<>();
+
     @OneToMany(mappedBy = "user")
     private List<Challenge> challenges;
     
@@ -71,6 +76,12 @@ public class User implements UserDetails {
         inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Product> favoriteProducts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Friend> friends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "friendUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Friend> friendOf = new ArrayList<>();
 
     public User() {
     }
@@ -192,6 +203,14 @@ public class User implements UserDetails {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperty(String key, Object value) {
+        this.additionalProperties.put(key, value);
     }
 
     public LocalDateTime getLastLogin() {

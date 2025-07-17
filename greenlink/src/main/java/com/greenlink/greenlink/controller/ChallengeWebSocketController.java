@@ -15,7 +15,13 @@ public class ChallengeWebSocketController {
     @MessageMapping("/challenge-action")
     @SendTo("/topic/challenge-updates")
     public String handleChallengeAction(String action) {
-        // This method can be used for general challenge action handling
-        return "Action received: " + action;
+        // Extract userId from authentication context - this is a placeholder
+        // In a real implementation, you would get this from the security context
+        Long userId = 1L;
+        
+        // Track the challenge action
+        challengeTrackingService.trackUserAction(userId, action, null);
+        
+        return "Action received and tracked: " + action;
     }
 } 

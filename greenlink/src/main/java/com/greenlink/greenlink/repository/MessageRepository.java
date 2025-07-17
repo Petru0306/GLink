@@ -17,6 +17,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT COUNT(m) FROM Message m WHERE m.conversation = ?1 AND m.sender != ?2 AND m.isRead = false")
     long countUnreadMessagesInConversation(Conversation conversation, User currentUser);
     
-    @Query("SELECT COUNT(m) FROM Message m JOIN m.conversation c WHERE (c.seller = ?1 OR c.buyer = ?1) AND m.sender != ?1 AND m.isRead = false")
+    @Query("SELECT COUNT(m) FROM Message m JOIN m.conversation c WHERE (c.buyer = ?1 OR c.seller = ?1) AND m.sender != ?1 AND m.isRead = false")
     long countTotalUnreadMessages(User user);
 } 
