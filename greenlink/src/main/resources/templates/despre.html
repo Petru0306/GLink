@@ -112,6 +112,145 @@
         .social-links a:hover {
             color: #20c997;
         }
+
+        /* Enhanced animations and improved styles */
+        .value-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .value-card:hover::before {
+            left: 100%;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 1rem 2rem rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+        }
+
+        .value-icon {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
+            border: 3px solid rgba(40, 167, 69, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .value-icon:hover {
+            transform: rotate(360deg) scale(1.1);
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2) 0%, rgba(32, 201, 151, 0.2) 100%);
+        }
+
+        .team-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .team-card:hover::before {
+            left: 100%;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 1rem 2rem rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+        }
+
+        .mission-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.05), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Bold titles */
+        h2.display-5 {
+            font-weight: 700 !important;
+            color: #2d3748;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h3.h4 {
+            font-weight: 600 !important;
+            color: #2d3748;
+        }
+
+        h5 {
+            font-weight: 600 !important;
+            color: #2d3748;
+        }
+
+        /* Enhanced hero section */
+        .hero-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes wave {
+            0% { transform: translate(-50%, -50%) rotate(-45deg); }
+            100% { transform: translate(-50%, -50%) rotate(315deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -123,8 +262,8 @@
     <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-3">Despre GreenLink</h1>
-                <p class="lead fs-4 mb-0">Conectăm oameni pasionați de un viitor sustenabil prin educație, produse eco și soluții de reciclare</p>
+                <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">Despre GreenLink</h1>
+                <p class="lead fs-4 mb-0 animate__animated animate__fadeInUp animate__delay-1s">Conectăm oameni pasionați de un viitor sustenabil prin educație, produse eco și soluții de reciclare</p>
             </div>
         </div>
     </div>
@@ -132,7 +271,7 @@
 
 <main class="container py-5">
     <!-- Mission Section -->
-    <section class="mission-section text-center">
+    <section class="mission-section text-center" data-aos="fade-up" data-aos-duration="1000">
         <h2 class="display-5 mb-4">Misiunea Noastră</h2>
         <p class="lead mb-4">Creăm o comunitate dedicată protecției mediului și dezvoltării sustenabile.</p>
         <p class="mb-0">GreenLink este platforma care conectează oamenii pasionați de mediu cu resurse educaționale,
@@ -140,10 +279,10 @@
     </section>
 
     <!-- Values Section -->
-    <section class="mb-5">
+    <section class="mb-5" data-aos="fade-up" data-aos-duration="1000">
         <h2 class="text-center display-5 mb-5">Valorile Noastre</h2>
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div class="value-card">
                     <div class="card-body text-center p-4">
                         <div class="value-icon">
@@ -154,7 +293,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="value-card">
                     <div class="card-body text-center p-4">
                         <div class="value-icon">
@@ -165,7 +304,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div class="value-card">
                     <div class="card-body text-center p-4">
                         <div class="value-icon">
@@ -180,10 +319,10 @@
     </section>
 
     <!-- Team Section -->
-    <section>
+    <section data-aos="fade-up" data-aos-duration="1000">
         <h2 class="text-center display-5 mb-5">Echipa Noastră</h2>
         <div class="row g-4 justify-content-center">
-            <div class="col-md-5">
+            <div class="col-md-5" data-aos="fade-up" data-aos-delay="100">
                 <div class="team-card">
                     <div class="team-image-container">
                         <img src="/images/about/Panait Mihai-Petru.jpg" class="team-image" alt="Panait Mihai-Petru">
@@ -198,7 +337,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5" data-aos="fade-up" data-aos-delay="200">
                 <div class="team-card">
                     <div class="team-image-container">
                         <img src="/images/about/Batea Andrei-Daniel.jpg" class="team-image" alt="Batea Andrei-Daniel">
