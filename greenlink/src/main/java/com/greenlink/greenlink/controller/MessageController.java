@@ -231,4 +231,38 @@ public class MessageController {
             return "redirect:/inbox?error=" + e.getMessage();
         }
     }
+    
+    @GetMapping("/conversation/{conversationId}/messages")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<List<MessageDto>> getConversationMessages(
+            @PathVariable Long conversationId,
+            Principal principal) {
+        
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            List<MessageDto> messages = messageService.getConversationMessages(conversationId, currentUser);
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting conversation messages", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PostMapping("/conversation/{conversationId}/read")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<?> markConversationAsReadAjax(
+            @PathVariable Long conversationId,
+            Principal principal) {
+        
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            messageService.markConversationAsRead(conversationId, currentUser);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error marking conversation as read", e);
+            return ResponseEntity.badRequest().build();
+        }
+    }
 } 
