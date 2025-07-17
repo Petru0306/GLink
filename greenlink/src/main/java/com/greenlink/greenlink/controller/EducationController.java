@@ -42,7 +42,35 @@ public class EducationController {
 
     @GetMapping("/curs/{courseId}")
     public String getCourseDetails(@PathVariable Long courseId, Model model, @AuthenticationPrincipal User currentUser) {
-        CourseDto course = courseService.getCourseById(courseId);
+        // For lessons 4, 5, 6, create mock course data since they don't exist in database
+        CourseDto course;
+        if (courseId >= 4 && courseId <= 6) {
+            // Create mock course data for lessons 4, 5, 6
+            String title = "";
+            String description = "";
+            int duration = 15; // Default duration in minutes
+            
+            switch(courseId.intValue()) {
+                case 4:
+                    title = "Începe un mini-compost acasă";
+                    description = "Transformă resturile în viață nouă";
+                    break;
+                case 5:
+                    title = "Plantează ceva (chiar și într-un ghiveci!)";
+                    description = "Conectează-te cu natura prin plantat";
+                    break;
+                case 6:
+                    title = "Adună gunoiul din cartierul tău";
+                    description = "Fă diferența în comunitatea ta";
+                    break;
+            }
+            
+            course = new CourseDto(courseId, title, description, duration);
+        } else {
+            // For existing courses (1, 2, 3), fetch from database
+            course = courseService.getCourseById(courseId);
+        }
+        
         model.addAttribute("course", course);
         
         // Check if user has already completed this course quiz
@@ -60,9 +88,63 @@ public class EducationController {
                 return "curs2";
             case 3:
                 return "curs3";
+            case 4:
+                return "curs4";
+            case 5:
+                return "curs5";
+            case 6:
+                return "curs6";
             default:
                 return "curs"; // Default to first course if ID not found
         }
+    }
+    
+    @GetMapping("/curs2")
+    public String getCourse2(Model model, @AuthenticationPrincipal User currentUser) {
+        // Check if user has already completed this course quiz
+        boolean lessonCompleted = false;
+        if (currentUser != null) {
+            lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 2L);
+            model.addAttribute("lessonCompleted", lessonCompleted);
+        }
+        
+        return "curs2";
+    }
+    
+    @GetMapping("/curs4")
+    public String getCourse4(Model model, @AuthenticationPrincipal User currentUser) {
+        // Check if user has already completed this course quiz
+        boolean lessonCompleted = false;
+        if (currentUser != null) {
+            lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 4L);
+            model.addAttribute("lessonCompleted", lessonCompleted);
+        }
+        
+        return "curs4";
+    }
+
+    @GetMapping("/curs5")
+    public String getCourse5(Model model, @AuthenticationPrincipal User currentUser) {
+        // Check if user has already completed this course quiz
+        boolean lessonCompleted = false;
+        if (currentUser != null) {
+            lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 5L);
+            model.addAttribute("lessonCompleted", lessonCompleted);
+        }
+        
+        return "curs5";
+    }
+
+    @GetMapping("/curs6")
+    public String getCourse6(Model model, @AuthenticationPrincipal User currentUser) {
+        // Check if user has already completed this course quiz
+        boolean lessonCompleted = false;
+        if (currentUser != null) {
+            lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 6L);
+            model.addAttribute("lessonCompleted", lessonCompleted);
+        }
+        
+        return "curs6";
     }
     
     @PostMapping("/quiz/{courseId}/submit")

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Ecologie și Biodiversitate</title>
+    <title>GreenLink - Lecția 3: Redu deșeurile cu un singur schimb simplu</title>
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,79 +12,108 @@
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
         .course-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
         }
         .course-header {
-            background: linear-gradient(135deg, #198754, #20c997);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             padding: 3rem 0;
             margin-bottom: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
         }
-        .content-section {
+        .lesson-section {
             background: white;
-            border-radius: 10px;
-            padding: 2rem;
+            border-radius: 15px;
+            padding: 2.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid #28a745;
         }
-        .content-section img {
-            max-width: 100%;
-            max-height: 300px; /* Limit image height */
-            border-radius: 8px;
-            margin: 1rem auto;
-            display: block;
+        .paragraph-number {
+            background: #28a745;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
         }
         .quiz-section {
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 15px;
             padding: 2rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
+            border: 2px solid #e9ecef;
         }
         .quiz-option {
             background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1.2rem;
             margin-bottom: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         .quiz-option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border-color: #28a745;
         }
         .quiz-option.selected {
-            border-color: #198754;
-            background-color: #d1e7dd;
+            border-color: #28a745;
+            background-color: #d4edda;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+        .quiz-option.correct {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .quiz-option.incorrect {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .quiz-section.locked .quiz-option {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .quiz-section.locked .quiz-option:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: #dee2e6;
         }
         .highlight-box {
-            background: #d1e7dd;
-            border-left: 4px solid #198754;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
+            background: linear-gradient(135deg, #e8f5e9, #f0f8f0);
+            border-left: 5px solid #28a745;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 12px 12px 0;
         }
         .bullet-list {
             padding-left: 1.5rem;
             margin-bottom: 1.5rem;
         }
         .bullet-list li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             position: relative;
             padding-left: 0.5rem;
+            line-height: 1.6;
         }
         .section-subtitle {
-            color: #198754;
+            color: #28a745;
             font-weight: 600;
-            margin: 1.5rem 0 1rem;
+            margin: 2rem 0 1rem;
+            font-size: 1.3rem;
         }
         .quiz-question {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #e9ecef;
         }
         .quiz-question:last-child {
             border-bottom: none;
@@ -92,53 +121,106 @@
         .quiz-result {
             text-align: center;
             padding: 2rem;
-            border-radius: 10px;
+            border-radius: 15px;
             margin-top: 2rem;
             display: none;
         }
         .quiz-result.success {
-            background-color: #d1e7dd;
-            border: 1px solid #badbcc;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 2px solid #28a745;
+            color: #155724;
         }
         .quiz-result.warning {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 2px solid #ffc107;
+            color: #856404;
         }
         .progress-container {
             margin: 2rem 0;
         }
         .progress {
-            height: 10px;
-            border-radius: 5px;
+            height: 12px;
+            border-radius: 6px;
             margin-bottom: 0.5rem;
+            background-color: #e9ecef;
         }
         .progress-bar {
-            background-color: #198754;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            border-radius: 6px;
         }
         .progress-label {
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
             color: #6c757d;
+            font-weight: 500;
         }
         .points-badge {
-            background: #198754;
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.6rem 1.2rem;
             border-radius: 50px;
             font-weight: 600;
             display: inline-block;
             margin-bottom: 1rem;
             font-size: 1.1rem;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
-        .quiz-completed-message {
-            background-color: #d1e7dd;
-            color: #0f5132;
-            padding: 1rem;
-            border-radius: 8px;
+        .final-task {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-top: 3rem;
+            border: 2px solid #dee2e6;
+        }
+        .task-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            border: 1px solid #badbcc;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .back-button:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+        .lesson-completed {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid #28a745;
             text-align: center;
+        }
+        .reflection-input {
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 1rem;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .reflection-input:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            outline: none;
         }
     </style>
 </head>
@@ -149,327 +231,302 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4">Ecologie și Biodiversitate</h1>
-            <p class="lead">Descoperă importanța ecosistemelor și a biodiversității</p>
+            <h1 class="display-4">🔄 Lecția 3: Redu deșeurile cu un singur schimb simplu</h1>
+            <p class="lead">Descoperă puterea schimbărilor mici pentru un impact mare</p>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="course-container">
-        <!-- Quiz already completed message -->
-        <div class="quiz-completed-message" th:if="${quizCompleted}" sec:authorize="isAuthenticated()">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            Felicitări! Ai completat deja acest quiz și ai primit punctele.
+        <!-- Back Button -->
+        <a href="/educatie" class="back-button">
+            <i class="bi bi-arrow-left"></i>
+            Înapoi la harta cursurilor
+        </a>
+
+        <!-- Lesson completed message -->
+        <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
+            <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
+            <strong>Felicitări!</strong> Ai completat această lecție cu succes!
         </div>
-    
-        <!-- Introduction Section -->
-        <section class="content-section">
-            <h2>Ce este biodiversitatea?</h2>
-            <div class="highlight-box">
-                <p class="mb-0">
-                    <i class="bi bi-tree-fill me-2"></i>
-                    Biodiversitatea reprezintă varietatea tuturor formelor de viață de pe Pământ, de la microorganisme până la cele mai complexe ecosisteme.
-                </p>
-            </div>
-            
-            <p>
-                Biodiversitatea este fundamentală pentru menținerea echilibrului ecologic și pentru supraviețuirea 
-                tuturor speciilor, inclusiv a omului. Ecosistemele sănătoase ne oferă aer curat, apă potabilă, 
-                sol fertil și resurse naturale esențiale pentru viața pe Pământ. Protejarea biodiversității 
-                este crucială pentru viitorul planetei noastre.
-            </p>
-            
-            <img src="/images/education/Ecosisteme si Biodiversitate.png" alt="Ecosisteme și biodiversitate" class="img-fluid">
-            
-            <h3 class="section-subtitle">Nivelurile Biodiversității</h3>
-            <ul class="bullet-list">
-                <li><strong>Diversitatea genetică</strong> - Variația genetică în cadrul unei specii, care permite adaptarea la schimbările de mediu.</li>
-                <li><strong>Diversitatea speciilor</strong> - Varietatea de specii diferite care există într-un anumit habitat sau pe întreaga planetă.</li>
-                <li><strong>Diversitatea ecosistemelor</strong> - Varietatea habitatelor, comunităților biologice și proceselor ecologice.</li>
-                <li><strong>Diversitatea funcțională</strong> - Varietatea funcțiilor ecologice îndeplinite de diferite organisme.</li>
-                <li><strong>Diversitatea culturală</strong> - Varietatea cunoștințelor, practicilor și inovațiilor umane legate de biodiversitate.</li>
-            </ul>
-        </section>
-
-        <!-- Main Points Section -->
-        <section class="content-section">
-            <h2>Importanța biodiversității</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-flower1 text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Specii</h5>
-                        <p>Diversitatea genetică și importanța fiecărei specii</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-tree text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Ecosisteme</h5>
-                        <p>Interacțiunile dintre specii și mediul lor</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="text-center">
-                        <i class="bi bi-shield-check text-success" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3">Conservare</h5>
-                        <p>Protejarea și restaurarea habitatelor naturale</p>
-                    </div>
-                </div>
-            </div>
-            
-            <h3 class="section-subtitle">Servicii ecosistemice</h3>
-            <ul class="bullet-list">
-                <li><strong>Servicii de aprovizionare</strong> - Furnizarea de alimente, apă dulce, lemn, fibre, resurse genetice și medicamente.</li>
-                <li><strong>Servicii de reglare</strong> - Reglarea climei, purificarea aerului și apei, polenizarea, controlul eroziunii și al inundațiilor.</li>
-                <li><strong>Servicii culturale</strong> - Beneficii recreative, estetice, spirituale și educaționale oferite de natură.</li>
-                <li><strong>Servicii de susținere</strong> - Formarea solului, fotosinteza, ciclul nutrienților și ciclul apei.</li>
-                <li><strong>Valoare economică</strong> - Biodiversitatea contribuie cu trilioane de dolari anual la economia globală.</li>
-            </ul>
-            
-            <h3 class="section-subtitle">Amenințări la adresa biodiversității</h3>
-            <ul class="bullet-list">
-                <li><strong>Pierderea habitatelor</strong> - Defrișările, urbanizarea și conversia terenurilor pentru agricultură.</li>
-                <li><strong>Schimbările climatice</strong> - Modificarea temperaturilor și a regimului precipitațiilor afectează ecosistemele.</li>
-                <li><strong>Poluarea</strong> - Contaminarea aerului, apei și solului cu substanțe nocive.</li>
-                <li><strong>Supraexploatarea</strong> - Vânătoarea excesivă, pescuitul excesiv și recoltarea nesustenabilă a resurselor.</li>
-                <li><strong>Specii invazive</strong> - Introducerea de specii non-native care perturbă ecosistemele locale.</li>
-                <li><strong>Boli</strong> - Răspândirea bolilor care afectează speciile sălbatice și domestice.</li>
-            </ul>
-        </section>
         
-        <section class="content-section">
-            <h2>Biodiversitatea în România</h2>
-            
-            <h3 class="section-subtitle">Bogăția naturală a României</h3>
-            <ul class="bullet-list">
-                <li>România găzduiește aproximativ 3.700 de specii de plante, dintre care 23 sunt endemice (există doar în România).</li>
-                <li>Carpații reprezintă cel mai mare habitat natural neîntrerupt din Europa, adăpostind peste 60% din populația europeană de urși bruni.</li>
-                <li>Delta Dunării este a treia cea mai mare biodiversitate din lume și cea mai mare zonă umedă din Europa.</li>
-                <li>Pădurile virgine din România sunt unele dintre cele mai valoroase din Europa, adăpostind specii rare și pe cale de dispariție.</li>
-                <li>În România există 13 parcuri naționale și 18 parcuri naturale, care protejează habitate valoroase.</li>
-                <li>Aproximativ 23% din teritoriul României face parte din rețeaua ecologică Natura 2000.</li>
-            </ul>
-            
-            <h3 class="section-subtitle">Conservarea biodiversității</h3>
-            <ul class="bullet-list">
-                <li><strong>Arii protejate</strong> - Parcuri naționale, rezervații naturale și situri Natura 2000 pentru protejarea speciilor și habitatelor.</li>
-                <li><strong>Legislație</strong> - Legi și reglementări pentru protejarea speciilor pe cale de dispariție și a habitatelor lor.</li>
-                <li><strong>Restaurare ecologică</strong> - Proiecte de refacere a ecosistemelor degradate și reintroducerea speciilor dispărute.</li>
-                <li><strong>Cercetare</strong> - Studii științifice pentru înțelegerea și monitorizarea biodiversității.</li>
-                <li><strong>Educație</strong> - Programe de conștientizare și educație pentru public despre importanța biodiversității.</li>
-                <li><strong>Agricultură durabilă</strong> - Practici agricole care protejează biodiversitatea și reduc impactul negativ asupra mediului.</li>
-                <li><strong>Ecoturism</strong> - Promovarea turismului responsabil care sprijină conservarea naturii și comunitățile locale.</li>
-            </ul>
-        </section>
+        <!-- Hidden authentication status indicator -->
+        <input type="hidden" id="authenticated-status" sec:authorize="isAuthenticated()" value="true">
 
-        <!-- Quiz Section -->
-        <section class="quiz-section" id="quiz">
-            <h2 class="text-center mb-4">Verifică ce ai învățat</h2>
-            
-            <div th:if="${quizCompleted}" sec:authorize="isAuthenticated()" class="alert alert-success text-center">
-                Ai completat deja acest quiz și ai primit punctele.
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span>Progresul lecției</span>
+                <span id="progress-text">0/5</span>
             </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Paragraph 1 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">1</div>
+            <h2>De ce contează obiectele de unică folosință</h2>
             
-            <div th:unless="${quizCompleted}">
-                <div class="quiz-questions">
-                    <!-- Question 1 -->
-                    <div class="quiz-question" data-question-id="1">
-                        <p class="fw-bold">1. De ce este importantă biodiversitatea?</p>
+            <p class="lead mb-4">
+                Obiectele de unică folosință sunt lucruri pe care le folosim o singură dată și apoi le aruncăm. Printre cele mai comune se numără:
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Obiecte de unică folosință frecvente:</h4>
+                <ul class="bullet-list">
+                    <li><strong>🍴 Tacâmurile și farfuriile din plastic</strong></li>
+                    <li><strong>☕ Paharele de cafea de la automate</strong></li>
+                    <li><strong>🥤 Paiele și pungile de plastic</strong></li>
+                    <li><strong>🧻 Șervețelele de hârtie și ambalajele alimentare</strong></li>
+                </ul>
+            </div>
+
+            <p>
+                Acestea sunt convenabile, dar creează o cantitate uriașă de deșeuri care ajunge în gropi de gunoi, în natură și în oceane. Plasticul, în special, se degradează în sute de ani și poate fi ingerat de animale.
+            </p>
+
+            <p>
+                Schimbarea începe cu o alegere simplă: înlocuiește un obiect de unică folosință cu o variantă reutilizabilă. Nu trebuie să devii „zero waste" peste noapte — un pas mic este un început important.
+            </p>
+
+            <!-- Quiz for Paragraph 1 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
+                <p class="mb-3"><strong>Ce sunt obiectele de unică folosință?</strong></p>
+                
                 <div class="quiz-option" data-correct="false">
-                    Pentru că face natura mai frumoasă
+                    <strong>A)</strong> Obiecte refolosibile de mai multe ori
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    Pentru că menține echilibrul ecosistemelor și asigură supraviețuirea speciilor
+                    <strong>B)</strong> Produse folosite o dată și apoi aruncate
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    Pentru că oferă mai multe specii pentru grădini zoologice
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Pentru că face parte din programa școlară
-                        </div>
-                    </div>
-                    
-                    <!-- Question 2 -->
-                    <div class="quiz-question" data-question-id="2">
-                        <p class="fw-bold">2. Câte specii de plante există aproximativ în România?</p>
-                        <div class="quiz-option" data-correct="false">
-                            1.500
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            2.800
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            3.700
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            5.200
-                        </div>
-                    </div>
-                    
-                    <!-- Question 3 -->
-                    <div class="quiz-question" data-question-id="3">
-                        <p class="fw-bold">3. Care este cea mai mare zonă umedă din Europa?</p>
-                        <div class="quiz-option" data-correct="true">
-                            Delta Dunării
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Parcul Natural Comana
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Lacul Balaton
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Mlaștinile din Belarus
-                        </div>
-                    </div>
-                    
-                    <!-- Question 4 -->
-                    <div class="quiz-question" data-question-id="4">
-                        <p class="fw-bold">4. Ce procent din teritoriul României face parte din rețeaua ecologică Natura 2000?</p>
-                        <div class="quiz-option" data-correct="false">
-                            10%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            17%
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            23%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            30%
-                        </div>
-                    </div>
-                    
-                    <!-- Question 5 -->
-                    <div class="quiz-question" data-question-id="5">
-                        <p class="fw-bold">5. Care dintre următoarele NU este un nivel al biodiversității?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Diversitatea genetică
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Diversitatea speciilor
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Diversitatea ecosistemelor
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Diversitatea geologică
-                        </div>
-                    </div>
-                    
-                    <!-- Question 6 -->
-                    <div class="quiz-question" data-question-id="6">
-                        <p class="fw-bold">6. Ce procent din populația europeană de urși bruni se găsește în Carpați?</p>
-                        <div class="quiz-option" data-correct="false">
-                            30%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            45%
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Peste 60%
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            75%
-                        </div>
-                    </div>
-                    
-                    <!-- Question 7 -->
-                    <div class="quiz-question" data-question-id="7">
-                        <p class="fw-bold">7. Care dintre următoarele NU este o amenințare la adresa biodiversității?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Pierderea habitatelor
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Schimbările climatice
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Ecoturismul responsabil
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Speciile invazive
-                        </div>
-                    </div>
-                    
-                    <!-- Question 8 -->
-                    <div class="quiz-question" data-question-id="8">
-                        <p class="fw-bold">8. Care dintre următoarele servicii ecosistemice se referă la formarea solului și ciclul nutrienților?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Servicii de aprovizionare
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Servicii de reglare
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Servicii culturale
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Servicii de susținere
-                        </div>
-                    </div>
-                    
-                    <!-- Question 9 -->
-                    <div class="quiz-question" data-question-id="9">
-                        <p class="fw-bold">9. Câte parcuri naționale există în România?</p>
-                        <div class="quiz-option" data-correct="false">
-                            8
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            13
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            18
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            22
-                        </div>
-                    </div>
-                    
-                    <!-- Question 10 -->
-                    <div class="quiz-question" data-question-id="10">
-                        <p class="fw-bold">10. Ce reprezintă speciile endemice?</p>
-                        <div class="quiz-option" data-correct="false">
-                            Specii pe cale de dispariție
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Specii invazive
-                        </div>
-                        <div class="quiz-option" data-correct="true">
-                            Specii care există doar într-o anumită regiune geografică
-                        </div>
-                        <div class="quiz-option" data-correct="false">
-                            Specii care migrează sezonier
-                        </div>
-                    </div>
+                    <strong>C)</strong> Lucruri din sticlă
                 </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Jucării reciclabile
+                </div>
+
+                <div class="quiz-result" id="result-1"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 2 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">2</div>
+            <h2>Un singur schimb poate face o mare diferență</h2>
+            
+            <p class="lead mb-4">
+                Poate părea nesemnificativ să înlocuiești o sticlă de plastic cu una reutilizabilă sau o pungă de plastic cu una din pânză. Dar aceste alegeri se adună rapid:
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Impactul unui singur schimb:</h4>
+                <ul class="bullet-list">
+                    <li><strong>💧 O persoană poate evita folosirea a peste 300 de sticle de plastic într-un an</strong> doar cu o singură sticlă reutilizabilă.</li>
+                    <li><strong>🛍️ O pungă de pânză poate înlocui sute de pungi din plastic</strong> de-a lungul vieții.</li>
+                    <li><strong>🍱 O cutie reutilizabilă de mâncare poate înlocui zeci de caserole</strong> de unică folosință.</li>
+                </ul>
+            </div>
+
+            <p>
+                Așadar, chiar un singur schimb pe care îl folosești zilnic reduce semnificativ cantitatea de deșeuri produse de tine. Este ușor de integrat și te ajută să devii mai conștient(ă) de alte lucruri pe care le poți îmbunătăți.
+            </p>
+
+            <!-- Quiz for Paragraph 2 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
+                <p class="mb-3"><strong>Câte sticle de plastic poate evita o singură sticlă reutilizabilă într-un an?</strong></p>
                 
-                <div class="progress-container">
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <div class="progress-label">
-                        <span>0 din 10 întrebări</span>
-                        <span>0 puncte</span>
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> 10
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Aproximativ 30
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>C)</strong> Peste 300
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Doar 2
+                </div>
+
+                <div class="quiz-result" id="result-2"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 3 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">3</div>
+            <h2>Exemple ușoare de eco-swap</h2>
+            
+            <p class="lead mb-4">
+                Nu știi cu ce să începi? Alege un obiect pe care îl folosești frecvent și caută o variantă reutilizabilă.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Iată câteva idei simple:</h4>
+                <ul class="bullet-list">
+                    <li><strong>🛍️ Schimbă pungile din plastic cu pungi textile sau din plasă.</strong></li>
+                    <li><strong>🧴 Înlocuiește sticlele de apă cu una din inox, aluminiu sau sticlă.</strong></li>
+                    <li><strong>🍴 Folosește tacâmuri refolosibile, chiar și un set mic ținut în geantă.</strong></li>
+                    <li><strong>☕ Ia-ți un termos sau cană proprie pentru cafea sau ceai.</strong></li>
+                    <li><strong>🍱 Folosește o cutie pentru prânz în loc de ambalaje de unică folosință.</strong></li>
+                </ul>
+            </div>
+
+            <p>
+                Alege ceea ce ți se pare ușor de integrat în rutina ta. Nu trebuie să fie perfect — important e să începi de undeva.
+            </p>
+
+            <!-- Quiz for Paragraph 3 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
+                <p class="mb-3"><strong>Ce este un exemplu de „eco-swap"?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Aruncarea unei sticle de apă
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>B)</strong> Folosirea unei pungi textile în loc de una din plastic
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>C)</strong> Încălzirea ambalajelor din plastic
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Folosirea paielor de unică folosință
+                </div>
+
+                <div class="quiz-result" id="result-3"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 4 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">4</div>
+            <h2>Avantaje ascunse ale folosirii obiectelor reutilizabile</h2>
+            
+            <p class="lead mb-4">
+                Pe lângă reducerea deșeurilor, obiectele reutilizabile îți aduc și alte beneficii:
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Beneficii suplimentare:</h4>
+                <ul class="bullet-list">
+                    <li><strong>💰 Economisești bani</strong> — de exemplu, apa la bidon costă de 10–20 ori mai mult decât cea de la robinet.</li>
+                    <li><strong>🛡️ Sunt mai sigure</strong> — multe recipiente reutilizabile nu conțin substanțe toxice precum BPA.</li>
+                    <li><strong>✨ Sunt mai estetice</strong> — poți alege modele care îți plac și îți reflectă personalitatea.</li>
+                    <li><strong>📦 Te fac mai organizat(ă)</strong> — ai tot timpul la tine ceea ce îți trebuie.</li>
+                </ul>
+            </div>
+
+            <p>
+                Mai mult, devii o sursă de inspirație. Oamenii observă și adesea întreabă — „De unde ai termosul ăsta?" Sau „Cum de nu mai folosești plastic?". E o cale de a începe conversații pozitive despre mediu.
+            </p>
+
+            <!-- Quiz for Paragraph 4 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
+                <p class="mb-3"><strong>Care este un beneficiu suplimentar al folosirii obiectelor reutilizabile?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Costă mai mult
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>B)</strong> Sunt mai toxice
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>C)</strong> Te ajută să economisești bani
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Ocupă mai mult spațiu
+                </div>
+
+                <div class="quiz-result" id="result-4"></div>
+            </div>
+        </section>
+
+        <!-- Paragraph 5 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">5</div>
+            <h2>Un obicei mic devine o schimbare mare</h2>
+            
+            <p class="lead mb-4">
+                Transformarea unui „eco-swap" într-un obicei zilnic este mai simplă decât pare. Poți începe prin a-ți pune mereu în geantă o pungă reutilizabilă sau să ții cana ta preferată la birou.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Cum să faci schimbarea un obicei:</h4>
+                <ul class="bullet-list">
+                    <li><strong>🎯 Alege un singur obiect</strong> pe care îl folosești zilnic și înlocuiește-l cu o variantă reutilizabilă.</li>
+                    <li><strong>📍 Păstrează-l într-un loc vizibil</strong> — pe birou, în geantă, lângă ușă.</li>
+                    <li><strong>⏰ Folosește-l în același moment</strong> în fiecare zi pentru a crea rutina.</li>
+                    <li><strong>🎉 Sărbătorește micile victorii</strong> — fiecare zi când folosești obiectul reutilizabil este o victorie!</li>
+                </ul>
+            </div>
+
+            <p>
+                Odată ce devine rutină, nici nu mai trebuie să te gândești la asta. După un timp, vei observa că vrei să faci și alte schimbări: să reciclezi mai corect, să cumperi mai puțin, să alegi produse locale. Sustenabilitatea începe cu un gest mic și continuă cu pași mari. Tot ce trebuie este să începi.
+            </p>
+
+            <!-- Quiz for Paragraph 5 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
+                <p class="mb-3"><strong>Ce te ajută să continui cu schimbările sustenabile?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Să le ignori complet
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>B)</strong> Să le tratezi ca obiceiuri zilnice
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>C)</strong> Să schimbi totul deodată
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Să nu te implici deloc
+                </div>
+
+                <div class="quiz-result" id="result-5"></div>
+            </div>
+        </section>
+
+        <!-- Final Task -->
+        <section class="final-task">
+            <h2 class="text-center mb-4">✅ Sarcina finală</h2>
+            
+            <div class="task-section">
+                <h4><i class="bi bi-camera me-2"></i>📷 Prompt foto (opțional)</h4>
+                <p>
+                    Fă o fotografie cu obiectul tău reutilizabil în acțiune — cum îl folosești, unde îl porți sau cum înlocuiește ceva de unică folosință.
+                </p>
+                <input type="file" class="form-control" id="image-upload" accept="image/*">
+                <div class="mt-2">
+                    <label id="upload-label">Nu ai încă încărcat nicio imagine.</label>
+                    <img id="image-preview" src="" alt="Imagine propusă" style="display: none; max-width: 100%; height: auto; margin-top: 10px;">
                 </div>
             </div>
-                
-            <div class="text-center mt-4">
-                    <button class="btn btn-success btn-lg" id="checkAnswers" disabled>Verifică răspunsurile</button>
-                </div>
-                
-                <div class="quiz-result" id="quizResult">
-                    <h3 class="mb-3">Rezultatul tău</h3>
-                    <div class="points-badge">
-                        <i class="bi bi-trophy-fill me-2"></i>
-                        <span id="pointsEarned">0</span> puncte câștigate
-                    </div>
-                    <p class="mb-4" id="resultMessage"></p>
-                    <div id="authMessage" sec:authorize="!isAuthenticated()">
-                        <p class="mb-2">Autentifică-te pentru a-ți salva punctele!</p>
-                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Autentificare</a>
-                    </div>
-                </div>
+
+            <div class="task-section">
+                <h4><i class="bi bi-pencil me-2"></i>✍️ Prompt de reflecție scrisă (obligatoriu)</h4>
+                <p class="mb-3">
+                    Scrie o propoziție despre cum te-ai simțit când ai făcut acest mic schimb sustenabil.
+                </p>
+                <textarea 
+                    class="reflection-input" 
+                    id="reflection-text" 
+                    placeholder="Scrie aici reflecția ta..."
+                    rows="4"></textarea>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-success btn-lg" id="complete-lesson" disabled>
+                    <i class="bi bi-check-circle me-2"></i>
+                    Completează lecția
+                </button>
+                <p class="mt-2" id="score-display">Puncte: 0/40</p>
             </div>
         </section>
     </main>
@@ -477,164 +534,238 @@
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
 
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">
+                        <i class="bi bi-lock me-2"></i>Autentificare necesară
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>De ce?</strong> Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <a href="/login" class="btn btn-success">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Autentificare
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+    
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Quiz functionality
-        const quizQuestions = document.querySelectorAll('.quiz-question');
-        const checkButton = document.getElementById('checkAnswers');
-        const progressBar = document.querySelector('.progress-bar');
-        const progressLabel = document.querySelector('.progress-label span:first-child');
-        const pointsLabel = document.querySelector('.progress-label span:last-child');
-        const quizResult = document.getElementById('quizResult');
-        const pointsEarned = document.getElementById('pointsEarned');
-        const resultMessage = document.getElementById('resultMessage');
-        const authMessage = document.getElementById('authMessage');
-        
-        let selectedAnswers = {};
-        let answeredQuestions = 0;
-        let correctAnswers = 0;
-        
-        // Check if user is authenticated - more reliable method
-        const isAuthenticated = document.querySelector('[sec\\:authorize="isAuthenticated()"]') !== null;
-        
-        // Always hide auth message for logged in users
-        if (isAuthenticated && authMessage) {
-            authMessage.style.display = 'none';
+        let attemptedQuestions = 0;
+        const totalQuestions = 5;
+        let answers = {};
+        let questionScores = {};
+        let totalScore = 0;
+
+        // Check if user is authenticated
+        function isAuthenticated() {
+            // Use a hidden input field that's only rendered for authenticated users
+            return document.getElementById('authenticated-status') !== null;
         }
 
-        // Handle quiz option selection
-        quizQuestions.forEach(question => {
-            const questionId = question.getAttribute('data-question-id');
-            const options = question.querySelectorAll('.quiz-option');
-            
-            options.forEach(option => {
-            option.addEventListener('click', () => {
-                    // Remove selected class from all options in this question
-                    options.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
-                option.classList.add('selected');
-                    
-                    // Store the answer
-                    if (!selectedAnswers[questionId]) {
-                        answeredQuestions++;
-                    }
-                    selectedAnswers[questionId] = option.getAttribute('data-correct') === 'true';
-                    
-                    // Update progress
-                    updateProgress();
-                    
-                    // Enable check button if all questions are answered
-                    checkButton.disabled = answeredQuestions < quizQuestions.length;
-                });
-            });
-        });
-
-        // Update progress bar and label
-        function updateProgress() {
-            const progress = (answeredQuestions / quizQuestions.length) * 100;
-            progressBar.style.width = progress + '%';
-            progressBar.setAttribute('aria-valuenow', progress);
-            progressLabel.textContent = answeredQuestions + ' din ' + quizQuestions.length + ' întrebări';
-        }
-        
-        // Handle check answers button
-        checkButton.addEventListener('click', () => {
-            // Calculate score
-            correctAnswers = Object.values(selectedAnswers).filter(correct => correct).length;
-            const totalQuestions = quizQuestions.length;
-            const points = correctAnswers * 10;
-            
-            // Update result display
-            pointsEarned.textContent = points;
-            resultMessage.textContent = 'Ai răspuns corect la ' + correctAnswers + ' din ' + totalQuestions + ' întrebări!';
-            pointsLabel.textContent = points + ' puncte';
-            
-            // Show result
-            quizResult.style.display = 'block';
-            quizResult.classList.add(correctAnswers > totalQuestions / 2 ? 'success' : 'warning');
-            
-            // Highlight correct/incorrect answers
-            quizQuestions.forEach(question => {
-                const questionId = question.getAttribute('data-question-id');
-                const options = question.querySelectorAll('.quiz-option');
+        // Quiz functionality with enhanced scoring
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionSection = this.closest('.quiz-section');
+                const questionNumber = Array.from(document.querySelectorAll('.quiz-section')).indexOf(questionSection) + 1;
+                const questionId = `question_${questionNumber}`;
                 
-                options.forEach(option => {
-                    const isCorrect = option.getAttribute('data-correct') === 'true';
-                    const isSelected = option.classList.contains('selected');
+                // Check if this question is locked (after second wrong attempt)
+                if (questionSection.classList.contains('locked')) {
+                    return; // Question is locked, no more attempts allowed
+                }
+                
+                // Check if this question was already answered correctly
+                if (questionScores[questionId] === 5) {
+                    return; // Question already completed with points
+                }
+                
+                // Remove previous selections in this question
+                questionSection.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected', 'correct', 'incorrect');
+                });
+                
+                // Select this option
+                this.classList.add('selected');
+                
+                // Check if correct
+                const isCorrect = this.getAttribute('data-correct') === 'true';
+                
+                if (isCorrect) {
+                    this.classList.add('correct');
                     
-                    if (isCorrect) {
-                        option.classList.add('border-success');
-                        option.style.borderWidth = '2px';
-                    } else if (isSelected) {
-                        option.classList.add('border-danger');
-                        option.style.borderWidth = '2px';
+                    // Award points based on attempt number
+                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0);
+                    const points = attempts === 0 ? 5 : 5; // Both attempts give 5 points
+                    
+                    questionScores[questionId] = points;
+                    totalScore += points;
+                    
+                    if (!answers[questionNumber]) {
+                        attemptedQuestions++;
+                        answers[questionNumber] = true;
+                        updateProgress();
                     }
                     
-                    // Disable further selection
-                    option.style.pointerEvents = 'none';
-                });
+                    // Show success message
+                    const resultDiv = questionSection.querySelector('.quiz-result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = 'quiz-result success';
+                    resultDiv.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i>Corect! +${points} puncte!`;
+                    
+                } else {
+                    this.classList.add('incorrect');
+                    
+                    // Increment attempt counter
+                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0) + 1;
+                    questionSection.setAttribute('data-attempts', attempts);
+                    
+                    if (attempts === 1) {
+                        // First wrong attempt - show correct answer and allow second try
+                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
+                        
+                        const resultDiv = questionSection.querySelector('.quiz-result');
+                        resultDiv.style.display = 'block';
+                        resultDiv.className = 'quiz-result warning';
+                        resultDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Greșit! Încearcă din nou. Răspunsul corect este evidențiat.';
+                        
+                        // Highlight the paragraph with correct information
+                        const paragraphSection = questionSection.closest('.lesson-section');
+                        paragraphSection.style.backgroundColor = '#fff3cd';
+                        paragraphSection.style.borderLeft = '5px solid #ffc107';
+                        
+                        // Reset after 3 seconds
+                        setTimeout(() => {
+                            paragraphSection.style.backgroundColor = '';
+                            paragraphSection.style.borderLeft = '5px solid #28a745';
+                        }, 3000);
+                        
+                    } else {
+                        // Second wrong attempt - no points, show correct answer, lock question
+                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
+                        questionSection.classList.add('locked'); // Lock the question
+                        
+                        const resultDiv = questionSection.querySelector('.quiz-result');
+                        resultDiv.style.display = 'block';
+                        resultDiv.className = 'quiz-result warning';
+                        resultDiv.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>0 puncte. Răspunsul corect este evidențiat.';
+                        
+                        // Mark as attempted but with 0 points
+                        if (!answers[questionNumber]) {
+                            attemptedQuestions++;
+                            answers[questionNumber] = true;
+                            updateProgress();
+                        }
+                    }
+                }
+                
+                updateScoreDisplay();
             });
+        });
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const percentage = (attemptedQuestions / totalQuestions) * 100;
             
-            // Disable check button
-            checkButton.disabled = true;
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${attemptedQuestions}/${totalQuestions}`;
             
-            // If user is authenticated, submit the result to the server
-            if (isAuthenticated) {
-                submitQuizResult(correctAnswers, totalQuestions);
+            // Enable final task if all questions attempted (regardless of points)
+            const finalTask = document.querySelector('.final-task');
+            if (attemptedQuestions === totalQuestions) {
+                finalTask.style.opacity = '1';
+                finalTask.style.pointerEvents = 'auto';
+            }
+            
+            // Enable complete button if all questions attempted and reflection written
+            const reflectionText = document.getElementById('reflection-text').value.trim();
+            const imageUploaded = document.getElementById('image-upload').files.length > 0;
+            const completeButton = document.getElementById('complete-lesson');
+            completeButton.disabled = !(attemptedQuestions === totalQuestions && reflectionText.length > 0);
+        }
+
+        function updateScoreDisplay() {
+            const scoreDisplay = document.getElementById('score-display');
+            if (scoreDisplay) {
+                scoreDisplay.textContent = `Puncte: ${totalScore}/40`;
+            }
+        }
+
+        // Reflection text input
+        document.getElementById('reflection-text').addEventListener('input', function() {
+            updateProgress();
+        });
+
+        // Image upload handling
+        document.getElementById('image-upload').addEventListener('change', function() {
+            const file = this.files[0];
+            const imagePreview = document.getElementById('image-preview');
+            const uploadLabel = document.getElementById('upload-label');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    uploadLabel.textContent = 'Imagine încărcată ✓';
+                    uploadLabel.style.color = '#28a745';
+                };
+                reader.readAsDataURL(file);
             }
         });
-        
-        // Submit quiz result to server
-        function submitQuizResult(correctAnswers, totalQuestions) {
-            // Get CSRF token
-            const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
-            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content') || 'X-CSRF-TOKEN';
+
+        // Complete lesson
+        document.getElementById('complete-lesson').addEventListener('click', function() {
+            const reflectionText = document.getElementById('reflection-text').value.trim();
+            const imageUploaded = document.getElementById('image-upload').files.length > 0;
             
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            
-            if (csrfToken) {
-                headers[csrfHeader] = csrfToken;
-            }
-            
-            fetch('/educatie/quiz/3/submit', {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify({
-                    correctAnswers: correctAnswers,
-                    totalQuestions: totalQuestions
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    resultMessage.textContent = data.message;
-                    
-                    // If user leveled up, show a special message
-                    if (data.leveledUp) {
-                        // Create level up notification
-                        const levelUpDiv = document.createElement('div');
-                        levelUpDiv.className = 'alert alert-success mt-3 text-center';
-                        levelUpDiv.innerHTML = '<i class="bi bi-stars me-2"></i><strong>Felicitări!</strong> Ai avansat la nivelul ' + data.newLevel + '!';
-                        quizResult.appendChild(levelUpDiv);
-                    }
-                    
-                    // Refresh the page after 3 seconds to show updated points
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
+            if (attemptedQuestions === totalQuestions && reflectionText.length > 0) {
+                // Check if user is authenticated
+                if (!isAuthenticated()) {
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    return;
                 }
-            })
-            .catch(error => {
-                console.error('Error submitting quiz result:', error);
-            });
-        }
-    });
+                
+                // Calculate final score
+                let finalScore = totalScore;
+                if (reflectionText.length > 0) finalScore += 5; // Reflection points
+                if (imageUploaded) finalScore += 10; // Image upload points
+                
+                // User is authenticated, proceed with completion
+                alert(`Felicitări! Ai completat lecția cu succes! 🎉\nPuncte finale: ${finalScore}/40`);
+                
+                // Mark lesson as completed in localStorage
+                localStorage.setItem('lesson_3_completed', 'true');
+                localStorage.setItem('lesson_3_score', finalScore);
+                
+                // Redirect back to education map with completion parameter
+                window.location.href = '/educatie?completed=3';
+            }
+        });
+
+        // Initialize final task as disabled
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalTask = document.querySelector('.final-task');
+            finalTask.style.opacity = '0.5';
+            finalTask.style.pointerEvents = 'none';
+        });
     </script>
 </body>
 </html> 
