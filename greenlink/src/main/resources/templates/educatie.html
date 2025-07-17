@@ -390,7 +390,7 @@
             </div>
             
             <!-- Island Map -->
-            <div class="island-map">
+            <div class="island-map" th:data-authenticated="${isAuthenticated}" th:data-completed-lessons="${completedLessons}">
                 <!-- Lesson Buttons -->
                 <a href="/educatie/curs/1" class="lesson-button lesson-1" data-lesson="1">
                     1
@@ -464,19 +464,43 @@
         let completedLessons = 0;
         const totalLessons = 6;
         
-        // Check for completed lessons in localStorage
+        // Get values from data attributes
+        const islandMap = document.querySelector('.island-map');
+        const isUserLoggedIn = islandMap ? islandMap.getAttribute('data-authenticated') === 'true' : false;
+        
+        // Parse completed lessons from data attribute
+        let serverCompletedLessons = [];
+        if (islandMap && islandMap.getAttribute('data-completed-lessons')) {
+            try {
+                serverCompletedLessons = JSON.parse(islandMap.getAttribute('data-completed-lessons'));
+            } catch (e) {
+                console.error('Error parsing completed lessons:', e);
+                serverCompletedLessons = [];
+            }
+        }
+        
+        // Check for completed lessons with user-specific logic
         function checkProgress() {
-            for (let i = 1; i <= totalLessons; i++) {
-                if (localStorage.getItem(`lesson_${i}_completed`)) {
-                    completedLessons++;
-                    const lessonButton = document.querySelector(`[data-lesson="${i}"]`);
+            if (!isUserLoggedIn) {
+                // For non-authenticated users, don't show any completed lessons
+                updateProgressDisplay();
+                return;
+            }
+            
+            // For authenticated users, use the server-provided completed lessons
+            if (serverCompletedLessons && serverCompletedLessons.length > 0) {
+                completedLessons = serverCompletedLessons.length;
+                
+                // Mark lessons as completed based on server data
+                serverCompletedLessons.forEach(lessonId => {
+                    const lessonButton = document.querySelector(`[data-lesson="${lessonId}"]`);
                     if (lessonButton) {
                         lessonButton.classList.remove('locked');
                         lessonButton.classList.add('completed');
-                        lessonButton.href = `/educatie/curs/${i}`;
                     }
-                }
+                });
             }
+            
             updateProgressDisplay();
         }
         
@@ -491,8 +515,7 @@
         
         // Lesson completion tracking
         function markLessonComplete(lessonNumber) {
-            if (!localStorage.getItem(`lesson_${lessonNumber}_completed`)) {
-                localStorage.setItem(`lesson_${lessonNumber}_completed`, 'true');
+            if (isUserLoggedIn) {
                 completedLessons++;
                 updateProgressDisplay();
                 
@@ -501,21 +524,11 @@
                     const nextLesson = document.querySelector(`[data-lesson="${lessonNumber + 1}"]`);
                     if (nextLesson) {
                         nextLesson.classList.remove('locked');
-                        nextLesson.classList.add('completed');
-                        // Set correct URL for next lesson
-                        if (lessonNumber + 1 === 2) {
-                            nextLesson.href = `/educatie/curs2`;
-                        } else if (lessonNumber + 1 === 4) {
-                            nextLesson.href = `/educatie/curs/4`;
-                        } else if (lessonNumber + 1 === 5) {
-                            nextLesson.href = `/educatie/curs/5`;
-                        } else if (lessonNumber + 1 === 6) {
-                            nextLesson.href = `/educatie/curs/6`;
-                        } else {
-                            nextLesson.href = `/educatie/curs/${lessonNumber + 1}`;
-                        }
+                        nextLesson.href = lessonNumber + 1 === 2 ? "/educatie/curs2" : `/educatie/curs/${lessonNumber + 1}`;
                     }
                 }
+            } else {
+                console.log("User not logged in, cannot mark lesson as complete");
             }
         }
         

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +36,31 @@ public class EducationController {
     private ChallengeTrackingService challengeTrackingService;
 
     @GetMapping
-    public String getAllCourses(Model model) {
+    public String getAllCourses(Model model, @AuthenticationPrincipal User currentUser) {
         List<CourseDto> courses = courseService.getAllCourses();
         model.addAttribute("courses", courses);
+        
+        // Add authentication info to model
+        model.addAttribute("isAuthenticated", currentUser != null);
+        
+        // Add completed lessons for authenticated users
+        if (currentUser != null) {
+            List<Long> completedLessons = new ArrayList<>();
+            for (long i = 1; i <= 6; i++) {
+                if (quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), i)) {
+                    completedLessons.add(i);
+                }
+            }
+            // Convert to JSON string for easier JavaScript parsing
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                String completedLessonsJson = mapper.writeValueAsString(completedLessons);
+                model.addAttribute("completedLessons", completedLessonsJson);
+            } catch (Exception e) {
+                model.addAttribute("completedLessons", "[]");
+            }
+        }
+        
         return "educatie"; // Returnează fișierul education.html
     }
 
