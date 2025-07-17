@@ -2,6 +2,8 @@ package com.greenlink.greenlink.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "quiz_results")
@@ -15,7 +17,7 @@ public class QuizResult {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "quiz_id", nullable = false)
+    @JoinColumn(name = "quiz_id", nullable = true)
     private Quiz quiz;
 
     @Column(nullable = false)
@@ -26,6 +28,14 @@ public class QuizResult {
 
     @Column(nullable = false)
     private int pointsEarned;
+    
+    // Reflection text from the user
+    @Column(name = "reflection_text", length = 1000)
+    private String reflectionText;
+    
+    // Reference to answers
+    @OneToMany(mappedBy = "quizResult", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuizAnswer> answers = new ArrayList<>();
 
     // Constructors
     public QuizResult() {
@@ -85,5 +95,27 @@ public class QuizResult {
 
     public void setPointsEarned(int pointsEarned) {
         this.pointsEarned = pointsEarned;
+    }
+    
+    public String getReflectionText() {
+        return reflectionText;
+    }
+    
+    public void setReflectionText(String reflectionText) {
+        this.reflectionText = reflectionText;
+    }
+    
+    public List<QuizAnswer> getAnswers() {
+        return answers;
+    }
+    
+    public void setAnswers(List<QuizAnswer> answers) {
+        this.answers = answers;
+    }
+    
+    // Helper method to add an answer
+    public void addAnswer(QuizAnswer answer) {
+        answers.add(answer);
+        answer.setQuizResult(this);
     }
 }

@@ -230,6 +230,142 @@
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
             outline: none;
         }
+        
+        /* Custom completion modal styles */
+        .completion-modal .modal-content {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            overflow: hidden;
+        }
+        
+        .completion-modal .modal-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .completion-modal .modal-header::before {
+            content: '🎉';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .completion-modal .modal-header::after {
+            content: '⭐';
+            position: absolute;
+            top: -5px;
+            right: 20px;
+            font-size: 1.5rem;
+            animation: sparkle 2s infinite;
+        }
+        
+        .completion-modal .modal-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .completion-modal .modal-body {
+            padding: 2.5rem;
+            text-align: center;
+            background: white;
+        }
+        
+        .completion-modal .modal-body p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+        
+        .completion-modal .score-highlight {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 1rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .completion-modal .modal-footer {
+            background: #f8f9fa;
+            border: none;
+            padding: 2rem;
+            text-align: left;
+        }
+        
+        .completion-modal .btn-continue {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .completion-modal .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .completion-modal .btn-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            opacity: 0.8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .completion-modal .btn-close:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 0.8;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -257,6 +393,7 @@
             <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
             <strong>Felicitări!</strong> Ai completat această lecție cu succes!
         </div>
+
         
         <!-- Hidden authentication status indicator -->
         <input type="hidden" id="authenticated-status" sec:authorize="isAuthenticated()" value="true">
@@ -499,7 +636,7 @@
             <h2 class="text-center mb-4">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>📷 Prompt foto (opțional)</h4>
+                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
                 <p>
                     Fă o fotografie cu o schimbare simplă pe care ai făcut-o azi — cum ar fi un obiect reutilizabil, stingerea luminilor, mersul pe jos sau folosirea unei sacoșe proprii.
                 </p>
@@ -511,7 +648,7 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>✍️ Prompt de reflecție scrisă (obligatoriu)</h4>
+                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
                 <p class="mb-3">
                     Scrie o propoziție despre cum această lecție ți-a schimbat modul de a privi obiceiurile tale zilnice.
                 </p>
@@ -527,7 +664,6 @@
                     <i class="bi bi-check-circle me-2"></i>
                     Completează lecția
                 </button>
-                <p class="mt-2" id="score-display">Puncte: 0/40</p>
             </div>
         </section>
     </main>
@@ -609,9 +745,8 @@
                 if (isCorrect) {
                     this.classList.add('correct');
                     
-                    // Award points based on attempt number
-                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0);
-                    const points = attempts === 0 ? 5 : 5; // Both attempts give 5 points
+                    // Award 5 points for correct answer on first attempt
+                    const points = 5;
                     
                     questionScores[questionId] = points;
                     totalScore += points;
@@ -628,49 +763,26 @@
                     resultDiv.className = 'quiz-result success';
                     resultDiv.innerHTML = `<i class="bi bi-check-circle-fill me-2"></i>Corect! +${points} puncte!`;
                     
+                    // Lock the question after correct answer
+                    questionSection.classList.add('locked');
+                    
                 } else {
                     this.classList.add('incorrect');
                     
-                    // Increment attempt counter
-                    const attempts = parseInt(questionSection.getAttribute('data-attempts') || 0) + 1;
-                    questionSection.setAttribute('data-attempts', attempts);
+                    // Wrong answer - show correct answer and lock question immediately
+                    questionSection.querySelector('[data-correct="true"]').classList.add('correct');
+                    questionSection.classList.add('locked'); // Lock the question
                     
-                    if (attempts === 1) {
-                        // First wrong attempt - show correct answer and allow second try
-                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
-                        
-                        const resultDiv = questionSection.querySelector('.quiz-result');
-                        resultDiv.style.display = 'block';
-                        resultDiv.className = 'quiz-result warning';
-                        resultDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>Greșit! Încearcă din nou. Răspunsul corect este evidențiat.';
-                        
-                        // Highlight the paragraph with correct information
-                        const paragraphSection = questionSection.closest('.lesson-section');
-                        paragraphSection.style.backgroundColor = '#fff3cd';
-                        paragraphSection.style.borderLeft = '5px solid #ffc107';
-                        
-                        // Reset after 3 seconds
-                        setTimeout(() => {
-                            paragraphSection.style.backgroundColor = '';
-                            paragraphSection.style.borderLeft = '5px solid #28a745';
-                        }, 3000);
-                        
-                    } else {
-                        // Second wrong attempt - no points, show correct answer, lock question
-                        questionSection.querySelector('[data-correct="true"]').classList.add('correct');
-                        questionSection.classList.add('locked'); // Lock the question
-                        
-                        const resultDiv = questionSection.querySelector('.quiz-result');
-                        resultDiv.style.display = 'block';
-                        resultDiv.className = 'quiz-result warning';
-                        resultDiv.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>0 puncte. Răspunsul corect este evidențiat.';
-                        
-                        // Mark as attempted but with 0 points
-                        if (!answers[questionNumber]) {
-                            attemptedQuestions++;
-                            answers[questionNumber] = true;
-                            updateProgress();
-                        }
+                    const resultDiv = questionSection.querySelector('.quiz-result');
+                    resultDiv.style.display = 'block';
+                    resultDiv.className = 'quiz-result warning';
+                    resultDiv.innerHTML = '<i class="bi bi-x-circle-fill me-2"></i>Greșit! 0 puncte. Răspunsul corect este evidențiat.';
+                    
+                    // Mark as attempted but with 0 points
+                    if (!answers[questionNumber]) {
+                        attemptedQuestions++;
+                        answers[questionNumber] = true;
+                        updateProgress();
                     }
                 }
                 
@@ -693,7 +805,7 @@
                 finalTask.style.pointerEvents = 'auto';
             }
             
-            // Enable complete button if all questions attempted and reflection written
+            // Enable complete button if all questions attempted and both tasks completed
             const reflectionText = document.getElementById('reflection-text').value.trim();
             const imageUploaded = document.getElementById('image-upload').files.length > 0;
             const completeButton = document.getElementById('complete-lesson');
@@ -746,18 +858,46 @@
                 
                 // Calculate final score
                 let finalScore = totalScore;
-                if (reflectionText.length > 0) finalScore += 5; // Reflection points
-                if (imageUploaded) finalScore += 10; // Image upload points
+                if (reflectionText.length > 0) finalScore += 5; // Scrie points
+                if (imageUploaded) finalScore += 10; // Foto points
                 
                 // User is authenticated, proceed with completion
-                alert(`Felicitări! Ai completat lecția cu succes! 🎉\nPuncte finale: ${finalScore}/40`);
+                // Show completion modal
+                const completionModalHTML = `
+                    <div class="modal completion-modal" tabindex="-1" role="dialog" id="completionModal">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        Lecția 1: Ce este sustenabilitatea?
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Felicitări! Ai completat cu succes această lecție importantă!</p>
+                                    <p>Ai învățat bazele sustenabilității și cum să începi să ai un impact pozitiv asupra mediului prin acțiuni simple!</p>
+                                    <div class="score-highlight">Scor final: ${finalScore}/40</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-continue" data-bs-dismiss="modal" onclick="window.location.href = '/educatie?completed=1'">Continuă către harta educativă</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Append modal to the body
+                document.body.insertAdjacentHTML('beforeend', completionModalHTML);
+
+                // Show the modal
+                const completionModal = new bootstrap.Modal(document.getElementById('completionModal'));
+                completionModal.show();
                 
                 // Mark lesson as completed in localStorage
                 localStorage.setItem('lesson_1_completed', 'true');
                 localStorage.setItem('lesson_1_score', finalScore);
-                
-                // Redirect back to education map with completion parameter
-                window.location.href = '/educatie?completed=1';
             }
         });
 
