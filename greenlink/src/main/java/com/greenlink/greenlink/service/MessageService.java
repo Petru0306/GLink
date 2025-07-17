@@ -25,6 +25,8 @@ public interface MessageService {
     
     MessageDto respondToOffer(Long messageId, User responder, String action, Double counterOfferAmount);
     
+    MessageDto getMessageById(Long messageId, User currentUser);
+    
     // Read status methods
     void markConversationAsRead(Long conversationId, User currentUser);
     

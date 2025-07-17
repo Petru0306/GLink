@@ -204,6 +204,50 @@
             });
         });
     </script>
+    
+    <!-- Global WebSocket for Notifications -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only connect if user is logged in (badge exists)
+        var inboxBtn = document.querySelector('a[href="/inbox"]');
+        var badge = inboxBtn ? inboxBtn.querySelector('.unread-message-count') : null;
+        var stompClient = null;
+        
+        function connectNotificationWebSocket() {
+            // Only connect if inbox button exists (user is logged in)
+            if (!inboxBtn) return;
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+            stompClient.connect({}, function(frame) {
+                // Subscribe to notifications
+                stompClient.subscribe('/user/queue/notifications', function(message) {
+                    // Show the badge (red dot) if not already visible
+                    if (badge) {
+                        badge.style.display = '';
+                        badge.classList.add('bg-danger');
+                        badge.textContent = '';
+                    } else {
+                        // If badge doesn't exist, create a red dot
+                        var dot = document.createElement('span');
+                        dot.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger unread-message-count';
+                        dot.style.width = '10px';
+                        dot.style.height = '10px';
+                        dot.style.padding = '0';
+                        dot.textContent = '';
+                        inboxBtn.appendChild(dot);
+                    }
+                });
+            }, function(error) {
+                // Retry after 5 seconds if connection fails
+                setTimeout(connectNotificationWebSocket, 5000);
+            });
+        }
+        connectNotificationWebSocket();
+    });
+    </script>
 </th:block>
 </body>
 </html> 

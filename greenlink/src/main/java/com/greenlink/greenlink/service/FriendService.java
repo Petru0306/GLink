@@ -91,6 +91,9 @@ public class FriendService {
         // Send notification to receiver
         String notificationContent = sender.getFirstName() + " " + sender.getLastName() + " wants to be your friend!";
         systemMessageService.sendSystemMessage(receiver, notificationContent, "FRIEND_REQUEST");
+        
+        // Send real-time WebSocket notification
+        systemMessageService.sendFriendRequestNotification(receiver, sender);
     }
     
     @Transactional

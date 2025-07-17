@@ -36,6 +36,9 @@ public class MessageServiceImpl implements MessageService {
     
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private SystemMessageService systemMessageService;
 
     @Override
     public List<ConversationDto> getUserConversations(User user) {
@@ -75,7 +78,17 @@ public class MessageServiceImpl implements MessageService {
                         conversation.setBuyer(currentUser);
                         conversation.setSellerRead(false);
                         conversation.setBuyerRead(true); // Buyer is creating it, so they've read it
-                        return conversationRepository.save(conversation);
+                        Conversation savedConversation = conversationRepository.save(conversation);
+                        
+                        // Send notification to seller about new conversation
+                        String buyerName = currentUser.getFirstName() + " " + currentUser.getLastName();
+                        systemMessageService.sendNewConversationNotification(
+                            product.getSeller(), 
+                            buyerName, 
+                            savedConversation.getId()
+                        );
+                        
+                        return savedConversation;
                     });
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error creating conversation", e);
@@ -148,6 +161,15 @@ public class MessageServiceImpl implements MessageService {
             
             conversationRepository.save(conversation);
             
+            // Send notification to the other participant
+            User recipient = isSenderSeller ? conversation.getBuyer() : conversation.getSeller();
+            String senderName = sender.getFirstName() + " " + sender.getLastName();
+            systemMessageService.sendNewConversationNotification(
+                recipient, 
+                senderName, 
+                conversation.getId()
+            );
+            
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error sending message", e);
@@ -197,6 +219,26 @@ public class MessageServiceImpl implements MessageService {
             return MessageDto.fromEntity(message, sender.getId());
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error making offer", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public MessageDto getMessageById(Long messageId, User currentUser) {
+        try {
+            Message message = messageRepository.findById(messageId)
+                    .orElseThrow(() -> new EntityNotFoundException("Message not found"));
+            
+            // Security check - only participants can view messages
+            Conversation conversation = message.getConversation();
+            if (!conversation.getSeller().getId().equals(currentUser.getId()) && 
+                !conversation.getBuyer().getId().equals(currentUser.getId())) {
+                throw new IllegalStateException("You are not authorized to view this message");
+            }
+            
+            return MessageDto.fromEntity(message, currentUser.getId());
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting message by ID", e);
             throw e;
         }
     }
@@ -255,25 +297,18 @@ public class MessageServiceImpl implements MessageService {
             
             messageRepository.save(offerMessage);
             
-            // Create response message
-            Message responseMessage = new Message();
-            responseMessage.setConversation(conversation);
-            responseMessage.setSender(responder);
-            
-            String responseContent;
+            // Only create a response message for COUNTER offers
+            Message responseMessage = null;
             
             if ("COUNTER".equalsIgnoreCase(action) && counterOfferAmount != null) {
+                responseMessage = new Message();
+                responseMessage.setConversation(conversation);
+                responseMessage.setSender(responder);
                 responseMessage.setOfferAmount(counterOfferAmount);
                 responseMessage.setOfferStatus(Message.OfferStatus.PENDING);
-                responseContent = String.format("Countered with %.2f RON", counterOfferAmount);
-            } else {
-                responseContent = String.format("Offer of %.2f RON was %s", 
-                        offerMessage.getOfferAmount(),
-                        action.toLowerCase());
+                responseMessage.setContent(String.format("Countered with %.2f RON", counterOfferAmount));
+                responseMessage = messageRepository.save(responseMessage);
             }
-            
-            responseMessage.setContent(responseContent);
-            responseMessage = messageRepository.save(responseMessage);
             
             // Update conversation read status
             if (isResponderSeller) {
@@ -286,7 +321,14 @@ public class MessageServiceImpl implements MessageService {
             
             conversationRepository.save(conversation);
             
-            return MessageDto.fromEntity(responseMessage, responder.getId());
+            // Return the response message only if it was created (for counter offers)
+            // For accept/reject, return null or a simple status update
+            if (responseMessage != null) {
+                return MessageDto.fromEntity(responseMessage, responder.getId());
+            } else {
+                // For accept/reject, return a simple status update without creating a new message
+                return null;
+            }
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error responding to offer", e);
             throw e;

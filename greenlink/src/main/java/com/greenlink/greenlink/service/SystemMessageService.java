@@ -4,16 +4,23 @@ import com.greenlink.greenlink.model.MessageType;
 import com.greenlink.greenlink.model.SystemMessage;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.SystemMessageRepository;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class SystemMessageService {
 
     @Autowired
     private SystemMessageRepository systemMessageRepository;
+    
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public SystemMessage sendSystemMessage(User recipient, String content, String type) {
@@ -25,7 +32,81 @@ public class SystemMessageService {
         }
 
         SystemMessage message = new SystemMessage(recipient, content, messageType);
-        return systemMessageRepository.save(message);
+        SystemMessage savedMessage = systemMessageRepository.save(message);
+        
+        // Send real-time notification via WebSocket
+        sendNotificationToUser(recipient.getId(), savedMessage);
+        
+        return savedMessage;
+    }
+    
+    /**
+     * Send real-time notification to a specific user via WebSocket
+     */
+    private void sendNotificationToUser(Long userId, SystemMessage message) {
+        try {
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "SYSTEM_NOTIFICATION");
+            notification.put("messageId", message.getId());
+            notification.put("content", message.getContent());
+            notification.put("messageType", message.getType().toString());
+            notification.put("createdAt", message.getCreatedAt());
+            notification.put("read", message.isRead());
+            
+            messagingTemplate.convertAndSendToUser(
+                userId.toString(), 
+                "/queue/notifications", 
+                notification
+            );
+        } catch (Exception e) {
+            // Log error but don't fail the main operation
+            System.err.println("Failed to send WebSocket notification: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Send real-time notification for friend requests
+     */
+    public void sendFriendRequestNotification(User recipient, User sender) {
+        try {
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "FRIEND_REQUEST");
+            notification.put("senderId", sender.getId());
+            notification.put("senderName", sender.getFirstName() + " " + sender.getLastName());
+            notification.put("senderEmail", sender.getEmail());
+            notification.put("content", sender.getFirstName() + " " + sender.getLastName() + " wants to be your friend!");
+            notification.put("timestamp", System.currentTimeMillis());
+            
+            messagingTemplate.convertAndSendToUser(
+                recipient.getId().toString(), 
+                "/queue/notifications", 
+                notification
+            );
+        } catch (Exception e) {
+            System.err.println("Failed to send friend request notification: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Send real-time notification for new conversations
+     */
+    public void sendNewConversationNotification(User recipient, String senderName, Long conversationId) {
+        try {
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "NEW_CONVERSATION");
+            notification.put("conversationId", conversationId);
+            notification.put("senderName", senderName);
+            notification.put("content", "New message from " + senderName);
+            notification.put("timestamp", System.currentTimeMillis());
+            
+            messagingTemplate.convertAndSendToUser(
+                recipient.getId().toString(), 
+                "/queue/notifications", 
+                notification
+            );
+        } catch (Exception e) {
+            System.err.println("Failed to send conversation notification: " + e.getMessage());
+        }
     }
 
     @Transactional

@@ -265,4 +265,36 @@ public class MessageController {
             return ResponseEntity.badRequest().build();
         }
     }
+    
+    @GetMapping("/message/{messageId}/status")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<?> getMessageStatus(
+            @PathVariable Long messageId,
+            Principal principal) {
+        
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            
+            // Get the message and check if user has access to it
+            MessageDto message = messageService.getMessageById(messageId, currentUser);
+            
+            if (message == null) {
+                return ResponseEntity.notFound().build();
+            }
+            
+            // Return the offer status
+            Map<String, Object> response = new HashMap<>();
+            response.put("messageId", messageId);
+            response.put("offerStatus", message.getOfferStatus());
+            response.put("offerAmount", message.getOfferAmount());
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting message status", e);
+            Map<String, String> response = new HashMap<>();
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 } 

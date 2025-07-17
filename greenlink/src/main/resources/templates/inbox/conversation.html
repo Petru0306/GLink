@@ -118,76 +118,190 @@
 
         /* Offer message styles */
         .offer-message {
-            background-color: #e8f4fc;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px;
-            padding: 1rem;
+            padding: 1.5rem;
             margin-bottom: 1rem;
-            border-left: 4px solid #0d6efd;
+            border: 2px solid #dee2e6;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offer-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #28a745, #20c997, #17a2b8);
+        }
+
+        .offer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .offer-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .offer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            margin: 0;
         }
 
         .offer-amount {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            color: #0d6efd;
+            color: #28a745;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .offer-original-price {
+            font-size: 1rem;
+            color: #6c757d;
+            text-decoration: line-through;
+            text-align: center;
             margin-bottom: 0.5rem;
         }
 
         .offer-status {
             font-size: 0.9rem;
             font-weight: 600;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             display: inline-block;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 1rem;
         }
 
         .offer-status.pending {
-            background-color: #ffc107;
+            background: linear-gradient(135deg, #ffc107, #ffca2c);
             color: #212529;
         }
 
         .offer-status.accepted {
-            background-color: #198754;
+            background: linear-gradient(135deg, #198754, #20c997);
             color: white;
         }
 
         .offer-status.rejected {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
             color: white;
         }
 
         .offer-status.countered {
-            background-color: #6c757d;
+            background: linear-gradient(135deg, #6c757d, #495057);
             color: white;
         }
 
         .offer-actions {
             margin-top: 1rem;
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            justify-content: center;
         }
 
         .btn-accept {
-            background-color: #198754;
+            background: linear-gradient(135deg, #198754, #20c997);
             color: white;
             border: none;
-            border-radius: 15px;
-            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3);
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(25, 135, 84, 0.4);
         }
 
         .btn-reject {
-            background-color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
             color: white;
             border: none;
-            border-radius: 15px;
-            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
         }
 
         .btn-counter {
-            background-color: #6c757d;
+            background: linear-gradient(135deg, #6c757d, #495057);
             color: white;
             border: none;
-            border-radius: 15px;
-            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-counter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+        }
+
+        .offer-processing {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .offer-processing .offer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Animations for offer status updates */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        /* Enhanced offer button states */
+        .btn-accept:active, .btn-reject:active, .btn-counter:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-accept:disabled, .btn-reject:disabled, .btn-counter:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
         }
         
         /* Connection status styles */
@@ -296,46 +410,51 @@
                         <!-- Messages Container -->
                         <div id="chat-container" class="chat-container">
                             <div th:each="message : ${messages}" 
-                                 th:class="'message ' + (${message.isCurrentUserSender} ? 'message-sent' : 'message-received')">
+                                 th:class="'message ' + (${message.isCurrentUserSender} ? 'message-sent' : 'message-received')"
+                                 th:attr="data-message-id=${message.id}">
                                 
                                 <!-- Regular Message -->
                                 <div th:if="${!message.isOffer}" class="message-content" th:text="${message.content}">
                                     Message content
                                 </div>
                                 
-                                                <!-- Offer Message -->
-                <div th:if="${message.isOffer}" class="offer-message" th:data-message-id="${message.id}">
-                    <div class="offer-amount">
-                        <!-- Show original price with strikethrough next to new price for accepted offers -->
-                        <span th:if="${message.offerStatus == 'ACCEPTED'}" class="me-2">
-                            <del th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">100.00 RON</del>
-                        </span>
-                        <span th:text="${#numbers.formatDecimal(message.offerAmount, 1, 2) + ' RON'}">100.00 RON</span>
-                    </div>
-                    <div th:class="'offer-status ' + ${#strings.toLowerCase(message.offerStatus)}"
-                         th:text="${message.offerStatus}">
-                        PENDING
-                    </div>
-                    
-                    <!-- Offer Actions (only show for recipient if offer is pending) -->
-                    <div th:if="${!message.isCurrentUserSender && message.offerStatus == 'PENDING'}" 
-                         class="offer-actions">
-                        <button class="btn-accept" 
-                                th:onclick="'respondToOffer(' + ${message.id} + ', \'ACCEPT\')'">
-                            <i class="bi bi-check-lg me-1"></i>Accept
-                        </button>
-                        <button class="btn-reject"
-                                th:onclick="'respondToOffer(' + ${message.id} + ', \'REJECT\')'">
-                            <i class="bi bi-x-lg me-1"></i>Refuz
-                        </button>
-                        <button class="btn-counter"
-                                onclick="showCounterOfferModal(this)"
-                                th:data-message-id="${message.id}"
-                                th:data-offer-amount="${message.offerAmount}">
-                            <i class="bi bi-arrow-left-right me-1"></i>Contraofertă
-                        </button>
-                    </div>
-                </div>
+                                <!-- Offer Message Card -->
+                                <div th:if="${message.isOffer}" class="offer-message" th:attr="data-message-id=${message.id}">
+                                    <div class="offer-header">
+                                        <div class="offer-icon">
+                                            <i class="bi bi-tag-fill"></i>
+                                        </div>
+                                        <h6 class="offer-title">Ofertă pentru <span th:text="${product.name}">produs</span></h6>
+                                    </div>
+                                    
+                                    <div class="offer-original-price">Preț original: <span th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">100.00 RON</span></div>
+                                    <div class="offer-amount" th:text="${#numbers.formatDecimal(message.offerAmount, 1, 2) + ' RON'}">100.00 RON</div>
+                                    
+                                    <div th:class="'offer-status ' + ${#strings.toLowerCase(message.offerStatus)}"
+                                         th:text="${message.offerStatus == 'PENDING' ? 'În așteptare' : 
+                                                   message.offerStatus == 'ACCEPTED' ? 'Acceptată' : 
+                                                   message.offerStatus == 'REJECTED' ? 'Refuzată' : 
+                                                   message.offerStatus == 'COUNTERED' ? 'Contraoferită' : message.offerStatus}">
+                                        PENDING
+                                    </div>
+                                    
+                                    <!-- Offer Actions (only show for recipient if offer is pending) -->
+                                    <div th:if="${!message.isCurrentUserSender && message.offerStatus == 'PENDING'}" 
+                                         class="offer-actions">
+                                        <button class="btn-accept" 
+                                                th:attr="data-message-id=${message.id}, data-action='ACCEPT'">
+                                            <i class="bi bi-check-lg me-2"></i>Accept
+                                        </button>
+                                        <button class="btn-reject"
+                                                th:attr="data-message-id=${message.id}, data-action='REJECT'">
+                                            <i class="bi bi-x-lg me-2"></i>Refuz
+                                        </button>
+                                        <button class="btn-counter"
+                                                th:attr="data-message-id=${message.id}, data-offer-amount=${message.offerAmount}">
+                                            <i class="bi bi-arrow-left-right me-2"></i>Contraofertă
+                                        </button>
+                                    </div>
+                                </div>
                                 
                                 <div class="message-time" th:text="${#temporals.format(message.sentAt, 'dd MMM, HH:mm')}">
                                     Time
@@ -351,8 +470,8 @@
                                 <button id="send-button" class="btn btn-success btn-send">
                                     <i class="bi bi-send"></i>
                                 </button>
-                                <button class="btn btn-primary btn-offer" onclick="showOfferModal()">
-                                    <i class="bi bi-tag"></i>
+                                <button class="btn btn-success btn-offer" onclick="showOfferModal()" title="Fă o ofertă">
+                                    <i class="bi bi-tag-fill"></i>
                                 </button>
                             </div>
                         </div>
@@ -366,21 +485,34 @@
     <div class="modal fade" id="offerModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Fă o ofertă</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-tag-fill me-2"></i>Fă o ofertă
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Preț original: <strong th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">100.00 RON</strong></p>
+                    <div class="alert alert-success">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Preț original: <strong th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">100.00 RON</strong>
+                    </div>
                     <div class="mb-3">
-                        <label for="offer-amount" class="form-label">Suma oferită (RON)</label>
-                        <input type="number" class="form-control" id="offer-amount" 
-                               th:value="${product.price}" step="0.01" min="0.01">
+                        <label for="offer-amount" class="form-label fw-bold">Suma oferită (RON)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">RON</span>
+                            <input type="number" class="form-control form-control-lg" id="offer-amount" 
+                                   th:value="${product.price}" step="0.01" min="0.01" placeholder="Introdu suma">
+                        </div>
+                        <div class="form-text">Oferă o sumă rezonabilă pentru a începe negocierea.</div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="button" class="btn btn-primary" onclick="makeOffer()">Trimite Oferta</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-2"></i>Anulează
+                    </button>
+                    <button type="button" class="btn btn-success btn-lg" onclick="makeOffer()">
+                        <i class="bi bi-send me-2"></i>Trimite Oferta
+                    </button>
                 </div>
             </div>
         </div>
@@ -390,22 +522,35 @@
     <div class="modal fade" id="counterOfferModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Fă o contraofertă</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-arrow-left-right me-2"></i>Fă o contraofertă
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Oferta primită: <strong id="original-offer-amount">100.00 RON</strong></p>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Oferta primită: <strong id="original-offer-amount">100.00 RON</strong>
+                    </div>
                     <div class="mb-3">
-                        <label for="counter-offer-amount" class="form-label">Contraoferta ta (RON)</label>
-                        <input type="number" class="form-control" id="counter-offer-amount" 
-                               step="0.01" min="0.01">
+                        <label for="counter-offer-amount" class="form-label fw-bold">Contraoferta ta (RON)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">RON</span>
+                            <input type="number" class="form-control form-control-lg" id="counter-offer-amount" 
+                                   step="0.01" min="0.01" placeholder="Introdu suma">
+                        </div>
+                        <div class="form-text">Introdu o sumă care să reflecte valoarea reală a produsului pentru tine.</div>
                         <input type="hidden" id="original-message-id" value="">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="button" class="btn btn-primary" onclick="makeCounterOffer()">Trimite Contraoferta</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-2"></i>Anulează
+                    </button>
+                    <button type="button" class="btn btn-primary btn-lg" onclick="makeCounterOffer()">
+                        <i class="bi bi-send me-2"></i>Trimite Contraoferta
+                    </button>
                 </div>
             </div>
         </div>
@@ -559,6 +704,7 @@
         function onMessageReceived(payload) {
             const message = JSON.parse(payload.body);
             console.log("WebSocket message received:", message);
+            console.log("Message details - ID:", message.id, "MessageID:", message.messageId, "Content:", message.content, "OfferStatus:", message.offerStatus, "IsOffer:", message.isOffer);
             console.log("Current user ID:", currentUserId, "Sender ID:", message.senderId);
             
             // Skip if this is a ping message
@@ -606,18 +752,49 @@
                 }
             }
             
-            // Handle offer response updates
-            if (message.isOffer && message.offerStatus && message.messageId) {
-                // This is an update to an existing offer
+            // Handle offer response updates - check for status updates first
+            if (message.messageId && message.offerStatus && (message.content === null || message.content === undefined || message.content === '')) {
+                console.log("Received offer status update:", message);
+                // This is a status update for an existing offer (no new message content)
                 if (message.offerStatus === 'ACCEPTED' || 
                     message.offerStatus === 'REJECTED' || 
                     message.offerStatus === 'COUNTERED') {
                     
+                    console.log("Processing offer status update:", message.messageId, message.offerStatus);
                     // Update the existing offer UI without adding a new message
                     updateOfferStatus(message.messageId, message.offerStatus);
                     return; // Don't append a new message for status updates
                 }
             }
+            
+            // Additional check for status updates - sometimes the message might have different structure
+            if (message.messageId && message.offerStatus && !message.content && !message.senderId) {
+                console.log("Received alternative status update format:", message);
+                if (message.offerStatus === 'ACCEPTED' || 
+                    message.offerStatus === 'REJECTED' || 
+                    message.offerStatus === 'COUNTERED') {
+                    
+                    console.log("Processing alternative status update:", message.messageId, message.offerStatus);
+                    updateOfferStatus(message.messageId, message.offerStatus);
+                    return;
+                }
+            }
+            
+            // Third check for status updates - handle cases where senderId might be present but content is still null
+            if (message.messageId && message.offerStatus && (message.content === null || message.content === undefined || message.content === '') && message.isOffer) {
+                console.log("Received status update with isOffer flag:", message);
+                if (message.offerStatus === 'ACCEPTED' || 
+                    message.offerStatus === 'REJECTED' || 
+                    message.offerStatus === 'COUNTERED') {
+                    
+                    console.log("Processing status update with isOffer flag:", message.messageId, message.offerStatus);
+                    updateOfferStatus(message.messageId, message.offerStatus);
+                    return;
+                }
+            }
+            
+            // Debug: Log all messages to see what we're receiving
+            console.log("Message processing - ID:", message.id, "MessageID:", message.messageId, "Content:", message.content, "OfferStatus:", message.offerStatus, "IsOffer:", message.isOffer, "SenderID:", message.senderId);
             
             // Determine if current user is the sender
             const isCurrentUserSender = message.senderId == currentUserId;
@@ -895,18 +1072,26 @@
             }
             
             if (stompClient && stompClient.connected) {
+                // Create a temporary ID to track this counter offer
+                const tempId = 'temp-counter-' + Date.now();
+                
                 // Send via WebSocket
                 const chatMessage = {
                     messageId: messageId,
                     conversationId: conversationId,
                     offerStatus: 'COUNTER',
-                    offerAmount: counterOfferAmount
+                    offerAmount: counterOfferAmount,
+                    tempId: tempId
                 };
                 
-                stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
+                // Track this counter offer to avoid duplicates
+                processedMessageIds.add(tempId);
                 
-                // Close modal
+                // Close modal first
                 bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
+                
+                // Send via WebSocket
+                stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
             } else {
                 // Fallback to AJAX
             $.ajax({
@@ -940,15 +1125,53 @@
         }
         
                 function respondToOffer(messageId, action) {
+            console.log('respondToOffer called with:', messageId, action);
+            
             // Show a temporary processing state
-            const offerElement = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (offerElement) {
-                // Add processing class
-                const actionsElement = offerElement.closest('.offer-actions');
-                if (actionsElement) {
-                    actionsElement.classList.add('processing');
-                    actionsElement.innerHTML = '<div class="text-muted"><i class="bi bi-hourglass"></i> Procesare...</div>';
+            let offerMessage = null;
+            
+            // Try to find the offer message - check multiple possible structures
+            const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
+            if (messageDiv) {
+                offerMessage = messageDiv.querySelector('.offer-message');
+            }
+            
+            // If not found, try direct offer message lookup
+            if (!offerMessage) {
+                offerMessage = document.querySelector(`.offer-message[data-message-id="${messageId}"]`);
+            }
+            
+            // If still not found, try finding by parent message
+            if (!offerMessage) {
+                const allOfferMessages = document.querySelectorAll('.offer-message');
+                for (let offer of allOfferMessages) {
+                    const parentMessage = offer.closest('.message');
+                    if (parentMessage && parentMessage.getAttribute('data-message-id') === messageId) {
+                        offerMessage = offer;
+                        break;
+                    }
                 }
+            }
+            
+            if (offerMessage) {
+                const actionsElement = offerMessage.querySelector('.offer-actions');
+                
+                if (actionsElement) {
+                    // Add processing class and disable buttons
+                    offerMessage.classList.add('offer-processing');
+                    actionsElement.innerHTML = `
+                        <div class="text-muted">
+                            <i class="bi bi-hourglass-split me-2"></i>
+                            ${getActionText(action)}...
+                        </div>
+                    `;
+                    
+                    // Disable all buttons in this offer
+                    const buttons = actionsElement.querySelectorAll('button');
+                    buttons.forEach(btn => btn.disabled = true);
+                }
+            } else {
+                console.error('Could not find offer message for ID:', messageId);
             }
             
             if (stompClient && stompClient.connected) {
@@ -966,8 +1189,44 @@
                 // Track this response to avoid duplicates
                 processedMessageIds.add(tempId);
                 
-                // Send via WebSocket
-                stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
+                // Send via WebSocket with a small delay to ensure processing state is shown
+                setTimeout(() => {
+                    stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
+                }, 100);
+                
+                // Fallback: if status update doesn't come within 3 seconds, update manually
+                setTimeout(() => {
+                    console.log("Checking fallback for messageId:", messageId, "action:", action);
+                    let offerMessage = null;
+                    
+                    // Try to find the offer message
+                    const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
+                    if (messageDiv) {
+                        offerMessage = messageDiv.querySelector('.offer-message');
+                    }
+                    
+                    if (!offerMessage) {
+                        offerMessage = document.querySelector(`.offer-message[data-message-id="${messageId}"]`);
+                    }
+                    
+                    if (!offerMessage) {
+                        const allOfferMessages = document.querySelectorAll('.offer-message');
+                        for (let offerMsg of allOfferMessages) {
+                            const parentMessage = offerMsg.closest('.message');
+                            if (parentMessage && parentMessage.getAttribute('data-message-id') === messageId) {
+                                offerMessage = offerMsg;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (offerMessage && offerMessage.classList.contains('offer-processing')) {
+                        console.log("Fallback: manually updating offer status to", action);
+                        updateOfferStatus(messageId, action);
+                    } else {
+                        console.log("Fallback: offer message not found or not in processing state");
+                    }
+                }, 3000);
             } else {
                 // Fallback to AJAX
                 $.ajax({
@@ -1001,15 +1260,51 @@
         
         // Update an offer's status without page refresh
         function updateOfferStatus(messageId, status) {
-            // Find the offer message
-            const offerElement = document.querySelector(`[data-message-id="${messageId}"]`);
-            if (!offerElement) return;
+            console.log("Updating offer status:", messageId, status);
             
-            // Get parent elements
-            const offerMessage = offerElement.closest('.offer-message');
-            const messageElement = offerElement.closest('.message');
+            // Find the offer message - try multiple selectors
+            let offerMessage = null;
+            
+            // First, try to find the message div and then the offer within it
+            const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
+            if (messageDiv) {
+                offerMessage = messageDiv.querySelector('.offer-message');
+                console.log("Found offer message via message div:", !!offerMessage);
+            }
+            
+            // If not found, try direct offer message lookup
+            if (!offerMessage) {
+                offerMessage = document.querySelector(`.offer-message[data-message-id="${messageId}"]`);
+                console.log("Found offer message via direct lookup:", !!offerMessage);
+            }
+            
+            // If still not found, try finding by looking for any offer message and checking its parent
+            if (!offerMessage) {
+                const allOfferMessages = document.querySelectorAll('.offer-message');
+                console.log("Total offer messages found:", allOfferMessages.length);
+                for (let offerMsg of allOfferMessages) {
+                    const parentMessage = offerMsg.closest('.message');
+                    if (parentMessage && parentMessage.getAttribute('data-message-id') === messageId) {
+                        offerMessage = offerMsg;
+                        console.log("Found offer message via parent lookup");
+                        break;
+                    }
+                }
+            }
+            
+            if (!offerMessage) {
+                console.error("Could not find offer message with messageId:", messageId);
+                console.log("Available message IDs:", Array.from(document.querySelectorAll('.message')).map(m => m.getAttribute('data-message-id')));
+                console.log("Available offer messages:", Array.from(document.querySelectorAll('.offer-message')).map(m => m.getAttribute('data-message-id')));
+                return;
+            }
             
             if (offerMessage) {
+                console.log("Found offer message, updating status to:", status);
+                
+                // Remove processing state
+                offerMessage.classList.remove('offer-processing');
+                
                 // Update status display
                 const statusElement = offerMessage.querySelector('.offer-status');
                 if (statusElement) {
@@ -1018,7 +1313,7 @@
                     // Add new status class
                     statusElement.classList.add(status.toLowerCase());
                     // Update text
-                    statusElement.textContent = status;
+                    statusElement.textContent = getOfferStatusText(status);
                 }
                 
                 // Remove action buttons
@@ -1027,20 +1322,35 @@
                     actionsElement.remove();
                 }
                 
-                // If accepted, update product price in the card
+                // If accepted, update product price in the card and show success animation
                 if (status === 'ACCEPTED') {
                     try {
-                        // Get offer amount
+                        // Add success animation
+                        offerMessage.style.animation = 'pulse 0.6s ease-in-out';
+                        setTimeout(() => {
+                            offerMessage.style.animation = '';
+                        }, 600);
+                        
+                        // Update product price card
                         const amountElement = offerMessage.querySelector('.offer-amount');
                         if (amountElement) {
                             const amount = parseFloat(amountElement.textContent);
-                            // Update product price card - optional
                             updateProductPriceDisplay(amount);
                         }
                     } catch (e) {
                         console.error('Error updating product price:', e);
                     }
                 }
+                
+                // If rejected, add rejection animation
+                if (status === 'REJECTED') {
+                    offerMessage.style.animation = 'shake 0.6s ease-in-out';
+                    setTimeout(() => {
+                        offerMessage.style.animation = '';
+                    }, 600);
+                }
+            } else {
+                console.error("Could not find offer message element");
             }
         }
         
@@ -1072,23 +1382,52 @@
             
             let messageContent = '';
             
-            if (message.isOffer) {
-                let priceDisplay = `<div class="offer-amount">`;
+            // Check if this is an offer message (either by isOffer flag or by having offerAmount)
+            const isOfferMessage = message.isOffer || (message.offerAmount && message.offerStatus);
+            
+            if (isOfferMessage) {
+                const originalPrice = /*[[${product.price}]]*/ 0;
+                const offerAmount = parseFloat(message.offerAmount).toFixed(2);
+                const originalPriceFormatted = parseFloat(originalPrice).toFixed(2);
                 
-                // Show original price with strikethrough for accepted offers
-                if (message.offerStatus === 'ACCEPTED') {
-                    const originalPrice = /*[[${product.price}]]*/ 0;
-                    priceDisplay += `<span class="me-2"><del>${parseFloat(originalPrice).toFixed(2)} RON</del></span>`;
+                // Create offer card content
+                let offerCard = `
+                    <div class="offer-message" data-message-id="${messageId}">
+                        <div class="offer-header">
+                            <div class="offer-icon">
+                                <i class="bi bi-tag-fill"></i>
+                            </div>
+                            <h6 class="offer-title">Ofertă pentru ${/*[[${product.name}]]*/ 'produs'}</h6>
+                        </div>
+                        
+                        <div class="offer-original-price">Preț original: ${originalPriceFormatted} RON</div>
+                        <div class="offer-amount">${offerAmount} RON</div>
+                        
+                        <div class="offer-status ${message.offerStatus.toLowerCase()}">
+                            ${getOfferStatusText(message.offerStatus)}
+                        </div>
+                `;
+                
+                // Add action buttons only for recipient if offer is pending
+                if (!message.currentUserSender && message.offerStatus === 'PENDING') {
+                    offerCard += `
+                        <div class="offer-actions">
+                            <button class="btn-accept" onclick="respondToOffer('${messageId}', 'ACCEPT')">
+                                <i class="bi bi-check-lg me-2"></i>Accept
+                            </button>
+                            <button class="btn-reject" onclick="respondToOffer('${messageId}', 'REJECT')">
+                                <i class="bi bi-x-lg me-2"></i>Refuz
+                            </button>
+                            <button class="btn-counter" onclick="showCounterOfferModal(this)" 
+                                    data-message-id="${messageId}" data-offer-amount="${message.offerAmount}">
+                                <i class="bi bi-arrow-left-right me-2"></i>Contraofertă
+                            </button>
+                        </div>
+                    `;
                 }
                 
-                priceDisplay += `<span>${parseFloat(message.offerAmount).toFixed(2)} RON</span></div>`;
-                
-                messageContent = `
-                    <div class="offer-message" data-message-id="${messageId}">
-                        ${priceDisplay}
-                        <div class="offer-status ${message.offerStatus.toLowerCase()}">${message.offerStatus}</div>
-                    </div>
-                `;
+                offerCard += '</div>';
+                messageContent = offerCard;
             } else {
                 messageContent = `<div class="message-content">${message.content}</div>`;
             }
@@ -1106,6 +1445,25 @@
             
             messageDiv.innerHTML = messageContent + messageTime;
             chatContainer.appendChild(messageDiv);
+        }
+        
+        function getOfferStatusText(status) {
+            switch(status) {
+                case 'PENDING': return 'În așteptare';
+                case 'ACCEPTED': return 'Acceptată';
+                case 'REJECTED': return 'Refuzată';
+                case 'COUNTERED': return 'Contraoferită';
+                default: return status;
+            }
+        }
+        
+        function getActionText(action) {
+            switch(action) {
+                case 'ACCEPT': return 'Acceptare';
+                case 'REJECT': return 'Refuzare';
+                case 'COUNTER': return 'Contraoferire';
+                default: return 'Procesare';
+            }
         }
 
         // Check WebSocket connection health
@@ -1171,6 +1529,71 @@
                 ajaxPollingInterval = null;
                 console.log("Stopped AJAX polling");
             }
+        }
+        
+        // Event delegation for offer buttons (works for both server-side and dynamically added buttons)
+        $(document).ready(function() {
+            // Handle accept/reject buttons
+            $(document).on('click', '.btn-accept, .btn-reject', function() {
+                const messageId = $(this).data('message-id');
+                const action = $(this).data('action');
+                
+                console.log('Offer button clicked:', messageId, action);
+                
+                if (messageId && action) {
+                    respondToOffer(messageId, action);
+                }
+            });
+            
+            // Handle counter offer button
+            $(document).on('click', '.btn-counter', function() {
+                const messageId = $(this).data('message-id');
+                const offerAmount = $(this).data('offer-amount');
+                
+                console.log('Counter offer button clicked:', messageId, offerAmount);
+                
+                if (messageId && offerAmount) {
+                    showCounterOfferModal(this);
+                }
+            });
+            
+            // Add periodic status check for offers that might be stuck in processing state
+            setInterval(function() {
+                const processingOffers = document.querySelectorAll('.offer-message.offer-processing');
+                if (processingOffers.length > 0) {
+                    console.log('Found', processingOffers.length, 'offers in processing state, checking for updates...');
+                    
+                    // For each processing offer, try to get the latest status from the server
+                    processingOffers.forEach(function(offerElement) {
+                        const messageDiv = offerElement.closest('.message');
+                        if (messageDiv) {
+                            const messageId = messageDiv.getAttribute('data-message-id');
+                            if (messageId) {
+                                console.log('Checking status for message:', messageId);
+                                // This will trigger a status check via AJAX if WebSocket is not working
+                                checkOfferStatus(messageId);
+                            }
+                        }
+                    });
+                }
+            }, 10000); // Check every 10 seconds
+        });
+        
+        // Function to check offer status via AJAX as a fallback
+        function checkOfferStatus(messageId) {
+            $.ajax({
+                url: `/inbox/message/${messageId}/status`,
+                type: 'GET',
+                success: function(response) {
+                    if (response.offerStatus && response.offerStatus !== 'PENDING') {
+                        console.log('Status check found updated status:', response.offerStatus);
+                        updateOfferStatus(messageId, response.offerStatus);
+                    }
+                },
+                error: function(xhr) {
+                    console.log('Status check failed for message:', messageId);
+                }
+            });
         }
     </script>
 </body>
