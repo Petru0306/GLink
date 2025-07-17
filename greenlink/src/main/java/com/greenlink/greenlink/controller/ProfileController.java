@@ -2,13 +2,11 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.model.User;
-import com.greenlink.greenlink.model.UserChallenge;
-import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.service.UserService;
-import com.greenlink.greenlink.service.ChallengeService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
-import com.greenlink.greenlink.service.QuizService;
 import com.greenlink.greenlink.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,142 +17,171 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 
+/**
+ * Controller for handling user profile-related operations.
+ * Manages both personal profiles and public profile views.
+ */
 @Controller
 @RequestMapping("/profile")
 public class ProfileController {
 
-    @Autowired
-    private UserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
+
+    private final UserService userService;
+    private final ChallengeTrackingService challengeTrackingService;
+    private final ProductService productService;
 
     @Autowired
-    private ChallengeService challengeService;
+    public ProfileController(UserService userService,
+                           ChallengeTrackingService challengeTrackingService,
+                           ProductService productService) {
+        this.userService = userService;
+        this.challengeTrackingService = challengeTrackingService;
+        this.productService = productService;
+    }
 
-    @Autowired
-    private ChallengeTrackingService challengeTrackingService;
-
-    @Autowired
-    private QuizService quizService;
-
-    @Autowired
-    private ProductService productService;
-
+    /**
+     * Display the current user's personal profile page.
+     * Shows user's own data and quick actions.
+     */
     @GetMapping
-    public String showProfile(Model model, Principal principal) {
+    public String showPersonalProfile(Model model, Principal principal) {
         try {
-            User user = userService.getCurrentUser(principal.getName());
+            if (principal == null) {
+                logger.warn("Unauthenticated user attempted to access personal profile");
+                return "redirect:/login";
+            }
 
-            // Add user data to model
-            model.addAttribute("user", user);
-            model.addAttribute("totalPoints", user.getPoints());
+            User currentUser = userService.getCurrentUser(principal.getName());
+            if (currentUser == null) {
+                logger.error("Current user not found for principal: {}", principal.getName());
+                model.addAttribute("error", "User session expired. Please login again.");
+                return "error";
+            }
 
-            // Get quiz results
-            List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
-            model.addAttribute("quizResults", quizResults);
+            // Load user's basic data
+            model.addAttribute("user", currentUser);
+            model.addAttribute("totalPoints", currentUser.getPoints());
+            
+            logger.info("Personal profile loaded successfully for user: {}", currentUser.getUsername());
+            return "profile/personal";
 
-            // Get challenges
-            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
-            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
-            model.addAttribute("activeChallenges", activeChallenges);
-            model.addAttribute("completedChallenges", completedChallenges);
-
-            return "profile";
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to load profile: " + e.getMessage());
+            logger.error("Error loading personal profile: {}", e.getMessage(), e);
+            model.addAttribute("error", "Failed to load profile. Please try again.");
             return "error";
         }
     }
 
+    /**
+     * Display the edit profile page for the current user.
+     */
     @GetMapping("/edit")
     public String showEditProfile(Model model, Principal principal) {
         try {
-            User user = userService.getCurrentUser(principal.getName());
-            model.addAttribute("user", user);
+            if (principal == null) {
+                return "redirect:/login";
+            }
+
+            User currentUser = userService.getCurrentUser(principal.getName());
+            if (currentUser == null) {
+                model.addAttribute("error", "User session expired. Please login again.");
+                return "error";
+            }
+
+            model.addAttribute("user", currentUser);
             return "profile/edit";
+
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to load profile for editing: " + e.getMessage());
+            logger.error("Error loading edit profile page: {}", e.getMessage(), e);
+            model.addAttribute("error", "Failed to load edit profile page.");
             return "error";
         }
     }
 
+    /**
+     * Handle profile update form submission.
+     */
     @PostMapping("/edit")
     public String updateProfile(@ModelAttribute User userUpdate,
                               @RequestParam(required = false) MultipartFile profilePicture,
                               Principal principal,
                               RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.updateProfile(principal.getName(), userUpdate, profilePicture);
+            if (principal == null) {
+                return "redirect:/login";
+            }
+
+            User updatedUser = userService.updateProfile(principal.getName(), userUpdate, profilePicture);
             
-            // Track profile photo upload for challenges
+            // Track profile photo upload for challenges if applicable
             if (profilePicture != null && !profilePicture.isEmpty()) {
-                challengeTrackingService.trackUserAction(user.getId(), "PROFILE_PHOTO_UPLOADED", null);
+                challengeTrackingService.trackUserAction(updatedUser.getId(), "PROFILE_PHOTO_UPLOADED", null);
+                logger.info("Profile photo uploaded for user: {}", updatedUser.getUsername());
             }
             
-            redirectAttributes.addFlashAttribute("success", "Profile updated successfully");
+            redirectAttributes.addFlashAttribute("success", "Profile updated successfully!");
+            logger.info("Profile updated successfully for user: {}", updatedUser.getUsername());
+
         } catch (Exception e) {
+            logger.error("Error updating profile: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "Failed to update profile: " + e.getMessage());
         }
+        
         return "redirect:/profile";
     }
 
-    @GetMapping("/challenges")
-    public String showChallenges(Model model, Principal principal) {
-        try {
-            User user = userService.getCurrentUser(principal.getName());
-            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
-            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
-            model.addAttribute("activeChallenges", activeChallenges);
-            model.addAttribute("completedChallenges", completedChallenges);
-            return "profile/challenges";
-        } catch (Exception e) {
-            model.addAttribute("error", "Failed to load challenges: " + e.getMessage());
-            return "error";
-        }
-    }
-
-    @PostMapping("/challenges/{challengeId}/complete")
-    public String completeChallenge(@PathVariable Long challengeId,
-                                  Principal principal,
-                                  RedirectAttributes redirectAttributes) {
-        try {
-            redirectAttributes.addFlashAttribute("success", "Challenge completed successfully");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to complete challenge: " + e.getMessage());
-        }
-        return "redirect:/profile/challenges";
-    }
-
-    @GetMapping("/quizzes")
-    public String showQuizResults(Model model, Principal principal) {
-        try {
-            User user = userService.getCurrentUser(principal.getName());
-            List<QuizResult> quizResults = quizService.getUserQuizResults(user.getId());
-            model.addAttribute("quizResults", quizResults);
-            return "profile/quizzes";
-        } catch (Exception e) {
-            model.addAttribute("error", "Failed to load quiz results: " + e.getMessage());
-            return "error";
-        }
-    }
-
-    @GetMapping("/public/{userId}")
+    /**
+     * Display a public profile page for any user by ID.
+     * Shows user's public information and products.
+     */
+    @GetMapping("/user/{userId}")
     public String viewPublicProfile(@PathVariable Long userId, Model model) {
         try {
-            // Get the user by ID
-            User user = userService.getUserById(userId);
-            if (user == null) {
-                return "redirect:/marketplace";
+            // Validate input
+            if (userId == null || userId <= 0) {
+                logger.warn("Invalid user ID provided: {}", userId);
+                model.addAttribute("error", "Invalid user ID provided.");
+                return "error";
             }
+
+            // Get the target user
+            User targetUser = userService.getUserById(userId);
+            if (targetUser == null) {
+                logger.warn("User with ID {} not found", userId);
+                model.addAttribute("error", "User not found.");
+                return "error";
+            }
+
+            // Load public profile data
+            loadPublicProfileData(model, targetUser);
             
-            // Get user's products
-            List<ProductDto> userProducts = productService.getProductsBySeller(userId);
-            
-            model.addAttribute("profileUser", user);
-            model.addAttribute("products", userProducts);
-            
-            return "profile/public-profile";
+            logger.info("Public profile loaded successfully for user ID: {} ({})", userId, targetUser.getUsername());
+            return "profile/public";
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/marketplace";
+            logger.error("Error loading public profile for user ID {}: {}", userId, e.getMessage(), e);
+            model.addAttribute("error", "Failed to load profile. Please try again later.");
+            return "error";
+        }
+    }
+
+    // ==================== PRIVATE HELPER METHODS ====================
+
+    /**
+     * Load data for public profile page.
+     */
+    private void loadPublicProfileData(Model model, User targetUser) {
+        // Basic user data
+        model.addAttribute("profileUser", targetUser);
+
+        // User's products
+        try {
+            List<ProductDto> userProducts = productService.getProductsBySeller(targetUser.getId());
+            model.addAttribute("products", userProducts != null ? userProducts : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load products for user {}: {}", targetUser.getId(), e.getMessage());
+            model.addAttribute("products", List.of());
         }
     }
 }

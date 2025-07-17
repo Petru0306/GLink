@@ -44,7 +44,7 @@ public class SecurityConfig {
                 auth
                     .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/files/**", "/webjars/**", "/error",
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
-                                   "/provocari/**", "/contact/**", "/profile/public/**", "/auth-test/generate-password").permitAll()
+                                   "/provocari/**", "/contact/**", "/profile/**", "/auth-test/generate-password").permitAll()
                     .requestMatchers("/inbox/**").authenticated()
                     .anyRequest().authenticated();
             })
