@@ -204,26 +204,31 @@ public class EducationController {
             // Get reflection text if provided
             String reflectionText = answers.get("reflectionText");
             
-            // Award points - 10 points per correct answer
-            int pointsEarned = correctAnswers * 10;
+            // Calculate points: 5 points per correct answer
+            int pointsFromQuestions = correctAnswers * 5;
             
-            // Add extra points for reflection text
+            // Add points for reflection text ("Scrie")
+            int reflectionPoints = 0;
             if (reflectionText != null && !reflectionText.trim().isEmpty()) {
-                pointsEarned += 5; // Reflection points
+                reflectionPoints = 5; // "Scrie" worth 5 points
             }
             
-            // Add extra points for image upload
+            // Add points for image upload ("Foto")
+            int imagePoints = 0;
             String imageUploaded = answers.get("imageUploaded");
             if ("true".equals(imageUploaded)) {
-                pointsEarned += 10; // Image points
+                imagePoints = 10; // "Foto" worth 10 points
             }
+            
+            // Total points earned
+            int totalPointsEarned = pointsFromQuestions + reflectionPoints + imagePoints;
             
             // Award points using PointsService
             pointsService.awardLessonPoints(currentUser.getId(), courseId, 
-                courseService.getCourseById(courseId).getTitle(), pointsEarned);
+                courseService.getCourseById(courseId).getTitle(), totalPointsEarned);
             
             // Create a quiz result record with reflection text
-            courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, pointsEarned, reflectionText, null);
+            courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, totalPointsEarned, reflectionText, null);
             
             // Track lesson completion for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
@@ -231,24 +236,35 @@ public class EducationController {
             // Get updated user to check new level
             User updatedUser = userService.getUserById(currentUser.getId());
             int newLevel = updatedUser.getLevel();
-            boolean leveledUp = newLevel > (updatedUser.getPoints() - pointsEarned) / 50 + 1;
+            boolean leveledUp = newLevel > (updatedUser.getPoints() - totalPointsEarned) / 50 + 1;
             
             // Return success response
             response.put("success", true);
             response.put("correctAnswers", correctAnswers);
             response.put("totalQuestions", totalQuestions);
-            response.put("pointsEarned", pointsEarned);
+            response.put("pointsEarned", totalPointsEarned);
             response.put("leveledUp", leveledUp);
             response.put("newLevel", newLevel);
             
-            String message = "Felicitări! Ai răspuns corect la " + correctAnswers + " din " + 
-                     totalQuestions + " întrebări și ai câștigat " + pointsEarned + " puncte!";
+            // Build message showing points earned
+            StringBuilder messageBuilder = new StringBuilder();
+            messageBuilder.append("Felicitări! Ai câștigat ").append(totalPointsEarned).append(" puncte!");
+            
+            // Add point breakdown
+            messageBuilder.append(" (Întrebări: ").append(pointsFromQuestions).append(" puncte");
+            if (reflectionPoints > 0) {
+                messageBuilder.append(", Scrie: ").append(reflectionPoints).append(" puncte");
+            }
+            if (imagePoints > 0) {
+                messageBuilder.append(", Foto: ").append(imagePoints).append(" puncte");
+            }
+            messageBuilder.append(")");
             
             if (leveledUp) {
-                message += " Ai avansat la nivelul " + newLevel + "!";
+                messageBuilder.append(" Ai avansat la nivelul ").append(newLevel).append("!");
             }
             
-            response.put("message", message);
+            response.put("message", messageBuilder.toString());
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
