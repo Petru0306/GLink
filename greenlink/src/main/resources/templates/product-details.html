@@ -311,48 +311,48 @@
                 <span class="product-price" th:unless="${product.hasNegotiatedPrice()}" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</span>
             </div>
 
-            !-- Butoane acțiune --
-            div class="d-grid gap-3"
-                !-- Favorite button --
-                button th:if="${#authorization.expression('isAuthenticated()')}"
-                        th:class="${favoriteIds != null  favoriteIds.contains(product.id) ? 'btn btn-success btn-action' : 'btn btn-outline-success btn-action'}"
+            <!-- Butoane acțiune -->
+            <div class="d-grid gap-3">
+                <!-- Favorite button -->
+                <button th:if="${#authorization.expression('isAuthenticated()')}"
+                        th:class="${favoriteIds != null && favoriteIds.contains(product.id) ? 'btn btn-success btn-action' : 'btn btn-outline-success btn-action'}"
                         th:id="'favorite-btn-' + ${product.id}"
                         th:data-product-id="${product.id}"
-                        th:data-is-favorite="${favoriteIds != null  favoriteIds.contains(product.id)}"
-                        onclick="toggleFavorite(this)"
-                    i class="bi bi-heart-fill me-2"/i
-                    span th:text="${favoriteIds != null  favoriteIds.contains(product.id) ? 'Elimină de la favorite' : 'Adaugă la favorite'}"
+                        th:data-is-favorite="${favoriteIds != null && favoriteIds.contains(product.id)}"
+                        onclick="toggleFavorite(this)">
+                    <i class="bi bi-heart-fill me-2"></i>
+                    <span th:text="${favoriteIds != null && favoriteIds.contains(product.id) ? 'Elimină de la favorite' : 'Adaugă la favorite'}">
                         Adaugă la favorite
-                    /span
-                /button
+                    </span>
+                </button>
                 
-                !-- Favorites page button - shows only when item is favorited --
-                a th:if="${#authorization.expression('isAuthenticated()')  favoriteIds != null  favoriteIds.contains(product.id)}"
+                <!-- Favorites page button - shows only when item is favorited -->
+                <a th:if="${#authorization.expression('isAuthenticated()') && favoriteIds != null && favoriteIds.contains(product.id)}"
                    href="/marketplace/favorites"
                    class="btn btn-outline-primary btn-action"
-                   th:id="'favorites-page-btn-' + ${product.id}"
-                    i class="bi bi-heart me-2"/i
+                   th:id="'favorites-page-btn-' + ${product.id}">
+                    <i class="bi bi-heart me-2"></i>
                     Pagina de favorite
-                /a
+                </a>
                 
-                !-- Make an Offer Button - Show only if user is authenticated and not the seller --
-                a th:if="${#authorization.expression('isAuthenticated()')  !isCurrentUserSeller}"
+                <!-- Make an Offer Button - Show only if user is authenticated and not the seller -->
+                <a th:if="${#authorization.expression('isAuthenticated()') && !isCurrentUserSeller}"
                    th:href="@{'/inbox/start/' + ${product.id}}"
-                   class="btn btn-primary btn-action"
-                    i class="bi bi-chat-text me-2"/i
+                   class="btn btn-primary btn-action">
+                    <i class="bi bi-chat-text me-2"></i>
                     Fă o ofertă
-                /a
+                </a>
                 
-                !-- Login prompt for unauthenticated users --
-                button th:unless="${#authorization.expression('isAuthenticated()')}"
+                <!-- Login prompt for unauthenticated users -->
+                <button th:unless="${#authorization.expression('isAuthenticated()')}"
                         type="button"
                         class="btn btn-outline-primary btn-action"
                         data-bs-toggle="modal"
-                        data-bs-target="#loginModal"
-                    i class="bi bi-chat-text me-2"/i
+                        data-bs-target="#loginModal">
+                    <i class="bi bi-chat-text me-2"></i>
                     Fă o ofertă
-                /button
-            /div
+                </button>
+            </div>
 
             <!-- Toast Container -->
             <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
@@ -449,8 +449,9 @@
                     }
                 });
 
-                function toggleFavorite(productId, button) {
+                function toggleFavorite(button) {
                     // Get current state
+                    const productId = button.dataset.productId;
                     const isFavorite = button.classList.contains('btn-success');
                     const url = isFavorite ? 
                         '/marketplace/favorites/remove/' + productId : 
@@ -490,11 +491,29 @@
                                 button.classList.remove('btn-success');
                                 button.classList.add('btn-outline-success');
                                 buttonText.textContent = 'Adaugă la favorite';
+                                button.dataset.isFavorite = 'false';
+                                
+                                // Remove favorites page button
+                                const favoritesPageBtn = document.getElementById('favorites-page-btn-' + productId);
+                                if (favoritesPageBtn) {
+                                    favoritesPageBtn.remove();
+                                }
                             } else {
                                 // Was not favorite, now add
                                 button.classList.remove('btn-outline-success');
                                 button.classList.add('btn-success');
                                 buttonText.textContent = 'Elimină de la favorite';
+                                button.dataset.isFavorite = 'true';
+                                
+                                // Add favorites page button
+                                const favoritesPageBtn = document.createElement('a');
+                                favoritesPageBtn.href = '/marketplace/favorites';
+                                favoritesPageBtn.className = 'btn btn-outline-primary btn-action';
+                                favoritesPageBtn.id = 'favorites-page-btn-' + productId;
+                                favoritesPageBtn.innerHTML = '<i class="bi bi-heart me-2"></i>Pagina de favorite';
+                                
+                                // Insert after the favorite button
+                                button.parentNode.insertBefore(favoritesPageBtn, button.nextSibling);
                             }
                             
                             // Show success toast
