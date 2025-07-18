@@ -320,7 +320,7 @@
                         th:data-product-id="${product.id}"
                         th:data-is-favorite="${favoriteIds != null && favoriteIds.contains(product.id)}"
                         onclick="toggleFavorite(this)">
-                    <i class="bi bi-heart-fill me-2"></i>
+                    <i th:class="${favoriteIds != null && favoriteIds.contains(product.id) ? 'bi bi-heart-fill me-2' : 'bi bi-heart me-2'}"></i>
                     <span th:text="${favoriteIds != null && favoriteIds.contains(product.id) ? 'Elimină de la favorite' : 'Adaugă la favorite'}">
                         Adaugă la favorite
                     </span>
@@ -368,141 +368,11 @@
             <!-- Scripts -->
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script th:inline="javascript">
-                $(document).ready(function() {
-                    // Set up AJAX CSRF header
-                    const token = $("meta[name='_csrf']").attr("content");
-                    const header = $("meta[name='_csrf_header']").attr("content");
-                    $.ajaxSetup({
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader(header, token);
-                        }
-                    });
-
-                    // Handle favorite form submission
-                    $('.quick-favorite-form').on('submit', function(e) {
-                        e.preventDefault();
-                        
-                        const form = $(this);
-                        const button = form.find('button');
-                        const icon = button.find('i');
-                        const textSpan = button.find('span');
-                        const isCurrentlyFavorite = button.attr('data-is-favorite') === 'true';
-                        const productId = form.attr('action').split('/').pop();
-
-                        $.ajax({
-                            url: form.attr('action'),
-                            type: 'POST',
-                            data: form.serialize(),
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    const newIsFavorite = !isCurrentlyFavorite;
-                                    
-                                    // Update button state
-                                    button.attr('data-is-favorite', newIsFavorite);
-                                    if (newIsFavorite) {
-                                        button.removeClass('btn-outline-success').addClass('btn-success');
-                                        icon.removeClass('bi-heart').addClass('bi-heart-fill');
-                                        textSpan.text('Elimină de la favorite');
-                                        form.attr('action', '/marketplace/favorites/remove/' + productId);
-                                    } else {
-                                        button.removeClass('btn-success').addClass('btn-outline-success');
-                                        icon.removeClass('bi-heart-fill').addClass('bi-heart');
-                                        textSpan.text('Adaugă la favorite');
-                                        form.attr('action', '/marketplace/favorites/add/' + productId);
-                                    }
-                                    
-                                    // Show success message
-                                    showToast('success', newIsFavorite ? 'Produs adăugat la favorite' : 'Produs eliminat de la favorite');
-                                } else {
-                                    showToast('error', response.message || 'A apărut o eroare');
-                                }
-                            },
-                            error: function(xhr) {
-                                let message = 'A apărut o eroare';
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-                                    message = response.message || message;
-                                } catch(e) {}
-                                showToast('error', message);
-                            }
-                        });
-                    });
-
-                    // Toast function
-                    function showToast(type, message) {
-                        const toastHtml = `
-                            <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="d-flex">
-                                    <div class="toast-body">
-                                        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
-                                        ${message}
-                                    </div>
-                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </div>
-                        `;
-                        
-                        const toastContainer = document.getElementById('toast-container');
-                        if (!toastContainer) {
-                            $('body').append('<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
-                        }
-                        
-                        const toast = $(toastHtml);
-                        $('#toast-container').append(toast);
-                        const bsToast = new bootstrap.Toast(toast[0], { autohide: true, delay: 3000 });
-                        bsToast.show();
-                    }
-                });
-
-                function buyProduct(productId) {
-                    // Get the CSRF token from the meta tag
-                    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-                    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-                    
-                    // Show loading state
-                    const button = event.target.closest('button');
-                    const originalText = button.innerHTML;
-                    button.disabled = true;
-                    button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
-                    
-                    // Use simple URLs without parameters
-                    const successUrl = window.location.origin + '/payment/success';
-                    const cancelUrl = window.location.origin + '/payment/cancel';
-                    
-                    fetch('/payment/create-checkout/' + productId, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            [csrfHeader]: csrfToken
-                        },
-                        body: 'successUrl=' + encodeURIComponent(successUrl) + '&cancelUrl=' + encodeURIComponent(cancelUrl)
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Server error');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.checkoutUrl) {
-                            // Redirect to Stripe Checkout
-                            window.location.href = data.checkoutUrl;
-                        } else {
-                            throw new Error('No checkout URL received');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        button.disabled = false;
-                        button.innerHTML = originalText;
-                        showToast('error', 'Failed to create checkout session. Please try again.');
-                    });
-                }
+                // Get CSRF token from meta tags
+                const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+                const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
                 
+                // Function to handle favorite toggle
                 function toggleFavorite(button) {
                     // Get current state
                     const productId = button.dataset.productId;
@@ -510,10 +380,6 @@
                     const url = isFavorite ? 
                         '/marketplace/favorites/remove/' + productId : 
                         '/marketplace/favorites/add/' + productId;
-                    
-                    // Get the CSRF token from the meta tag
-                    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-                    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
                     
                     // Show loading state
                     const buttonText = button.querySelector('span');
@@ -523,27 +389,30 @@
                     button.disabled = true;
                     buttonText.textContent = 'Se procesează...';
                     
+                    // Make the request
                     fetch(url, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/x-www-form-urlencoded',
                             'X-Requested-With': 'XMLHttpRequest',
                             [csrfHeader]: csrfToken
                         }
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Server error');
+                            throw new Error('Server error: ' + response.status);
                         }
                         return response.json();
                     })
                     .then(data => {
                         if (data.success) {
-                            // Toggle button appearance
+                            // Update button state immediately
                             if (isFavorite) {
                                 // Was favorite, now remove
                                 button.classList.remove('btn-success');
                                 button.classList.add('btn-outline-success');
+                                icon.classList.remove('bi-heart-fill');
+                                icon.classList.add('bi-heart');
                                 buttonText.textContent = 'Adaugă la favorite';
                                 button.dataset.isFavorite = 'false';
                                 
@@ -556,6 +425,8 @@
                                 // Was not favorite, now add
                                 button.classList.remove('btn-outline-success');
                                 button.classList.add('btn-success');
+                                icon.classList.remove('bi-heart');
+                                icon.classList.add('bi-heart-fill');
                                 buttonText.textContent = 'Elimină de la favorite';
                                 button.dataset.isFavorite = 'true';
                                 
@@ -575,7 +446,7 @@
                                 'Produs eliminat de la favorite' : 
                                 'Produs adăugat la favorite');
                         } else {
-                            // Restore original state
+                            // Restore original state on error
                             buttonText.textContent = originalText;
                             showToast('error', data.message || 'A apărut o eroare');
                         }
@@ -604,18 +475,26 @@
                         </div>
                     `;
                     
-                    const toastContainer = document.getElementById('toast-container');
+                    let toastContainer = document.getElementById('toast-container');
                     if (!toastContainer) {
-                        document.body.insertAdjacentHTML('beforeend', '<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+                        toastContainer = document.createElement('div');
+                        toastContainer.id = 'toast-container';
+                        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                        document.body.appendChild(toastContainer);
                     }
                     
                     const toastElement = document.createElement('div');
                     toastElement.innerHTML = toastHtml;
                     const toast = toastElement.firstChild;
-                    document.getElementById('toast-container').appendChild(toast);
+                    toastContainer.appendChild(toast);
                     
                     const bsToast = new bootstrap.Toast(toast, { autohide: true, delay: 3000 });
                     bsToast.show();
+                    
+                    // Remove toast after it's hidden
+                    toast.addEventListener('hidden.bs.toast', () => {
+                        toast.remove();
+                    });
                 }
             </script>
         </div>

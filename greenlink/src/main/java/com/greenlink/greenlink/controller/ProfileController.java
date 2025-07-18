@@ -227,11 +227,11 @@ public class ProfileController {
             model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
             
             // Extract unique badges from completed challenges
-            List<String> earnedBadges = completedChallenges.stream()
+            List<String> earnedBadges = (completedChallenges != null ? completedChallenges.stream()
                 .map(uc -> uc.getChallenge().getBadge())
                 .filter(badge -> badge != null && !badge.trim().isEmpty())
                 .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : List.of());
             model.addAttribute("earnedBadges", earnedBadges);
             
         } catch (Exception e) {
@@ -289,11 +289,11 @@ public class ProfileController {
             model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
             
             // Extract unique badges from completed challenges
-            List<String> earnedBadges = completedChallenges.stream()
+            List<String> earnedBadges = (completedChallenges != null ? completedChallenges.stream()
                 .map(uc -> uc.getChallenge().getBadge())
                 .filter(badge -> badge != null && !badge.trim().isEmpty())
                 .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : List.of());
             model.addAttribute("earnedBadges", earnedBadges);
             
         } catch (Exception e) {

@@ -98,7 +98,7 @@ document.getElementById('complete-lesson').addEventListener('click', async funct
     // Calculate score from answers
     const correctAnswers = Object.values(quizAnswers).filter(a => a.isCorrect).length;
     const totalQuestions = document.querySelectorAll('.quiz-section').length;
-    const pointsEarned = correctAnswers * 10;
+    const pointsEarned = correctAnswers * 5;
     
     // Gather image data if uploaded
     const imageInput = document.getElementById('image-upload');
