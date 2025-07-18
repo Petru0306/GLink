@@ -21,6 +21,12 @@ public class ProductDto {
     private Integer sellerLevel;
     private Branch branch;
     private Double negotiatedPrice; // Price negotiated for the current user
+    
+    // Sale-related fields
+    private boolean sold;
+    private Long buyerId;
+    private String buyerName;
+    private LocalDateTime soldAt;
 
     // Constructori
     public ProductDto() {}
@@ -200,6 +206,39 @@ public class ProductDto {
     
     public void setNegotiatedPrice(Double negotiatedPrice) {
         this.negotiatedPrice = negotiatedPrice;
+    }
+    
+    // Sale-related getters and setters
+    public boolean isSold() {
+        return sold;
+    }
+    
+    public void setSold(boolean sold) {
+        this.sold = sold;
+    }
+    
+    public Long getBuyerId() {
+        return buyerId;
+    }
+    
+    public void setBuyerId(Long buyerId) {
+        this.buyerId = buyerId;
+    }
+    
+    public String getBuyerName() {
+        return buyerName;
+    }
+    
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+    
+    public LocalDateTime getSoldAt() {
+        return soldAt;
+    }
+    
+    public void setSoldAt(LocalDateTime soldAt) {
+        this.soldAt = soldAt;
     }
     
     // Helper method to check if there's a negotiated price

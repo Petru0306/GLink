@@ -19,6 +19,9 @@ public interface PointEventRepository extends JpaRepository<PointEvent, Long> {
     
     List<PointEvent> findByUserIdAndEventTypeOrderByCreatedAtDesc(Long userId, String eventType);
     
+    @Query("SELECT pe FROM PointEvent pe WHERE pe.user.id = ?1 ORDER BY pe.createdAt DESC LIMIT 5")
+    List<PointEvent> findTop5ByUserIdOrderByCreatedAtDesc(Long userId);
+    
     @Query("SELECT SUM(pe.points) FROM PointEvent pe WHERE pe.user.id = ?1")
     Integer getTotalPointsEarned(Long userId);
     

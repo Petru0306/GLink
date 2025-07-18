@@ -20,6 +20,11 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.greenlink.greenlink.model.UserChallenge;
+import com.greenlink.greenlink.service.FriendService;
+import com.greenlink.greenlink.repository.PointEventRepository;
+import com.greenlink.greenlink.model.PointEvent;
+import com.greenlink.greenlink.service.ChallengeService;
 
 /**
  * Controller for handling user profile-related operations.
@@ -35,16 +40,25 @@ public class ProfileController {
     private final ChallengeTrackingService challengeTrackingService;
     private final ProductService productService;
     private final QuizResultRepository quizResultRepository;
+    private final FriendService friendService;
+    private final PointEventRepository pointEventRepository;
+    private final ChallengeService challengeService;
 
     @Autowired
     public ProfileController(UserService userService,
                            ChallengeTrackingService challengeTrackingService,
                            ProductService productService,
-                           QuizResultRepository quizResultRepository) {
+                           QuizResultRepository quizResultRepository,
+                           FriendService friendService,
+                           PointEventRepository pointEventRepository,
+                           ChallengeService challengeService) {
         this.userService = userService;
         this.challengeTrackingService = challengeTrackingService;
         this.productService = productService;
         this.quizResultRepository = quizResultRepository;
+        this.friendService = friendService;
+        this.pointEventRepository = pointEventRepository;
+        this.challengeService = challengeService;
     }
 
     /**
@@ -66,15 +80,15 @@ public class ProfileController {
                 return "error";
             }
 
-            // Load user's basic data
-            model.addAttribute("user", currentUser);
-            model.addAttribute("totalPoints", currentUser.getPoints());
+            // Load personal profile data
+            loadPersonalProfileData(model, currentUser);
             
-            // Load completed lessons for the quizzes section
-            loadCompletedLessons(model, currentUser);
+            // Mark as personal profile
+            model.addAttribute("isPersonalProfile", true);
+            model.addAttribute("currentUser", currentUser);
             
             logger.info("Personal profile loaded successfully for user: {}", currentUser.getUsername());
-            return "profile/personal";
+            return "profile/profile";
 
         } catch (Exception e) {
             logger.error("Error loading personal profile: {}", e.getMessage(), e);
@@ -146,7 +160,7 @@ public class ProfileController {
      * Shows user's public information and products.
      */
     @GetMapping("/user/{userId}")
-    public String viewPublicProfile(@PathVariable Long userId, Model model) {
+    public String viewPublicProfile(@PathVariable Long userId, Model model, Principal principal) {
         try {
             // Validate input
             if (userId == null || userId <= 0) {
@@ -163,11 +177,24 @@ public class ProfileController {
                 return "error";
             }
 
+            // Check if user is viewing their own profile
+            User currentUser = null;
+            boolean isOwnProfile = false;
+            if (principal != null) {
+                currentUser = userService.getCurrentUser(principal.getName());
+                isOwnProfile = currentUser != null && currentUser.getId().equals(targetUser.getId());
+            }
+
             // Load public profile data
             loadPublicProfileData(model, targetUser);
             
+            // Mark as public profile
+            model.addAttribute("isPersonalProfile", false);
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("isOwnProfile", isOwnProfile);
+            
             logger.info("Public profile loaded successfully for user ID: {} ({})", userId, targetUser.getUsername());
-            return "profile/public";
+            return "profile/profile";
 
         } catch (Exception e) {
             logger.error("Error loading public profile for user ID {}: {}", userId, e.getMessage(), e);
@@ -177,6 +204,68 @@ public class ProfileController {
     }
 
     // ==================== PRIVATE HELPER METHODS ====================
+
+    /**
+     * Load data for personal profile page.
+     */
+    private void loadPersonalProfileData(Model model, User currentUser) {
+        // Basic user data
+        model.addAttribute("profileUser", currentUser);
+
+        // User's products
+        try {
+            List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
+            model.addAttribute("products", userProducts != null ? userProducts : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load products for user {}: {}", currentUser.getId(), e.getMessage());
+            model.addAttribute("products", List.of());
+        }
+        
+        // User's completed challenges and badges
+        try {
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(currentUser.getId());
+            model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
+            
+            // Extract unique badges from completed challenges
+            List<String> earnedBadges = completedChallenges.stream()
+                .map(uc -> uc.getChallenge().getBadge())
+                .filter(badge -> badge != null && !badge.trim().isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+            model.addAttribute("earnedBadges", earnedBadges);
+            
+        } catch (Exception e) {
+            logger.warn("Failed to load challenges for user {}: {}", currentUser.getId(), e.getMessage());
+            model.addAttribute("completedChallenges", List.of());
+            model.addAttribute("earnedBadges", List.of());
+        }
+        
+        // User's friends
+        try {
+            List<User> friends = friendService.getFriendsList(currentUser);
+            model.addAttribute("friends", friends != null ? friends : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load friends for user {}: {}", currentUser.getId(), e.getMessage());
+            model.addAttribute("friends", List.of());
+        }
+        
+        // Recent activity (last 5 point events)
+        try {
+            List<PointEvent> recentActivity = pointEventRepository.findTop5ByUserIdOrderByCreatedAtDesc(currentUser.getId());
+            model.addAttribute("recentActivity", recentActivity != null ? recentActivity : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load recent activity for user {}: {}", currentUser.getId(), e.getMessage());
+            model.addAttribute("recentActivity", List.of());
+        }
+        
+        // Reviews (placeholder for now - would need a review system)
+        model.addAttribute("reviews", List.of());
+        model.addAttribute("averageRating", 0.0);
+        model.addAttribute("totalReviews", 0);
+        
+        // Load completed lessons for the quizzes section
+        loadCompletedLessons(model, currentUser);
+    }
 
     /**
      * Load data for public profile page.
@@ -193,6 +282,48 @@ public class ProfileController {
             logger.warn("Failed to load products for user {}: {}", targetUser.getId(), e.getMessage());
             model.addAttribute("products", List.of());
         }
+        
+        // User's completed challenges and badges
+        try {
+            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(targetUser.getId());
+            model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
+            
+            // Extract unique badges from completed challenges
+            List<String> earnedBadges = completedChallenges.stream()
+                .map(uc -> uc.getChallenge().getBadge())
+                .filter(badge -> badge != null && !badge.trim().isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+            model.addAttribute("earnedBadges", earnedBadges);
+            
+        } catch (Exception e) {
+            logger.warn("Failed to load challenges for user {}: {}", targetUser.getId(), e.getMessage());
+            model.addAttribute("completedChallenges", List.of());
+            model.addAttribute("earnedBadges", List.of());
+        }
+        
+        // User's friends
+        try {
+            List<User> friends = friendService.getFriendsList(targetUser);
+            model.addAttribute("friends", friends != null ? friends : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load friends for user {}: {}", targetUser.getId(), e.getMessage());
+            model.addAttribute("friends", List.of());
+        }
+        
+        // Recent activity (last 5 point events)
+        try {
+            List<PointEvent> recentActivity = pointEventRepository.findTop5ByUserIdOrderByCreatedAtDesc(targetUser.getId());
+            model.addAttribute("recentActivity", recentActivity != null ? recentActivity : List.of());
+        } catch (Exception e) {
+            logger.warn("Failed to load recent activity for user {}: {}", targetUser.getId(), e.getMessage());
+            model.addAttribute("recentActivity", List.of());
+        }
+        
+        // Reviews (placeholder for now - would need a review system)
+        model.addAttribute("reviews", List.of());
+        model.addAttribute("averageRating", 0.0);
+        model.addAttribute("totalReviews", 0);
     }
     
     /**

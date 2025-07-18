@@ -23,4 +23,5 @@ public interface UserService extends UserDetailsService {
     boolean emailExists(String email);
     void deactivateAccount(Long userId);
     void reactivateAccount(Long userId);
+    User updateUser(User user);
 }

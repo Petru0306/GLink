@@ -23,6 +23,9 @@ public class FriendService {
     @Autowired
     private SystemMessageService systemMessageService;
 
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
+
     public FriendService(FriendRepository friendRepository, UserRepository userRepository, 
                          FriendRequestRepository friendRequestRepository) {
         this.friendRepository = friendRepository;
@@ -44,6 +47,10 @@ public class FriendService {
         friendship.setUser(user);
         friendship.setFriendUser(friendUser);
         friendRepository.save(friendship);
+        
+        // Track the friend action for challenges for both users
+        challengeTrackingService.trackUserAction(user.getId(), "FRIEND_ADDED", user.getId());
+        challengeTrackingService.trackUserAction(friendUser.getId(), "FRIEND_ADDED", friendUser.getId());
     }
 
     @Transactional

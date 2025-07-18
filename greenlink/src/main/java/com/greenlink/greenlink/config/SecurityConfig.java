@@ -38,13 +38,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))  // Enable CSRF but ignore for API endpoints
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/payment/webhook"))  // Enable CSRF but ignore for API endpoints and webhooks
             .authorizeHttpRequests(auth -> {
                 logger.info("Configuring authorization rules");
                 auth
                     .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/files/**", "/webjars/**", "/error",
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
-                                   "/provocari/**", "/contact/**", "/profile/**", "/auth-test/generate-password").permitAll()
+                                   "/provocari/**", "/contact/**", "/profile/**", "/auth-test/generate-password", 
+                                   "/payment/webhook", "/payment/success", "/payment/cancel").permitAll()
                     .requestMatchers("/inbox/**").authenticated()
                     .anyRequest().authenticated();
             })

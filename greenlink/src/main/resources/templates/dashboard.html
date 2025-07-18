@@ -691,6 +691,16 @@
                         <p class="action-description">Manage your listed products</p>
                     </div>
                 </a>
+                <a href="/dashboard/sales" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-graph-up action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Sales History</h5>
+                        <p class="action-description" th:text="${totalProductsSold + ' products sold'}">0 products sold</p>
+                        <small class="text-success fw-bold" th:text="${'RON ' + #numbers.formatDecimal(totalEarnings, 1, 2)}">RON 0.00</small>
+                    </div>
+                </a>
                 <a href="/educatie" class="text-decoration-none">
                     <div class="quick-action-card p-4">
                         <div class="action-icon-wrapper">

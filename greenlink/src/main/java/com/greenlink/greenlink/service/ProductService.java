@@ -46,7 +46,11 @@ public class ProductService {
         Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
         Integer sellerLevel = product.getSeller() != null ? product.getSeller().getLevel() : null;
         
-        return new ProductDto(
+        String buyerName = product.getBuyer() != null ? 
+                product.getBuyer().getFirstName() + " " + product.getBuyer().getLastName() : null;
+        Long buyerId = product.getBuyer() != null ? product.getBuyer().getId() : null;
+        
+        ProductDto dto = new ProductDto(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
@@ -62,6 +66,14 @@ public class ProductService {
                 sellerLevel,
                 product.getBranch()
         );
+        
+        // Set sale-related fields
+        dto.setSold(product.isSold());
+        dto.setBuyerId(buyerId);
+        dto.setBuyerName(buyerName);
+        dto.setSoldAt(product.getSoldAt());
+        
+        return dto;
     }
 
     private ProductDto convertToDto(Product product, User currentUser) {
@@ -126,14 +138,28 @@ public class ProductService {
     }
 
     public List<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream()
+        return productRepository.findAllAvailableProducts().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public Page<ProductDto> getProducts(Pageable pageable) {
-        return productRepository.findAll(pageable)
-                .map(this::convertToDto);
+        return productRepository.findAllAvailableProducts().stream()
+                .collect(Collectors.collectingAndThen(
+                    Collectors.toList(),
+                    list -> {
+                        int start = (int) pageable.getOffset();
+                        int end = Math.min((start + pageable.getPageSize()), list.size());
+                        if (start > list.size()) {
+                            return Page.empty(pageable);
+                        }
+                        return new org.springframework.data.domain.PageImpl<>(
+                            list.subList(start, end).stream().map(this::convertToDto).collect(Collectors.toList()),
+                            pageable,
+                            list.size()
+                        );
+                    }
+                ));
     }
 
     public ProductDto getProductById(Long id) {
@@ -357,7 +383,15 @@ public class ProductService {
     }
     
     public List<ProductDto> getProductsBySeller(Long sellerId) {
-        List<Product> products = productRepository.findBySellerId(sellerId);
+        List<Product> products = productRepository.findAvailableProductsBySellerId(sellerId);
+        
+        return products.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+    
+    public List<ProductDto> getSoldProductsBySeller(Long sellerId) {
+        List<Product> products = productRepository.findSoldProductsBySellerId(sellerId);
         
         return products.stream()
                 .map(this::convertToDto)

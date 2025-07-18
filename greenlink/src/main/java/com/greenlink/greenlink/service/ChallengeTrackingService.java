@@ -2,9 +2,13 @@ package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.UserChallenge;
+import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.model.Friend;
 import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserChallengeRepository;
+import com.greenlink.greenlink.repository.FriendRepository;
+import com.greenlink.greenlink.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,12 @@ public class ChallengeTrackingService {
 
     @Autowired
     private PointsService pointsService;
+
+    @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public void trackUserAction(Long userId, String actionType, Object actionData) {
@@ -88,6 +98,22 @@ public class ChallengeTrackingService {
             (title.contains("complete") && title.contains("lesson"))) {
             int completedLessons = getCompletedLessonsCount(userId);
             return completedLessons >= 1;
+        }
+        
+        // For friend challenges, activate if user has any friends
+        if (title.contains("friend")) {
+            int friendsCount = getFriendsCount(userId);
+            logger.debug("Checking friend challenge '{}' for user {} with {} friends", challenge.getTitle(), userId, friendsCount);
+            
+            if (title.contains("first friend")) {
+                return friendsCount >= 1;
+            } else if (title.contains("three friends")) {
+                return friendsCount >= 1; // Activate when user has any friends, progress will be calculated
+            } else if (title.contains("five friends")) {
+                return friendsCount >= 1; // Activate when user has any friends, progress will be calculated
+            } else if (title.contains("ten friends")) {
+                return friendsCount >= 1; // Activate when user has any friends, progress will be calculated
+            }
         }
         
         // For other challenges, they will be activated when the specific action occurs
@@ -191,17 +217,9 @@ public class ChallengeTrackingService {
                 
             case "FRIEND_ADDED":
                 if (title.contains("friend")) {
-                    if (title.contains("first friend")) {
-                        return true;
-                    } else if (title.contains("three friends")) {
-                        return getFriendsCount((Long) actionData) >= 3;
-                    } else if (title.contains("five friends")) {
-                        return getFriendsCount((Long) actionData) >= 5;
-                    } else if (title.contains("ten friends")) {
-                        return getFriendsCount((Long) actionData) >= 10;
-                    } else if (title.contains("fifteen friends")) {
-                        return getFriendsCount((Long) actionData) >= 15;
-                    }
+                    // Always update friend challenges when a friend is added
+                    // The progress calculation will handle the actual progress based on current friend count
+                    return true;
                 }
                 return false;
                 
@@ -526,10 +544,29 @@ public class ChallengeTrackingService {
     }
 
     private int getFriendsCount(Long userId) {
-        // For now, return 0 as we don't have a friends system implemented
-        // This would need to be implemented when you add a friends/following system
-        logger.debug("Friends count for user {}: 0 (not implemented)", userId);
-        return 0;
+        // Count all friendships for the user (both as user and as friend)
+        // We need to get the User object first, then count friendships
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            logger.debug("User not found for ID: {}", userId);
+            return 0;
+        }
+        
+        List<Friend> friendships = friendRepository.findAllFriendships(user);
+        int count = friendships.size();
+        logger.info("=== FRIEND COUNT DEBUG ===");
+        logger.info("User ID: {}", userId);
+        logger.info("User email: {}", user.getEmail());
+        logger.info("Total friendships found: {}", count);
+        logger.info("Friendship details:");
+        for (Friend friendship : friendships) {
+            logger.info("  - Friendship ID: {}, User: {} -> Friend: {}", 
+                friendship.getId(), 
+                friendship.getUser().getEmail(), 
+                friendship.getFriendUser().getEmail());
+        }
+        logger.info("==========================");
+        return count;
     }
 
     // DTO classes for WebSocket messages

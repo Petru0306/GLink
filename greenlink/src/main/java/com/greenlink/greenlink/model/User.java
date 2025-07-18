@@ -86,6 +86,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "friendUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friendOf = new ArrayList<>();
 
+    // Stripe Connect fields
+    @Column(name = "stripe_account_id")
+    private String stripeAccountId;
+    
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
+
     public User() {
     }
 
@@ -361,5 +368,21 @@ public class User implements UserDetails {
 
     public void setFavoriteProducts(List<Product> favoriteProducts) {
         this.favoriteProducts = favoriteProducts;
+    }
+
+    public String getStripeAccountId() {
+        return stripeAccountId;
+    }
+
+    public void setStripeAccountId(String stripeAccountId) {
+        this.stripeAccountId = stripeAccountId;
+    }
+
+    public String getStripeCustomerId() {
+        return stripeCustomerId;
+    }
+
+    public void setStripeCustomerId(String stripeCustomerId) {
+        this.stripeCustomerId = stripeCustomerId;
     }
 }

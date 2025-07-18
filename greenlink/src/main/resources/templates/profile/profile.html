@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName + ' - Profile - GreenLink') : 'User Profile - GreenLink'}">User Profile - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <link rel="stylesheet" href="/css/profile.css?v=1.2">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center text-md-start">
+                    <!-- Profile Avatar -->
+                    <div class="profile-avatar-placeholder">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-start">
+                    <!-- Profile Info -->
+                    <h1 class="profile-name" th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">User Name</h1>
+                    <p class="profile-username" th:text="${profileUser != null ? ('@' + profileUser.username) : '@username'}">@username</p>
+                    <div class="eco-score">
+                        <i class="bi bi-trophy-fill"></i>
+                        <span th:text="${profileUser != null ? profileUser.points : 0}">0</span> GreenLink Points
+                        <span class="badge bg-light text-dark ms-2">Level <span th:text="${profileUser != null ? profileUser.level : 1}">1</span></span>
+                    </div>
+                    <!-- Last Activity -->
+                    <div class="last-activity mt-2" th:if="${not #lists.isEmpty(recentActivity)}">
+                        <small class="text-light">
+                            <i class="bi bi-clock me-1"></i>
+                            <span th:text="${recentActivity[0].description}">Recent activity</span>
+                        </small>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center text-md-end">
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <!-- Personal Profile Actions -->
+                        <div th:if="${isPersonalProfile}">
+                            <a href="/profile/edit" class="btn btn-success btn-sm">
+                                <i class="bi bi-pencil me-1"></i>Edit Profile
+                            </a>
+                            <a href="/dashboard" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                        </div>
+                        
+                        <!-- Public Profile Actions -->
+                        <div th:unless="${isPersonalProfile}">
+                            <button class="btn btn-success btn-sm" onclick="showMessageModal()" th:if="${currentUser != null && !isOwnProfile}">
+                                <i class="bi bi-chat-dots me-1"></i>Message
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="showAddFriendModal()" th:if="${currentUser != null && !isOwnProfile}">
+                                <i class="bi bi-person-plus me-1"></i>Add Friend
+                            </button>
+                            <a href="/profile" class="btn btn-outline-success btn-sm" th:if="${isOwnProfile}">
+                                <i class="bi bi-person me-1"></i>My Profile
+                            </a>
+                        </div>
+                        
+                        <!-- Back Button -->
+                        <a href="javascript:history.back()" class="btn btn-outline-light btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i>Back
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Main Content Area -->
+            <div class="col-lg-8">
+                
+                <!-- User Overview Section -->
+                <div class="main-content mb-4">
+                    <h2 class="section-title">
+                        <i class="bi bi-person-circle me-2"></i>About
+                    </h2>
+                    
+                    <!-- Bio Section -->
+                    <div th:if="${profileUser?.bio}" class="mb-4">
+                        <p class="lead" th:text="${profileUser.bio}">User bio...</p>
+                    </div>
+                    
+                    <!-- Member Since -->
+                    <div class="member-info">
+                        <i class="bi bi-calendar-check me-2"></i>
+                        <span>Member since <span th:text="${profileUser?.createdAt != null ? #dates.format(profileUser.createdAt, 'MMMM yyyy') : 'Unknown'}">January 2023</span></span>
+                    </div>
+                    
+                    <!-- Personal Profile Only: Level Progress -->
+                    <div th:if="${isPersonalProfile}" class="level-progress mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">Progress to next level</small>
+                            <small class="text-muted" th:text="${profileUser != null ? profileUser.progressToNextLevel : 0} + '%'">75%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 th:style="'width: ' + ${profileUser != null ? profileUser.progressToNextLevel : 0} + '%'"
+                                 th:text="${profileUser != null ? profileUser.progressToNextLevel : 0} + '%'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Badges Section -->
+                <div class="main-content mb-4" th:if="${not #lists.isEmpty(earnedBadges)}">
+                    <h2 class="section-title">
+                        <i class="bi bi-award me-2"></i>Badges Earned
+                    </h2>
+                    <div class="badges-grid">
+                        <div th:each="badge : ${earnedBadges}" class="badge-item">
+                            <div class="badge-icon">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <span class="badge-name" th:text="${badge}">Badge Name</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="main-content mb-4">
+                    <h2 class="section-title">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>Products Listed
+                        <span class="badge bg-success ms-2" th:text="${products != null ? products.size() : 0}">0</span>
+                    </h2>
+                    
+                    <!-- No Products Message -->
+                    <div th:if="${#lists.isEmpty(products)}" class="empty-state">
+                        <i class="bi bi-box-seam empty-state-icon"></i>
+                        <h3 class="empty-state-title">No Products Available</h3>
+                        <p class="empty-state-text" th:if="${isPersonalProfile}">You haven't listed any products in the marketplace yet. <a href="/marketplace" class="text-success">Start selling today!</a></p>
+                        <p class="empty-state-text" th:unless="${isPersonalProfile}">This user hasn't listed any products in the marketplace yet.</p>
+                    </div>
+                    
+                    <!-- Products Grid -->
+                    <div th:if="${not #lists.isEmpty(products)}" class="products-grid">
+                        <div th:each="product : ${products}" class="product-card" 
+                             th:data-product-url="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}">
+                            <div class="product-image-container">
+                                <img th:if="${product.imageUrl != null}" th:src="${product.imageUrl}" class="product-image" alt="Product Image">
+                                <img th:unless="${product.imageUrl != null}" src="/images/placeholder-product.jpg" class="product-image" alt="Product">
+                                <span th:if="${product.ecoFriendly}" class="product-eco-badge">
+                                    <i class="bi bi-leaf-fill me-1"></i>Eco
+                                </span>
+                            </div>
+                            <div class="product-content">
+                                <h3 class="product-title" th:text="${product.name}">Product Name</h3>
+                                <p class="product-description" th:text="${#strings.length(product.description) > 80 ? #strings.substring(product.description, 0, 77) + '...' : product.description}">
+                                    Product description...
+                                </p>
+                                <div class="product-meta">
+                                    <span class="product-price" th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' RON'">Price</span>
+                                    <span class="product-stock">
+                                        <i class="bi bi-box-seam me-1"></i>
+                                        <span th:text="${product.stock}">10</span> in stock
+                                    </span>
+                                </div>
+                                <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" class="btn btn-success btn-sm w-100">
+                                    <i class="bi bi-eye me-1"></i>View Product
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Profile Only: Completed Lessons -->
+                <div class="main-content mb-4" th:if="${isPersonalProfile && not #lists.isEmpty(completedLessons)}">
+                    <h2 class="section-title">
+                        <i class="bi bi-book me-2"></i>Completed Lessons
+                        <span class="badge bg-info ms-2" th:text="${completedLessons.size()}">0</span>
+                    </h2>
+                    
+                    <div class="lessons-grid">
+                        <div th:each="lesson : ${completedLessons}" class="lesson-card">
+                            <div class="lesson-header">
+                                <div class="lesson-title">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span th:text="${lesson.title}">Lesson Title</span>
+                                </div>
+                                <div class="lesson-meta">
+                                    <span class="lesson-points" th:text="${lesson.pointsEarned} + ' pts'">25 pts</span>
+                                    <span class="lesson-date" th:text="${#dates.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                </div>
+                            </div>
+                            <p class="lesson-description" th:text="${lesson.description}">Lesson description</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="main-content mb-4">
+                    <h2 class="section-title">
+                        <i class="bi bi-star me-2"></i>Reviews
+                        <span class="badge bg-warning text-dark ms-2" th:text="${totalReviews}">0</span>
+                    </h2>
+                    
+                    <!-- No Reviews Message -->
+                    <div th:if="${#lists.isEmpty(reviews)}" class="empty-state">
+                        <i class="bi bi-star empty-state-icon"></i>
+                        <h3 class="empty-state-title">No Reviews Yet</h3>
+                        <p class="empty-state-text" th:if="${isPersonalProfile}">You haven't received any reviews yet. Keep selling great products!</p>
+                        <p class="empty-state-text" th:unless="${isPersonalProfile}">This user hasn't received any reviews yet.</p>
+                    </div>
+                    
+                    <!-- Reviews List -->
+                    <div th:if="${not #lists.isEmpty(reviews)}" class="reviews-list">
+                        <!-- Reviews would be displayed here when review system is implemented -->
+                    </div>
+                </div>
+
+                <!-- Friends Section -->
+                <div class="main-content mb-4" th:if="${not #lists.isEmpty(friends)}">
+                    <h2 class="section-title">
+                        <i class="bi bi-people me-2"></i>Friends
+                        <span class="badge bg-info ms-2" th:text="${friends.size()}">0</span>
+                    </h2>
+                    
+                    <div class="friends-grid">
+                        <div th:each="friend : ${friends}" class="friend-card">
+                            <a th:href="@{'/profile/user/' + ${friend.id}}" class="friend-link">
+                                <div class="friend-avatar">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <div class="friend-info">
+                                    <h6 class="friend-name" th:text="${friend.firstName + ' ' + friend.lastName}">Friend Name</h6>
+                                    <small class="friend-username" th:text="'@' + ${friend.username}">@username</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenge History Section -->
+                <div class="main-content mb-4" th:if="${not #lists.isEmpty(completedChallenges)}">
+                    <h2 class="section-title">
+                        <i class="bi bi-trophy me-2"></i>Challenge History
+                        <span class="badge bg-success ms-2" th:text="${completedChallenges.size()}">0</span>
+                    </h2>
+                    
+                    <div class="challenges-list">
+                        <div th:each="userChallenge : ${completedChallenges}" class="challenge-item">
+                            <div class="challenge-header">
+                                <div class="challenge-title">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <span th:text="${userChallenge.challenge.title}">Challenge Title</span>
+                                </div>
+                                <div class="challenge-meta">
+                                    <span class="challenge-points" th:text="${userChallenge.challenge.points} + ' pts'">50 pts</span>
+                                    <span class="challenge-date" th:text="${#dates.format(userChallenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                </div>
+                            </div>
+                            <p class="challenge-description" th:text="${userChallenge.challenge.description}">Challenge description</p>
+                            <div class="challenge-badge" th:if="${userChallenge.challenge.badge}">
+                                <span class="badge bg-warning text-dark" th:text="${userChallenge.challenge.badge}">Badge</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar">
+                    
+                    <!-- Quick Stats -->
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">
+                            <i class="bi bi-graph-up me-2"></i>Quick Stats
+                        </h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value" th:text="${products != null ? products.size() : 0}">0</div>
+                                    <div class="stat-label">Products Listed</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value" th:text="${averageRating}">4.8</div>
+                                    <div class="stat-label">Average Rating</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-trophy"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
+                                    <div class="stat-label">Challenges Completed</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <div class="stat-value" th:text="${friends != null ? friends.size() : 0}">0</div>
+                                    <div class="stat-label">Friends</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="sidebar-section" th:if="${not #lists.isEmpty(recentActivity)}">
+                        <h3 class="sidebar-title">
+                            <i class="bi bi-clock-history me-2"></i>Recent Activity
+                        </h3>
+                        <div class="activity-list">
+                            <div th:each="activity : ${recentActivity}" class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="bi bi-plus-circle text-success"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-description" th:text="${activity.description}">Activity description</div>
+                                    <div class="activity-meta">
+                                        <span class="activity-points" th:text="'+' + ${activity.points} + ' pts'">+10 pts</span>
+                                        <span class="activity-date" th:text="${#dates.format(activity.createdAt, 'dd MMM')}">01 Jan</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Eco Impact Summary -->
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">
+                            <i class="bi bi-leaf me-2"></i>Eco Impact
+                        </h3>
+                        <div class="eco-impact-grid">
+                            <div class="eco-stat">
+                                <div class="eco-value">12</div>
+                                <div class="eco-label">CO₂ kg Saved</div>
+                            </div>
+                            <div class="eco-stat">
+                                <div class="eco-value" th:text="${products != null ? products.size() : 0}">0</div>
+                                <div class="eco-label">Eco Products Sold</div>
+                            </div>
+                            <div class="eco-stat">
+                                <div class="eco-value" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
+                                <div class="eco-label">Challenges Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Messaging system will be implemented soon!</p>
+                    <p class="text-muted">You'll be able to send messages to <span th:text="${profileUser?.firstName ?: 'this user'}">this user</span> here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Friend Modal -->
+    <div class="modal fade" id="addFriendModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Friend</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Friend request system will be implemented soon!</p>
+                    <p class="text-muted">You'll be able to send a friend request to <span th:text="${profileUser?.firstName ?: 'this user'}">this user</span> here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make product cards clickable
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't navigate if clicking on the action button
+                    if (e.target.closest('.btn')) {
+                        return;
+                    }
+                    
+                    const productUrl = this.getAttribute('data-product-url');
+                    if (productUrl) {
+                        window.location.href = productUrl;
+                    }
+                });
+            });
+        });
+
+        function showMessageModal() {
+            const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+            modal.show();
+        }
+
+        function showAddFriendModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addFriendModal'));
+            modal.show();
+        }
+    </script>
+</body>
+</html> 

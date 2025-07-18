@@ -50,6 +50,17 @@ public class Product {
     @JoinColumn(name = "seller_id")
     private User seller;
     
+    // Sale-related fields
+    @Column(nullable = false)
+    private boolean sold = false;
+    
+    @ManyToOne
+    @JoinColumn(name = "buyer_id")
+    private User buyer;
+    
+    @Column(name = "sold_at")
+    private LocalDateTime soldAt;
+    
     // Map to store negotiated prices between users and this product
     @ElementCollection
     @CollectionTable(name = "negotiated_prices", 
@@ -197,6 +208,30 @@ public class Product {
     
     public void setSeller(User seller) {
         this.seller = seller;
+    }
+    
+    public boolean isSold() {
+        return sold;
+    }
+    
+    public void setSold(boolean sold) {
+        this.sold = sold;
+    }
+    
+    public User getBuyer() {
+        return buyer;
+    }
+    
+    public void setBuyer(User buyer) {
+        this.buyer = buyer;
+    }
+    
+    public LocalDateTime getSoldAt() {
+        return soldAt;
+    }
+    
+    public void setSoldAt(LocalDateTime soldAt) {
+        this.soldAt = soldAt;
     }
     
     public Map<Long, Double> getNegotiatedPrices() {
