@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #28a745;
@@ -25,7 +26,12 @@
         
         body {
             background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6, .welcome-text, .section-title {
+            font-family: 'Montserrat', sans-serif;
         }
         
         /* Hero Section */
@@ -66,6 +72,53 @@
             font-size: 1.2rem;
             opacity: 0.9;
             margin-bottom: 1.5rem;
+        }
+        
+        /* Hero Points Display */
+        .hero-points-display {
+            text-align: center;
+        }
+        
+        .points-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .points-info i {
+            font-size: 2rem;
+            color: #FFD700;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .points-count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .points-label {
+            font-size: 1.1rem;
+            color: white;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* User Profile Card */
@@ -449,9 +502,12 @@
 <header class="hero-section">
     <div class="container hero-content">
         <div class="row align-items-center">
-            <div class="col-lg-8">
+            <div class="col-lg-6">
                 <h1 class="welcome-text">Welcome back, <span th:text="${user.firstName}">User</span>!</h1>
                 <p class="welcome-subtitle">Track your progress and make a positive impact on the environment.</p>
+            </div>
+            <div class="col-lg-6">
+                <!-- Additional welcome content can be added here if needed -->
             </div>
         </div>
     </div>
@@ -461,30 +517,34 @@
     <!-- User Profile Card -->
     <div class="user-profile-card">
         <div class="row align-items-center">
-            <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="col-lg-3 mb-4 mb-lg-0">
                 <div class="user-avatar">
                     <i class="bi bi-person"></i>
                 </div>
-                <div class="user-info">
-                    <h3 class="user-name" th:text="${user.firstName + ' ' + user.lastName}">User Name</h3>
-                    <p class="user-email" th:text="${user.email}">user@example.com</p>
-                </div>
             </div>
-            <div class="col-lg-4 mb-4 mb-lg-0 text-center">
-                <span class="points-badge">
-                    <i class="bi bi-trophy-fill me-2"></i>
-                    <span th:text="${user.points}">0</span> GreenLink Points
-                </span>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" 
-                         th:style="'width: ' + ${user.points % 100} + '%'"
-                         th:attr="aria-valuenow=${user.points % 100}"
-                         aria-valuemin="0" aria-valuemax="100">
+            <div class="col-lg-5 mb-4 mb-lg-0">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3 class="user-name" th:text="${user.firstName + ' ' + user.lastName}">User Name</h3>
+                        <p class="user-email" th:text="${user.email}">user@example.com</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="points-badge">
+                            <i class="bi bi-trophy-fill me-2"></i>
+                            <span th:text="${user.points}">0</span> GreenLink Points
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" 
+                                 th:style="'width: ' + ${user.points % 100} + '%'"
+                                 th:attr="aria-valuenow=${user.points % 100}"
+                                 aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <p class="text-muted mt-2 mb-0">
+                            <span th:text="${100 - (user.points % 100)}">100</span> points until Level <span th:text="${user.points / 100 + 2}">2</span>
+                        </p>
                     </div>
                 </div>
-                <p class="text-muted mt-2">
-                    <span th:text="${100 - (user.points % 100)}">100</span> points until next level
-                </p>
             </div>
             <div class="col-lg-4 text-center text-lg-end">
                 <div class="d-flex justify-content-center justify-content-lg-end">
