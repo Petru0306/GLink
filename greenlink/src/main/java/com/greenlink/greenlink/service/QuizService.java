@@ -28,6 +28,9 @@ public class QuizService {
     private UserService userService;
 
     @Autowired
+    private PointsService pointsService;
+
+    @Autowired
     private QuizAnswerRepository quizAnswerRepository;
 
     // Metode pentru Quiz
@@ -81,7 +84,7 @@ public class QuizService {
 
         // Salvează rezultatul și actualizează punctele utilizatorului
         QuizResult savedResult = quizResultRepository.save(result);
-        userService.addPoints(userId, pointsEarned);
+        pointsService.awardQuizPoints(userId, quizId, quiz.getTitle(), pointsEarned);
 
         
         // Save each answer

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
     bio TEXT,
     profile_picture VARCHAR(255),
     points INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 1,
     created_at TIMESTAMP,
     last_login TIMESTAMP,
     enabled BOOLEAN DEFAULT true,
@@ -90,3 +91,25 @@ CREATE TABLE IF NOT EXISTS friends (
     FOREIGN KEY (friend_id) REFERENCES users(id),
     UNIQUE (user_id, friend_id)
 );
+
+-- Create point_events table
+CREATE TABLE IF NOT EXISTS point_events (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    points INTEGER NOT NULL,
+    event_type VARCHAR(100) NOT NULL,
+    description VARCHAR(500),
+    related_entity_id BIGINT,
+    related_entity_type VARCHAR(50),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    old_level INTEGER,
+    new_level INTEGER,
+    leveled_up BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Create indexes for point_events table
+CREATE INDEX IF NOT EXISTS idx_point_events_user_id ON point_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_point_events_event_type ON point_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_point_events_created_at ON point_events(created_at);
+CREATE INDEX IF NOT EXISTS idx_point_events_leveled_up ON point_events(leveled_up);

@@ -17,9 +17,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.favoriteProducts WHERE u.email = :email")
     Optional<User> findByEmailWithFavorites(String email);
 
-    @Query(value = "SELECT * FROM users WHERE active = true ORDER BY points DESC LIMIT :limit",
+    @Query(value = "SELECT * FROM users WHERE active = true ORDER BY points DESC, level DESC LIMIT :limit",
             nativeQuery = true)
     List<User> findTopByOrderByPointsDesc(int limit);
+    
+    @Query(value = "SELECT * FROM users WHERE active = true ORDER BY level DESC, points DESC LIMIT :limit",
+            nativeQuery = true)
+    List<User> findTopByOrderByLevelDesc(int limit);
+    
+    @Query("SELECT u FROM User u WHERE u.level >= :minLevel ORDER BY u.level DESC, u.points DESC")
+    List<User> findByLevelGreaterThanEqualOrderByLevelDescPointsDesc(int minLevel);
     
     @Query("SELECT u FROM User u JOIN u.favoriteProducts fp WHERE fp = :product")
     List<User> findByFavoriteProductsContains(@Param("product") Product product);

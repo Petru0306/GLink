@@ -18,6 +18,7 @@ public class ProductDto {
     private int stock;
     private Long sellerId;
     private String sellerName;
+    private Integer sellerLevel;
     private Branch branch;
     private Double negotiatedPrice; // Price negotiated for the current user
 
@@ -42,7 +43,7 @@ public class ProductDto {
     public ProductDto(Long id, String name, String description, double price,
                       Category category, String imageUrl, boolean ecoFriendly,
                       LocalDateTime createdAt, LocalDateTime updatedAt, int stock,
-                      Long sellerId, String sellerName, Branch branch) {
+                      Long sellerId, String sellerName, Integer sellerLevel, Branch branch) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -55,13 +56,14 @@ public class ProductDto {
         this.stock = stock;
         this.sellerId = sellerId;
         this.sellerName = sellerName;
+        this.sellerLevel = sellerLevel;
         this.branch = branch;
     }
     
     public ProductDto(Long id, String name, String description, double price,
                       Category category, String imageUrl, boolean ecoFriendly,
                       LocalDateTime createdAt, LocalDateTime updatedAt, int stock,
-                      Long sellerId, String sellerName, Branch branch, Double negotiatedPrice) {
+                      Long sellerId, String sellerName, Integer sellerLevel, Branch branch, Double negotiatedPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,6 +76,7 @@ public class ProductDto {
         this.stock = stock;
         this.sellerId = sellerId;
         this.sellerName = sellerName;
+        this.sellerLevel = sellerLevel;
         this.branch = branch;
         this.negotiatedPrice = negotiatedPrice;
     }
@@ -173,6 +176,14 @@ public class ProductDto {
     
     public void setSellerName(String sellerName) {
         this.sellerName = sellerName;
+    }
+    
+    public Integer getSellerLevel() {
+        return sellerLevel;
+    }
+    
+    public void setSellerLevel(Integer sellerLevel) {
+        this.sellerLevel = sellerLevel;
     }
     
     public Branch getBranch() {

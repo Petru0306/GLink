@@ -44,6 +44,7 @@ public class ProductService {
         String sellerName = product.getSeller() != null ? 
                 product.getSeller().getFirstName() + " " + product.getSeller().getLastName() : null;
         Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
+        Integer sellerLevel = product.getSeller() != null ? product.getSeller().getLevel() : null;
         
         return new ProductDto(
                 product.getId(),
@@ -58,6 +59,7 @@ public class ProductService {
                 product.getStock(),
                 sellerId,
                 sellerName,
+                sellerLevel,
                 product.getBranch()
         );
     }
@@ -66,6 +68,7 @@ public class ProductService {
         String sellerName = product.getSeller() != null ? 
                 product.getSeller().getFirstName() + " " + product.getSeller().getLastName() : null;
         Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
+        Integer sellerLevel = product.getSeller() != null ? product.getSeller().getLevel() : null;
         
         // Get negotiated price for the current user if available
         Double negotiatedPrice = null;
@@ -86,6 +89,7 @@ public class ProductService {
                 product.getStock(),
                 sellerId,
                 sellerName,
+                sellerLevel,
                 product.getBranch(),
                 negotiatedPrice
         );

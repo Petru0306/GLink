@@ -26,11 +26,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
+    private final PointsService pointsService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, PointsService pointsService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;
+        this.pointsService = pointsService;
     }
 
     @Override
@@ -192,9 +194,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addPoints(Long userId, int points) {
-        User user = getUserById(userId);
-        user.setPoints(user.getPoints() + points);
-        userRepository.save(user);
+        // Use PointsService for better tracking and level calculation
+        pointsService.addPoints(userId, points, "MANUAL", "Points added manually");
     }
 
     @Override
@@ -204,13 +205,23 @@ public class UserServiceImpl implements UserService {
         if (user.getPoints() < points) {
             throw new RuntimeException("Insufficient points");
         }
-        user.setPoints(user.getPoints() - points);
-        userRepository.save(user);
+        // Use PointsService for better tracking
+        pointsService.addPoints(userId, -points, "MANUAL_DEDUCTION", "Points deducted manually");
     }
 
     @Override
     public List<User> getTopUsers(int limit) {
         return userRepository.findTopByOrderByPointsDesc(limit);
+    }
+
+    @Override
+    public List<User> getTopUsersByLevel(int limit) {
+        return userRepository.findTopByOrderByLevelDesc(limit);
+    }
+
+    @Override
+    public List<User> getUsersByMinLevel(int minLevel) {
+        return userRepository.findByLevelGreaterThanEqualOrderByLevelDescPointsDesc(minLevel);
     }
 
     @Override

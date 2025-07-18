@@ -10,6 +10,7 @@ import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.greenlink.greenlink.service.SystemMessageService;
+import com.greenlink.greenlink.service.PointsService;
 import com.greenlink.greenlink.model.SystemMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,9 @@ public class MessageController {
 
     @Autowired
     private ChallengeTrackingService challengeTrackingService;
+
+    @Autowired
+    private PointsService pointsService;
     
     @Autowired
     private SystemMessageService systemMessageService;
@@ -145,6 +149,13 @@ public class MessageController {
             // Track message sending for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
             
+            // Award points for sending message
+            try {
+                pointsService.awardMessageSentPoints(currentUser.getId(), conversationId, 2); // 2 points per message
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Error awarding points for message sent: " + e.getMessage());
+            }
+            
             return ResponseEntity.ok(message);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error sending message", e);
@@ -169,6 +180,16 @@ public class MessageController {
             
             // Track marketplace offer for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_OFFER_MADE", null);
+            
+            // Award points for making offer
+            try {
+                Conversation conversation = messageService.getConversationById(conversationId);
+                String productName = conversation.getProduct().getName();
+                pointsService.awardOfferMadePoints(currentUser.getId(), conversation.getProduct().getId(), 
+                    productName, offerAmount, 5); // 5 points per offer
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Error awarding points for offer made: " + e.getMessage());
+            }
             
             return ResponseEntity.ok(message);
         } catch (Exception e) {

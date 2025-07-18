@@ -18,6 +18,8 @@ public interface UserService extends UserDetailsService {
     void addPoints(Long userId, int points);
     void deductPoints(Long userId, int points);
     List<User> getTopUsers(int limit);
+    List<User> getTopUsersByLevel(int limit);
+    List<User> getUsersByMinLevel(int minLevel);
     boolean emailExists(String email);
     void deactivateAccount(Long userId);
     void reactivateAccount(Long userId);

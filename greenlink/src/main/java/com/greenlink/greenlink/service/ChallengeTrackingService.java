@@ -36,6 +36,9 @@ public class ChallengeTrackingService {
     @Autowired
     private UserChallengeRepository userChallengeRepository;
 
+    @Autowired
+    private PointsService pointsService;
+
     @Transactional
     public void trackUserAction(Long userId, String actionType, Object actionData) {
         logger.info("Tracking user action: userId={}, actionType={}, actionData={}", userId, actionType, actionData);
@@ -486,6 +489,13 @@ public class ChallengeTrackingService {
     }
     
     private void sendChallengeCompleted(Long userId, Challenge challenge) {
+        // Award points for challenge completion
+        try {
+            pointsService.awardChallengePoints(userId, challenge.getId(), challenge.getTitle(), challenge.getPoints());
+        } catch (Exception e) {
+            logger.error("Error awarding points for challenge completion: {}", e.getMessage(), e);
+        }
+        
         ChallengeCompletedEvent event = new ChallengeCompletedEvent(
             challenge.getId(),
             challenge.getTitle(),

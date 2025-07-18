@@ -46,6 +46,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int points = 0;
 
+    @Column(nullable = false)
+    private int level = 1;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime lastLogin;
@@ -195,6 +198,93 @@ public class User implements UserDetails {
 
     public void setPoints(int points) {
         this.points = points;
+        this.level = calculateLevel(points);
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    /**
+     * Calculate user level based on total points
+     * Level thresholds: 1-50=1, 51-150=2, 151-300=3, 301-500=4, 501-750=5, 751-1050=6, etc.
+     */
+    public int calculateLevel(int totalPoints) {
+        if (totalPoints <= 0) return 1;
+        
+        // Progressive level system: each level requires more points
+        // Level 1: 0-50 points
+        // Level 2: 51-150 points (100 more)
+        // Level 3: 151-300 points (150 more)
+        // Level 4: 301-500 points (200 more)
+        // Level 5: 501-750 points (250 more)
+        // Level 6: 751-1050 points (300 more)
+        // etc.
+        
+        int level = 1;
+        int pointsNeeded = 50;
+        int totalPointsNeeded = 0;
+        
+        while (totalPoints >= totalPointsNeeded + pointsNeeded) {
+            totalPointsNeeded += pointsNeeded;
+            level++;
+            pointsNeeded += 50 * level;
+        }
+        
+        return level;
+    }
+
+    /**
+     * Get points needed for next level
+     */
+    public int getPointsForNextLevel() {
+        int currentLevel = this.level;
+        int pointsNeeded = 50;
+        int totalPointsNeeded = 0;
+        
+        for (int i = 1; i <= currentLevel; i++) {
+            totalPointsNeeded += pointsNeeded;
+            pointsNeeded += 50 * i;
+        }
+        
+        return totalPointsNeeded;
+    }
+
+    /**
+     * Get progress percentage to next level
+     */
+    public int getProgressToNextLevel() {
+        if (this.points <= 0) return 0;
+        
+        int pointsForCurrentLevel = getPointsForCurrentLevel();
+        int pointsForNextLevel = getPointsForNextLevel();
+        int pointsInCurrentLevel = this.points - pointsForCurrentLevel;
+        int pointsNeededForNextLevel = pointsForNextLevel - pointsForCurrentLevel;
+        
+        if (pointsNeededForNextLevel <= 0) return 100;
+        
+        int progress = (pointsInCurrentLevel * 100) / pointsNeededForNextLevel;
+        return Math.min(100, Math.max(0, progress));
+    }
+
+    /**
+     * Get points needed for current level
+     */
+    private int getPointsForCurrentLevel() {
+        int currentLevel = this.level;
+        int pointsNeeded = 50;
+        int totalPointsNeeded = 0;
+        
+        for (int i = 1; i < currentLevel; i++) {
+            totalPointsNeeded += pointsNeeded;
+            pointsNeeded += 50 * i;
+        }
+        
+        return totalPointsNeeded;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -32,7 +32,16 @@
                     <div class="eco-score">
                         <i class="bi bi-trophy-fill"></i>
                         <span th:text="${user != null ? user.points : 0}">0</span> GreenLink Points
-                        <span class="badge bg-light text-dark ms-2">Level <span th:text="${user != null ? (user.points / 50 + 1) : 1}">1</span></span>
+                        <span class="badge bg-light text-dark ms-2">Level <span th:text="${user != null ? user.level : 1}">1</span></span>
+                    </div>
+                    <div class="level-progress mt-2">
+                        <small class="text-light">Progress to next level</small>
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 th:style="'width: ' + ${user != null ? user.progressToNextLevel : 0} + '%'"
+                                 th:text="${user != null ? user.progressToNextLevel : 0} + '%'">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-3 text-center text-md-end">

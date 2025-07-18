@@ -6,6 +6,7 @@ import com.greenlink.greenlink.repository.QuizResultRepository;
 import com.greenlink.greenlink.service.CourseService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
+import com.greenlink.greenlink.service.PointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +35,9 @@ public class EducationController {
 
     @Autowired
     private ChallengeTrackingService challengeTrackingService;
+
+    @Autowired
+    private PointsService pointsService;
 
     @GetMapping
     public String getAllCourses(Model model, @AuthenticationPrincipal User currentUser) {
@@ -214,8 +218,9 @@ public class EducationController {
                 pointsEarned += 10; // Image points
             }
             
-            // Update user points
-            userService.addPoints(currentUser.getId(), pointsEarned);
+            // Award points using PointsService
+            pointsService.awardLessonPoints(currentUser.getId(), courseId, 
+                courseService.getCourseById(courseId).getTitle(), pointsEarned);
             
             // Create a quiz result record with reflection text
             courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, pointsEarned, reflectionText, null);
@@ -223,10 +228,10 @@ public class EducationController {
             // Track lesson completion for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
             
-            // Calculate new level
-            int oldLevel = (currentUser.getPoints() - pointsEarned) / 50 + 1;
-            int newLevel = (currentUser.getPoints()) / 50 + 1;
-            boolean leveledUp = newLevel > oldLevel;
+            // Get updated user to check new level
+            User updatedUser = userService.getUserById(currentUser.getId());
+            int newLevel = updatedUser.getLevel();
+            boolean leveledUp = newLevel > (updatedUser.getPoints() - pointsEarned) / 50 + 1;
             
             // Return success response
             response.put("success", true);
