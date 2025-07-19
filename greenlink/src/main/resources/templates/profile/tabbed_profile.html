@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.9">
+    <link rel="stylesheet" href="/css/profile-tabs.css?v=1.0.0">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <div class="container mt-4">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center text-md-start">
+                    <!-- Profile Avatar -->
+                    <div class="profile-avatar-placeholder">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-start">
+                    <!-- Profile Info -->
+                    <h1 class="profile-name" th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">User Name</h1>
+                    <p class="profile-username" th:text="${profileUser != null ? ('@' + profileUser.email.split('@')[0]) : '@username'}">@username</p>
+                    <div class="eco-score">
+                        <i class="bi bi-trophy-fill"></i>
+                        <span th:text="${profileUser != null ? profileUser.points : 0}">0</span> GreenLink Points
+                        <span class="badge bg-light text-dark ms-2">Level <span th:text="${profileUser != null ? (profileUser.points / 50 + 1) : 1}">1</span></span>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center text-md-end">
+                    <!-- Edit Profile Button - only show for personal profile -->
+                    <a th:if="${isPersonalProfile}" href="/profile/edit" class="btn btn-outline-light">
+                        <i class="bi bi-pencil me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
+                    <i class="bi bi-house me-2"></i>Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="challenges-tab" data-bs-toggle="tab" data-bs-target="#challenges" type="button" role="tab" aria-controls="challenges" aria-selected="false">
+                    <i class="bi bi-trophy me-2"></i>Challenges
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="lessons-tab" data-bs-toggle="tab" data-bs-target="#lessons" type="button" role="tab" aria-controls="lessons" aria-selected="false">
+                    <i class="bi bi-book me-2"></i>Lessons
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">
+                    <i class="bi bi-activity me-2"></i>Activity
+                </button>
+            </li>
+        </ul>
+
+        <!-- Main Content -->
+        <div class="tab-content" id="profileTabsContent">
+            <!-- Overview Tab -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="main-content">
+                    <h2 class="mb-4">Welcome, <span th:text="${profileUser.firstName}">User</span>!</h2>
+                    <div th:if="${profileUser?.bio}" class="mb-4">
+                        <h4>About</h4>
+                        <div class="bg-light p-3 rounded" th:text="${profileUser.bio}">
+                            User bio...
+                        </div>
+                    </div>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-box-seam text-success mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="card-title">Products Listed</h5>
+                                    <div class="display-6 fw-bold text-success" th:text="${products != null ? products.size() : 0}">0</div>
+                                    <small class="text-muted">Total products in marketplace</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-trophy text-success mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="card-title">Challenges Completed</h5>
+                                    <div class="display-6 fw-bold text-success" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
+                                    <small class="text-muted">Environmental challenges</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-book text-warning mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="card-title">Lessons Completed</h5>
+                                    <div class="display-6 fw-bold text-warning" th:text="${completedLessons != null ? completedLessons.size() : 0}">0</div>
+                                    <small class="text-muted">Educational content</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-people text-info mb-2" style="font-size: 2rem;"></i>
+                                    <h5 class="card-title">Friends</h5>
+                                    <div class="display-6 fw-bold text-info" th:text="${friends != null ? friends.size() : 0}">0</div>
+                                    <small class="text-muted">Community connections</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Challenges Tab -->
+            <div class="tab-pane fade" id="challenges" role="tabpanel" aria-labelledby="challenges-tab">
+                <div class="main-content">
+                    <h2 class="mb-4">Completed Challenges</h2>
+                    <div th:if="${not #lists.isEmpty(completedChallenges)}">
+                        <div class="list-group">
+                            <div th:each="challenge : ${completedChallenges}" class="list-group-item">
+                                <h6 class="mb-1" th:text="${challenge.challenge.title}">Challenge Name</h6>
+                                <p class="mb-1" th:text="${challenge.challenge.description}">Challenge description...</p>
+                                <small class="text-muted" th:text="${#temporals.format(challenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="empty-state">
+                        <i class="bi bi-trophy empty-state-icon"></i>
+                        <h3 class="empty-state-title">No Completed Challenges Yet</h3>
+                        <p class="empty-state-text">Start your eco-friendly journey by taking on some challenges!</p>
+                        <a href="/provocari" class="btn btn-success">View Challenges</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lessons Tab -->
+            <div class="tab-pane fade" id="lessons" role="tabpanel" aria-labelledby="lessons-tab">
+                <div class="main-content">
+                    <h2 class="mb-4">Completed Lessons</h2>
+                    <div th:if="${not #lists.isEmpty(completedLessons)}">
+                        <div class="row g-4">
+                            <div th:each="lesson : ${completedLessons}" class="col-md-6 col-lg-4">
+                                <div class="card lesson-completion-card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title" th:text="${lesson.title}">Lesson Title</h5>
+                                        <p class="card-text" th:text="${lesson.description}">Lesson description...</p>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-trophy-fill me-1"></i>
+                                                <span th:text="${lesson.pointsEarned}">10</span> points
+                                            </span>
+                                            <small class="text-muted" th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(completedLessons)}" class="empty-state">
+                        <i class="bi bi-book empty-state-icon"></i>
+                        <h3 class="empty-state-title">No Completed Lessons Yet</h3>
+                        <p class="empty-state-text">Learn about sustainability and earn points by completing lessons.</p>
+                        <a href="/educatie" class="btn btn-success">Start Learning</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Tab -->
+            <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                <div class="main-content">
+                    <h2 class="mb-4">Recent Activity</h2>
+                    <div th:if="${not #lists.isEmpty(recentActivity)}">
+                        <div class="list-group">
+                            <div th:each="activity : ${recentActivity}" class="list-group-item">
+                                <div class="d-flex align-items-start">
+                                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                        <i class="bi bi-plus-circle text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-medium" th:text="${activity.description}">Activity description</div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="text-success fw-bold" th:text="'+' + ${activity.points} + ' pts'">+10 pts</span>
+                                            <small class="text-muted" th:text="${#temporals.format(activity.createdAt, 'dd MMM yyyy')}">01 Jan</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(recentActivity)}" class="empty-state">
+                        <i class="bi bi-activity empty-state-icon"></i>
+                        <h3 class="empty-state-title">No Recent Activity</h3>
+                        <p class="empty-state-text">Your recent activities will be shown here as you engage with the platform.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

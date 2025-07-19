@@ -4,6 +4,7 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ProductService;
+import com.greenlink.greenlink.service.ChallengeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,9 @@ public class DashboardController {
     
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private ChallengeService challengeService;
 
     public DashboardController(UserService userService) { 
         this.userService = userService;
@@ -53,6 +57,20 @@ public class DashboardController {
         } catch (Exception e) {
             model.addAttribute("totalEarnings", 0.0);
             model.addAttribute("totalProductsSold", 0);
+        }
+        
+        // Add challenge statistics
+        try {
+            // Get completed challenges count
+            long completedChallengesCount = challengeService.getCompletedChallengesCount(user.getId());
+            model.addAttribute("completedChallengesCount", completedChallengesCount);
+            
+            // Get current streak
+            long currentStreak = challengeService.getCurrentStreak(user.getId());
+            model.addAttribute("currentStreak", currentStreak);
+        } catch (Exception e) {
+            model.addAttribute("completedChallengesCount", 0);
+            model.addAttribute("currentStreak", 0);
         }
         
         return "dashboard";
