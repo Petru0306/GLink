@@ -87,8 +87,8 @@ public class ProfileController {
             model.addAttribute("isPersonalProfile", true);
             model.addAttribute("currentUser", currentUser);
             
-            logger.info("Personal profile loaded successfully for user: {} - Returning template: profile/minimal", currentUser.getUsername());
-            return "profile/minimal";
+            logger.info("Personal profile loaded successfully for user: {} - Returning template: profile/tabbed_profile", currentUser.getUsername());
+            return "profile/tabbed_profile";
 
         } catch (Exception e) {
             logger.error("Error loading personal profile: {}", e.getMessage(), e);
@@ -201,8 +201,8 @@ public class ProfileController {
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("isOwnProfile", isOwnProfile);
             
-            logger.info("Public profile loaded successfully for user ID: {} ({}) - Returning template: profile/minimal", userId, targetUser.getUsername());
-            return "profile/minimal";
+            logger.info("Public profile loaded successfully for user ID: {} ({}) - Returning template: profile/tabbed_profile", userId, targetUser.getUsername());
+            return "profile/tabbed_profile";
 
         } catch (Exception e) {
             logger.error("Error loading public profile for user ID {}: {}", userId, e.getMessage(), e);
@@ -331,6 +331,9 @@ public class ProfileController {
         model.addAttribute("reviews", List.of());
         model.addAttribute("averageRating", 0.0);
         model.addAttribute("totalReviews", 0);
+        
+        // Load completed lessons for the quizzes section
+        loadCompletedLessons(model, targetUser);
     }
     
     /**

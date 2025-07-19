@@ -28,7 +28,7 @@
                         <a th:if="${isPersonalProfile}" href="/dashboard" class="btn btn-outline-light rounded-pill px-4 py-2">
                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                         </a>
-                        <a th:unless="${isPersonalProfile}" th:href="@{'/profile/user/' + ${profileUser.id}}" class="btn btn-outline-light rounded-pill px-4 py-2">
+                        <a th:unless="${isPersonalProfile or currentUser == null}" th:href="@{'/profile'}" class="btn btn-outline-light rounded-pill px-4 py-2">
                             <i class="bi bi-person-circle me-2"></i>My Profile
                         </a>
                         <button onclick="history.back()" class="btn btn-outline-light rounded-pill px-4 py-2">
@@ -63,13 +63,13 @@
                                 </span>
                                 <div class="progress mb-2">
                                     <div class="progress-bar bg-success" role="progressbar" 
-                                         th:style="'width: ' + ${profileUser != null and profileUser.progressToNextLevel != null ? profileUser.progressToNextLevel : 0} + '%'"
-                                         th:attr="aria-valuenow=${profileUser != null and profileUser.progressToNextLevel != null ? profileUser.progressToNextLevel : 0}"
+                                         th:style="'width: ' + ${profileUser != null ? profileUser.progressToNextLevel : 0} + '%'"
+                                         th:attr="aria-valuenow=${profileUser != null ? profileUser.progressToNextLevel : 0}"
                                          aria-valuemin="0" aria-valuemax="100">
                                     </div>
                                 </div>
                                 <small class="text-muted">
-                                    <span th:text="${100 - (profileUser != null and profileUser.progressToNextLevel != null ? profileUser.progressToNextLevel : 0)}">100</span> points until Level <span th:text="${(profileUser != null and profileUser.points != null ? profileUser.points : 0) / 100 + 2}">2</span>
+                                    <span th:text="${profileUser != null ? (100 - profileUser.progressToNextLevel) : 100}">100</span> points until Level <span th:text="${profileUser != null ? (profileUser.level + 1) : 2}">2</span>
                                 </small>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             <div class="col-6 text-center">
                                 <i class="bi bi-calendar-check text-success mb-1"></i>
                                 <small class="text-muted d-block">
-                                    Member since <span th:text="${profileUser?.createdAt != null ? #dates.format(profileUser.createdAt, 'MMMM yyyy') : 'Unknown'}">January 2023</span>
+                                    Member since <span th:text="${profileUser?.createdAt != null ? #temporals.format(profileUser.createdAt, 'MMMM yyyy') : 'Unknown'}">January 2023</span>
                                 </small>
                             </div>
                         </div>
@@ -94,18 +94,6 @@
             </div>
         </div>
         
-        <!-- Success Alert -->
-        <div class="alert alert-success">
-            <strong>🎉 SUCCESS:</strong> This is the ENHANCED profile template with hero section and user card!
-        </div>
-        
-        <!-- Debug Info -->
-        <div class="alert alert-info">
-            <strong>Debug Data:</strong><br>
-            User: <span th:text="${profileUser != null ? profileUser.firstName : 'NULL'}">NULL</span><br>
-            Products: <span th:text="${products != null ? products.size() : 'NULL'}">NULL</span><br>
-            Is Personal: <span th:text="${isPersonalProfile}">false</span>
-        </div>
     </div>
 
     <!-- Footer -->
