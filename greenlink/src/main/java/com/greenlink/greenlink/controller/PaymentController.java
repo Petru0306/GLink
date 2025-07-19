@@ -1,9 +1,13 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.model.Product;
+import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.service.PaymentService;
 import com.greenlink.greenlink.service.StripeService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ProductService;
+import com.greenlink.greenlink.repository.ProductRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import org.slf4j.Logger;
@@ -34,6 +38,12 @@ public class PaymentController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ProductService productService;
+    
+    @Autowired
+    private ProductRepository productRepository;
     
     @Value("${stripe.publishable-key}")
     private String publishableKey;
@@ -149,29 +159,39 @@ public class PaymentController {
     @PreAuthorize("isAuthenticated()")
     @ResponseBody
     public ResponseEntity<Map<String, String>> onboardSeller(@RequestParam String returnUrl) {
+        logger.info("Starting seller onboarding process for returnUrl: {}", returnUrl);
+        
         try {
             User currentUser = userService.getCurrentUser();
+            logger.info("Current user: {} (ID: {})", currentUser.getEmail(), currentUser.getId());
             
             // Create Stripe Connect account if not exists
             if (currentUser.getStripeAccountId() == null) {
+                logger.info("Creating new Stripe Connect account for user: {}", currentUser.getEmail());
                 stripeService.createConnectAccount(currentUser);
                 userService.updateUser(currentUser);
+                logger.info("Stripe Connect account created: {}", currentUser.getStripeAccountId());
+            } else {
+                logger.info("User already has Stripe account: {}", currentUser.getStripeAccountId());
             }
             
             // Create account link for onboarding
+            logger.info("Creating account link for onboarding");
             String accountLinkUrl = stripeService.createAccountLink(currentUser.getStripeAccountId(), returnUrl);
+            logger.info("Account link created: {}", accountLinkUrl);
             
             Map<String, String> response = new HashMap<>();
             response.put("accountLinkUrl", accountLinkUrl);
             
+            logger.info("Onboarding process completed successfully");
             return ResponseEntity.ok(response);
         } catch (StripeException e) {
-            logger.error("Error onboarding seller", e);
+            logger.error("Stripe error during seller onboarding", e);
             Map<String, String> error = new HashMap<>();
             error.put("error", "Failed to onboard seller: " + e.getMessage());
             return ResponseEntity.badRequest().body(error);
         } catch (Exception e) {
-            logger.error("Error onboarding seller", e);
+            logger.error("Unexpected error during seller onboarding", e);
             Map<String, String> error = new HashMap<>();
             error.put("error", "Failed to onboard seller: " + e.getMessage());
             return ResponseEntity.badRequest().body(error);
@@ -226,5 +246,109 @@ public class PaymentController {
     @GetMapping("/cancel")
     public String showCancelPage(Model model) {
         return "payment/cancel";
+    }
+    
+    /**
+     * Test endpoint to verify payment controller is working
+     */
+    @GetMapping("/test")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> testEndpoint() {
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "Payment controller is working");
+        response.put("timestamp", java.time.LocalDateTime.now().toString());
+        return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Handle return from Stripe onboarding
+     */
+    @GetMapping("/onboarding-return")
+    public String handleOnboardingReturn(@RequestParam(required = false) String refresh, Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            
+            if (refresh != null) {
+                // User needs to refresh their onboarding
+                model.addAttribute("message", "Please complete your onboarding to continue selling.");
+                return "marketplace/seller-onboarding";
+            }
+            
+            // Check if user has completed onboarding
+            if (currentUser.getStripeAccountId() != null) {
+                Map<String, Object> status = stripeService.getAccountStatus(currentUser.getStripeAccountId());
+                boolean isComplete = (Boolean) status.get("chargesEnabled") && (Boolean) status.get("detailsSubmitted");
+                
+                if (isComplete) {
+                    model.addAttribute("success", true);
+                    model.addAttribute("message", "Your seller account has been successfully set up!");
+                    return "marketplace/onboarding-success";
+                } else {
+                    model.addAttribute("message", "Please complete your onboarding to continue selling.");
+                    return "marketplace/seller-onboarding";
+                }
+            } else {
+                model.addAttribute("message", "Please complete your onboarding to continue selling.");
+                return "marketplace/seller-onboarding";
+            }
+        } catch (Exception e) {
+            logger.error("Error handling onboarding return", e);
+            model.addAttribute("error", "An error occurred while processing your onboarding return.");
+            return "marketplace/seller-onboarding";
+        }
+    }
+    
+    /**
+     * Admin purchase endpoint - allows purchase with admin password
+     */
+    @PostMapping("/admin-purchase")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> adminPurchase(@RequestParam Long productId, @RequestParam String password) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Check admin password (you can change this to any password you want)
+            String adminPassword = "admin123"; // TODO: Move to application.properties
+            
+            if (!adminPassword.equals(password)) {
+                response.put("success", false);
+                response.put("message", "Parolă incorectă");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Get current user and product
+            User buyer = userService.getCurrentUser();
+            ProductDto productDto = productService.getProductById(productId);
+            
+            // Get the actual Product entity from repository
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
+            
+            if (product == null) {
+                response.put("success", false);
+                response.put("message", "Produsul nu a fost găsit");
+                return ResponseEntity.ok(response);
+            }
+            
+            if (product.getSeller().getId().equals(buyer.getId())) {
+                response.put("success", false);
+                response.put("message", "Nu puteți achiziționa propriul produs");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Process the purchase
+            paymentService.processAdminPurchase(product, buyer);
+            
+            response.put("success", true);
+            response.put("message", "Produsul a fost achiziționat cu succes!");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing admin purchase", e);
+            response.put("success", false);
+            response.put("message", "Eroare la procesarea achiziției: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
     }
 } 

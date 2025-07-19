@@ -210,28 +210,47 @@ public class MarketplaceController {
     
     @GetMapping("/sell")
     public String showSellForm(Model model, @RequestHeader(value = "Referer", required = false) String referer) {
-        ProductDto product = new ProductDto();
-        model.addAttribute("product", product);
-        model.addAttribute("isSelling", true);
-        
-        // Store the referer for the cancel button
-        if (referer != null) {
-            // Extract the path from the full URL
-            String path = referer;
-            try {
-                if (referer.contains("://")) {
-                    path = new java.net.URL(referer).getPath();
-                }
-            } catch (Exception e) {
-                // If URL parsing fails, use the full referer
-                logger.warn("Failed to parse referer URL: {}", referer, e);
+        try {
+            User currentUser = userService.getCurrentUser();
+            
+            // Check if user has Stripe account for selling
+            // TEMPORARILY DISABLED: Allow users to list items without Stripe Connect
+            // TODO: Re-enable this check after Stripe Connect is properly configured
+            /*
+            if (currentUser.getStripeAccountId() == null) {
+                // Redirect to seller onboarding
+                model.addAttribute("needsOnboarding", true);
+                model.addAttribute("currentUser", currentUser);
+                return "marketplace/seller-onboarding";
             }
-            model.addAttribute("refererPath", path);
-        } else {
-            model.addAttribute("refererPath", "/dashboard");
+            */
+            
+            ProductDto product = new ProductDto();
+            model.addAttribute("product", product);
+            model.addAttribute("isSelling", true);
+            
+            // Store the referer for the cancel button
+            if (referer != null) {
+                // Extract the path from the full URL
+                String path = referer;
+                try {
+                    if (referer.contains("://")) {
+                        path = new java.net.URL(referer).getPath();
+                    }
+                } catch (Exception e) {
+                    // If URL parsing fails, use the full referer
+                    logger.warn("Failed to parse referer URL: {}", referer, e);
+                }
+                model.addAttribute("refererPath", path);
+            } else {
+                model.addAttribute("refererPath", "/dashboard");
+            }
+            
+            return "marketplace/product-form";
+        } catch (Exception e) {
+            logger.error("Error showing sell form", e);
+            return "redirect:/login";
         }
-        
-        return "marketplace/product-form";
     }
 
     @GetMapping("/product/edit/{id}")

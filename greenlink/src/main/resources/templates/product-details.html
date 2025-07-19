@@ -496,6 +496,172 @@
                         toast.remove();
                     });
                 }
+                
+                // Function to handle product purchase with admin password
+                function buyProduct(productId) {
+                    // Clear any previous error messages
+                    const passwordError = document.getElementById('passwordError');
+                    const passwordField = document.getElementById('adminPassword');
+                    
+                    passwordError.style.display = 'none';
+                    passwordField.value = '';
+                    
+                    // Show the admin password modal
+                    const modal = new bootstrap.Modal(document.getElementById('adminPasswordModal'));
+                    modal.show();
+                    
+                    // Store the product ID for the purchase
+                    document.getElementById('adminPasswordModal').setAttribute('data-product-id', productId);
+                    
+                    // Add event listener for modal hidden event
+                    const modalElement = document.getElementById('adminPasswordModal');
+                    modalElement.addEventListener('hidden.bs.modal', function onModalHidden() {
+                        // Check if purchase was successful (if not, mark as purchased)
+                        const wasPurchaseSuccessful = modalElement.getAttribute('data-purchase-successful') === 'true';
+                        if (!wasPurchaseSuccessful) {
+                            markProductAsPurchased(productId);
+                        }
+                        // Remove the event listener to avoid duplicates
+                        modalElement.removeEventListener('hidden.bs.modal', onModalHidden);
+                    }, { once: true });
+                }
+                
+                // Function to mark product as purchased in UI
+                function markProductAsPurchased(productId) {
+                    const buyButton = document.querySelector(`button[onclick="buyProduct(${productId})"]`);
+                    if (buyButton) {
+                        buyButton.disabled = true;
+                        buyButton.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Purchased';
+                        buyButton.className = 'btn btn-success btn-lg px-4 disabled';
+                        
+                        // Add a tooltip or small text to indicate this is a UI state
+                        buyButton.title = 'Product marked as purchased in this session';
+                    }
+                }
+                
+                // Function to handle modal close without purchase
+                function handleModalCloseWithoutPurchase(productId) {
+                    // Only mark as purchased if the purchase wasn't actually successful
+                    const wasPurchaseSuccessful = document.getElementById('adminPasswordModal').getAttribute('data-purchase-successful') === 'true';
+                    if (!wasPurchaseSuccessful) {
+                        markProductAsPurchased(productId);
+                    }
+                }
+                
+                // Function to confirm purchase with admin password
+                function confirmAdminPurchase() {
+                    const productId = document.getElementById('adminPasswordModal').getAttribute('data-product-id');
+                    const password = document.getElementById('adminPassword').value;
+                    const button = document.getElementById('confirmPurchaseBtn');
+                    const originalText = button.innerHTML;
+                    const passwordError = document.getElementById('passwordError');
+                    const passwordErrorText = document.getElementById('passwordErrorText');
+                    
+                    // Hide any previous error
+                    passwordError.style.display = 'none';
+                    
+                    // Show loading state
+                    button.disabled = true;
+                    button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+                    
+                    // Get the CSRF token from the meta tag
+                    const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+                    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+                    
+                    fetch('/payment/admin-purchase', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            [csrfHeader]: csrfToken
+                        },
+                        body: 'productId=' + productId + '&password=' + encodeURIComponent(password)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Server error: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Mark purchase as successful
+                            document.getElementById('adminPasswordModal').setAttribute('data-purchase-successful', 'true');
+                            
+                            // Close admin password modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('adminPasswordModal'));
+                            modal.hide();
+                            
+                            // Clear password field and hide error
+                            document.getElementById('adminPassword').value = '';
+                            passwordError.style.display = 'none';
+                            
+                            // Show success modal with animations
+                            showPurchaseSuccessModal();
+                        } else {
+                            // Show error message
+                            passwordErrorText.textContent = data.message || 'Parolă incorectă';
+                            passwordError.style.display = 'block';
+                            throw new Error(data.message || 'Purchase failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        
+                        // Show error message if it's a password error
+                        if (error.message.includes('Parolă incorectă') || error.message.includes('Incorrect password')) {
+                            passwordErrorText.textContent = 'Parolă incorectă';
+                            passwordError.style.display = 'block';
+                        } else {
+                            showToast('error', 'Eroare la procesarea achiziției');
+                        }
+                    });
+                }
+                
+                // Function to show purchase success modal
+                function showPurchaseSuccessModal() {
+                    const successModal = new bootstrap.Modal(document.getElementById('purchaseSuccessModal'));
+                    successModal.show();
+                    
+                    // Start animations after modal is shown
+                    setTimeout(() => {
+                        const checkmark = document.getElementById('successCheckmark');
+                        const successText = document.getElementById('successText');
+                        
+                        // Animate checkmark
+                        checkmark.style.transform = 'scale(1)';
+                        checkmark.style.opacity = '1';
+                        
+                        // Animate text after checkmark
+                        setTimeout(() => {
+                            successText.style.transform = 'translateY(0)';
+                            successText.style.opacity = '1';
+                        }, 300);
+                    }, 100);
+                }
+                
+                // Function to handle Enter key press in password field
+                function handlePasswordKeyPress(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        confirmAdminPurchase();
+                    }
+                }
+                
+                // Function to close success modal and redirect
+                function closeSuccessModal() {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('purchaseSuccessModal'));
+                    modal.hide();
+                    
+                    // Mark purchase as successful to prevent "Purchased" button state
+                    document.getElementById('adminPasswordModal').setAttribute('data-purchase-successful', 'true');
+                    
+                    // Redirect to marketplace branch
+                    const currentBranch = window.location.pathname.split('/')[2]; // Extract branch from URL
+                    window.location.href = '/marketplace/' + currentBranch;
+                }
             </script>
         </div>
     </div>
@@ -640,6 +806,208 @@
 <!-- Include login modal -->
 <div th:replace="fragments/login-modal :: loginModal"></div>
 <div th:replace="fragments/login-modal :: loginModalScript"></div>
+
+<!-- Admin Password Modal -->
+<div class="modal fade" id="adminPasswordModal" tabindex="-1" aria-labelledby="adminPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient-success text-white border-0">
+                <h5 class="modal-title fw-bold" id="adminPasswordModalLabel">
+                    <i class="bi bi-shield-lock me-2"></i>Confirmare Achiziție
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 py-4">
+                <div class="text-center mb-4">
+                    <div class="admin-icon-wrapper mb-3">
+                        <i class="bi bi-shield-check display-4 text-success"></i>
+                    </div>
+                    <h6 class="fw-semibold text-dark mb-2">Confirmare Achiziție</h6>
+                    <p class="text-muted mb-0">Introduceți parola de administrator pentru a confirma achiziția</p>
+                </div>
+                <form id="adminPurchaseForm" onsubmit="event.preventDefault(); confirmAdminPurchase();">
+                    <div class="mb-4">
+                        <label for="adminPassword" class="form-label fw-semibold text-dark mb-2">
+                            <i class="bi bi-shield-lock me-2 text-success"></i>Parolă Administrator
+                        </label>
+                        <div class="input-group input-group-lg shadow-sm">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="bi bi-key-fill text-success"></i>
+                            </span>
+                            <input type="password" 
+                                   class="form-control border-start-0 ps-0" 
+                                   id="adminPassword" 
+                                   placeholder="Introduceți parola de administrator"
+                                   required
+                                   autocomplete="off"
+                                   onkeypress="handlePasswordKeyPress(event)">
+                        </div>
+                        <div id="passwordError" class="text-danger mt-3 d-flex align-items-center" style="display: none;">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span id="passwordErrorText" class="fw-medium">Parolă incorectă</span>
+                        </div>
+                        <div class="form-text text-muted mt-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Apăsați Enter pentru a confirma achiziția
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-2"></i>Anulează
+                </button>
+                <button type="button" class="btn btn-success btn-lg px-4 shadow-sm" id="confirmPurchaseBtn" onclick="confirmAdminPurchase()">
+                    <i class="bi bi-check-lg me-2"></i>Confirmă Achiziția
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Purchase Success Modal -->
+<div class="modal fade" id="purchaseSuccessModal" tabindex="-1" aria-labelledby="purchaseSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 bg-white position-relative">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" 
+                        onclick="closeSuccessModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-5">
+                <!-- Animated Checkmark -->
+                <div id="successCheckmark" class="success-checkmark mb-4">
+                    <div class="checkmark-circle">
+                        <div class="checkmark-draw"></div>
+                    </div>
+                </div>
+                
+                <!-- Success Text -->
+                <div id="successText" class="success-text">
+                    <h4 class="text-success fw-bold mb-3">Purchased!</h4>
+                    <p class="text-muted mb-0">Produsul a fost achiziționat cu succes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Admin Password Modal Styling */
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    }
+    
+    .admin-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(32, 201, 151, 0.1));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .input-group-lg .form-control {
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    .input-group-lg .input-group-text {
+        font-size: 1.1rem;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Focus effects */
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+    
+    .input-group:focus-within .input-group-text {
+        border-color: #28a745;
+        background-color: #f8fff9;
+    }
+    
+    /* Button hover effects */
+    .btn-lg {
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-lg:hover {
+        transform: translateY(-1px);
+    }
+    
+    /* Success Modal Animations */
+    .success-checkmark {
+        transform: scale(0);
+        opacity: 0;
+        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .success-text {
+        transform: translateY(20px);
+        opacity: 0;
+        transition: all 0.5s ease-out;
+    }
+    
+    /* Checkmark Circle Animation */
+    .checkmark-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        margin: 0 auto;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(40, 167, 69, 0.3);
+    }
+    
+    .checkmark-draw {
+        width: 30px;
+        height: 20px;
+        border: 3px solid white;
+        border-top: none;
+        border-right: none;
+        transform: rotate(-45deg);
+        margin-top: -2px;
+        animation: checkmark-appear 0.8s ease-out 0.3s both;
+    }
+    
+    @keyframes checkmark-appear {
+        0% {
+            opacity: 0;
+            transform: rotate(-45deg) scale(0);
+        }
+        50% {
+            opacity: 1;
+            transform: rotate(-45deg) scale(1.2);
+        }
+        100% {
+            opacity: 1;
+            transform: rotate(-45deg) scale(1);
+        }
+    }
+    
+    /* Modal entrance animation */
+    .modal.fade .modal-dialog {
+        transform: scale(0.8);
+        transition: transform 0.3s ease-out;
+    }
+    
+    .modal.show .modal-dialog {
+        transform: scale(1);
+    }
+    
+    /* Close button hover effect */
+    .btn-close:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s ease;
+    }
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

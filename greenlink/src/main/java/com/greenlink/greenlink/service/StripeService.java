@@ -40,6 +40,13 @@ public class StripeService {
                                 .setTransfers(AccountCreateParams.Capabilities.Transfers.builder().setRequested(true).build())
                                 .build()
                 )
+                .setBusinessType(AccountCreateParams.BusinessType.INDIVIDUAL)
+                .setBusinessProfile(
+                        AccountCreateParams.BusinessProfile.builder()
+                                .setMcc("5734") // Computer Software Stores
+                                .setUrl("https://greenlink.com")
+                                .build()
+                )
                 .build();
         
         Account account = Account.create(params);
@@ -112,11 +119,10 @@ public class StripeService {
                                 .setQuantity(1L)
                                 .build()
                 )
-                .putMetadata("transfer_destination", product.getSeller().getStripeAccountId())
-                .putMetadata("application_fee_amount", String.valueOf(commissionAmount))
                 .putMetadata("product_id", product.getId().toString())
                 .putMetadata("buyer_id", buyer.getId().toString())
                 .putMetadata("seller_id", product.getSeller().getId().toString())
+                .putMetadata("commission_amount", String.valueOf(commissionAmount))
                 .build();
         
         return Session.create(params);

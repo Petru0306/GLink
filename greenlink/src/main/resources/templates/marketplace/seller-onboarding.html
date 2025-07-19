@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Onboarding - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    
+    <!-- CSRF Token -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .onboarding-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            margin-top: -2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 1rem;
+            position: relative;
+        }
+
+        .step.active {
+            background: #28a745;
+            color: white;
+        }
+
+        .step.completed {
+            background: #20c997;
+            color: white;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 2rem;
+            height: 2px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.completed::after {
+            background: #20c997;
+        }
+
+        .onboarding-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 1.5rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        .benefits-list li i {
+            color: #28a745;
+            margin-right: 0.5rem;
+        }
+
+        .btn-onboard {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-onboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .security-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container hero-content">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Seller Onboarding</li>
+                </ol>
+            </nav>
+            <h1 class="display-4 fw-bold mt-3">Start Selling on GreenLink</h1>
+            <p class="lead">Complete your seller profile to start listing products</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="onboarding-card">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active">
+                    <i class="bi bi-1-circle"></i>
+                </div>
+                <div class="step">
+                    <i class="bi bi-2-circle"></i>
+                </div>
+                <div class="step">
+                    <i class="bi bi-3-circle"></i>
+                </div>
+            </div>
+
+            <!-- Onboarding Content -->
+            <div class="text-center mb-4">
+                <div class="onboarding-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Secure Payment Setup</h2>
+                <p class="text-muted mb-4">To start selling on GreenLink, we need to set up secure payment processing through Stripe Connect.</p>
+            </div>
+
+            <!-- Benefits -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="fw-bold mb-3">Why Stripe Connect?</h5>
+                    <ul class="benefits-list">
+                        <li><i class="bi bi-check-circle-fill"></i>Secure payment processing</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Automatic payouts to your bank account</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Professional payment experience</li>
+                        <li><i class="bi bi-check-circle-fill"></i>Compliance with financial regulations</li>
+                        <li><i class="bi bi-check-circle-fill"></i>24/7 customer support</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="fw-bold mb-3">What you'll need:</h5>
+                    <ul class="benefits-list">
+                        <li><i class="bi bi-info-circle"></i>Government-issued ID</li>
+                        <li><i class="bi bi-info-circle"></i>Bank account information</li>
+                        <li><i class="bi bi-info-circle"></i>Business details (if applicable)</li>
+                        <li><i class="bi bi-info-circle"></i>5-10 minutes of your time</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+                <i class="bi bi-shield-lock me-2"></i>
+                <div>
+                    <strong>Security First:</strong> Your information is encrypted and secure. Stripe is a trusted payment processor used by millions of businesses worldwide.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center">
+                <button id="startOnboardingBtn" class="btn btn-onboard btn-lg me-3">
+                    <i class="bi bi-arrow-right me-2"></i>Start Onboarding
+                </button>
+                <a href="/dashboard" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center mt-4" style="display: none;">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">Setting up your seller account...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        document.getElementById('startOnboardingBtn').addEventListener('click', function() {
+            console.log('Start onboarding button clicked');
+            
+            // Show loading state
+            this.disabled = true;
+            this.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+            document.getElementById('loadingState').style.display = 'block';
+            
+            // Start onboarding process
+            const returnUrl = window.location.origin + '/payment/onboarding-return';
+            console.log('Return URL:', returnUrl);
+            
+            // Get CSRF token from Thymeleaf
+            const csrfToken = /*[[${_csrf.token}]]*/ '';
+            const csrfHeader = /*[[${_csrf.headerName}]]*/ '';
+            
+            console.log('CSRF Token:', csrfToken ? 'Present' : 'Missing');
+            console.log('CSRF Header:', csrfHeader);
+            
+            fetch('/payment/onboard-seller', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    [csrfHeader]: csrfToken
+                },
+                body: 'returnUrl=' + encodeURIComponent(returnUrl)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        console.error('Response text:', text);
+                        throw new Error('Server error: ' + response.status);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.accountLinkUrl) {
+                    // Redirect to Stripe onboarding
+                    console.log('Redirecting to:', data.accountLinkUrl);
+                    window.location.href = data.accountLinkUrl;
+                } else {
+                    throw new Error('No onboarding URL received');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Reset button state
+                const btn = document.getElementById('startOnboardingBtn');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-arrow-right me-2"></i>Start Onboarding';
+                document.getElementById('loadingState').style.display = 'none';
+                
+                // Show error message
+                alert('An error occurred while starting the onboarding process: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html> 

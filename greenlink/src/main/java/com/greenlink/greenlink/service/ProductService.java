@@ -82,13 +82,17 @@ public class ProductService {
         Long sellerId = product.getSeller() != null ? product.getSeller().getId() : null;
         Integer sellerLevel = product.getSeller() != null ? product.getSeller().getLevel() : null;
         
+        String buyerName = product.getBuyer() != null ? 
+                product.getBuyer().getFirstName() + " " + product.getBuyer().getLastName() : null;
+        Long buyerId = product.getBuyer() != null ? product.getBuyer().getId() : null;
+        
         // Get negotiated price for the current user if available
         Double negotiatedPrice = null;
         if (currentUser != null) {
             negotiatedPrice = product.getNegotiatedPriceForUser(currentUser.getId());
         }
         
-        return new ProductDto(
+        ProductDto dto = new ProductDto(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
@@ -105,6 +109,14 @@ public class ProductService {
                 product.getBranch(),
                 negotiatedPrice
         );
+        
+        // Set sale-related fields
+        dto.setSold(product.isSold());
+        dto.setBuyerId(buyerId);
+        dto.setBuyerName(buyerName);
+        dto.setSoldAt(product.getSoldAt());
+        
+        return dto;
     }
 
     private Product convertToEntity(ProductDto dto) {
@@ -285,6 +297,9 @@ public class ProductService {
         Specification<Product> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            // Always filter out sold products
+            predicates.add(cb.equal(root.get("sold"), false));
+
             if (branch != null) {
                 predicates.add(cb.equal(root.get("branch"), branch));
             }
@@ -324,8 +339,11 @@ public class ProductService {
     }
 
     public List<ProductDto> filterProducts(Category category, Double minPrice, Double maxPrice, Boolean ecoFriendly) {
+        // Note: findByFilters method in repository doesn't filter by sold status
+        // This method should be updated to use Specification like getFilteredProducts
         return productRepository.findByFilters(category, minPrice, maxPrice, ecoFriendly)
                 .stream()
+                .filter(product -> !product.isSold()) // Filter out sold products
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -352,6 +370,7 @@ public class ProductService {
         }
         
         return similarProducts.stream()
+                .filter(p -> !p.isSold()) // Filter out sold products
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -378,6 +397,7 @@ public class ProductService {
         }
         
         return similarProducts.stream()
+                .filter(p -> !p.isSold()) // Filter out sold products
                 .map(p -> convertToDto(p, currentUser))
                 .collect(Collectors.toList());
     }

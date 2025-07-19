@@ -114,9 +114,42 @@ public class PaymentService {
             userRepository.save(currentUser);
         }
         
+        // TEMPORARILY DISABLED: Skip seller Stripe account check
+        // TODO: Re-enable this check after Stripe Connect is properly configured
+        /*
+        // Ensure seller has a Stripe account
+        if (product.getSeller().getStripeAccountId() == null) {
+            throw new RuntimeException("Seller must complete Stripe onboarding before accepting payments");
+        }
+        */
+        
         // Create checkout session
         Session session = stripeService.createCheckoutSession(product, currentUser, successUrl, cancelUrl);
         
         return session.getUrl();
+    }
+    
+    /**
+     * Process admin purchase - mark product as sold without Stripe payment
+     */
+    @Transactional
+    public void processAdminPurchase(Product product, User buyer) {
+        // Check if product is still available
+        if (product.isSold()) {
+            throw new RuntimeException("Product is already sold");
+        }
+        
+        // Check if buyer is not the seller
+        if (product.getSeller().getId().equals(buyer.getId())) {
+            throw new RuntimeException("Cannot purchase your own product");
+        }
+        
+        // Update product state
+        product.setSold(true);
+        product.setBuyer(buyer);
+        product.setSoldAt(LocalDateTime.now());
+        
+        // Save the updated product
+        productRepository.save(product);
     }
 } 
