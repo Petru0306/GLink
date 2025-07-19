@@ -3,7 +3,7 @@ ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1 NOT NULL;
 
 -- Create point_events table
 CREATE TABLE point_events (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     points INTEGER NOT NULL,
     event_type VARCHAR(100) NOT NULL,
