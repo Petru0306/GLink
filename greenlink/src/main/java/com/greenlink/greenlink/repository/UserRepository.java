@@ -41,4 +41,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
           + "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR "
           + "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<User> searchUsers(@Param("query") String query, @Param("currentUserId") Long currentUserId);
+    
+    Optional<User> findByOauth2ProviderAndOauth2ProviderId(String oauth2Provider, String oauth2ProviderId);
 }

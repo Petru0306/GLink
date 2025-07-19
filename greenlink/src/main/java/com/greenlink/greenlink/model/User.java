@@ -93,6 +93,19 @@ public class User implements UserDetails {
     @Column(name = "stripe_customer_id")
     private String stripeCustomerId;
 
+    // OAuth2 fields
+    @Column(name = "oauth2_provider")
+    private String oauth2Provider;
+    
+    @Column(name = "oauth2_provider_id")
+    private String oauth2ProviderId;
+    
+    @Column(name = "oauth2_name")
+    private String oauth2Name;
+    
+    @Column(name = "oauth2_picture")
+    private String oauth2Picture;
+
     public User() {
     }
 
@@ -384,5 +397,37 @@ public class User implements UserDetails {
 
     public void setStripeCustomerId(String stripeCustomerId) {
         this.stripeCustomerId = stripeCustomerId;
+    }
+
+    public String getOauth2Provider() {
+        return oauth2Provider;
+    }
+
+    public void setOauth2Provider(String oauth2Provider) {
+        this.oauth2Provider = oauth2Provider;
+    }
+
+    public String getOauth2ProviderId() {
+        return oauth2ProviderId;
+    }
+
+    public void setOauth2ProviderId(String oauth2ProviderId) {
+        this.oauth2ProviderId = oauth2ProviderId;
+    }
+
+    public String getOauth2Name() {
+        return oauth2Name;
+    }
+
+    public void setOauth2Name(String oauth2Name) {
+        this.oauth2Name = oauth2Name;
+    }
+
+    public String getOauth2Picture() {
+        return oauth2Picture;
+    }
+
+    public void setOauth2Picture(String oauth2Picture) {
+        this.oauth2Picture = oauth2Picture;
     }
 }

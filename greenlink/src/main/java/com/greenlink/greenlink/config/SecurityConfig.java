@@ -24,14 +24,17 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomAuthenticationFailureHandler failureHandler;
+    private final CustomOAuth2SuccessHandler oauth2SuccessHandler;
 
     public SecurityConfig(UserService userService, PasswordEncoder passwordEncoder, 
                         CustomAuthenticationSuccessHandler successHandler,
-                        CustomAuthenticationFailureHandler failureHandler) {
+                        CustomAuthenticationFailureHandler failureHandler,
+                        CustomOAuth2SuccessHandler oauth2SuccessHandler) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.successHandler = successHandler;
         this.failureHandler = failureHandler;
+        this.oauth2SuccessHandler = oauth2SuccessHandler;
     }
 
     @Bean
@@ -58,6 +61,13 @@ public class SecurityConfig {
                     .passwordParameter("password")
                     .successHandler(successHandler)
                     .failureHandler(failureHandler)
+                    .permitAll();
+            })
+            .oauth2Login(oauth2 -> {
+                logger.info("Configuring OAuth2 login");
+                oauth2
+                    .loginPage("/login")
+                    .successHandler(oauth2SuccessHandler)
                     .permitAll();
             })
             .logout(logout -> {
