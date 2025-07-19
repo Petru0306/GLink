@@ -7,27 +7,27 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login to GreenLink</h5>
+                    <h5 class="modal-title" id="loginModalLabel" th:text="#{auth.login} + ' to GreenLink'">Login to GreenLink</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div th:if="${param.error}" class="alert alert-danger">
-                        Invalid email or password.
+                        <span th:text="#{auth.invalid.credentials}">Invalid email or password.</span>
                     </div>
                     <div th:if="${param.logout}" class="alert alert-success">
-                        You have been logged out.
+                        <span th:text="#{auth.logged.out}">You have been logged out.</span>
                     </div>
                     <div th:if="${param.registered}" class="alert alert-success">
-                        Registration successful! Please login.
+                        <span th:text="#{auth.registration.success}">Registration successful! Please login.</span>
                     </div>
-                    <form th:action="@{/login}" method="post">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <form id="loginForm" action="/login" method="post">
+                        <input type="hidden" name="_csrf" value="" id="csrfToken" />
                         <div class="mb-3">
-                            <label for="usernameModal" class="form-label">Email</label>
+                            <label for="usernameModal" class="form-label" th:text="#{profile.email}">Email</label>
                             <input type="email" class="form-control" id="usernameModal" name="username" required>
                         </div>
                         <div class="mb-3">
-                            <label for="passwordModal" class="form-label">Password</label>
+                            <label for="passwordModal" class="form-label" th:text="#{profile.new.password}">Password</label>
                             <div class="input-group">
                                 <input type="password" class="form-control" id="passwordModal" name="password" required>
                                 <button class="btn btn-outline-secondary" type="button" id="toggleLoginPasswordModal">
@@ -37,12 +37,12 @@
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="remember-me-modal" name="remember-me">
-                            <label class="form-check-label" for="remember-me-modal">Remember me</label>
+                            <label class="form-check-label" for="remember-me-modal" th:text="#{auth.remember.me}">Remember me</label>
                         </div>
                         <div class="mb-3 text-end">
-                            <a href="/forgot-password" class="text-success">Forgot password?</a>
+                            <a href="/forgot-password" class="text-success" th:text="#{auth.forgot.password}">Forgot password?</a>
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Login</button>
+                        <button type="submit" class="btn btn-success w-100" th:text="#{auth.login}">Login</button>
                     </form>
                 </div>
             </div>
@@ -81,6 +81,18 @@ document.addEventListener('DOMContentLoaded', function() {
     window.showLoginModal = function() {
         loginModal.show();
     };
+
+    // Set CSRF token when modal is shown
+    loginModalEl.addEventListener('show.bs.modal', function () {
+        const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+        
+        if (csrfToken) {
+            document.getElementById('csrfToken').value = csrfToken;
+            console.log('CSRF token loaded successfully');
+        } else {
+            console.warn('CSRF token not found in page meta tags');
+        }
+    });
 
     // Password toggle for login form
     const toggleLoginPassword = document.getElementById('toggleLoginPasswordModal');

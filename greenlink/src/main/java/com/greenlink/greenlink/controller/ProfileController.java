@@ -87,8 +87,8 @@ public class ProfileController {
             model.addAttribute("isPersonalProfile", true);
             model.addAttribute("currentUser", currentUser);
             
-            logger.info("Personal profile loaded successfully for user: {}", currentUser.getUsername());
-            return "profile/profile";
+            logger.info("Personal profile loaded successfully for user: {} - Returning template: profile/minimal", currentUser.getUsername());
+            return "profile/minimal";
 
         } catch (Exception e) {
             logger.error("Error loading personal profile: {}", e.getMessage(), e);
@@ -181,10 +181,18 @@ public class ProfileController {
             User currentUser = null;
             boolean isOwnProfile = false;
             if (principal != null) {
-                currentUser = userService.getCurrentUser(principal.getName());
-                isOwnProfile = currentUser != null && currentUser.getId().equals(targetUser.getId());
+                try {
+                    currentUser = userService.getCurrentUser(principal.getName());
+                    isOwnProfile = currentUser != null && currentUser.getId().equals(targetUser.getId());
+                } catch (Exception e) {
+                    logger.warn("Could not get current user: {}", e.getMessage());
+                    // Continue without current user
+                }
             }
 
+            // Set the profile user first
+            model.addAttribute("profileUser", targetUser);
+            
             // Load public profile data
             loadPublicProfileData(model, targetUser);
             
@@ -193,8 +201,8 @@ public class ProfileController {
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("isOwnProfile", isOwnProfile);
             
-            logger.info("Public profile loaded successfully for user ID: {} ({})", userId, targetUser.getUsername());
-            return "profile/profile";
+            logger.info("Public profile loaded successfully for user ID: {} ({}) - Returning template: profile/minimal", userId, targetUser.getUsername());
+            return "profile/minimal";
 
         } catch (Exception e) {
             logger.error("Error loading public profile for user ID {}: {}", userId, e.getMessage(), e);
@@ -271,8 +279,7 @@ public class ProfileController {
      * Load data for public profile page.
      */
     private void loadPublicProfileData(Model model, User targetUser) {
-        // Basic user data
-        model.addAttribute("profileUser", targetUser);
+        // Note: profileUser is already set in the controller method
 
         // User's products
         try {
@@ -357,88 +364,64 @@ public class ProfileController {
      * Map QuizResult to LessonCompletionData with enhanced information.
      */
     private LessonCompletionData mapToLessonCompletionData(QuizResult quizResult) {
-        LessonCompletionData data = new LessonCompletionData();
-        data.setId(quizResult.getId());
-        data.setPointsEarned(quizResult.getPointsEarned());
-        data.setCompletedAt(quizResult.getCompletedAt());
-        data.setReflectionText(quizResult.getReflectionText());
+        LessonCompletionData lessonData = new LessonCompletionData();
         
-        // Map lesson information based on quiz/lesson ID
         if (quizResult.getQuiz() != null) {
-            Long lessonId = quizResult.getQuiz().getId();
-            data.setLessonId(lessonId);
-            
-            // Map lesson titles and images based on lesson ID
-            switch (lessonId.intValue()) {
-                case 1:
-                    data.setTitle("Lecția 1: Ce este sustenabilitatea?");
-                    data.setImageUrl("/images/lesson1.jpg");
-                    break;
-                case 2:
-                    data.setTitle("Lecția 2: Consumul Responsabil");
-                    data.setImageUrl("/images/lesson2.jpg");
-                    break;
-                case 3:
-                    data.setTitle("Lecția 3: Energie Regenerabilă");
-                    data.setImageUrl("/images/lesson3.jpg");
-                    break;
-                case 4:
-                    data.setTitle("Lecția 4: Managementul Deșeurilor");
-                    data.setImageUrl("/images/lesson4.jpg");
-                    break;
-                case 5:
-                    data.setTitle("Lecția 5: Transport Durabil");
-                    data.setImageUrl("/images/lesson5.jpg");
-                    break;
-                case 6:
-                    data.setTitle("Lecția 6: Gardening Sustenabil");
-                    data.setImageUrl("/images/lesson6.jpg");
-                    break;
-                default:
-                    data.setTitle("Lecția " + lessonId);
-                    data.setImageUrl("/images/lesson-default.jpg");
-                    break;
-            }
+            lessonData.setTitle(quizResult.getQuiz().getTitle());
+            lessonData.setDescription(quizResult.getQuiz().getDescription());
         } else {
-            data.setTitle("Lecție completată");
-            data.setImageUrl("/images/lesson-default.jpg");
+            lessonData.setTitle("Unknown Lesson");
+            lessonData.setDescription("Lesson details not available");
         }
         
-        return data;
+        lessonData.setPointsEarned(quizResult.getPointsEarned());
+        lessonData.setCompletedAt(quizResult.getCompletedAt());
+        
+        return lessonData;
     }
-    
+
+    // ==================== DTO CLASSES ====================
+
     /**
-     * Data class for lesson completion information.
+     * Data transfer object for lesson completion information.
      */
     public static class LessonCompletionData {
-        private Long id;
-        private Long lessonId;
         private String title;
-        private String imageUrl;
+        private String description;
         private int pointsEarned;
-        private String reflectionText;
         private LocalDateTime completedAt;
-        
-        // Getters and setters
-        public Long getId() { return id; }
-        public void setId(Long id) { this.id = id; }
-        
-        public Long getLessonId() { return lessonId; }
-        public void setLessonId(Long lessonId) { this.lessonId = lessonId; }
-        
-        public String getTitle() { return title; }
-        public void setTitle(String title) { this.title = title; }
-        
-        public String getImageUrl() { return imageUrl; }
-        public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-        
-        public int getPointsEarned() { return pointsEarned; }
-        public void setPointsEarned(int pointsEarned) { this.pointsEarned = pointsEarned; }
-        
-        public String getReflectionText() { return reflectionText; }
-        public void setReflectionText(String reflectionText) { this.reflectionText = reflectionText; }
-        
-        public LocalDateTime getCompletedAt() { return completedAt; }
-        public void setCompletedAt(LocalDateTime completedAt) { this.completedAt = completedAt; }
+
+        // Getters and Setters
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public int getPointsEarned() {
+            return pointsEarned;
+        }
+
+        public void setPointsEarned(int pointsEarned) {
+            this.pointsEarned = pointsEarned;
+        }
+
+        public LocalDateTime getCompletedAt() {
+            return completedAt;
+        }
+
+        public void setCompletedAt(LocalDateTime completedAt) {
+            this.completedAt = completedAt;
+        }
     }
 }

@@ -33,26 +33,74 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         
         logger.info("OAuth2 authentication successful");
         
-        if (authentication.getPrincipal() instanceof OAuth2User) {
-            OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
-            
-            // Determine the provider from the request
-            String provider = determineProvider(request);
-            logger.info("Processing OAuth2 user from provider: {}", provider);
-            
-            // Process the OAuth2 user
-            User user = oauth2Service.processOAuth2User(oauth2User, provider);
-            logger.info("OAuth2 user processed successfully: {}", user.getEmail());
+        try {
+            if (authentication.getPrincipal() instanceof OAuth2User) {
+                OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+                
+                // Determine the provider from the request
+                String provider = determineProvider(request, authentication);
+                logger.info("Processing OAuth2 user from provider: {}", provider);
+                
+                // Process the OAuth2 user
+                User user = oauth2Service.processOAuth2User(oauth2User, provider);
+                logger.info("OAuth2 user processed successfully: {}", user.getEmail());
+            } else {
+                logger.warn("Authentication principal is not OAuth2User: {}", authentication.getPrincipal().getClass());
+            }
+        } catch (Exception e) {
+            logger.error("Error processing OAuth2 user", e);
+            // Don't throw the exception, just log it and continue with the redirect
         }
         
         super.onAuthenticationSuccess(request, response, authentication);
     }
     
-    private String determineProvider(HttpServletRequest request) {
+    private String determineProvider(HttpServletRequest request, Authentication authentication) {
+        // Try to get from request URI first
         String requestURI = request.getRequestURI();
+        logger.info("Request URI: {}", requestURI);
+        
         if (requestURI.contains("/oauth2/authorization/google")) {
             return "google";
+        } else if (requestURI.contains("/oauth2/authorization/github")) {
+            return "github";
         }
+        
+        // Try to get from request parameters
+        String clientRegistrationId = request.getParameter("registrationId");
+        if (clientRegistrationId != null) {
+            logger.info("Found registrationId in parameters: {}", clientRegistrationId);
+            return clientRegistrationId;
+        }
+        
+        // Try to get from authentication name
+        String authName = authentication.getName();
+        logger.info("Authentication name: {}", authName);
+        
+        // Check if the name contains provider info
+        if (authName.contains("github")) {
+            return "github";
+        } else if (authName.contains("google")) {
+            return "google";
+        }
+        
+        // Last resort: check the OAuth2User attributes
+        if (authentication.getPrincipal() instanceof OAuth2User) {
+            OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+            Object id = oauth2User.getAttribute("id");
+            Object sub = oauth2User.getAttribute("sub");
+            
+            logger.info("OAuth2User attributes - id: {}, sub: {}", id, sub);
+            
+            // GitHub uses numeric ID, Google uses "sub"
+            if (id != null && sub == null) {
+                return "github";
+            } else if (sub != null) {
+                return "google";
+            }
+        }
+        
+        logger.warn("Could not determine OAuth2 provider from request URI: {}", requestURI);
         return "unknown";
     }
 } 

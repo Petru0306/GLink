@@ -321,7 +321,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center">
                     <h1 class="display-4 fw-bold mb-3" th:text="${branchTitle}">Marketplace</h1>
-                    <p class="lead mb-4">Descoperă produse eco-friendly de la producători locali și contribuie la un viitor mai sustenabil.</p>
+                    <p class="lead mb-4" th:text="#{marketplace.discover.products}">Descoperă produse eco-friendly de la producători locali și contribuie la un viitor mai sustenabil.</p>
                 </div>
             </div>
         </div>
@@ -346,12 +346,12 @@
             <div class="col-lg-3">
                 <div class="filter-card card">
                     <div class="card-body p-4">
-                        <h5 class="card-title mb-4">Filtrează Produsele</h5>
+                        <h5 class="card-title mb-4" th:text="#{marketplace.filter.products}">Filtrează Produsele</h5>
                         <form id="filterForm">
                             <div class="mb-4">
-                                <label class="filter-label">Categorie</label>
+                                <label class="filter-label" th:text="#{marketplace.category}">Categorie</label>
                                 <select class="form-select sort-select" name="category">
-                                    <option value="">Toate categoriile</option>
+                                    <option value="" th:text="#{marketplace.all.categories}">Toate categoriile</option>
                                     <option th:each="cat : ${categories}" 
                                             th:value="${cat}" 
                                             th:text="${cat.displayName}"
@@ -360,7 +360,7 @@
                                 </select>
                             </div>
                             <div class="mb-4">
-                                <label class="filter-label">Interval de Preț</label>
+                                <label class="filter-label" th:text="#{marketplace.price.range}">Interval de Preț</label>
                                 <div class="price-inputs">
                                     <input type="number" class="form-control price-input" name="minPrice" 
                                            placeholder="Min" th:value="${param.minPrice}">
@@ -374,15 +374,15 @@
                                            name="ecoFriendly" 
                                            th:checked="${param.ecoFriendly != null and param.ecoFriendly[0] == 'true'}">
                                     <label class="form-check-label filter-label" for="ecoFriendly">
-                                        <i class="bi bi-leaf-fill text-success me-2"></i>Doar produse eco-friendly
+                                        <i class="bi bi-leaf-fill text-success me-2"></i><span th:text="#{marketplace.eco.friendly.only}">Doar produse eco-friendly</span>
                                     </label>
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success apply-filters-btn mb-2">
-                                <i class="bi bi-funnel-fill me-2"></i>Aplică Filtre
+                                <i class="bi bi-funnel-fill me-2"></i><span th:text="#{marketplace.apply.filters}">Aplică Filtre</span>
                             </button>
                             <a href="/marketplace" class="reset-filters-btn mt-1 d-block text-center">
-                                <i class="bi bi-x-circle me-2"></i>Resetează Filtre
+                                <i class="bi bi-x-circle me-2"></i><span th:text="#{marketplace.reset.filters}">Resetează Filtre</span>
                             </a>
                         </form>
                     </div>
