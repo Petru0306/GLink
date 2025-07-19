@@ -7,6 +7,7 @@ import com.greenlink.greenlink.repository.UserRepository;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,8 +17,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @TestConfiguration
+@ComponentScan(basePackages = {
+    "com.greenlink.greenlink.service",
+    "com.greenlink.greenlink.repository",
+    "com.greenlink.greenlink.model"
+}, excludeFilters = {
+    @ComponentScan.Filter(type = org.springframework.context.annotation.FilterType.REGEX, pattern = ".*StripeConfig.*"),
+    @ComponentScan.Filter(type = org.springframework.context.annotation.FilterType.REGEX, pattern = ".*OAuth2.*")
+})
 public class TestConfig {
-
 
     @Bean
     @Primary
