@@ -12,15 +12,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/register")
@@ -63,5 +68,16 @@ public class AuthController {
         logger.error("Login attempt failed");
         model.addAttribute("loginError", true);
         return "login";
+    }
+
+    /**
+     * Generate password hash for admin password reset
+     * Usage: /auth-test/generate-password?password=yourNewPassword
+     */
+    @GetMapping("/auth-test/generate-password")
+    @ResponseBody
+    public String generatePasswordHash(@RequestParam String password) {
+        String encodedPassword = passwordEncoder.encode(password);
+        return "Password hash for '" + password + "': " + encodedPassword;
     }
 }

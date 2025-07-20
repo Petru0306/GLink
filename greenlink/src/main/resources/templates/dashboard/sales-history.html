@@ -106,7 +106,7 @@
                         </div>
                         
                         <div th:if="${!#lists.isEmpty(soldProducts)}" class="row">
-                            <div th:each="product : soldProducts" class="col-md-6 col-lg-4 mb-4">
+                            <div th:each="product : ${soldProducts}" class="col-md-6 col-lg-4">
                                 <div class="card h-100 border-0 shadow-sm">
                                     <div class="position-relative">
                                         <img th:src="${product.imageUrl}" th:alt="${product.name}" 

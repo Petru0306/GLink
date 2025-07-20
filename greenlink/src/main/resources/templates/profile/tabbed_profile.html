@@ -8,8 +8,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css?v=1.0.9">
     <link rel="stylesheet" href="/css/profile-tabs.css?v=1.0.0">
+    <link rel="stylesheet" href="/css/dm-modal.css?v=1.0.0">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    
+    <!-- CSRF Token -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
     <!-- Navbar -->
@@ -36,10 +41,22 @@
                     </div>
                 </div>
                 <div class="col-md-3 text-center text-md-end">
-                    <!-- Edit Profile Button - only show for personal profile -->
-                    <a th:if="${isPersonalProfile}" href="/profile/edit" class="btn btn-outline-light">
-                        <i class="bi bi-pencil me-2"></i>Edit Profile
-                    </a>
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-column gap-2">
+                        <!-- DM Button - only show for other users' profiles and if they are friends -->
+                        <button th:if="${!isPersonalProfile and canSendMessage}" 
+                                class="btn btn-success" 
+                                onclick="openDMModal()"
+                                th:data-user-id="${profileUser.id}"
+                                th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
+                            <i class="bi bi-chat-dots me-2"></i>DM
+                        </button>
+                        
+                        <!-- Edit Profile Button - only show for personal profile -->
+                        <a th:if="${isPersonalProfile}" href="/profile/edit" class="btn btn-outline-light">
+                            <i class="bi bi-pencil me-2"></i>Edit Profile
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -214,6 +231,379 @@
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
 
+    <!-- DM Modal -->
+    <div class="modal fade" id="dmModal" tabindex="-1" aria-labelledby="dmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dmModalLabel">
+                        <i class="bi bi-chat-dots me-2"></i>
+                        <span id="dmRecipientName">Direct Message</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="chat-container">
+                        <div id="dmMessages" class="messages-container" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 1rem; margin-bottom: 1rem;">
+                            <!-- Messages will be loaded here -->
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="dmMessageInput" class="form-control" placeholder="Type your message..." maxlength="500">
+                            <button class="btn btn-success" type="button" id="dmSendButton">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    
+    <script th:inline="javascript">
+        // DM Modal functionality
+        let currentDMConversationId = null;
+        let dmStompClient = null;
+        let dmProcessedMessageIds = new Set();
+        let currentUserId = null; // Will be set when conversation starts
+        
+        // Get CSRF token
+        const token = $("meta[name='_csrf']").attr("content");
+        const header = $("meta[name='_csrf_header']").attr("content");
+        
+        // Set up AJAX CSRF header
+        $.ajaxSetup({
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader(header, token);
+            }
+        });
+        
+        function openDMModal() {
+            const button = event.target.closest('button');
+            const userId = button.getAttribute('data-user-id');
+            const userName = button.getAttribute('data-user-name');
+            
+            console.log('Opening DM modal for user:', userId, userName);
+            
+            if (!userId) {
+                showDMError('Invalid user ID');
+                return;
+            }
+            
+            document.getElementById('dmRecipientName').textContent = userName || 'User';
+            
+            // Start conversation
+            startDMConversation(userId);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('dmModal'));
+            modal.show();
+        }
+        
+        function startDMConversation(userId) {
+            console.log('Starting DM conversation for user ID:', userId);
+            
+            $.ajax({
+                url: '/dm/conversation/' + userId,
+                method: 'POST',
+                success: function(response) {
+                    console.log('DM conversation started successfully:', response);
+                    currentDMConversationId = response.conversationId;
+                    
+                    // Get current user ID from the first message or set it based on conversation
+                    if (response.currentUserId) {
+                        currentUserId = response.currentUserId;
+                    }
+                    
+                    loadDMMessages();
+                    connectDMWebSocket();
+                },
+                error: function(xhr, status, error) {
+                    console.error('DM Conversation Error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    
+                    let errorMessage = 'Failed to start conversation';
+                    if (xhr.status === 400) {
+                        errorMessage = 'Bad request. Please check if you can message this user.';
+                    } else if (xhr.status === 403) {
+                        errorMessage = 'Access denied. Please make sure you are logged in and can message this user.';
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'User not found.';
+                    } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error;
+                    } else if (xhr.responseText) {
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            errorMessage = errorResponse.error || errorResponse.message || xhr.statusText;
+                        } catch (e) {
+                            errorMessage = xhr.responseText || xhr.statusText;
+                        }
+                    }
+                    showDMError(errorMessage);
+                }
+            });
+        }
+        
+        function loadDMMessages() {
+            if (!currentDMConversationId) return;
+            
+            $.get('/dm/conversation/' + currentDMConversationId + '/messages')
+                .done(function(messages) {
+                    // Set currentUserId from the first message if available
+                    if (messages && messages.length > 0 && !currentUserId) {
+                        // Find a message where currentUserSender is true to get current user ID
+                        const myMessage = messages.find(m => m.currentUserSender);
+                        if (myMessage) {
+                            currentUserId = myMessage.senderId;
+                        }
+                    }
+                    
+                    displayDMMessages(messages);
+                    scrollToBottom();
+                })
+                .fail(function(xhr) {
+                    console.error('Load Messages Error:', xhr);
+                    let errorMessage = 'Failed to load messages';
+                    if (xhr.status === 403) {
+                        errorMessage = 'Access denied. Please make sure you are logged in.';
+                    } else if (xhr.statusText) {
+                        errorMessage = xhr.statusText;
+                    }
+                    showDMError(errorMessage);
+                });
+        }
+        
+        function displayDMMessages(messages) {
+            const container = document.getElementById('dmMessages');
+            container.innerHTML = '';
+            
+            messages.forEach(function(message) {
+                appendDMMessage(message);
+            });
+        }
+        
+        function appendDMMessage(message) {
+            const messageId = message.id || message.tempId;
+            
+            // Skip if we've already displayed this message (except for temp messages)
+            if (messageId && dmProcessedMessageIds.has(messageId) && !message.isTemporary) {
+                return;
+            }
+            
+            if (messageId) {
+                dmProcessedMessageIds.add(messageId);
+            }
+            
+            const container = document.getElementById('dmMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message mb-3';
+            
+            // Add data attribute for temporary messages
+            if (message.tempId) {
+                messageDiv.setAttribute('data-temp-id', message.tempId);
+            }
+            
+            // Determine if current user is sender
+            // For temporary messages, always show as current user
+            // For real messages, check the senderId against currentUserId
+            let isCurrentUser = false;
+            if (message.isTemporary) {
+                isCurrentUser = true;
+            } else if (message.senderId && currentUserId) {
+                isCurrentUser = message.senderId === currentUserId;
+            } else if (message.currentUserSender !== undefined) {
+                // Fallback to the flag if senderId is not available
+                isCurrentUser = message.currentUserSender;
+            }
+            const alignment = isCurrentUser ? 'text-end' : 'text-start';
+            const bgColor = isCurrentUser ? 'bg-success text-white' : 'bg-light';
+            
+            const time = new Date(message.sentAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            messageDiv.innerHTML = `
+                <div class="${alignment}">
+                    <div class="d-inline-block ${bgColor} rounded p-2" style="max-width: 70%;">
+                        <div class="message-content">${escapeHtml(message.content)}</div>
+                        <small class="message-time ${isCurrentUser ? 'text-white-50' : 'text-muted'}">${time}</small>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+        }
+        
+        function connectDMWebSocket() {
+            if (!currentDMConversationId) return;
+            
+            const socket = new SockJS('/ws-messages');
+            dmStompClient = Stomp.over(socket);
+            dmStompClient.debug = null;
+            
+            // Add CSRF headers for WebSocket connections
+            const headers = {};
+            headers[header] = token;
+            
+            dmStompClient.connect(headers, function() {
+                // Subscribe to DM conversation
+                const subscription = dmStompClient.subscribe('/topic/dm.' + currentDMConversationId, onDMMessageReceived);
+                console.log('Subscribed to DM topic: /topic/dm.' + currentDMConversationId);
+                
+                // Join the conversation
+                dmStompClient.send("/app/dm.join", {}, JSON.stringify({conversationId: currentDMConversationId}));
+                
+                console.log('Connected to DM WebSocket for conversation:', currentDMConversationId);
+            }, function(error) {
+                console.error('DM WebSocket connection error:', error);
+            });
+        }
+        
+        function onDMMessageReceived(payload) {
+            const message = JSON.parse(payload.body);
+            
+            // Skip ping messages
+            if (message.type === 'PING') {
+                return;
+            }
+            
+            // Skip join confirmations
+            if (message.type === 'JOINED') {
+                return;
+            }
+            
+            // Skip if this is a response to our own temporary message
+            if (message.tempId && dmProcessedMessageIds.has(message.tempId)) {
+                // Remove the temporary message and add the real one
+                removeTemporaryMessage(message.tempId);
+                dmProcessedMessageIds.delete(message.tempId);
+                // Don't return here - we want to show the real message
+            }
+            
+            // Skip if we've already displayed this message (but allow temp message replacement)
+            const messageId = message.id || message.tempId;
+            if (messageId && dmProcessedMessageIds.has(messageId) && !message.tempId) {
+                console.log("Skipping duplicate message:", messageId);
+                return;
+            }
+            
+            if (messageId) {
+                dmProcessedMessageIds.add(messageId);
+            }
+            
+            console.log("Displaying message:", message);
+            appendDMMessage(message);
+            scrollToBottom();
+        }
+        
+        function sendDMMessage() {
+            const input = document.getElementById('dmMessageInput');
+            const content = input.value.trim();
+            
+            if (!content || !currentDMConversationId) return;
+            
+            if (dmStompClient && dmStompClient.connected) {
+                // Send via WebSocket
+                const tempId = 'temp-' + Date.now();
+                const dmMessage = {
+                    conversationId: currentDMConversationId,
+                    content: content,
+                    tempId: tempId
+                };
+                
+                // Display temporary message
+                const tempMessage = {
+                    id: tempId,
+                    content: content,
+                    sentAt: new Date(),
+                    currentUserSender: true,
+                    isTemporary: true,
+                    tempId: tempId
+                };
+                
+                appendDMMessage(tempMessage);
+                scrollToBottom();
+                
+                // Clear input
+                input.value = '';
+                
+                // Send via WebSocket
+                dmStompClient.send("/app/dm.sendMessage", {}, JSON.stringify(dmMessage));
+            } else {
+                // Fallback to AJAX
+                $.post('/dm/conversation/' + currentDMConversationId + '/message', {content: content})
+                    .done(function(message) {
+                        appendDMMessage(message);
+                        scrollToBottom();
+                        input.value = '';
+                    })
+                    .fail(function(xhr) {
+                        console.error('Send Message Error:', xhr);
+                        let errorMessage = 'Failed to send message';
+                        if (xhr.status === 403) {
+                            errorMessage = 'Access denied. Please make sure you are logged in.';
+                        } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        } else if (xhr.statusText) {
+                            errorMessage = xhr.statusText;
+                        }
+                        showDMError(errorMessage);
+                    });
+            }
+        }
+        
+        function scrollToBottom() {
+            const container = document.getElementById('dmMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function removeTemporaryMessage(tempId) {
+            const container = document.getElementById('dmMessages');
+            const tempMessage = container.querySelector(`[data-temp-id="${tempId}"]`);
+            if (tempMessage) {
+                tempMessage.remove();
+                console.log("Removed temporary message:", tempId);
+            }
+        }
+        
+        function showDMError(message) {
+            const container = document.getElementById('dmMessages');
+            container.innerHTML = `<div class="alert alert-danger">${escapeHtml(message)}</div>`;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Event listeners
+        document.getElementById('dmSendButton').addEventListener('click', sendDMMessage);
+        document.getElementById('dmMessageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendDMMessage();
+            }
+        });
+        
+        // Clean up WebSocket connection when modal is closed
+        document.getElementById('dmModal').addEventListener('hidden.bs.modal', function() {
+            if (dmStompClient) {
+                dmStompClient.disconnect();
+                dmStompClient = null;
+            }
+            currentDMConversationId = null;
+            dmProcessedMessageIds.clear();
+            
+            // Clear the messages container
+            const container = document.getElementById('dmMessages');
+            container.innerHTML = '';
+        });
+    </script>
 </body>
 </html>
