@@ -2655,7 +2655,33 @@
                 </div>
                 
                 <div class="leaderboard-entries">
-                    <div class="leaderboard-entry gold" onclick="window.location.href='/points/leaderboard'">
+                    <!-- Display real leaderboard data -->
+                    <div th:each="user, iterStat : ${topUsers}" 
+                         th:class="'leaderboard-entry ' + (${iterStat.index == 0 ? 'gold' : ''}) + (${iterStat.index == 1 ? 'silver' : ''}) + (${iterStat.index == 2 ? 'bronze' : ''})" 
+                         onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <i th:if="${iterStat.index == 0}" class="bi bi-trophy-fill"></i>
+                            <i th:if="${iterStat.index == 1}" class="bi bi-award-fill"></i>
+                            <i th:if="${iterStat.index == 2}" class="bi bi-patch-check-fill"></i>
+                            <span class="rank-number" th:text="${iterStat.index + 1}">1</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5 th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
+                                <p th:text="'Level ' + ${user.level} + ' • ' + ${user.points} + ' points'">Level info</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i th:class="'bi ' + (${iterStat.index == 0 ? 'bi-gem' : iterStat.index == 1 ? 'bi-star' : iterStat.index == 2 ? 'bi-book' : iterStat.index == 3 ? 'bi-recycle' : 'bi-tree'})"></i>
+                            <span th:text="${iterStat.index == 0 ? 'Maester' : iterStat.index == 1 ? 'Advocate' : iterStat.index == 2 ? 'Scholar' : iterStat.index == 3 ? 'Recycler' : 'Planter'}">Achievement</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Fallback entries if no users exist -->
+                    <div th:if="${#lists.isEmpty(topUsers)}" class="leaderboard-entry gold" onclick="window.location.href='/points/leaderboard'">
                         <div class="rank-badge">
                             <i class="bi bi-trophy-fill"></i>
                             <span class="rank-number">1</span>
@@ -2665,107 +2691,29 @@
                                 <i class="bi bi-person"></i>
                             </div>
                             <div class="user-details">
-                                <h5>Eco Master</h5>
-                                <p>Level 15 • 2,450 points</p>
+                                <h5>No users yet</h5>
+                                <p>Be the first to join!</p>
                             </div>
                         </div>
                         <div class="achievement-badge">
                             <i class="bi bi-gem"></i>
-                            <span>Maester</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry silver" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <i class="bi bi-award-fill"></i>
-                            <span class="rank-number">2</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Green Champion</h5>
-                                <p>Level 12 • 1,890 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-star"></i>
-                            <span>Advocate</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry bronze" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <i class="bi bi-patch-check-fill"></i>
-                            <span class="rank-number">3</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Sustainability Pro</h5>
-                                <p>Level 10 • 1,567 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-book"></i>
-                            <span>Scholar</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <span class="rank-number">4</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Recycling Hero</h5>
-                                <p>Level 8 • 1,234 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-recycle"></i>
-                            <span>Recycler</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <span class="rank-number">5</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Nature Lover</h5>
-                                <p>Level 6 • 987 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-tree"></i>
-                            <span>Planter</span>
+                            <span>Pioneer</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="leaderboard-stats">
                     <div class="stat-item">
-                        <span class="stat-number">89</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #lists.size(topUsers) : 0}">0</span>
                         <span class="stat-label">Competitors</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">15,420</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![points]) : 0}">0</span>
                         <span class="stat-label">Total Points</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">42</span>
-                        <span class="stat-label">Badges Earned</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![level]) : 0}">0</span>
+                        <span class="stat-label">Levels Achieved</span>
                     </div>
                 </div>
                 
