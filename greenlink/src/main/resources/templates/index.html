@@ -2151,16 +2151,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-speedometer2 me-2" style="color: var(--neon-green);"></i>
-                        Calculator de Carbon
+                        <span th:text="#{home.carbon.calculator}">Calculator de Carbon</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-graph-down me-1" style="color: var(--electric-green);"></i>
-                        Calculează amprenta ta de carbon și primește recomandări personalizate pentru a o reduce.
+                        <span th:text="#{home.carbon.calculator.desc}">Calculează amprenta ta de carbon și primește recomandări personalizate pentru a o reduce.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-calculator"></i> Calcul</span>
-                        <span class="feature-tag"><i class="bi bi-lightbulb"></i> Recomandări</span>
-                        <span class="feature-tag"><i class="bi bi-arrow-down-circle"></i> Reducere</span>
+                        <span class="feature-tag"><i class="bi bi-calculator"></i> <span th:text="#{home.calculation}">Calcul</span></span>
+                        <span class="feature-tag"><i class="bi bi-lightbulb"></i> <span th:text="#{home.recommendations}">Recomandări</span></span>
+                        <span class="feature-tag"><i class="bi bi-arrow-down-circle"></i> <span th:text="#{home.reduction}">Reducere</span></span>
                     </div>
                 </div>
 
@@ -2170,16 +2170,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-heart-fill me-2" style="color: var(--neon-green);"></i>
-                        Comunitate Socială
+                        <span th:text="#{home.social.community}">Comunitate Socială</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-chat-heart me-1" style="color: var(--electric-green);"></i>
-                        Conectează-te cu alți utilizatori pasionați de sustenabilitate, împărtășește realizările și participă la provocări.
+                        <span th:text="#{home.social.community.desc}">Conectează-te cu alți utilizatori pasionați de sustenabilitate, împărtășește realizările și participă la provocări.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-people-fill"></i> Prieteni</span>
-                        <span class="feature-tag"><i class="bi bi-chat-dots"></i> Mesaje</span>
-                        <span class="feature-tag"><i class="bi bi-share"></i> Partajare</span>
+                        <span class="feature-tag"><i class="bi bi-people-fill"></i> <span th:text="#{home.friends}">Prieteni</span></span>
+                        <span class="feature-tag"><i class="bi bi-chat-dots"></i> <span th:text="#{home.messages}">Mesaje</span></span>
+                        <span class="feature-tag"><i class="bi bi-share"></i> <span th:text="#{home.sharing}">Partajare</span></span>
                     </div>
                 </div>
             </div>
@@ -2202,10 +2202,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-trophy"></i>
                         </div>
-                        <h3 class="feature-title">Provocări Ecologice</h3>
+                        <h3 class="feature-title" th:text="#{home.eco.challenges}">Provocări Ecologice</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.eco.challenges.desc}">
                             Participă la provocări zilnice, săptămânale și lunare pentru a-ți testa cunoștințele și a-ți îmbunătăți impactul ecologic.
                         </p>
                         <ul class="feature-benefits">
@@ -2222,10 +2222,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-chat-dots"></i>
                         </div>
-                        <h3 class="feature-title">Sistem de Mesaje</h3>
+                        <h3 class="feature-title" th:text="#{home.message.system}">Sistem de Mesaje</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.message.system.desc}">
                             Comunică cu alți utilizatori, împărtășește experiențe și creează conexiuni în comunitatea sustenabilă.
                         </p>
                         <ul class="feature-benefits">
@@ -2242,10 +2242,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-heart"></i>
                         </div>
-                        <h3 class="feature-title">Lista de Favorite</h3>
+                        <h3 class="feature-title" th:text="#{home.favorites.list}">Lista de Favorite</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.favorites.list.desc}">
                             Salvează produsele și cursurile preferate pentru a le accesa rapid și a-ți organiza experiența pe platformă.
                         </p>
                         <ul class="feature-benefits">
@@ -2262,10 +2262,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-credit-card"></i>
                         </div>
-                        <h3 class="feature-title">Plăți Securizate</h3>
+                        <h3 class="feature-title" th:text="#{home.secure.payments}">Plăți Securizate</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.secure.payments.desc}">
                             Tranzacții sigure prin Stripe pentru marketplace, cu protecție completă a datelor și suport pentru multiple metode de plată.
                         </p>
                         <ul class="feature-benefits">
@@ -2282,10 +2282,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-translate"></i>
                         </div>
-                        <h3 class="feature-title">Internaționalizare</h3>
+                        <h3 class="feature-title" th:text="#{home.internationalization}">Internaționalizare</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.internationalization.desc}">
                             Platformă disponibilă în română și engleză, cu suport pentru multiple regiuni și culturi.
                         </p>
                         <ul class="feature-benefits">
@@ -2302,10 +2302,10 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-phone"></i>
                         </div>
-                        <h3 class="feature-title">Design Responsive</h3>
+                        <h3 class="feature-title" th:text="#{home.responsive.design}">Design Responsive</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.responsive.design.desc}">
                             Experiență optimizată pentru toate dispozitivele - desktop, tabletă și mobil, cu interfață adaptivă.
                         </p>
                         <ul class="feature-benefits">
