@@ -661,80 +661,1273 @@
             font-weight: bold;
         }
 
-        /* How It Works Section */
-        .how-it-works {
+        /* GreenLink Experience Hub */
+        .experience-hub {
             padding: 8rem 0;
-            background: white;
-        }
-
-        .steps-container {
-            max-width: 1000px;
-            margin: 0 auto;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             position: relative;
+            overflow: hidden;
         }
 
-        .steps-container::before {
+        .experience-hub::before {
             content: '';
             position: absolute;
-            top: 50%;
+            top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: var(--gradient-primary);
-            transform: translateY(-50%);
-            z-index: 1;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 70%, rgba(0,255,136,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 30%, rgba(57,255,20,0.05) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        .steps-grid {
+        .hub-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
             position: relative;
             z-index: 2;
         }
 
-        .step-item {
+        .hub-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 25px;
             padding: 2rem;
-            text-align: center;
             box-shadow: var(--shadow-light);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
         }
 
-        .step-item:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-medium);
+        .hub-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--shadow-heavy), var(--glow-green);
+            border-color: var(--neon-green);
         }
 
-        .step-number {
+        .hub-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .hub-card:hover::before {
+            left: 100%;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(40, 167, 69, 0.1);
+        }
+
+        .card-icon {
             width: 60px;
             height: 60px;
             background: var(--gradient-primary);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+        }
+
+        .hub-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--gradient-neon);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .card-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        /* Marketplace Preview */
+        .product-showcase {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+
+        .product-item {
+            min-width: 120px;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 0.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .price {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            margin: 0;
+        }
+
+        /* Learning Hub */
+        .lesson-preview {
+            margin-bottom: 1.5rem;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .lesson-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--neon-green);
+            transform: translateX(5px);
+        }
+
+        .lesson-item.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .lesson-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-neon);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .lesson-icon i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .lesson-info {
+            flex: 1;
+        }
+
+        .lesson-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 0.3rem 0;
+            color: #2c3e50;
+        }
+
+        .lesson-desc {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+        }
+
+        .lesson-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .status-badge.completed {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--neon-green);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-badge.in-progress {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-badge.locked {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+            border: 1px solid rgba(108, 117, 125, 0.3);
+        }
+
+        .lesson-duration {
+            font-size: 0.7rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .lesson-item.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .lesson-item.locked:hover {
+            transform: none;
+            background: rgba(40, 167, 69, 0.05);
+            border-color: transparent;
+        }
+
+        .lesson-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-neon);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Challenge Arena */
+        .challenge-showcase {
+            margin-bottom: 1.5rem;
+        }
+
+        .challenge-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .challenge-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--neon-green);
+            transform: translateX(5px);
+        }
+
+        .challenge-item.daily {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .challenge-item.weekly {
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .challenge-item.monthly {
+            border-left: 4px solid #feca57;
+        }
+
+        .challenge-item.special {
+            border-left: 4px solid #9c27b0;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.05) 0%, rgba(103, 58, 183, 0.05) 100%);
+        }
+
+        .challenge-reward {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .reward-points {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .reward-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6c757d;
+            background: rgba(108, 117, 125, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 8px;
+            border: 1px solid rgba(108, 117, 125, 0.2);
+        }
+
+        .challenge-badge {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 1.5rem;
-            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .challenge-item.daily .challenge-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        }
+
+        .challenge-item.weekly .challenge-badge {
+            background: linear-gradient(45deg, #4ecdc4, #6ee7df);
+        }
+
+        .challenge-item.monthly .challenge-badge {
+            background: linear-gradient(45deg, #feca57, #ffd93d);
+        }
+
+        .challenge-badge i {
+            font-size: 1.2rem;
             color: white;
-            transition: all 0.4s ease;
         }
 
-        .step-item:hover .step-number {
-            transform: scale(1.1);
+        .challenge-info {
+            flex: 1;
         }
 
-        .step-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+        .challenge-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 0 0 0.3rem 0;
             color: #2c3e50;
         }
 
-        .step-description {
+        .challenge-info p {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .challenge-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-complete {
+            color: var(--neon-green);
+        }
+
+        .status-progress {
+            color: #4ecdc4;
+        }
+
+        .status-locked {
+            color: #6c757d;
+        }
+
+        /* Epic Leaderboard */
+        .leaderboard-preview {
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(40, 167, 69, 0.1);
+        }
+
+        .leaderboard-header h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .leaderboard-header p {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .leaderboard-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .leaderboard-entry:hover {
+            transform: translateX(5px);
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--neon-green);
+        }
+
+        .leaderboard-entry.gold {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+            border-left: 4px solid #ffd700;
+        }
+
+        .leaderboard-entry.silver {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(169, 169, 169, 0.1) 100%);
+            border-left: 4px solid #c0c0c0;
+        }
+
+        .leaderboard-entry.bronze {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.1) 0%, rgba(218, 165, 32, 0.1) 100%);
+            border-left: 4px solid #cd7f32;
+        }
+
+        .rank-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .rank-badge i {
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .rank-number {
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .leaderboard-entry.gold .rank-badge {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .leaderboard-entry.silver .rank-badge {
+            background: linear-gradient(45deg, #c0c0c0, #e5e5e5);
+            box-shadow: 0 4px 15px rgba(192, 192, 192, 0.3);
+        }
+
+        .leaderboard-entry.bronze .rank-badge {
+            background: linear-gradient(45deg, #cd7f32, #daa520);
+            box-shadow: 0 4px 15px rgba(205, 127, 50, 0.3);
+        }
+
+        .leaderboard-entry:not(.gold):not(.silver):not(.bronze) .rank-badge {
+            background: var(--gradient-primary);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--gradient-neon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .user-details h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 0.2rem 0;
+        }
+
+        .user-details p {
+            font-size: 0.7rem;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .achievement-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--neon-green);
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .achievement-badge i {
+            font-size: 0.8rem;
+        }
+
+        .leaderboard-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 2px solid rgba(40, 167, 69, 0.1);
+        }
+
+        .user-avatars {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            border: 2px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar i {
+            font-size: 1.2rem;
+        }
+
+        .avatar-more {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(40, 167, 69, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-green);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 2px solid var(--neon-green);
+        }
+
+        .community-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-item .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--neon-green);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-item .stat-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        /* Interaction Buttons */
+        .interaction-area {
+            text-align: center;
+        }
+
+        .hub-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hub-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-medium);
+            background: var(--gradient-neon);
+        }
+
+        .hub-btn i {
+            font-size: 1rem;
+        }
+
+        /* Floating Elements */
+        .floating-elements-hub {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-neon);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            animation: floatHub 6s ease-in-out infinite;
+            animation-delay: var(--delay);
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 20%;
+            left: 10%;
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 60%;
+            left: 15%;
+        }
+
+        .floating-icon:nth-child(3) {
+            top: 30%;
+            right: 10%;
+        }
+
+        .floating-icon:nth-child(4) {
+            top: 70%;
+            right: 15%;
+        }
+
+        @keyframes floatHub {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Epic Leaderboard Section */
+        .epic-leaderboard {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .epic-leaderboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(192, 192, 192, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(205, 127, 50, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .epic-leaderboard .section-title {
+            color: white;
+        }
+
+        .epic-leaderboard .section-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .leaderboard-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .leaderboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+            border-radius: 25px;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .leaderboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .leaderboard-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+        }
+
+        .leaderboard-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .leaderboard-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .leaderboard-entry:hover::before {
+            left: 100%;
+        }
+
+        .leaderboard-entry:hover {
+            transform: translateX(10px) scale(1.02);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .leaderboard-entry.gold {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.15) 100%);
+            border-left: 5px solid #ffd700;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .leaderboard-entry.silver {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.15) 0%, rgba(169, 169, 169, 0.15) 100%);
+            border-left: 5px solid #c0c0c0;
+            box-shadow: 0 5px 20px rgba(192, 192, 192, 0.2);
+        }
+
+        .leaderboard-entry.bronze {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.15) 0%, rgba(218, 165, 32, 0.15) 100%);
+            border-left: 5px solid #cd7f32;
+            box-shadow: 0 5px 20px rgba(205, 127, 50, 0.2);
+        }
+
+        .rank-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .rank-badge i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .rank-number {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .leaderboard-entry.gold .rank-badge {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .leaderboard-entry.silver .rank-badge {
+            background: linear-gradient(45deg, #c0c0c0, #e5e5e5);
+            box-shadow: 0 8px 25px rgba(192, 192, 192, 0.4);
+        }
+
+        .leaderboard-entry.bronze .rank-badge {
+            background: linear-gradient(45deg, #cd7f32, #daa520);
+            box-shadow: 0 8px 25px rgba(205, 127, 50, 0.4);
+        }
+
+        .leaderboard-entry:not(.gold):not(.silver):not(.bronze) .rank-badge {
+            background: var(--gradient-neon);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-neon);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .user-details h5 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin: 0 0 0.3rem 0;
+        }
+
+        .user-details p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+        }
+
+        .achievement-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--neon-green);
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .achievement-badge i {
+            font-size: 1rem;
+        }
+
+        .leaderboard-stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .leaderboard-stats .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .leaderboard-stats .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--neon-green);
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .leaderboard-stats .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        .leaderboard-cta {
+            text-align: center;
+        }
+
+        .cta-btn {
+            background: var(--gradient-neon);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+            text-decoration: none;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0, 255, 136, 0.4);
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+        }
+
+        .cta-btn i {
+            font-size: 1.1rem;
+        }
+
+        .stat-icon i {
+            font-size: 2rem;
+            color: white;
+            z-index: 2;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.4s ease;
+        }
+
+        .stat-card:hover .stat-number {
+            color: var(--neon-green);
+            transform: scale(1.1);
+        }
+
+        /* Interactive Stat Cards */
+        .interactive-stat {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .clickable-icon {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clickable-icon:active {
+            transform: scale(0.9);
+        }
+
+        .click-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: var(--gradient-neon);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .clickable-icon.clicked .click-effect {
+            width: 120px;
+            height: 120px;
+            opacity: 0.3;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .interactive-stat:hover .click-hint {
+            opacity: 1;
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .stat-number.animating {
+            animation: numberBump 0.3s ease-out;
+        }
+
+        @keyframes numberBump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .progress-bar.animating {
+            animation: progressFill 0.5s ease-out;
+        }
+
+        @keyframes progressFill {
+            from { width: 0%; }
+        }
+
+        /* Achievement notifications */
+        .achievement-notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--gradient-neon);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: var(--shadow-heavy);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            max-width: 300px;
+        }
+
+        .achievement-notification.show {
+            transform: translateX(0);
+        }
+
+        .achievement-notification h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .achievement-notification p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-neon);
+            border-radius: 4px;
+            transition: width 2s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .impact-visualization {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 5rem;
+            flex-wrap: wrap;
+        }
+
+        .impact-circle {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .circle-progress {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--gradient-neon) 0deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: rotate 3s linear infinite;
+        }
+
+        .circle-inner {
+            width: 80%;
+            height: 80%;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .progress-percentage {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .progress-label {
+            font-size: 1rem;
+            color: #6c757d;
+            font-weight: 600;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .impact-message {
+            max-width: 500px;
+            text-align: left;
+        }
+
+        .impact-message h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .highlight {
+            color: var(--neon-green);
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .impact-message p {
+            font-size: 1.1rem;
             color: #6c757d;
             line-height: 1.6;
         }
@@ -1127,49 +2320,460 @@
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="how-it-works">
+    <!-- GreenLink Experience Hub -->
+    <section class="experience-hub">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">Cum Funcționează</h2>
+                <h2 class="section-title">
+                    <i class="bi bi-stars me-3" style="color: var(--neon-green);"></i>
+                    GreenLink Experience Hub
+                </h2>
                 <p class="section-subtitle">
-                    În doar câteva pași simpli, poți începe să-ți construiești identitatea digitală sustenabilă și să contribui la protejarea mediului.
+                    Explorează și interacționează cu toate funcționalitățile platformei într-un mod creativ și distractiv!
                 </p>
             </div>
 
-            <div class="steps-container">
-                <div class="steps-grid">
-                    <div class="step-item" data-aos="fade-up" data-aos-delay="100">
-                        <div class="step-number">1</div>
-                        <h3 class="step-title">Creează Contul</h3>
-                        <p class="step-description">
-                            Înregistrează-te rapid cu email sau prin OAuth (Google/GitHub) și personalizează-ți profilul.
-                        </p>
+            <div class="hub-grid">
+                <!-- Interactive Marketplace Preview -->
+                <div class="hub-card marketplace-preview" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <h3>Marketplace Explorer</h3>
                     </div>
+                    <div class="card-content">
+                        <div class="product-showcase">
+                            <div class="product-item" data-product="1">
+                                <div class="product-image">
+                                    <img src="/images/products/Bamboo Toothbrush.png" alt="Bamboo Toothbrush">
+                                </div>
+                                <div class="product-info">
+                                    <h4>Bamboo Toothbrush</h4>
+                                    <p class="price">€3.50</p>
+                                </div>
+                            </div>
+                            <div class="product-item" data-product="2">
+                                <div class="product-image">
+                                    <img src="/images/products/Organic cotton T-shirt.png" alt="Organic T-shirt">
+                                </div>
+                                <div class="product-info">
+                                    <h4>Organic T-shirt</h4>
+                                    <p class="price">€15.00</p>
+                                </div>
+                            </div>
+                            <div class="product-item" data-product="3">
+                                <div class="product-image">
+                                    <img src="/images/products/Organic honey.png" alt="Organic Honey">
+                                </div>
+                                <div class="product-info">
+                                    <h4>Organic Honey</h4>
+                                    <p class="price">€8.90</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="interaction-area">
+                            <button class="hub-btn" onclick="window.location.href='/marketplace'">
+                                <i class="bi bi-arrow-right"></i>
+                                Explorează Marketplace
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="step-item" data-aos="fade-up" data-aos-delay="200">
-                        <div class="step-number">2</div>
-                        <h3 class="step-title">Explorează Funcționalitățile</h3>
-                        <p class="step-description">
-                            Descoperă cursurile educaționale, marketplace-ul, provocările și harta de reciclare.
-                        </p>
+                <!-- Interactive Learning Hub -->
+                <div class="hub-card learning-hub" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="bi bi-book"></i>
+                        </div>
+                        <h3>Learning Center</h3>
                     </div>
+                    <div class="card-content">
+                        <div class="lesson-preview">
+                            <div class="lesson-item active" data-lesson="1" onclick="window.location.href='/educatie/curs/1'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-leaf"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4>Ce este sustenabilitatea?</h4>
+                                    <p class="lesson-desc">Învață principiile fundamentale</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" style="width: 85%"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge completed">✓ Completat</span>
+                                        <span class="lesson-duration">15 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lesson-item" data-lesson="2" onclick="window.location.href='/educatie/curs2'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-recycle"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4>Cum să reciclezi corect</h4>
+                                    <p class="lesson-desc">Regulile de bază pentru reciclare</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" style="width: 60%"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge in-progress">🔄 În curs</span>
+                                        <span class="lesson-duration">20 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lesson-item" data-lesson="3" onclick="window.location.href='/educatie/curs/3'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-lightning"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4>Redu deșeurile cu un singur schimb</h4>
+                                    <p class="lesson-desc">Schimbări mici pentru impact mare</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" style="width: 30%"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge in-progress">🔄 În curs</span>
+                                        <span class="lesson-duration">18 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lesson-item locked" data-lesson="4" onclick="window.location.href='/educatie/curs/4'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-tree"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4>Începe un mini-compost acasă</h4>
+                                    <p class="lesson-desc">Transformă resturile în viață nouă</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge locked">🔒 Blocat</span>
+                                        <span class="lesson-duration">25 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="interaction-area">
+                            <button class="hub-btn" onclick="window.location.href='/educatie'">
+                                <i class="bi bi-play-circle"></i>
+                                Explorează Toate Lecțiile
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="step-item" data-aos="fade-up" data-aos-delay="300">
-                        <div class="step-number">3</div>
-                        <h3 class="step-title">Participă Activamente</h3>
-                        <p class="step-description">
-                            Completează cursuri, rezolvă provocări, vinde/cumpără produse și calculează-ți amprenta de carbon.
-                        </p>
+                <!-- Challenge Arena -->
+                <div class="hub-card challenge-arena" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <h3>Challenge Arena</h3>
                     </div>
+                    <div class="card-content">
+                        <div class="challenge-showcase">
+                            <div class="challenge-item daily" onclick="window.location.href='/provocari'">
+                                <div class="challenge-badge">
+                                    <i class="bi bi-person-circle"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <h4>Profile Perfectionist</h4>
+                                    <p>Upload a profile photo</p>
+                                    <div class="challenge-reward">
+                                        <span class="reward-points">+30 puncte</span>
+                                        <span class="reward-badge">📸 Photographer Badge</span>
+                                    </div>
+                                    <div class="challenge-status">
+                                        <span class="status-complete">✓ Completat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="challenge-item weekly" onclick="window.location.href='/provocari'">
+                                <div class="challenge-badge">
+                                    <i class="bi bi-book"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <h4>Knowledge Seeker</h4>
+                                    <p>Complete 3 lessons in the education section</p>
+                                    <div class="challenge-reward">
+                                        <span class="reward-points">+100 puncte</span>
+                                        <span class="reward-badge">🎓 Scholar Badge</span>
+                                    </div>
+                                    <div class="challenge-status">
+                                        <span class="status-progress">2/3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="challenge-item monthly" onclick="window.location.href='/provocari'">
+                                <div class="challenge-badge">
+                                    <i class="bi bi-shop"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <h4>Marketplace Explorer</h4>
+                                    <p>List your first item in the marketplace</p>
+                                    <div class="challenge-reward">
+                                        <span class="reward-points">+75 puncte</span>
+                                        <span class="reward-badge">🛒 Trader Badge</span>
+                                    </div>
+                                    <div class="challenge-status">
+                                        <span class="status-locked">🔒 Blocat</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="challenge-item special" onclick="window.location.href='/provocari'">
+                                <div class="challenge-badge">
+                                    <i class="bi bi-gem"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <h4>Education Master</h4>
+                                    <p>Complete all available lessons</p>
+                                    <div class="challenge-reward">
+                                        <span class="reward-points">+500 puncte</span>
+                                        <span class="reward-badge">👑 Maester Badge</span>
+                                    </div>
+                                    <div class="challenge-status">
+                                        <span class="status-progress">4/6</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="challenge-item special" onclick="window.location.href='/provocari'">
+                                <div class="challenge-badge">
+                                    <i class="bi bi-calculator"></i>
+                                </div>
+                                <div class="challenge-info">
+                                    <h4>Carbon Expert</h4>
+                                    <p>Use the carbon calculator 10 times</p>
+                                    <div class="challenge-reward">
+                                        <span class="reward-points">+400 puncte</span>
+                                        <span class="reward-badge">🧮 Carbon Expert Badge</span>
+                                    </div>
+                                    <div class="challenge-status">
+                                        <span class="status-progress">3/10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="interaction-area">
+                            <button class="hub-btn" onclick="window.location.href='/provocari'">
+                                <i class="bi bi-flag"></i>
+                                Acceptă Provocări
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="step-item" data-aos="fade-up" data-aos-delay="400">
-                        <div class="step-number">4</div>
-                        <h3 class="step-title">Construiește-ți Identitatea</h3>
-                        <p class="step-description">
-                            Urmărește progresul, câștigă puncte, avansează în niveluri și conectează-te cu comunitatea.
-                        </p>
+                <!-- Community Hub -->
+                <div class="hub-card community-hub" data-aos="fade-up" data-aos-delay="400">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <h3>Community Hub</h3>
                     </div>
+                    <div class="card-content">
+                        <div class="community-preview">
+                            <div class="user-avatars">
+                                <div class="avatar" style="background: var(--gradient-neon);">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="avatar" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="avatar" style="background: linear-gradient(45deg, #45b7d1, #96ceb4);">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="avatar" style="background: linear-gradient(45deg, #feca57, #ff9ff3);">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="avatar-more">
+                                    <span>+25</span>
+                                </div>
+                            </div>
+                            <div class="community-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number">89</span>
+                                    <span class="stat-label">Membri</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">156</span>
+                                    <span class="stat-label">Produse</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number">42</span>
+                                    <span class="stat-label">Lecții</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="interaction-area">
+                            <button class="hub-btn" onclick="window.location.href='/friends'">
+                                <i class="bi bi-chat-dots"></i>
+                                Conectează-te
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Floating Elements -->
+            <div class="floating-elements-hub">
+                <div class="floating-icon" style="--delay: 0s">
+                    <i class="bi bi-recycle"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 2s">
+                    <i class="bi bi-leaf"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 4s">
+                    <i class="bi bi-lightning"></i>
+                </div>
+                <div class="floating-icon" style="--delay: 6s">
+                    <i class="bi bi-tree"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Epic Leaderboard Section -->
+    <section class="epic-leaderboard">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">
+                    <i class="bi bi-trophy-fill me-3" style="color: var(--neon-green);"></i>
+                    Epic Leaderboard
+                </h2>
+                <p class="section-subtitle">
+                    Meet the top environmental champions who are leading the eco-revolution!
+                </p>
+            </div>
+
+            <div class="leaderboard-container" data-aos="fade-up" data-aos-delay="200">
+                <div class="leaderboard-header">
+                    <h3>🏆 Top Eco Warriors</h3>
+                    <p>Celebrating environmental champions</p>
+                </div>
+                
+                <div class="leaderboard-entries">
+                    <div class="leaderboard-entry gold" onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <i class="bi bi-trophy-fill"></i>
+                            <span class="rank-number">1</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5>Eco Master</h5>
+                                <p>Level 15 • 2,450 points</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i class="bi bi-gem"></i>
+                            <span>Maester</span>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-entry silver" onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <i class="bi bi-award-fill"></i>
+                            <span class="rank-number">2</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5>Green Champion</h5>
+                                <p>Level 12 • 1,890 points</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i class="bi bi-star"></i>
+                            <span>Advocate</span>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-entry bronze" onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <i class="bi bi-patch-check-fill"></i>
+                            <span class="rank-number">3</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5>Sustainability Pro</h5>
+                                <p>Level 10 • 1,567 points</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i class="bi bi-book"></i>
+                            <span>Scholar</span>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <span class="rank-number">4</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5>Recycling Hero</h5>
+                                <p>Level 8 • 1,234 points</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i class="bi bi-recycle"></i>
+                            <span>Recycler</span>
+                        </div>
+                    </div>
+                    
+                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <span class="rank-number">5</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5>Nature Lover</h5>
+                                <p>Level 6 • 987 points</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i class="bi bi-tree"></i>
+                            <span>Planter</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="leaderboard-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">89</span>
+                        <span class="stat-label">Competitors</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">15,420</span>
+                        <span class="stat-label">Total Points</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">42</span>
+                        <span class="stat-label">Badges Earned</span>
+                    </div>
+                </div>
+                
+                <div class="leaderboard-cta">
+                    <button class="cta-btn" onclick="window.location.href='/points/leaderboard'">
+                        <i class="bi bi-list-ol"></i>
+                        Vezi Leaderboard Complet
+                    </button>
                 </div>
             </div>
         </div>
@@ -1424,6 +3028,266 @@
             }
         `;
         document.head.appendChild(rippleStyle);
+
+        // Interactive click counters for statistics
+        let clickCounts = {
+            items: 0,
+            lessons: 0,
+            challenges: 0,
+            users: 0
+        };
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('greenlinkStats');
+            if (saved) {
+                clickCounts = JSON.parse(saved);
+                updateAllDisplays();
+            }
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            localStorage.setItem('greenlinkStats', JSON.stringify(clickCounts));
+        }
+
+        // Update display for a specific stat
+        function updateDisplay(statType) {
+            const card = document.querySelector(`[data-stat="${statType}"]`);
+            if (!card) return;
+
+            const numberElement = card.querySelector('.stat-number');
+            const progressBar = card.querySelector('.progress-bar');
+            const max = parseInt(card.dataset.max);
+            const current = clickCounts[statType];
+
+            // Update number with animation
+            numberElement.textContent = current.toLocaleString();
+            numberElement.classList.add('animating');
+            setTimeout(() => numberElement.classList.remove('animating'), 300);
+
+            // Update progress bar
+            const percentage = Math.min((current / max) * 100, 100);
+            progressBar.style.width = percentage + '%';
+            progressBar.classList.add('animating');
+            setTimeout(() => progressBar.classList.remove('animating'), 500);
+
+            // Update data attribute
+            numberElement.setAttribute('data-current', current);
+        }
+
+        // Update all displays
+        function updateAllDisplays() {
+            Object.keys(clickCounts).forEach(statType => {
+                updateDisplay(statType);
+            });
+        }
+
+        // Handle click on stat cards
+        function handleStatClick(event) {
+            const card = event.currentTarget;
+            const statType = card.dataset.stat;
+            const increment = parseInt(card.dataset.increment);
+            const max = parseInt(card.dataset.max);
+
+            // Add click effect
+            const icon = card.querySelector('.clickable-icon');
+            icon.classList.add('clicked');
+            setTimeout(() => icon.classList.remove('clicked'), 300);
+
+            // Increment counter
+            clickCounts[statType] += increment;
+            
+            // Cap at maximum
+            if (clickCounts[statType] > max) {
+                clickCounts[statType] = max;
+            }
+
+            // Update display
+            updateDisplay(statType);
+            
+            // Save progress
+            saveProgress();
+
+            // Create particle effect
+            createClickParticle(event);
+
+            // Check for achievements
+            checkAchievements(statType, clickCounts[statType]);
+
+            // Update total impact
+            updateTotalImpact();
+        }
+
+        // Create particle effect on click
+        function createClickParticle(event) {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = event.clientX + 'px';
+            particle.style.top = event.clientY + 'px';
+            particle.style.width = '8px';
+            particle.style.height = '8px';
+            particle.style.background = 'var(--gradient-neon)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '9999';
+            particle.style.animation = 'clickParticle 0.6s ease-out forwards';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 600);
+        }
+
+        // Add click particle animation
+        const clickParticleStyle = document.createElement('style');
+        clickParticleStyle.textContent = `
+            @keyframes clickParticle {
+                0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1) rotate(180deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(0) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(clickParticleStyle);
+
+        // Check for achievements
+        function checkAchievements(statType, value) {
+            const achievements = {
+                items: [
+                    { threshold: 10, title: 'Vânzător Începător', message: 'Ai listat primele 10 produse!' },
+                    { threshold: 25, title: 'Vânzător Dedicat', message: 'Ai listat 25 de produse!' },
+                    { threshold: 50, title: 'Vânzător Expert', message: 'Ai listat 50 de produse!' }
+                ],
+                lessons: [
+                    { threshold: 5, title: 'Student Începător', message: 'Ai finalizat primele 5 lecții!' },
+                    { threshold: 15, title: 'Student Dedicat', message: 'Ai finalizat 15 lecții!' },
+                    { threshold: 30, title: 'Student Expert', message: 'Ai finalizat 30 de lecții!' }
+                ],
+                challenges: [
+                    { threshold: 5, title: 'Challenger Începător', message: 'Ai finalizat primele 5 provocări!' },
+                    { threshold: 15, title: 'Challenger Dedicat', message: 'Ai finalizat 15 provocări!' },
+                    { threshold: 25, title: 'Challenger Expert', message: 'Ai finalizat 25 de provocări!' }
+                ],
+                users: [
+                    { threshold: 10, title: 'Influencer Începător', message: 'Ai invitat 10 utilizatori!' },
+                    { threshold: 25, title: 'Influencer Dedicat', message: 'Ai invitat 25 de utilizatori!' },
+                    { threshold: 50, title: 'Influencer Expert', message: 'Ai invitat 50 de utilizatori!' }
+                ]
+            };
+
+            const statAchievements = achievements[statType] || [];
+            statAchievements.forEach(achievement => {
+                if (value === achievement.threshold) {
+                    showAchievement(achievement.title, achievement.message);
+                }
+            });
+        }
+
+        // Show achievement notification
+        function showAchievement(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <h4><i class="bi bi-trophy-fill me-2"></i>${title}</h4>
+                <p>${message}</p>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 500);
+            }, 3000);
+        }
+
+        // Update total impact message
+        function updateTotalImpact() {
+            const totalItems = clickCounts.items;
+            const totalLessons = clickCounts.lessons;
+            const impactMessage = document.querySelector('.impact-message h3');
+            if (impactMessage) {
+                impactMessage.innerHTML = `Comunitatea GreenLink a creat <span class="highlight">${totalItems.toLocaleString()} de produse sustenabile</span> și finalizat <span class="highlight">${totalLessons.toLocaleString()} de lecții</span>!`;
+            }
+        }
+
+        // Initialize interactive stats
+        function initInteractiveStats() {
+            const statCards = document.querySelectorAll('.interactive-stat');
+            statCards.forEach(card => {
+                card.addEventListener('click', handleStatClick);
+            });
+
+            // Load saved progress
+            loadProgress();
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initInteractiveStats);
+
+        // Add floating particles to impact section
+        function createFloatingParticles() {
+            const impactSection = document.querySelector('.impact-stats');
+            if (!impactSection) return;
+
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 4 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = `hsl(${120 + Math.random() * 60}, 70%, 60%)`;
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = '0.3';
+                particle.style.pointerEvents = 'none';
+                particle.style.animation = `floatParticle ${5 + Math.random() * 10}s linear infinite`;
+                particle.style.zIndex = '1';
+
+                impactSection.appendChild(particle);
+            }
+        }
+
+        // Add floating particle animation
+        const particleStyle = document.createElement('style');
+        particleStyle.textContent = `
+            @keyframes floatParticle {
+                0% {
+                    transform: translateY(100vh) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.3;
+                }
+                90% {
+                    opacity: 0.3;
+                }
+                100% {
+                    transform: translateY(-100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(particleStyle);
+
+        // Initialize floating particles
+        createFloatingParticles();
     </script>
 </body>
 </html>
