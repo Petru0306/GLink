@@ -30,11 +30,18 @@
             --accent-green: #198754;
             --dark-green: #146c43;
             --light-green: #d1e7dd;
+            --neon-green: #00ff88;
+            --electric-green: #39ff14;
+            --emerald-green: #50c878;
             --gradient-primary: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             --gradient-secondary: linear-gradient(135deg, #20c997 0%, #0dcaf0 100%);
+            --gradient-neon: linear-gradient(45deg, #00ff88, #39ff14, #50c878);
+            --gradient-rainbow: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
             --shadow-light: 0 10px 30px rgba(40, 167, 69, 0.1);
             --shadow-medium: 0 20px 40px rgba(40, 167, 69, 0.15);
             --shadow-heavy: 0 30px 60px rgba(40, 167, 69, 0.2);
+            --shadow-neon: 0 0 20px rgba(0, 255, 136, 0.5);
+            --glow-green: 0 0 30px rgba(40, 167, 69, 0.6);
         }
 
         * {
@@ -135,6 +142,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: gradientShift 8s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background: var(--gradient-primary); }
+            25% { background: linear-gradient(135deg, #20c997 0%, #28a745 100%); }
+            50% { background: linear-gradient(135deg, #198754 0%, #20c997 100%); }
+            75% { background: linear-gradient(135deg, #28a745 0%, #198754 100%); }
         }
 
         .hero-background {
@@ -147,6 +162,22 @@
                 radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: backgroundShift 10s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% {
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            }
+            50% {
+                background: 
+                    radial-gradient(circle at 80% 20%, rgba(0,255,136,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 80%, rgba(57,255,20,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 60% 60%, rgba(80,200,120,0.05) 0%, transparent 50%);
+            }
         }
 
         .floating-elements {
@@ -163,6 +194,22 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .floating-element::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-neon);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 2s ease-in-out infinite;
         }
 
         .floating-element:nth-child(1) {
@@ -343,9 +390,13 @@
 
         .platform-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
             margin-top: 4rem;
+            justify-items: center;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .platform-card {
@@ -353,10 +404,34 @@
             border-radius: 20px;
             padding: 2.5rem;
             box-shadow: var(--shadow-light);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            width: 100%;
+            max-width: 380px;
+            border: 2px solid transparent;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: var(--shadow-heavy), var(--glow-green);
+            border-color: var(--neon-green);
+        }
+
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .platform-card:hover::after {
+            left: 100%;
         }
 
         .platform-card::before {
@@ -381,19 +456,51 @@
         }
 
         .platform-icon {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             background: var(--gradient-primary);
-            border-radius: 20px;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 1.5rem;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-neon);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .platform-card:hover .platform-icon::before {
+            opacity: 1;
         }
 
         .platform-card:hover .platform-icon {
-            transform: scale(1.1) rotate(5deg);
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .platform-icon i {
+            font-size: 2.2rem;
+            color: white;
+            z-index: 2;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .platform-card:hover .platform-icon i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
         }
 
         .platform-icon i {
@@ -411,6 +518,35 @@
         .platform-description {
             color: #6c757d;
             line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-tag {
+            background: linear-gradient(45deg, var(--light-green), var(--secondary-green));
+            color: var(--dark-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .platform-card:hover .feature-tag {
+            background: var(--gradient-neon);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: var(--shadow-neon);
         }
 
         /* Features Showcase */
@@ -740,64 +876,118 @@
             </div>
             
             <div class="platform-grid">
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="100" onclick="window.location.href='/dashboard'">
                     <div class="platform-icon">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
-                    <h3 class="platform-title">Sistem de Puncte & Niveluri</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-trophy-fill me-2" style="color: var(--neon-green);"></i>
+                        Sistem de Puncte & Niveluri
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-star-fill me-1" style="color: var(--electric-green);"></i>
                         Obține puncte și avansează în niveluri prin acțiuni sustenabile. Fiecare activitate ecologică este recompensată și afișată în profilul tău digital.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-check-circle"></i> Gamificare</span>
+                        <span class="feature-tag"><i class="bi bi-award"></i> Recompense</span>
+                        <span class="feature-tag"><i class="bi bi-graph-up"></i> Progres</span>
+                    </div>
                 </div>
 
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="200" onclick="window.location.href='/educatie'">
                     <div class="platform-icon">
                         <i class="bi bi-book"></i>
                     </div>
-                    <h3 class="platform-title">Educație Interactivă</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-mortarboard-fill me-2" style="color: var(--neon-green);"></i>
+                        Educație Interactivă
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
                         Cursuri gamificate despre sustenabilitate, biodiversitate, energie verde și reciclare. Învață prin experiențe interactive și teste.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-play-circle"></i> Cursuri</span>
+                        <span class="feature-tag"><i class="bi bi-question-circle"></i> Teste</span>
+                        <span class="feature-tag"><i class="bi bi-emoji-smile"></i> Interactiv</span>
+                    </div>
                 </div>
 
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="300" onclick="window.location.href='/marketplace'">
                     <div class="platform-icon">
                         <i class="bi bi-shop"></i>
                     </div>
-                    <h3 class="platform-title">Marketplace Sustenabil</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-bag-heart-fill me-2" style="color: var(--neon-green);"></i>
+                        Marketplace Sustenabil
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-recycle me-1" style="color: var(--electric-green);"></i>
                         Vinde și cumpără produse eco-friendly, second-hand sau sustenabile. Fiecare tranzacție contribuie la economia circulară.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-cart-plus"></i> Vânzare</span>
+                        <span class="feature-tag"><i class="bi bi-cart-check"></i> Cumpărare</span>
+                        <span class="feature-tag"><i class="bi bi-currency-exchange"></i> Plăți</span>
+                    </div>
                 </div>
 
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="400" onclick="window.location.href='/reciclare'">
                     <div class="platform-icon">
                         <i class="bi bi-recycle"></i>
                     </div>
-                    <h3 class="platform-title">Hartă de Reciclare</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-geo-alt-fill me-2" style="color: var(--neon-green);"></i>
+                        Hartă de Reciclare
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-map me-1" style="color: var(--electric-green);"></i>
                         Găsește puncte de reciclare apropiate și învață cum să reciclezi corect diferitele tipuri de materiale.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-geo-alt"></i> Localizare</span>
+                        <span class="feature-tag"><i class="bi bi-info-circle"></i> Ghiduri</span>
+                        <span class="feature-tag"><i class="bi bi-pin-map"></i> Hartă</span>
+                    </div>
                 </div>
 
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="500" onclick="window.location.href='/calculator'">
                     <div class="platform-icon">
                         <i class="bi bi-calculator"></i>
                     </div>
-                    <h3 class="platform-title">Calculator de Carbon</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-speedometer2 me-2" style="color: var(--neon-green);"></i>
+                        Calculator de Carbon
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-graph-down me-1" style="color: var(--electric-green);"></i>
                         Calculează amprenta ta de carbon și primește recomandări personalizate pentru a o reduce.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-calculator"></i> Calcul</span>
+                        <span class="feature-tag"><i class="bi bi-lightbulb"></i> Recomandări</span>
+                        <span class="feature-tag"><i class="bi bi-arrow-down-circle"></i> Reducere</span>
+                    </div>
                 </div>
 
-                <div class="platform-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="600" onclick="window.location.href='/friends'">
                     <div class="platform-icon">
                         <i class="bi bi-people"></i>
                     </div>
-                    <h3 class="platform-title">Comunitate Socială</h3>
+                    <h3 class="platform-title">
+                        <i class="bi bi-heart-fill me-2" style="color: var(--neon-green);"></i>
+                        Comunitate Socială
+                    </h3>
                     <p class="platform-description">
+                        <i class="bi bi-chat-heart me-1" style="color: var(--electric-green);"></i>
                         Conectează-te cu alți utilizatori pasionați de sustenabilitate, împărtășește realizările și participă la provocări.
                     </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-people-fill"></i> Prieteni</span>
+                        <span class="feature-tag"><i class="bi bi-chat-dots"></i> Mesaje</span>
+                        <span class="feature-tag"><i class="bi bi-share"></i> Partajare</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1045,16 +1235,48 @@
             });
         });
 
-        // Parallax effect for floating elements
+        // Enhanced parallax effect for floating elements
         window.addEventListener('scroll', function() {
             const scrolled = window.pageYOffset;
             const parallax = document.querySelectorAll('.floating-element');
             
             parallax.forEach((element, index) => {
                 const speed = 0.5 + (index * 0.1);
-                element.style.transform = `translateY(${scrolled * speed}px)`;
+                const rotation = scrolled * 0.1;
+                element.style.transform = `translateY(${scrolled * speed}px) rotate(${rotation}deg)`;
             });
+
+            // Add scroll-triggered color changes
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                const opacity = Math.max(0, 1 - scrolled / 500);
+                heroSection.style.opacity = opacity;
+            }
+
+            // Add scroll progress indicator
+            const scrollProgress = (scrolled / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            updateScrollProgress(scrollProgress);
         });
+
+        // Add scroll progress bar
+        function updateScrollProgress(progress) {
+            let progressBar = document.getElementById('scroll-progress');
+            if (!progressBar) {
+                progressBar = document.createElement('div');
+                progressBar.id = 'scroll-progress';
+                progressBar.style.position = 'fixed';
+                progressBar.style.top = '0';
+                progressBar.style.left = '0';
+                progressBar.style.width = '0%';
+                progressBar.style.height = '3px';
+                progressBar.style.background = 'var(--gradient-neon)';
+                progressBar.style.zIndex = '10000';
+                progressBar.style.transition = 'width 0.3s ease';
+                progressBar.style.boxShadow = 'var(--shadow-neon)';
+                document.body.appendChild(progressBar);
+            }
+            progressBar.style.width = progress + '%';
+        }
 
         // Interactive hover effects
         document.querySelectorAll('.platform-card, .feature-item, .step-item').forEach(card => {
@@ -1067,30 +1289,56 @@
             });
         });
 
-        // Add cursor trail effect
+        // Enhanced cursor trail effect with particles
         let cursorTrail = [];
-        const maxTrailLength = 20;
+        const maxTrailLength = 15;
 
         document.addEventListener('mousemove', function(e) {
+            // Create main cursor dot
             const dot = document.createElement('div');
             dot.style.position = 'fixed';
             dot.style.left = e.clientX + 'px';
             dot.style.top = e.clientY + 'px';
-            dot.style.width = '4px';
-            dot.style.height = '4px';
-            dot.style.backgroundColor = 'rgba(40, 167, 69, 0.6)';
+            dot.style.width = '6px';
+            dot.style.height = '6px';
+            dot.style.background = 'var(--gradient-neon)';
             dot.style.borderRadius = '50%';
             dot.style.pointerEvents = 'none';
             dot.style.zIndex = '9999';
-            dot.style.transition = 'opacity 0.3s ease';
+            dot.style.transition = 'all 0.3s ease';
+            dot.style.boxShadow = 'var(--shadow-neon)';
             
             document.body.appendChild(dot);
+            
+            // Create particle effect
+            for (let i = 0; i < 3; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.left = (e.clientX + Math.random() * 20 - 10) + 'px';
+                particle.style.top = (e.clientY + Math.random() * 20 - 10) + 'px';
+                particle.style.width = '3px';
+                particle.style.height = '3px';
+                particle.style.background = `hsl(${120 + Math.random() * 60}, 100%, 60%)`;
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.zIndex = '9998';
+                particle.style.animation = `particleFloat 1s ease-out forwards`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 1000);
+            }
             
             cursorTrail.push(dot);
             
             if (cursorTrail.length > maxTrailLength) {
                 const oldDot = cursorTrail.shift();
                 oldDot.style.opacity = '0';
+                oldDot.style.transform = 'scale(0.5)';
                 setTimeout(() => {
                     if (oldDot.parentNode) {
                         oldDot.parentNode.removeChild(oldDot);
@@ -1100,8 +1348,82 @@
             
             setTimeout(() => {
                 dot.style.opacity = '0';
-            }, 100);
+                dot.style.transform = 'scale(0.8)';
+            }, 150);
         });
+
+        // Add particle float animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes particleFloat {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-50px) scale(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add magnetic effect to cards
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // Add ripple effect to cards
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(0, 255, 136, 0.3)';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.animation = 'ripple 0.6s linear';
+                ripple.style.left = (e.clientX - this.offsetLeft) + 'px';
+                ripple.style.top = (e.clientY - this.offsetTop) + 'px';
+                ripple.style.width = ripple.style.height = '100px';
+                ripple.style.pointerEvents = 'none';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    if (ripple.parentNode) {
+                        ripple.parentNode.removeChild(ripple);
+                    }
+                }, 600);
+            });
+        });
+
+        // Add ripple animation
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
     </script>
 </body>
 </html>
