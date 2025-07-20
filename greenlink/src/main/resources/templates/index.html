@@ -2209,10 +2209,10 @@
                             Participă la provocări zilnice, săptămânale și lunare pentru a-ți testa cunoștințele și a-ți îmbunătăți impactul ecologic.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Provocări personalizate în funcție de nivel</li>
-                            <li>Recompense și badge-uri exclusive</li>
-                            <li>Clasament global și local</li>
-                            <li>Tracking progres în timp real</li>
+                            <li th:text="#{home.feature.challenges.personalized}">Provocări personalizate în funcție de nivel</li>
+                            <li th:text="#{home.feature.challenges.rewards}">Recompense și badge-uri exclusive</li>
+                            <li th:text="#{home.feature.challenges.leaderboard}">Clasament global și local</li>
+                            <li th:text="#{home.feature.challenges.tracking}">Tracking progres în timp real</li>
                         </ul>
                     </div>
                 </div>
@@ -2229,10 +2229,10 @@
                             Comunică cu alți utilizatori, împărtășește experiențe și creează conexiuni în comunitatea sustenabilă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Mesaje private și grupuri</li>
-                            <li>Împărtășire de realizări</li>
-                            <li>Notificări în timp real</li>
-                            <li>Traducere automată RO/EN</li>
+                            <li th:text="#{home.feature.messages.private}">Mesaje private și grupuri</li>
+                            <li th:text="#{home.feature.messages.sharing}">Împărtășire de realizări</li>
+                            <li th:text="#{home.feature.messages.notifications}">Notificări în timp real</li>
+                            <li th:text="#{home.feature.messages.translation}">Traducere automată RO/EN</li>
                         </ul>
                     </div>
                 </div>
@@ -2249,10 +2249,10 @@
                             Salvează produsele și cursurile preferate pentru a le accesa rapid și a-ți organiza experiența pe platformă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Organizare personalizată</li>
-                            <li>Sincronizare cross-device</li>
-                            <li>Recomandări bazate pe preferințe</li>
-                            <li>Partajare cu prietenii</li>
+                            <li th:text="#{home.feature.favorites.organization}">Organizare personalizată</li>
+                            <li th:text="#{home.feature.favorites.sync}">Sincronizare cross-device</li>
+                            <li th:text="#{home.feature.favorites.recommendations}">Recomandări bazate pe preferințe</li>
+                            <li th:text="#{home.feature.favorites.sharing}">Partajare cu prietenii</li>
                         </ul>
                     </div>
                 </div>
@@ -2269,10 +2269,10 @@
                             Tranzacții sigure prin Stripe pentru marketplace, cu protecție completă a datelor și suport pentru multiple metode de plată.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Integrare Stripe completă</li>
-                            <li>Plăți cu card și transfer bancar</li>
-                            <li>Istoric tranzacții detaliat</li>
-                            <li>Suport pentru vânzători</li>
+                            <li th:text="#{home.feature.payments.stripe}">Integrare Stripe completă</li>
+                            <li th:text="#{home.feature.payments.methods}">Plăți cu card și transfer bancar</li>
+                            <li th:text="#{home.feature.payments.history}">Istoric tranzacții detaliat</li>
+                            <li th:text="#{home.feature.payments.support}">Suport pentru vânzători</li>
                         </ul>
                     </div>
                 </div>
@@ -2289,10 +2289,10 @@
                             Platformă disponibilă în română și engleză, cu suport pentru multiple regiuni și culturi.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Interfață bilingvă completă</li>
-                            <li>Conținut adaptat cultural</li>
-                            <li>Suport pentru multiple timezone-uri</li>
-                            <li>Traducere automată mesaje</li>
+                            <li th:text="#{home.feature.i18n.interface}">Interfață bilingvă completă</li>
+                            <li th:text="#{home.feature.i18n.content}">Conținut adaptat cultural</li>
+                            <li th:text="#{home.feature.i18n.timezones}">Suport pentru multiple timezone-uri</li>
+                            <li th:text="#{home.feature.i18n.translation}">Traducere automată mesaje</li>
                         </ul>
                     </div>
                 </div>
@@ -2309,10 +2309,10 @@
                             Experiență optimizată pentru toate dispozitivele - desktop, tabletă și mobil, cu interfață adaptivă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Design mobile-first</li>
-                            <li>Performanță optimizată</li>
-                            <li>Accesibilitate îmbunătățită</li>
-                            <li>Suport pentru touch gestures</li>
+                            <li th:text="#{home.feature.responsive.mobile}">Design mobile-first</li>
+                            <li th:text="#{home.feature.responsive.performance}">Performanță optimizată</li>
+                            <li th:text="#{home.feature.responsive.accessibility}">Accesibilitate îmbunătățită</li>
+                            <li th:text="#{home.feature.responsive.touch}">Suport pentru touch gestures</li>
                         </ul>
                     </div>
                 </div>
@@ -2396,8 +2396,8 @@
                                     <i class="bi bi-leaf"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Ce este sustenabilitatea?</h4>
-                                    <p class="lesson-desc">Învață principiile fundamentale</p>
+                                    <h4 th:text="#{home.lesson.center.1.title}">Ce este sustenabilitatea?</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.1.desc}">Învață principiile fundamentale</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 85%"></div>
                                     </div>
@@ -2412,8 +2412,8 @@
                                     <i class="bi bi-recycle"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Cum să reciclezi corect</h4>
-                                    <p class="lesson-desc">Regulile de bază pentru reciclare</p>
+                                    <h4 th:text="#{home.lesson.center.2.title}">Cum să reciclezi corect</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.2.desc}">Regulile de bază pentru reciclare</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 60%"></div>
                                     </div>
@@ -2428,8 +2428,8 @@
                                     <i class="bi bi-lightning"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Redu deșeurile cu un singur schimb</h4>
-                                    <p class="lesson-desc">Schimbări mici pentru impact mare</p>
+                                    <h4 th:text="#{home.lesson.center.3.title}">Redu deșeurile cu un singur schimb</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.3.desc}">Schimbări mici pentru impact mare</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 30%"></div>
                                     </div>
@@ -2444,8 +2444,8 @@
                                     <i class="bi bi-tree"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Începe un mini-compost acasă</h4>
-                                    <p class="lesson-desc">Transformă resturile în viață nouă</p>
+                                    <h4 th:text="#{home.lesson.center.4.title}">Începe un mini-compost acasă</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.4.desc}">Transformă resturile în viață nouă</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 0%"></div>
                                     </div>
@@ -2480,8 +2480,8 @@
                                     <i class="bi bi-person-circle"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Profile Perfectionist</h4>
-                                    <p>Upload a profile photo</p>
+                                    <h4 th:text="#{home.challenge.1.title}">Profile Perfectionist</h4>
+                                    <p th:text="#{home.challenge.1.desc}">Upload a profile photo</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+30 puncte</span>
                                         <span class="reward-badge">📸 Photographer Badge</span>
@@ -2496,8 +2496,8 @@
                                     <i class="bi bi-book"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Knowledge Seeker</h4>
-                                    <p>Complete 3 lessons in the education section</p>
+                                    <h4 th:text="#{home.challenge.2.title}">Knowledge Seeker</h4>
+                                    <p th:text="#{home.challenge.2.desc}">Complete 3 lessons in the education section</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+100 puncte</span>
                                         <span class="reward-badge">🎓 Scholar Badge</span>
@@ -2512,8 +2512,8 @@
                                     <i class="bi bi-shop"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Marketplace Explorer</h4>
-                                    <p>List your first item in the marketplace</p>
+                                    <h4 th:text="#{home.challenge.3.title}">Marketplace Explorer</h4>
+                                    <p th:text="#{home.challenge.3.desc}">List your first item in the marketplace</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+75 puncte</span>
                                         <span class="reward-badge">🛒 Trader Badge</span>
@@ -2528,8 +2528,8 @@
                                     <i class="bi bi-gem"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Education Master</h4>
-                                    <p>Complete all available lessons</p>
+                                    <h4 th:text="#{home.challenge.4.title}">Education Master</h4>
+                                    <p th:text="#{home.challenge.4.desc}">Complete all available lessons</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+500 puncte</span>
                                         <span class="reward-badge">👑 Maester Badge</span>
@@ -2544,8 +2544,8 @@
                                     <i class="bi bi-calculator"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Carbon Expert</h4>
-                                    <p>Use the carbon calculator 10 times</p>
+                                    <h4 th:text="#{home.challenge.5.title}">Carbon Expert</h4>
+                                    <p th:text="#{home.challenge.5.desc}">Use the carbon calculator 10 times</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+400 puncte</span>
                                         <span class="reward-badge">🧮 Carbon Expert Badge</span>
