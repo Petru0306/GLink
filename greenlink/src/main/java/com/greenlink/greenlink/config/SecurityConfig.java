@@ -41,7 +41,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.info("Configuring security filter chain");
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/payment/webhook"))  // Enable CSRF but ignore for API endpoints and webhooks
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/payment/webhook", "/dm/**"))  // Enable CSRF but ignore for API endpoints, webhooks, and DM endpoints
             .authorizeHttpRequests(auth -> {
                 logger.info("Configuring authorization rules");
                 auth
@@ -49,7 +49,7 @@ public class SecurityConfig {
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
                                    "/provocari/**", "/contact/**", "/profile/**", "/auth-test/generate-password", 
                                    "/payment/webhook", "/payment/success", "/payment/cancel", "/change-language").permitAll()
-                    .requestMatchers("/inbox/**").authenticated()
+                    .requestMatchers("/inbox/**", "/dm/**").authenticated()
                     .anyRequest().authenticated();
             })
             .formLogin(form -> {

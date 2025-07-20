@@ -1,0 +1,219 @@
+/* DM Modal Styles */
+#dmModal .modal-content {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+#dmModal .modal-header {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    color: white;
+    border-bottom: none;
+    border-radius: 1rem 1rem 0 0;
+    padding: 1.5rem;
+}
+
+#dmModal .modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+#dmModal .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+#dmModal .btn-close:hover {
+    opacity: 1;
+}
+
+#dmModal .modal-body {
+    padding: 1.5rem;
+}
+
+/* Messages Container */
+.messages-container {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef !important;
+    border-radius: 0.75rem !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Message Styles */
+.message {
+    margin-bottom: 1rem;
+}
+
+.message .d-inline-block {
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word;
+    max-width: 70%;
+}
+
+.message .bg-success {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%) !important;
+    border: none;
+}
+
+.message .bg-light {
+    background: white !important;
+    border: 1px solid #e9ecef;
+}
+
+.message-content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Input Group */
+.input-group {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#dmMessageInput {
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+#dmMessageInput:focus {
+    box-shadow: none;
+    border-color: #198754;
+}
+
+#dmSendButton {
+    border: none;
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    color: white;
+    padding: 0.75rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#dmSendButton:hover {
+    background: linear-gradient(135deg, #157347 0%, #1ea085 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#dmSendButton:active {
+    transform: translateY(0);
+}
+
+/* Scrollbar Styling */
+.messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Loading and Error States */
+.alert {
+    border-radius: 0.75rem;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #dmModal .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+    
+    .message .d-inline-block {
+        max-width: 85%;
+    }
+    
+    #dmModal .modal-body {
+        padding: 1rem;
+    }
+    
+    .messages-container {
+        height: 300px !important;
+    }
+}
+
+/* Animation for new messages */
+@keyframes messageSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message {
+    animation: messageSlideIn 0.3s ease-out;
+}
+
+/* Typing indicator (for future use) */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.875rem;
+}
+
+.typing-dots {
+    display: inline-flex;
+    margin-left: 0.5rem;
+}
+
+.typing-dots span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    margin: 0 1px;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+} 

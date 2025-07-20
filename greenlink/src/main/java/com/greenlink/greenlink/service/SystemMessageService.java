@@ -108,6 +108,28 @@ public class SystemMessageService {
             System.err.println("Failed to send conversation notification: " + e.getMessage());
         }
     }
+    
+    /**
+     * Send real-time notification for new direct messages
+     */
+    public void sendNewDirectMessageNotification(User recipient, String senderName, Long conversationId) {
+        try {
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("type", "NEW_DIRECT_MESSAGE");
+            notification.put("conversationId", conversationId);
+            notification.put("senderName", senderName);
+            notification.put("content", "New direct message from " + senderName);
+            notification.put("timestamp", System.currentTimeMillis());
+            
+            messagingTemplate.convertAndSendToUser(
+                recipient.getId().toString(), 
+                "/queue/notifications", 
+                notification
+            );
+        } catch (Exception e) {
+            System.err.println("Failed to send direct message notification: " + e.getMessage());
+        }
+    }
 
     @Transactional
     public void markAsRead(Long messageId) {

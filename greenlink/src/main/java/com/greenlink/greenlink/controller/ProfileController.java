@@ -25,6 +25,7 @@ import com.greenlink.greenlink.service.FriendService;
 import com.greenlink.greenlink.repository.PointEventRepository;
 import com.greenlink.greenlink.model.PointEvent;
 import com.greenlink.greenlink.service.ChallengeService;
+import com.greenlink.greenlink.service.DirectMessageService;
 
 /**
  * Controller for handling user profile-related operations.
@@ -43,6 +44,7 @@ public class ProfileController {
     private final FriendService friendService;
     private final PointEventRepository pointEventRepository;
     private final ChallengeService challengeService;
+    private final DirectMessageService directMessageService;
 
     @Autowired
     public ProfileController(UserService userService,
@@ -51,7 +53,8 @@ public class ProfileController {
                            QuizResultRepository quizResultRepository,
                            FriendService friendService,
                            PointEventRepository pointEventRepository,
-                           ChallengeService challengeService) {
+                           ChallengeService challengeService,
+                           DirectMessageService directMessageService) {
         this.userService = userService;
         this.challengeTrackingService = challengeTrackingService;
         this.productService = productService;
@@ -59,6 +62,7 @@ public class ProfileController {
         this.friendService = friendService;
         this.pointEventRepository = pointEventRepository;
         this.challengeService = challengeService;
+        this.directMessageService = directMessageService;
     }
 
     /**
@@ -200,6 +204,14 @@ public class ProfileController {
             model.addAttribute("isPersonalProfile", false);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("isOwnProfile", isOwnProfile);
+            
+            // Check if current user can send DM to target user (friends only)
+            if (currentUser != null && !isOwnProfile) {
+                boolean canSendMessage = directMessageService.canSendMessage(currentUser, targetUser);
+                model.addAttribute("canSendMessage", canSendMessage);
+            } else {
+                model.addAttribute("canSendMessage", false);
+            }
             
             logger.info("Public profile loaded successfully for user ID: {} ({}) - Returning template: profile/tabbed_profile", userId, targetUser.getUsername());
             return "profile/tabbed_profile";

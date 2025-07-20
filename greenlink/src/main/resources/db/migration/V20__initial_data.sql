@@ -83,7 +83,9 @@ WHERE NOT EXISTS (
     SELECT 1 FROM products WHERE name = 'Dried Fruit Mix'
 );
 
+
 -- Set admin as the seller for all products
 UPDATE products
 SET seller_id = (SELECT id FROM users WHERE email = 'admin@greenlink.com')
-WHERE seller_id IS NULL; 
+WHERE seller_id IS NULL;
+
