@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Standard Hero Section -->
+    <header th:fragment="standardHero(title, subtitle)" class="hero-section">
+        <!-- Animated bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown" th:text="${title}">Hero Title</h1>
+                    <p class="lead fs-4 mb-0 animate__animated animate__fadeInUp animate__delay-1s" th:text="${subtitle}">Hero Subtitle</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Buttons -->
+    <header th:fragment="heroWithButtons(title, subtitle, buttonText1, buttonUrl1, buttonText2, buttonUrl2)" class="hero-section">
+        <!-- Animated bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown" th:text="${title}">Hero Title</h1>
+                    <p class="lead fs-4 mb-4 animate__animated animate__fadeInUp animate__delay-1s" th:text="${subtitle}">Hero Subtitle</p>
+                    <div class="d-flex gap-4 justify-content-center animate__animated animate__fadeInUp animate__delay-2s">
+                        <a th:href="${buttonUrl1}" class="btn btn-light btn-hero">
+                            <i class="bi bi-arrow-right me-2"></i>
+                            <span th:text="${buttonText1}">Primary Button</span>
+                        </a>
+                        <a th:href="${buttonUrl2}" class="btn btn-outline-light btn-hero">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <span th:text="${buttonText2}">Secondary Button</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Wave Bottom -->
+    <header th:fragment="heroWithWave(title, subtitle)" class="hero-section wave-bottom">
+        <!-- Animated bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown" th:text="${title}">Hero Title</h1>
+                    <p class="lead fs-4 mb-0 animate__animated animate__fadeInUp animate__delay-1s" th:text="${subtitle}">Hero Subtitle</p>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+</html>
