@@ -6,19 +6,19 @@
         <div class="row">
             <div class="col-md-4 mb-4">
                 <h5 class="text-success mb-3">GreenLink</h5>
-                <p>Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.</p>
+                <p th:text="#{footer.tagline}">Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.</p>
             </div>
             <div class="col-md-4 mb-4">
-                <h5 class="text-success mb-3">Link-uri Rapide</h5>
+                <h5 class="text-success mb-3" th:text="#{footer.quick.links}">Link-uri Rapide</h5>
                 <ul class="list-unstyled">
-                    <li><a href="/educatie" class="text-light text-decoration-none">Educație</a></li>
-                    <li><a href="/marketplace" class="text-light text-decoration-none">Marketplace</a></li>
-                    <li><a href="/reciclare" class="text-light text-decoration-none">Reciclare</a></li>
-                    <li><a href="/calculator" class="text-light text-decoration-none">Calculator Carbon</a></li>
+                    <li><a href="/educatie" class="text-light text-decoration-none" th:text="#{footer.education}">Educație</a></li>
+                    <li><a href="/marketplace" class="text-light text-decoration-none" th:text="#{footer.marketplace}">Marketplace</a></li>
+                    <li><a href="/reciclare" class="text-light text-decoration-none" th:text="#{footer.recycling}">Reciclare</a></li>
+                    <li><a href="/calculator" class="text-light text-decoration-none" th:text="#{footer.calculator}">Calculator Carbon</a></li>
                 </ul>
             </div>
             <div class="col-md-4 mb-4">
-                <h5 class="text-success mb-3">Contact</h5>
+                <h5 class="text-success mb-3" th:text="#{footer.contact}">Contact</h5>
                 <ul class="list-unstyled">
                     <li><i class="bi bi-envelope me-2"></i>greenlink@gmail.com</li>
                     <li><i class="bi bi-telephone me-2"></i>+40756010835 / +40799234469</li>
@@ -28,7 +28,7 @@
         </div>
         <hr class="border-secondary">
         <div class="text-center">
-            <p class="mb-0">&copy; 2025 GreenLink. Toate drepturile rezervate.</p>
+            <p class="mb-0" th:text="#{footer.copyright}">&copy; 2025 GreenLink. Toate drepturile rezervate.</p>
         </div>
     </div>
 </footer>
