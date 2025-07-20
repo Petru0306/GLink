@@ -2023,7 +2023,7 @@
             <img src="/images/logo.svg" alt="GreenLink" class="loading-logo">
             <div class="loading-spinner"></div>
             <h3>GreenLink</h3>
-            <p>Se încarcă platforma sustenabilă...</p>
+            <p th:text="#{common.loading}">Se încarcă platforma sustenabilă...</p>
         </div>
     </div>
 
@@ -2041,18 +2041,18 @@
         </div>
         <div class="hero-content">
             <h1 class="hero-title">GreenLink</h1>
-            <p class="hero-subtitle">Platforma digitală care transformă sustenabilitatea într-o experiență socială interactivă</p>
-            <p class="hero-description">
+            <p class="hero-subtitle" th:text="#{home.subtitle}">Platforma digitală care transformă sustenabilitatea într-o experiență socială interactivă</p>
+            <p class="hero-description" th:text="#{home.description}">
                 Îmbinăm activitățile ecologice cu dinamica rețelelor sociale pentru a crea o nouă formă de identitate digitală - una care reflectă valori, impact și responsabilitate față de mediu.
             </p>
             <div class="hero-buttons">
                 <a href="/register" class="btn-hero btn-primary-hero">
                     <i class="bi bi-person-plus"></i>
-                    Începe Aventura
+                    <span th:text="#{home.start.adventure}">Începe Aventura</span>
                 </a>
                 <a href="#platform-overview" class="btn-hero btn-secondary-hero">
                     <i class="bi bi-play-circle"></i>
-                    Descoperă Platforma
+                    <span th:text="#{home.discover.platform}">Descoperă Platforma</span>
                 </a>
             </div>
         </div>
@@ -2062,8 +2062,8 @@
     <section class="platform-overview" id="platform-overview">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">O Platformă Completă pentru Sustenabilitate</h2>
-                <p class="section-subtitle">
+                <h2 class="section-title" th:text="#{home.platform.title}">O Platformă Completă pentru Sustenabilitate</h2>
+                <p class="section-subtitle" th:text="#{home.platform.subtitle}">
                     GreenLink este mai mult decât o aplicație - este o comunitate digitală care încurajează acțiuni sustenabile prin gamificare, educație și conectivitate socială.
                 </p>
             </div>
@@ -2190,8 +2190,8 @@
     <section class="features-showcase">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">Funcționalități Avansate</h2>
-                <p class="section-subtitle">
+                <h2 class="section-title" th:text="#{home.features.title}">Funcționalități Avansate</h2>
+                <p class="section-subtitle" th:text="#{home.features.subtitle}">
                     Descoperă toate instrumentele și funcționalitățile care fac din GreenLink o platformă unică pentru sustenabilitate.
                 </p>
             </div>
@@ -2324,11 +2324,11 @@
     <section class="experience-hub">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">
+                <h2 class="section-title" th:text="#{home.experience.hub.title}">
                     <i class="bi bi-stars me-3" style="color: var(--neon-green);"></i>
                     GreenLink Experience Hub
                 </h2>
-                <p class="section-subtitle">
+                <p class="section-subtitle" th:text="#{home.experience.hub.subtitle}">
                     Explorează și interacționează cu toate funcționalitățile platformei într-un mod creativ și distractiv!
                 </p>
             </div>
@@ -2340,7 +2340,7 @@
                         <div class="card-icon">
                             <i class="bi bi-shop"></i>
                         </div>
-                        <h3>Marketplace Explorer</h3>
+                        <h3 th:text="#{home.hub.marketplace.title}">Marketplace Explorer</h3>
                     </div>
                     <div class="card-content">
                         <div class="product-showcase">
@@ -2375,7 +2375,7 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/marketplace'">
                                 <i class="bi bi-arrow-right"></i>
-                                Explorează Marketplace
+                                <span th:text="#{home.hub.marketplace.button}">Explorează Marketplace</span>
                             </button>
                         </div>
                     </div>
@@ -2387,7 +2387,7 @@
                         <div class="card-icon">
                             <i class="bi bi-book"></i>
                         </div>
-                        <h3>Learning Center</h3>
+                        <h3 th:text="#{home.hub.learning.title}">Learning Center</h3>
                     </div>
                     <div class="card-content">
                         <div class="lesson-preview">
@@ -2459,7 +2459,7 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/educatie'">
                                 <i class="bi bi-play-circle"></i>
-                                Explorează Toate Lecțiile
+                                <span th:text="#{home.hub.learning.button}">Explorează Toate Lecțiile</span>
                             </button>
                         </div>
                     </div>
@@ -2471,7 +2471,7 @@
                         <div class="card-icon">
                             <i class="bi bi-trophy"></i>
                         </div>
-                        <h3>Challenge Arena</h3>
+                        <h3 th:text="#{home.hub.challenges.title}">Challenge Arena</h3>
                     </div>
                     <div class="card-content">
                         <div class="challenge-showcase">
@@ -2559,7 +2559,7 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/provocari'">
                                 <i class="bi bi-flag"></i>
-                                Acceptă Provocări
+                                <span th:text="#{home.hub.challenges.button}">Acceptă Provocări</span>
                             </button>
                         </div>
                     </div>
@@ -2589,11 +2589,11 @@
     <section class="epic-leaderboard">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">
+                <h2 class="section-title" th:text="#{home.leaderboard.title}">
                     <i class="bi bi-trophy-fill me-3" style="color: var(--neon-green);"></i>
                     Epic Leaderboard
                 </h2>
-                <p class="section-subtitle">
+                <p class="section-subtitle" th:text="#{home.leaderboard.subtitle}">
                     Meet the top environmental champions who are leading the eco-revolution!
                 </p>
             </div>
@@ -2682,8 +2682,8 @@
         <div class="cta-background"></div>
         <div class="container">
             <div class="cta-content" data-aos="fade-up">
-                <h2 class="cta-title">Gata să-ți Construiești Viitorul Sustenabil?</h2>
-                <p class="cta-description">
+                <h2 class="cta-title" th:text="#{home.cta.title}">Gata să-ți Construiești Viitorul Sustenabil?</h2>
+                <p class="cta-description" th:text="#{home.cta.description}">
                     Alătură-te comunității GreenLink și începe să-ți construiești identitatea digitală sustenabilă. Fiecare acțiune contează pentru viitorul nostru comun.
                 </p>
                 <div class="cta-buttons">
