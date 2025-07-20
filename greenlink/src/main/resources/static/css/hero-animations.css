@@ -1,0 +1,166 @@
+/* Hero Section with Animated Floating Bubbles */
+.hero-section {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    padding: 6rem 0;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: transform 0.5s ease;
+}
+
+/* Fluid background animation */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+    transform: rotate(-45deg);
+    animation: wave 20s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Add floating bubbles */
+.hero-section .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 8s ease-in-out infinite;
+    z-index: 1;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.hero-section .bubble:nth-child(1) {
+    width: 180px;
+    height: 180px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+    animation-duration: 12s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+}
+
+.hero-section .bubble:nth-child(2) {
+    width: 140px;
+    height: 140px;
+    top: 65%;
+    left: 15%;
+    animation-delay: 2s;
+    animation-duration: 10s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+}
+
+.hero-section .bubble:nth-child(3) {
+    width: 200px;
+    height: 200px;
+    top: 30%;
+    right: 20%;
+    animation-delay: 1s;
+    animation-duration: 15s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+}
+
+.hero-section .bubble:nth-child(4) {
+    width: 160px;
+    height: 160px;
+    top: 70%;
+    right: 10%;
+    animation-delay: 3s;
+    animation-duration: 14s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+}
+
+.hero-section .bubble:nth-child(5) {
+    width: 120px;
+    height: 120px;
+    top: 20%;
+    right: 40%;
+    animation-delay: 2.5s;
+    animation-duration: 13s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+}
+
+.hero-section .bubble:nth-child(6) {
+    width: 250px;
+    height: 250px;
+    top: 50%;
+    right: 30%;
+    animation-delay: 0.5s;
+    animation-duration: 18s;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+}
+
+@keyframes float {
+    0% { transform: translateY(0) scale(1) rotate(0); }
+    25% { transform: translateY(-25px) scale(1.05) rotate(2deg); }
+    50% { transform: translateY(-40px) scale(1.1) rotate(0); }
+    75% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+    100% { transform: translateY(0) scale(1) rotate(0); }
+}
+
+@keyframes wave {
+    0% { transform: translate(-50%, -50%) rotate(-45deg); }
+    100% { transform: translate(-50%, -50%) rotate(315deg); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+}
+
+/* Optional wave shape at the bottom */
+.hero-section.wave-bottom::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -2px;
+    left: 0;
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDBweCIgdmlld0JveD0iMCAwIDEyODAgMTQwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiNmOGY5ZmEiPjxwYXRoIGQ9Ik0xMjgwIDBsLTI2Mi4xIDExNi4yNmE3My4yOSA3My4yOSAwIDAgMS0zOS4wOSA2TDAgMHYxNDBoMTI4MHoiLz48L2c+PC9zdmc+');
+    background-size: 100% 102px;
+    height: 100px;
+    z-index: 2;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 4rem 0;
+    }
+    
+    .hero-section .bubble:nth-child(1) {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .hero-section .bubble:nth-child(2) {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .hero-section .bubble:nth-child(3) {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .hero-section .bubble:nth-child(4) {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .hero-section .bubble:nth-child(5) {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .hero-section .bubble:nth-child(6) {
+        width: 140px;
+        height: 140px;
+    }
+}
