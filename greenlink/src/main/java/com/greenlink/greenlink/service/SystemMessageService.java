@@ -121,11 +121,26 @@ public class SystemMessageService {
             notification.put("content", "New direct message from " + senderName);
             notification.put("timestamp", System.currentTimeMillis());
             
+            // Send to user-specific notification queue
             messagingTemplate.convertAndSendToUser(
                 recipient.getId().toString(), 
                 "/queue/notifications", 
                 notification
             );
+            
+            // Also attempt to send to recipient's specific queue to ensure delivery
+            try {
+                messagingTemplate.convertAndSendToUser(
+                    recipient.getEmail(), 
+                    "/queue/notifications", 
+                    notification
+                );
+            } catch (Exception innerEx) {
+                System.err.println("Failed to send notification to email user queue: " + innerEx.getMessage());
+            }
+            
+            // Log successful notification
+            System.out.println("Sent direct message notification to user " + recipient.getId() + " (" + recipient.getEmail() + ")");
         } catch (Exception e) {
             System.err.println("Failed to send direct message notification: " + e.getMessage());
         }

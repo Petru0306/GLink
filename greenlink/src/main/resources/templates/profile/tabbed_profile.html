@@ -46,7 +46,7 @@
                         <!-- DM Button - only show for other users' profiles and if they are friends -->
                         <button th:if="${!isPersonalProfile and canSendMessage}" 
                                 class="btn btn-success" 
-                                onclick="openDMModal()"
+                                onclick="openDMModal(event)"
                                 th:data-user-id="${profileUser.id}"
                                 th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
                             <i class="bi bi-chat-dots me-2"></i>DM
@@ -267,7 +267,6 @@
     <script th:inline="javascript">
         // DM Modal functionality
         let currentDMConversationId = null;
-        let dmStompClient = null;
         let dmProcessedMessageIds = new Set();
         let currentUserId = null; // Will be set when conversation starts
         
@@ -282,8 +281,8 @@
             }
         });
         
-        function openDMModal() {
-            const button = event.target.closest('button');
+        function openDMModal(event) {
+            const button = event ? event.target.closest('button') : document.querySelector('button[data-user-id]');
             const userId = button.getAttribute('data-user-id');
             const userName = button.getAttribute('data-user-name');
             
@@ -319,8 +318,12 @@
                         currentUserId = response.currentUserId;
                     }
                     
+                    // Clear message processing set
+                    dmProcessedMessageIds.clear();
+                    
+                    // Load messages and start polling
                     loadDMMessages();
-                    connectDMWebSocket();
+                    startMessagePolling();
                 },
                 error: function(xhr, status, error) {
                     console.error('DM Conversation Error:', {
@@ -352,11 +355,19 @@
             });
         }
         
+        let lastMessageTimestamp = 0; // Track last message time to avoid unnecessary refreshes
+        let messageLoadInProgress = false; // Prevent concurrent message loads
+        
         function loadDMMessages() {
-            if (!currentDMConversationId) return;
+            if (!currentDMConversationId || messageLoadInProgress) return;
+            
+            messageLoadInProgress = true;
+            console.log('Loading messages for conversation:', currentDMConversationId);
             
             $.get('/dm/conversation/' + currentDMConversationId + '/messages')
                 .done(function(messages) {
+                    console.log('Loaded messages:', messages.length);
+                    
                     // Set currentUserId from the first message if available
                     if (messages && messages.length > 0 && !currentUserId) {
                         // Find a message where currentUserSender is true to get current user ID
@@ -366,8 +377,30 @@
                         }
                     }
                     
-                    displayDMMessages(messages);
-                    scrollToBottom();
+                    // Check if there are any new messages to display
+                    let newestTimestamp = lastMessageTimestamp;
+                    if (messages && messages.length > 0) {
+                        // Find the newest message timestamp
+                        messages.forEach(msg => {
+                            const msgTime = new Date(msg.sentAt).getTime();
+                            if (msgTime > newestTimestamp) {
+                                newestTimestamp = msgTime;
+                            }
+                        });
+                    }
+                    
+                    // Only refresh if it's the first load or we have new messages
+                    const isFirstLoad = lastMessageTimestamp === 0;
+                    const hasNewMessages = newestTimestamp > lastMessageTimestamp;
+                    
+                    if (isFirstLoad || hasNewMessages) {
+                        console.log('Refreshing messages display');
+                        lastMessageTimestamp = newestTimestamp;
+                        displayDMMessages(messages);
+                        scrollToBottom();
+                    } else {
+                        console.log('No new messages to display');
+                    }
                 })
                 .fail(function(xhr) {
                     console.error('Load Messages Error:', xhr);
@@ -378,27 +411,42 @@
                         errorMessage = xhr.statusText;
                     }
                     showDMError(errorMessage);
+                })
+                .always(function() {
+                    messageLoadInProgress = false;
                 });
         }
         
         function displayDMMessages(messages) {
-            const container = document.getElementById('dmMessages');
-            container.innerHTML = '';
+            if (!messages || messages.length === 0) return;
             
+            const container = document.getElementById('dmMessages');
+            container.innerHTML = ''; // Clear the container before adding messages
+            dmProcessedMessageIds.clear(); // Reset processed IDs to avoid duplicates
+            
+            console.log('Displaying ' + messages.length + ' messages');
             messages.forEach(function(message) {
                 appendDMMessage(message);
             });
         }
         
         function appendDMMessage(message) {
-            const messageId = message.id || message.tempId;
+            console.log('Attempting to append message:', message);
+            const messageId = message.id || message.messageId || message.tempId;
             
+            // For temporary messages, always show them
+            if (message.isTemporary) {
+                console.log('Showing temporary message:', messageId);
+            }
             // Skip if we've already displayed this message (except for temp messages)
-            if (messageId && dmProcessedMessageIds.has(messageId) && !message.isTemporary) {
+            else if (messageId && dmProcessedMessageIds.has(messageId)) {
+                console.log('Skipping duplicate message with ID:', messageId);
                 return;
             }
             
-            if (messageId) {
+            // Only add non-temporary messages to the processed set
+            if (messageId && !message.isTemporary) {
+                console.log('Adding message ID to processed set:', messageId);
                 dmProcessedMessageIds.add(messageId);
             }
             
@@ -440,46 +488,58 @@
             container.appendChild(messageDiv);
         }
         
-        function connectDMWebSocket() {
-            if (!currentDMConversationId) return;
+        // We'll replace WebSockets with polling for more reliable messaging
+        let messagePollingInterval = null;
+        
+        function startMessagePolling() {
+            // Clear any existing polling
+            stopMessagePolling();
             
-            const socket = new SockJS('/ws-messages');
-            dmStompClient = Stomp.over(socket);
-            dmStompClient.debug = null;
+            if (!currentDMConversationId) {
+                console.error('Cannot start polling: No conversation ID');
+                return;
+            }
             
-            // Add CSRF headers for WebSocket connections
-            const headers = {};
-            headers[header] = token;
+            console.log('Starting message polling for conversation:', currentDMConversationId);
             
-            dmStompClient.connect(headers, function() {
-                // Subscribe to DM conversation
-                const subscription = dmStompClient.subscribe('/topic/dm.' + currentDMConversationId, onDMMessageReceived);
-                console.log('Subscribed to DM topic: /topic/dm.' + currentDMConversationId);
-                
-                // Join the conversation
-                dmStompClient.send("/app/dm.join", {}, JSON.stringify({conversationId: currentDMConversationId}));
-                
-                console.log('Connected to DM WebSocket for conversation:', currentDMConversationId);
-            }, function(error) {
-                console.error('DM WebSocket connection error:', error);
-            });
+            // Poll at a slower rate (3 seconds) to avoid excessive refreshes
+            messagePollingInterval = setInterval(function() {
+                // Only poll when modal is visible and we're not already loading messages
+                if (document.getElementById('dmModal').classList.contains('show') && !messageLoadInProgress) {
+                    console.log('Polling for new messages...');
+                    loadDMMessages();
+                }
+            }, 3000);
+        }
+        
+        function stopMessagePolling() {
+            if (messagePollingInterval) {
+                console.log('Stopping message polling');
+                clearInterval(messagePollingInterval);
+                messagePollingInterval = null;
+            }
         }
         
         function onDMMessageReceived(payload) {
+            console.log('Raw message received:', payload.body);
             const message = JSON.parse(payload.body);
+            console.log('Parsed message:', message);
             
             // Skip ping messages
             if (message.type === 'PING') {
+                console.log('Skipping PING message');
                 return;
             }
             
             // Skip join confirmations
             if (message.type === 'JOINED') {
+                console.log('Skipping JOINED message');
                 return;
             }
             
             // Skip if this is a response to our own temporary message
             if (message.tempId && dmProcessedMessageIds.has(message.tempId)) {
+                console.log('Found temporary message to replace:', message.tempId);
                 // Remove the temporary message and add the real one
                 removeTemporaryMessage(message.tempId);
                 dmProcessedMessageIds.delete(message.tempId);
@@ -487,13 +547,14 @@
             }
             
             // Skip if we've already displayed this message (but allow temp message replacement)
-            const messageId = message.id || message.tempId;
+            const messageId = message.id || message.messageId;
             if (messageId && dmProcessedMessageIds.has(messageId) && !message.tempId) {
                 console.log("Skipping duplicate message:", messageId);
                 return;
             }
             
             if (messageId) {
+                console.log('Adding message ID to processed set:', messageId);
                 dmProcessedMessageIds.add(messageId);
             }
             
@@ -508,54 +569,63 @@
             
             if (!content || !currentDMConversationId) return;
             
-            if (dmStompClient && dmStompClient.connected) {
-                // Send via WebSocket
-                const tempId = 'temp-' + Date.now();
-                const dmMessage = {
-                    conversationId: currentDMConversationId,
+            // Display temporary message first
+            const tempId = 'temp-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+            const tempMessage = {
+                id: tempId,
+                messageId: tempId,
+                content: content,
+                sentAt: new Date(),
+                currentUserSender: true,
+                isTemporary: true,
+                tempId: tempId
+            };
+            
+            // Show temporary message immediately
+            appendDMMessage(tempMessage);
+            scrollToBottom();
+            
+            // Clear input right away
+            input.value = '';
+            
+            // Use AJAX instead of WebSocket for more reliability
+            console.log('Sending message via AJAX');
+            $.ajax({
+                url: '/dm/conversation/' + currentDMConversationId + '/message',
+                method: 'POST',
+                data: {
                     content: content,
                     tempId: tempId
-                };
-                
-                // Display temporary message
-                const tempMessage = {
-                    id: tempId,
-                    content: content,
-                    sentAt: new Date(),
-                    currentUserSender: true,
-                    isTemporary: true,
-                    tempId: tempId
-                };
-                
-                appendDMMessage(tempMessage);
-                scrollToBottom();
-                
-                // Clear input
-                input.value = '';
-                
-                // Send via WebSocket
-                dmStompClient.send("/app/dm.sendMessage", {}, JSON.stringify(dmMessage));
-            } else {
-                // Fallback to AJAX
-                $.post('/dm/conversation/' + currentDMConversationId + '/message', {content: content})
-                    .done(function(message) {
-                        appendDMMessage(message);
-                        scrollToBottom();
-                        input.value = '';
-                    })
-                    .fail(function(xhr) {
-                        console.error('Send Message Error:', xhr);
-                        let errorMessage = 'Failed to send message';
-                        if (xhr.status === 403) {
-                            errorMessage = 'Access denied. Please make sure you are logged in.';
-                        } else if (xhr.responseJSON && xhr.responseJSON.error) {
-                            errorMessage = xhr.responseJSON.error;
-                        } else if (xhr.statusText) {
-                            errorMessage = xhr.statusText;
+                },
+                success: function(response) {
+                    console.log('Message sent successfully:', response);
+                    
+                    // Set the timestamp from the response to update our tracking
+                    if (response.sentAt) {
+                        const sentTime = new Date(response.sentAt).getTime();
+                        if (sentTime > lastMessageTimestamp) {
+                            lastMessageTimestamp = sentTime;
                         }
-                        showDMError(errorMessage);
-                    });
-            }
+                    }
+                    
+                    // Replace temp message with real one
+                    removeTemporaryMessage(tempId);
+                    if (dmProcessedMessageIds.has(tempId)) {
+                        dmProcessedMessageIds.delete(tempId);
+                    }
+                    appendDMMessage(response);
+                    scrollToBottom();
+                    
+                    // Force a full refresh of messages after sending
+                    setTimeout(function() {
+                        loadDMMessages();
+                    }, 500);
+                },
+                error: function(xhr) {
+                    console.error('Error sending message:', xhr);
+                    showSendError(tempId);
+                }
+            });
         }
         
         function scrollToBottom() {
@@ -584,25 +654,72 @@
         }
         
         // Event listeners
-        document.getElementById('dmSendButton').addEventListener('click', sendDMMessage);
+        document.getElementById('dmSendButton').addEventListener('click', function() {
+            sendDMMessage();
+        });
         document.getElementById('dmMessageInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendDMMessage();
             }
         });
         
-        // Clean up WebSocket connection when modal is closed
-        document.getElementById('dmModal').addEventListener('hidden.bs.modal', function() {
-            if (dmStompClient) {
-                dmStompClient.disconnect();
-                dmStompClient = null;
+        // Add function to show error for a temporary message
+        function showSendError(tempId) {
+            const container = document.getElementById('dmMessages');
+            const tempMessage = container.querySelector(`[data-temp-id="${tempId}"]`);
+            if (tempMessage) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'send-error-indicator text-danger small';
+                errorMsg.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Not sent. Tap to retry.';                
+                tempMessage.appendChild(errorMsg);
+                
+                // Make the message clickable for retry
+                tempMessage.style.cursor = 'pointer';
+                tempMessage.addEventListener('click', function() {
+                    // Implement retry logic here if needed
+                    loadDMMessages(); // For now, just refresh messages
+                });
             }
-            currentDMConversationId = null;
-            dmProcessedMessageIds.clear();
+        }
+        
+        // Clean up when modal is closed
+        document.getElementById('dmModal').addEventListener('hidden.bs.modal', function() {
+            // Stop polling
+            stopMessagePolling();
             
-            // Clear the messages container
+            // Clear the messages container, but don't reset other state
             const container = document.getElementById('dmMessages');
             container.innerHTML = '';
+            
+            console.log('DM modal closed, polling stopped');
+        });
+        
+        // Setup when modal is opened
+        document.getElementById('dmModal').addEventListener('shown.bs.modal', function() {
+            console.log('DM modal opened, ensuring polling is active');
+            
+            // Reset message timestamp to force a fresh load
+            lastMessageTimestamp = 0;
+            
+            // Make sure polling is active when the modal is shown
+            if (currentDMConversationId) {
+                // Load messages immediately
+                loadDMMessages();
+                
+                // Start polling after messages are loaded
+                setTimeout(function() {
+                    startMessagePolling();
+                }, 500);
+            }
+        });
+        
+        // Listen for page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible' && currentDMConversationId) {
+                // Refresh messages when the page becomes visible
+                console.log('Page became visible, refreshing messages');
+                loadDMMessages();
+            }
         });
     </script>
 </body>

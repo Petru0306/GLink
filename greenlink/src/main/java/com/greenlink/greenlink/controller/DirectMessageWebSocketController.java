@@ -93,6 +93,9 @@ public class DirectMessageWebSocketController {
             // Get user from principal
             User currentUser = userService.getUserByEmail(principal.getName());
             
+            // Log incoming message for debugging
+            logger.info("Received WebSocket message - tempId: " + directMessage.getTempId() + ", content: " + directMessage.getContent());
+            
             // Send message using existing service
             DirectMessageDto savedMessage = directMessageService.sendMessage(
                     directMessage.getConversationId(), 
@@ -105,25 +108,36 @@ public class DirectMessageWebSocketController {
                 savedMessage.setTempId(directMessage.getTempId());
             }
             
-            // Create a broadcast message that shows the correct sender for all users
-            DirectMessageDto broadcastMessage = new DirectMessageDto();
-            broadcastMessage.setId(savedMessage.getId());
-            broadcastMessage.setConversationId(savedMessage.getConversationId());
-            broadcastMessage.setSenderId(savedMessage.getSenderId());
-            broadcastMessage.setSenderName(savedMessage.getSenderName());
-            broadcastMessage.setContent(savedMessage.getContent());
-            broadcastMessage.setSentAt(savedMessage.getSentAt());
-            broadcastMessage.setRead(savedMessage.isRead());
-            broadcastMessage.setTempId(savedMessage.getTempId());
-            
-            // The currentUserSender will be determined by each client based on senderId
-            // We don't set it here - let the frontend determine it
-            
-            // Broadcast to DM conversation topic - this will send to all subscribers including the sender
-            messagingTemplate.convertAndSend(
-                    "/topic/dm." + directMessage.getConversationId(), 
-                    broadcastMessage
-            );
+            // Make sure the ID is set as both id and messageId for consistent client handling
+            if (savedMessage.getId() != null) {
+                // Create a copy with explicitly set fields to ensure consistent serialization
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("id", savedMessage.getId());
+                messageMap.put("messageId", savedMessage.getId()); // Duplicate ID for client flexibility
+                messageMap.put("conversationId", savedMessage.getConversationId());
+                messageMap.put("senderId", savedMessage.getSenderId());
+                messageMap.put("senderName", savedMessage.getSenderName());
+                messageMap.put("content", savedMessage.getContent());
+                messageMap.put("sentAt", savedMessage.getSentAt());
+                messageMap.put("read", savedMessage.isRead());
+                messageMap.put("currentUserSender", savedMessage.isCurrentUserSender());
+                
+                // Add tempId if it exists
+                if (savedMessage.getTempId() != null) {
+                    messageMap.put("tempId", savedMessage.getTempId());
+                }
+                
+                // Log details before broadcasting
+                logger.info("Broadcasting message - id: " + savedMessage.getId() + ", tempId: " + savedMessage.getTempId());
+                
+                // Broadcast to conversation topic - this will send to all subscribers including the sender
+                messagingTemplate.convertAndSend(
+                        "/topic/dm." + directMessage.getConversationId(), 
+                        messageMap
+                );
+            } else {
+                logger.warning("Saved message has null ID, cannot broadcast properly");
+            }
             
             logger.info("DM sent via WebSocket: " + savedMessage.getContent());
             
