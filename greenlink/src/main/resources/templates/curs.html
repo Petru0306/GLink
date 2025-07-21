@@ -375,8 +375,8 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4">🌱 Lecția 1: Ce este sustenabilitatea?</h1>
-            <p class="lead">Și cum poți începe chiar de azi</p>
+            <h1 class="display-4" th:text="#{home.lesson.center.1.title}">🌱 Lecția 1: Ce este sustenabilitatea?</h1>
+            <p class="lead" th:text="#{home.lesson.center.1.desc}">Și cum poți începe chiar de azi</p>
         </div>
     </header>
 
@@ -385,13 +385,13 @@
         <!-- Back Button -->
         <a href="/educatie" class="back-button">
             <i class="bi bi-arrow-left"></i>
-            Înapoi la harta cursurilor
+            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
         </a>
 
         <!-- Lesson completed message -->
         <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
             <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
-            <strong>Felicitări!</strong> Ai completat această lecție cu succes!
+            <span th:text="#{course.lesson.completed}">Felicitări! Ai completat această lecție cu succes!</span>
         </div>
 
         
@@ -401,7 +401,7 @@
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Progresul lecției</span>
+                <span th:text="#{course.lesson.progress}">Progresul lecției</span>
                 <span id="progress-text">0/5</span>
             </div>
             <div class="progress">
@@ -433,7 +433,7 @@
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
                 <p class="mb-3"><strong>Care sunt cei trei piloni ai sustenabilității?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -480,7 +480,7 @@
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
                 <p class="mb-3"><strong>Care afirmație este adevărată?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -526,7 +526,7 @@
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
                 <p class="mb-3"><strong>Care dintre următoarele este o acțiune sustenabilă?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -570,7 +570,7 @@
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
                 <p class="mb-3"><strong>Câte sticle din plastic poate înlocui o sticlă reutilizabilă într-un an?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -611,7 +611,7 @@
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
                 <p class="mb-3"><strong>Ce mentalitate te ajută să trăiești sustenabil?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">

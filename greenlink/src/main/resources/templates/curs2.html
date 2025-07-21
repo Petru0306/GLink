@@ -367,8 +367,8 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4">♻️ Lecția 2: Cum să reciclezi corect</h1>
-            <p class="lead">Învață regulile de bază pentru o reciclare eficientă</p>
+            <h1 class="display-4" th:text="#{home.lesson.center.2.title}">♻️ Lecția 2: Cum să reciclezi corect</h1>
+            <p class="lead" th:text="#{home.lesson.center.2.desc}">Învață regulile de bază pentru o reciclare eficientă</p>
         </div>
     </header>
 
@@ -377,13 +377,13 @@
         <!-- Back Button -->
         <a href="/educatie" class="back-button">
             <i class="bi bi-arrow-left"></i>
-            Înapoi la harta cursurilor
+            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
         </a>
 
         <!-- Lesson completed message -->
         <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
             <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
-            <strong>Felicitări!</strong> Ai completat această lecție cu succes!
+            <span th:text="#{course.lesson.completed}">Felicitări! Ai completat această lecție cu succes!</span>
         </div>
         
         <!-- Hidden authentication status indicator -->
@@ -392,7 +392,7 @@
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Progresul lecției</span>
+                <span th:text="#{course.lesson.progress}">Progresul lecției</span>
                 <span id="progress-text">0/5</span>
             </div>
             <div class="progress">
