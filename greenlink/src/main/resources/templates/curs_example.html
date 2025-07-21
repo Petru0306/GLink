@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLink - Course Example</title>
+    <!-- Bootstrap, styles and other head content would go here -->
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Course Header -->
+    <header class="course-header text-center">
+        <div class="container">
+            <h1 class="display-4" th:text="#{home.lesson.center.1.title}">🌱 Lecția 1: Ce este sustenabilitatea?</h1>
+            <p class="lead" th:text="#{home.lesson.center.1.desc}">Și cum poți începe chiar de azi</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="course-container">
+        <!-- Back Button -->
+        <a href="/educatie" class="back-button">
+            <i class="bi bi-arrow-left"></i>
+            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
+        </a>
+
+        <!-- Lesson completed message -->
+        <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
+            <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
+            <span th:text="#{course.lesson.completed}">Felicitări! Ai completat această lecție cu succes!</span>
+        </div>
+
+        <!-- Hidden authentication status indicator -->
+        <input type="hidden" id="authenticated-status" sec:authorize="isAuthenticated()" value="true">
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-label">
+                <span th:text="#{course.lesson.progress}">Progresul lecției</span>
+                <span id="progress-text">0/5</span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Paragraph 1 -->
+        <section class="lesson-section">
+            <div class="paragraph-number">1</div>
+            <h2>Ce înseamnă cu adevărat sustenabilitatea</h2>
+            
+            <p class="lead mb-4">
+                Sustenabilitatea este o idee simplă, dar puternică: înseamnă să ne satisfacem nevoile de azi — precum mâncare, energie și adăpost — fără a compromite capacitatea generațiilor viitoare de a-și satisface propriile nevoi. Nu este vorba doar despre mediu, ci și despre construirea unui sistem echitabil și durabil pentru oameni și economie.
+            </p>
+
+            <div class="highlight-box">
+                <h4 class="section-subtitle">Cei trei piloni ai sustenabilității:</h4>
+                <ul class="bullet-list">
+                    <li><strong>🌍 Mediul:</strong> Protejarea naturii și folosirea responsabilă a resurselor.</li>
+                    <li><strong>🏘️ Social:</strong> Asigurarea unor comunități sigure, sănătoase și echitabile.</li>
+                    <li><strong>💰 Economie:</strong> Crearea unor sisteme eficiente, stabile și durabile.</li>
+                </ul>
+            </div>
+
+            <p>
+                Când acești trei piloni sunt în echilibru, societatea poate evolua într-un mod care sprijină atât oamenii, cât și planeta. Sustenabilitatea nu înseamnă să renunți la confort — înseamnă să alegi moduri mai inteligente de a trăi, produce și consuma.
+            </p>
+
+            <!-- Quiz for Paragraph 1 -->
+            <div class="quiz-section" data-attempts="0">
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
+                <p class="mb-3"><strong>Care sunt cei trei piloni ai sustenabilității?</strong></p>
+                
+                <div class="quiz-option" data-correct="false">
+                    <strong>A)</strong> Animale, păduri și oceane
+                </div>
+                <div class="quiz-option" data-correct="true">
+                    <strong>B)</strong> Mediu, societate și economie
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>C)</strong> Plastic, metal și sticlă
+                </div>
+                <div class="quiz-option" data-correct="false">
+                    <strong>D)</strong> Bani, locuri de muncă și taxe
+                </div>
+
+                <div class="quiz-result" id="result-1"></div>
+            </div>
+        </section>
+
+        <!-- Footer section with submit button -->
+        <div class="quiz-footer">
+            <button type="button" id="submit-quiz" class="btn btn-success" th:text="#{course.submit.answers}">Trimite Răspunsurile</button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- JavaScript would go here -->
+</body>
+</html>
