@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,11 @@ public class User implements UserDetails {
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min = 8, max = 120, message = "Password must be at least 8 characters long")
+    @Pattern(
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.,])(?=\\S+$).{8,}$",
+        message = "Password must contain at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=!.,)"
+    )
     private String password;
 
     @NotBlank

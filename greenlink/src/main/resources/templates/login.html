@@ -138,6 +138,17 @@
                                 <i class="bi bi-eye"></i>
                             </button>
                         </div>
+                        <!-- Password Requirements -->
+                        <div class="mt-2">
+                            <small class="text-muted" th:text="#{register.password.requirements}">Password requirements:</small>
+                            <ul class="list-unstyled small text-muted mt-1" id="loginModalPasswordRequirements">
+                                <li id="login-req-length"><i class="bi bi-circle text-muted"></i> <span th:text="#{register.password.req.length}">At least 8 characters</span></li>
+                                <li id="login-req-number"><i class="bi bi-circle text-muted"></i> <span th:text="#{register.password.req.number}">At least one number</span></li>
+                                <li id="login-req-lowercase"><i class="bi bi-circle text-muted"></i> <span th:text="#{register.password.req.lowercase}">At least one lowercase letter</span></li>
+                                <li id="login-req-uppercase"><i class="bi bi-circle text-muted"></i> <span th:text="#{register.password.req.uppercase}">At least one uppercase letter</span></li>
+                                <li id="login-req-special"><i class="bi bi-circle text-muted"></i> <span th:text="#{register.password.req.special}">At least one special character (@#$%^&+=!)</span></li>
+                            </ul>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-success w-100">Register</button>
                 </form>
@@ -234,6 +245,62 @@ window.addEventListener('load', function() {
                 icon.classList.add('bi-eye');
             }
         };
+    }
+
+    // Password validation for register modal
+    const registerPasswordField = document.getElementById('registerPassword');
+    if (registerPasswordField) {
+        registerPasswordField.addEventListener('input', function() {
+            validateLoginModalPassword(this.value);
+        });
+    }
+
+    function validateLoginModalPassword(password) {
+        const requirements = {
+            length: password.length >= 8,
+            number: /\d/.test(password),
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            special: /[@#$%^&+=!.,]/.test(password)
+        };
+
+        // Update requirement indicators
+        Object.keys(requirements).forEach(req => {
+            const element = document.getElementById(`login-req-${req}`);
+            if (element) {
+                const icon = element.querySelector('i');
+                if (requirements[req]) {
+                    icon.className = 'bi bi-check-circle text-success';
+                    element.classList.remove('text-muted');
+                    element.classList.add('text-success');
+                } else {
+                    icon.className = 'bi bi-circle text-muted';
+                    element.classList.remove('text-success');
+                    element.classList.add('text-muted');
+                }
+            }
+        });
+
+        // Check if all requirements are met
+        const allValid = Object.values(requirements).every(req => req);
+        
+        // Update submit button state in register modal
+        const registerForm = document.querySelector('#registerModal form');
+        if (registerForm) {
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = !allValid;
+                if (!allValid) {
+                    submitButton.classList.add('btn-secondary');
+                    submitButton.classList.remove('btn-success');
+                } else {
+                    submitButton.classList.remove('btn-secondary');
+                    submitButton.classList.add('btn-success');
+                }
+            }
+        }
+
+        return allValid;
     }
 });
 
