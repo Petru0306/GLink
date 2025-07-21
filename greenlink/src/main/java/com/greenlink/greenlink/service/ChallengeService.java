@@ -7,6 +7,9 @@ import java.util.List;
 public interface ChallengeService {
     List<Challenge> getAllChallenges();
     List<Challenge> getChallengesByType(Challenge.ChallengeType type);
+    List<Challenge> getTranslatedChallenges();
+    List<UserChallenge> getTranslatedUserActiveChallenges(Long userId);
+    List<UserChallenge> getTranslatedUserCompletedChallenges(Long userId);
     List<UserChallenge> getUserActiveChallenges(Long userId);
     List<UserChallenge> getUserCompletedChallenges(Long userId);
     UserChallenge startChallenge(Long userId, Long challengeId);

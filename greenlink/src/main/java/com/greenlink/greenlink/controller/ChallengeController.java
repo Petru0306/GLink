@@ -45,11 +45,11 @@ public class ChallengeController {
             checkAndUpdateUserChallenges(user.getId());
             
             // Get user's active and completed challenges
-            List<UserChallenge> activeChallenges = challengeService.getUserActiveChallenges(user.getId());
-            List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(user.getId());
+            List<UserChallenge> activeChallenges = challengeService.getTranslatedUserActiveChallenges(user.getId());
+            List<UserChallenge> completedChallenges = challengeService.getTranslatedUserCompletedChallenges(user.getId());
             
             // Get all challenges and filter out the ones that are active or completed
-            List<Challenge> allChallenges = challengeService.getAllChallenges();
+            List<Challenge> allChallenges = challengeService.getTranslatedChallenges();
             List<Challenge> availableChallenges = filterAvailableChallenges(allChallenges, activeChallenges, completedChallenges);
             
             model.addAttribute("allChallenges", availableChallenges);
@@ -60,7 +60,7 @@ public class ChallengeController {
             model.addAttribute("currentStreak", challengeService.getCurrentStreak(user.getId()));
         } else {
             // For non-logged in users, show all challenges
-            model.addAttribute("allChallenges", challengeService.getAllChallenges());
+            model.addAttribute("allChallenges", challengeService.getTranslatedChallenges());
         }
         return "provocari";
     }
@@ -101,7 +101,12 @@ public class ChallengeController {
 
     @GetMapping("/type/{type}")
     public String getChallengesByType(@PathVariable Challenge.ChallengeType type, Model model) {
-        model.addAttribute("challenges", challengeService.getChallengesByType(type));
+        // Get all translated challenges and filter by type
+        List<Challenge> allTranslatedChallenges = challengeService.getTranslatedChallenges();
+        List<Challenge> filteredChallenges = allTranslatedChallenges.stream()
+                .filter(challenge -> challenge.getType() == type)
+                .collect(Collectors.toList());
+        model.addAttribute("challenges", filteredChallenges);
         return "provocari :: challengeList";
     }
     
