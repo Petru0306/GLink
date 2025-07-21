@@ -403,42 +403,42 @@
         <!-- Paragraph 1 -->
         <section class="lesson-section">
             <div class="paragraph-number">1</div>
-            <h2>Ce este compostul și de ce e important</h2>
+            <h2 th:text="#{course.4.paragraph.1.title}">Ce este compostul și de ce e important</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.4.paragraph.1.content}">
                 Compostul este un amestec natural de resturi organice — cum ar fi coji de fructe, zaț de cafea, resturi de legume sau frunze uscate — care, în timp, se transformă într-un sol bogat, numit humus.
             </p>
 
-            <p>
+            <p th:text="#{course.4.paragraph.1.conclusion}">
                 Prin compostare, aceste resturi se descompun în mod natural, fără a produce substanțe toxice. În loc să arunci resturile de mâncare, le poți transforma în viață nouă. Compostarea nu este doar pentru grădinari — oricine poate începe, chiar și într-un apartament!
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">De ce este important compostul?</h4>
+                <h4 class="section-subtitle" th:text="#{course.4.paragraph.1.importance.title}">De ce este important compostul?</h4>
                 <ul class="bullet-list">
-                    <li><strong>🌱 Reduce cantitatea de deșeuri</strong> care ajung la groapa de gunoi.</li>
-                    <li><strong>🌎 Diminuează emisiile de gaze cu efect de seră</strong>, cum ar fi metanul.</li>
-                    <li><strong>🌼 Produce un îngrășământ natural excelent</strong> pentru plante și grădini.</li>
-                    <li><strong>💰 Este gratuit și reduce nevoia</strong> de produse chimice.</li>
+                    <li><strong th:text="#{course.4.paragraph.1.importance.item.1}">🌱 Reduce cantitatea de deșeuri care ajung la groapa de gunoi.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.1.importance.item.2}">🌎 Diminuează emisiile de gaze cu efect de seră, cum ar fi metanul.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.1.importance.item.3}">🌼 Produce un îngrășământ natural excelent pentru plante și grădini.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.1.importance.item.4}">💰 Este gratuit și reduce nevoia de produse chimice.</strong></li>
                 </ul>
             </div>
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
-                <p class="mb-3"><strong>Ce este compostul?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
+                <p class="mb-3"><strong th:text="#{course.4.paragraph.1.question}">Ce este compostul?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Gunoi ars
+                    <strong>A)</strong> <span th:text="#{course.4.paragraph.1.option.a}">Gunoi ars</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>B)</strong> Sol natural obținut din resturi organice
+                    <strong>B)</strong> <span th:text="#{course.4.paragraph.1.option.b}">Sol natural obținut din resturi organice</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Plastic reciclat
+                    <strong>C)</strong> <span th:text="#{course.4.paragraph.1.option.c}">Plastic reciclat</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Îngrășământ chimic
+                    <strong>D)</strong> <span th:text="#{course.4.paragraph.1.option.d}">Îngrășământ chimic</span>
                 </div>
 
                 <div class="quiz-result" id="result-1"></div>
@@ -448,41 +448,41 @@
         <!-- Paragraph 2 -->
         <section class="lesson-section">
             <div class="paragraph-number">2</div>
-            <h2>De ce este mai bine să compostezi decât să arunci</h2>
+            <h2 th:text="#{course.4.paragraph.2.title}">De ce este mai bine să compostezi decât să arunci</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.4.paragraph.2.content}">
                 Când alimentele sunt aruncate la gunoi, ele nu se descompun ca în natură. În lipsa oxigenului, în groapa de gunoi, ele emit metan, un gaz de 25 de ori mai puternic decât dioxidul de carbon.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Știați că:</h4>
+                <h4 class="section-subtitle" th:text="#{course.4.paragraph.2.facts.title}">Știați că:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🍽️ Aproximativ 1/3 din toată mâncarea produsă</strong> la nivel global se irosește?</li>
-                    <li><strong>🗑️ Resturile alimentare reprezintă peste 40%</strong> din gunoiul menajer?</li>
-                    <li><strong>🌍 Compostarea acestor resturi ar putea preveni</strong> milioane de tone de emisii nocive?</li>
+                    <li><strong th:text="#{course.4.paragraph.2.facts.item.1}">🍽️ Aproximativ 1/3 din toată mâncarea produsă la nivel global se irosește?</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.2.facts.item.2}">🗑️ Resturile alimentare reprezintă peste 40% din gunoiul menajer?</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.2.facts.item.3}">🌍 Compostarea acestor resturi ar putea preveni milioane de tone de emisii nocive?</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.4.paragraph.2.conclusion}">
                 Deci, compostarea nu este doar o metodă ecologică — este o soluție concretă la problema risipei de alimente și a schimbărilor climatice.
             </p>
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
-                <p class="mb-3"><strong>Ce gaz periculos este emis de resturile alimentare în groapa de gunoi?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
+                <p class="mb-3"><strong th:text="#{course.4.paragraph.2.question}">Ce gaz periculos este emis de resturile alimentare în groapa de gunoi?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Oxigen
+                    <strong>A)</strong> <span th:text="#{course.4.paragraph.2.option.a}">Oxigen</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Azot
+                    <strong>B)</strong> <span th:text="#{course.4.paragraph.2.option.b}">Azot</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Metan
+                    <strong>C)</strong> <span th:text="#{course.4.paragraph.2.option.c}">Metan</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Hidrogen
+                    <strong>D)</strong> <span th:text="#{course.4.paragraph.2.option.d}">Hidrogen</span>
                 </div>
 
                 <div class="quiz-result" id="result-2"></div>
@@ -492,42 +492,42 @@
         <!-- Paragraph 3 -->
         <section class="lesson-section">
             <div class="paragraph-number">3</div>
-            <h2>Cum poți începe un mini-compost chiar la tine acasă</h2>
+            <h2 th:text="#{course.4.paragraph.3.title}">Cum poți începe un mini-compost chiar la tine acasă</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.4.paragraph.3.content}">
                 Nu ai nevoie de o grădină sau un compostor mare. Poți începe un mini-compost într-un borcan, o găleată mică sau un recipient de plastic cu capac.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Ai nevoie de:</h4>
+                <h4 class="section-subtitle" th:text="#{course.4.paragraph.3.needs.title}">Ai nevoie de:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🥦 Materiale umede (verzi):</strong> coji de fructe, resturi de legume, zaț de cafea.</li>
-                    <li><strong>🍂 Materiale uscate (maro):</strong> hârtie ruptă, frunze uscate, carton.</li>
-                    <li><strong>💨 Aer:</strong> deschide ocazional capacul pentru aerisire.</li>
-                    <li><strong>🌀 Amestec:</strong> combină cele două tipuri pentru echilibru.</li>
+                    <li><strong th:text="#{course.4.paragraph.3.needs.item.1}">🥦 Materiale umede (verzi): coji de fructe, resturi de legume, zaț de cafea.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.3.needs.item.2}">🍂 Materiale uscate (maro): hârtie ruptă, frunze uscate, carton.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.3.needs.item.3}">💨 Aer: deschide ocazional capacul pentru aerisire.</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.3.needs.item.4}">🌀 Amestec: combină cele două tipuri pentru echilibru.</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.4.paragraph.3.conclusion}">
                 Păstrează recipientul într-un loc aerisit. Dacă nu ai unde să folosești compostul, îl poți dona unei grădini urbane sau pune în ghivece de flori.
             </p>
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
-                <p class="mb-3"><strong>Care dintre următoarele poate fi pus în compost?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
+                <p class="mb-3"><strong th:text="#{course.4.paragraph.3.question}">Care dintre următoarele poate fi pus în compost?</strong></p>
                 
                 <div class="quiz-option" data-correct="true">
-                    <strong>A)</strong> Zaț de cafea
+                    <strong>A)</strong> <span th:text="#{course.4.paragraph.3.option.a}">Zaț de cafea</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Resturi de plastic
+                    <strong>B)</strong> <span th:text="#{course.4.paragraph.3.option.b}">Resturi de plastic</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Ambalaje cerate
+                    <strong>C)</strong> <span th:text="#{course.4.paragraph.3.option.c}">Ambalaje cerate</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Paie de plastic
+                    <strong>D)</strong> <span th:text="#{course.4.paragraph.3.option.d}">Paie de plastic</span>
                 </div>
 
                 <div class="quiz-result" id="result-3"></div>
@@ -537,42 +537,42 @@
         <!-- Paragraph 4 -->
         <section class="lesson-section">
             <div class="paragraph-number">4</div>
-            <h2>Ce NU trebuie pus niciodată în compost</h2>
+            <h2 th:text="#{course.4.paragraph.4.title}">Ce NU trebuie pus niciodată în compost</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.4.paragraph.4.content}">
                 La fel cum unele resturi sunt ideale pentru compost, altele trebuie evitate complet, deoarece atrag dăunători, miroase urât sau opresc procesul natural de descompunere.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Iată ce NU trebuie să pui:</h4>
+                <h4 class="section-subtitle" th:text="#{course.4.paragraph.4.avoid.title}">Iată ce NU trebuie să pui:</h4>
                 <ul class="bullet-list">
-                    <li><strong>❌ Carne, lactate, oase</strong></li>
-                    <li><strong>❌ Uleiuri sau mâncare gătită</strong></li>
-                    <li><strong>❌ Plastic, sticlă, metal</strong></li>
-                    <li><strong>❌ Produse de curățenie chimice</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.4.avoid.item.1}">❌ Carne, lactate, oase</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.4.avoid.item.2}">❌ Uleiuri sau mâncare gătită</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.4.avoid.item.3}">❌ Plastic, sticlă, metal</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.4.avoid.item.4}">❌ Produse de curățenie chimice</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.4.paragraph.4.conclusion}">
                 Regula de bază: dacă e natural și nerafinat, probabil poate fi compostat. În caz de îndoială, mai bine nu-l pui.
             </p>
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
-                <p class="mb-3"><strong>Ce NU ar trebui pus într-un compost?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
+                <p class="mb-3"><strong th:text="#{course.4.paragraph.4.question}">Ce NU ar trebui pus într-un compost?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Carton rupt
+                    <strong>A)</strong> <span th:text="#{course.4.paragraph.4.option.a}">Carton rupt</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Zaț de cafea
+                    <strong>B)</strong> <span th:text="#{course.4.paragraph.4.option.b}">Zaț de cafea</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Coji de ou
+                    <strong>C)</strong> <span th:text="#{course.4.paragraph.4.option.c}">Coji de ou</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>D)</strong> Carne
+                    <strong>D)</strong> <span th:text="#{course.4.paragraph.4.option.d}">Carne</span>
                 </div>
 
                 <div class="quiz-result" id="result-4"></div>
@@ -582,45 +582,45 @@
         <!-- Paragraph 5 -->
         <section class="lesson-section">
             <div class="paragraph-number">5</div>
-            <h2>Transformă compostarea într-un obicei zilnic</h2>
+            <h2 th:text="#{course.4.paragraph.5.title}">Transformă compostarea într-un obicei zilnic</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.4.paragraph.5.content}">
                 Odată ce începi să compostezi, devine ușor să continui. Ține un borcan sau un recipient aproape de bucătărie, iar în fiecare zi adaugă ce rămâne de la gătit sau mâncat.
             </p>
 
-            <p>
+            <p th:text="#{course.4.paragraph.5.conclusion.1}">
                 În câteva săptămâni, vei vedea cum totul se transformă într-un pământ negru, bogat. Este un exemplu minunat de economie circulară — nimic nu se pierde, totul se transformă.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Compostul poate fi folosit:</h4>
+                <h4 class="section-subtitle" th:text="#{course.4.paragraph.5.uses.title}">Compostul poate fi folosit:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🪴 În ghivece, pentru plante de apartament</strong></li>
-                    <li><strong>🌱 În grădini sau jardiniere</strong></li>
-                    <li><strong>🤝 Sau chiar donat comunității</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.5.uses.item.1}">🪴 În ghivece, pentru plante de apartament</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.5.uses.item.2}">🌱 În grădini sau jardiniere</strong></li>
+                    <li><strong th:text="#{course.4.paragraph.5.uses.item.3}">🤝 Sau chiar donat comunității</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.4.paragraph.5.conclusion.2}">
                 Fiecare rest pe care îl compostezi înseamnă mai puțin gunoi, mai puține emisii și mai multă viață în sol.
             </p>
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
-                <p class="mb-3"><strong>Ce se întâmplă cu resturile compostate după câteva săptămâni?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
+                <p class="mb-3"><strong th:text="#{course.4.paragraph.5.question}">Ce se întâmplă cu resturile compostate după câteva săptămâni?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Rămân la fel
+                    <strong>A)</strong> <span th:text="#{course.4.paragraph.5.option.a}">Rămân la fel</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Se transformă în plastic
+                    <strong>B)</strong> <span th:text="#{course.4.paragraph.5.option.b}">Se transformă în plastic</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Se transformă în pământ fertil
+                    <strong>C)</strong> <span th:text="#{course.4.paragraph.5.option.c}">Se transformă în pământ fertil</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Se usucă și devin toxice
+                    <strong>D)</strong> <span th:text="#{course.4.paragraph.5.option.d}">Se usucă și devin toxice</span>
                 </div>
 
                 <div class="quiz-result" id="result-5"></div>
@@ -632,8 +632,8 @@
             <h2 class="text-center mb-4" th:text="#{course.final.task}">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
-                <p>
+                <h4><i class="bi bi-camera me-2"></i><span th:text="#{course.photo.task}">Foto (10 pts)</span></h4>
+                <p th:text="#{course.4.photo.instructions}">
                     Fă o poză cu mini-compostul tău — un borcan sau recipient în care ai pus resturi de mâncare potrivite și hârtie.
                 </p>
                 <input type="file" class="form-control" id="image-upload" accept="image/*">
@@ -644,14 +644,14 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
-                <p class="mb-3">
+                <h4><i class="bi bi-pencil me-2"></i><span th:text="#{course.write.task}">Scrie (5 pts)</span></h4>
+                <p class="mb-3" th:text="#{course.4.write.instructions}">
                     Scrie o propoziție despre cum te-a făcut să te simți acest experiment cu compostul.
                 </p>
                 <textarea 
                     class="reflection-input" 
                     id="reflection-text" 
-                    placeholder="Scrie aici reflecția ta..."
+                    th:placeholder="#{course.write.placeholder}"
                     rows="4"></textarea>
             </div>
 
