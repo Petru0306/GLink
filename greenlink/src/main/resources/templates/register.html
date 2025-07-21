@@ -102,12 +102,12 @@
                     </div>
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
-                        <label class="form-check-label" for="remember-me">Remember me</label>
+                        <label class="form-check-label" for="remember-me" th:text="#{auth.remember.me}">Remember me</label>
                     </div>
                     <div class="mb-3 text-end">
-                        <a href="/forgot-password" class="text-success">Forgot password?</a>
+                        <a href="/forgot-password" class="text-success" th:text="#{auth.forgot.password}">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">Login</button>
+                    <button type="submit" class="btn btn-success w-100" th:text="#{auth.login}">Login</button>
                 </form>
             </div>
         </div>
