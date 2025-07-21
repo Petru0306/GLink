@@ -389,6 +389,185 @@
                 right: 1rem;
             }
         }
+
+        /* Gaussian Chart Styles */
+        .gaussian-chart-container {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gaussian-chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(40, 167, 69, 0.05) 50%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        .chart-title {
+            color: #2c3e50;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            margin: 2rem 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 1rem;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #gaussianCanvas {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #gaussianCanvas:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-marker {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .marker-pulse {
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff6b6b 0%, #ee5a52 100%);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .marker-pulse::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 50%;
+            animation: ripple 2s ease-in-out infinite;
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .user-marker:hover .marker-tooltip {
+            opacity: 1;
+        }
+
+        .tooltip-value {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .legend-color.green {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .legend-color.yellow {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+
+        .legend-color.red {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+        }
+
+        /* Chart Animations */
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Chart Responsive */
+        @media (max-width: 768px) {
+            .gaussian-chart-container {
+                padding: 1rem;
+            }
+            
+            .chart-legend {
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            #gaussianCanvas {
+                height: 200px;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -559,6 +738,46 @@
                         <p class="result-value" id="carbonResult">0</p>
                         <p class="lead text-muted" th:text="#{calculator.result.unit}">tone CO₂e/an</p>
                     </div>
+                    
+                    <!-- Gaussian Distribution Chart -->
+                    <div class="gaussian-chart-container mt-5" id="gaussianChart">
+                        <h4 class="text-center mb-4 chart-title">
+                            <i class="bi bi-graph-up-arrow me-2"></i>
+                            <span th:text="#{calculator.chart.title}">Comparație cu Media Globală</span>
+                        </h4>
+                        <div class="chart-wrapper">
+                            <canvas id="gaussianCanvas" width="800" height="300"></canvas>
+                            <div class="user-marker" id="userMarker">
+                                <div class="marker-pulse"></div>
+                                <div class="marker-tooltip">
+                                    <span class="tooltip-value" id="tooltipValue">0</span>
+                                    <span class="tooltip-label" th:text="#{calculator.result.unit}">tone CO₂e/an</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-legend mt-4">
+                            <div class="legend-item">
+                                <div class="legend-color green"></div>
+                                <span th:text="#{calculator.chart.legend.excellent}">Excelent (0-3 tone)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color yellow"></div>
+                                <span th:text="#{calculator.chart.legend.medium}">Mediu (3-7 tone)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color red"></div>
+                                <span th:text="#{calculator.chart.legend.high}">Ridicat (7+ tone)</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Hidden translation elements for JavaScript -->
+                        <div style="display: none;">
+                            <span data-translate="calculator.chart.zone.excellent" th:text="#{calculator.chart.zone.excellent}">Excelent</span>
+                            <span data-translate="calculator.chart.zone.medium" th:text="#{calculator.chart.zone.medium}">Mediu</span>
+                            <span data-translate="calculator.chart.zone.high" th:text="#{calculator.chart.zone.high}">Ridicat</span>
+                        </div>
+                    </div>
+                    
                     <div class="mt-4">
                         <h4 class="mb-3" th:text="#{calculator.recommendations.title}">Recomandări pentru reducerea amprentei de carbon:</h4>
                         <div id="recommendations">
@@ -591,6 +810,12 @@ document.getElementById('carbonCalculator').addEventListener('submit', function(
     
     // Generate recommendations
     generateRecommendations();
+    
+    // Draw Gaussian chart with user's result
+    setTimeout(() => {
+        drawGaussianChart(parseFloat(totalTonnes));
+        showConfettiIfExcellent(parseFloat(totalTonnes));
+    }, 500);
     
     // Method 1: Use the direct test-tracking endpoint which we know works
     fetch('/provocari/test-tracking?actionType=CARBON_CALCULATOR_USED', {
@@ -702,6 +927,268 @@ function generateRecommendations() {
         div.innerHTML = `<i class="bi bi-lightbulb text-success me-2"></i>${rec}`;
         recommendationsDiv.appendChild(div);
     });
+}
+
+// Gaussian Chart Functions
+function drawGaussianChart(userValue) {
+    const canvas = document.getElementById('gaussianCanvas');
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.getBoundingClientRect();
+    
+    // Set canvas size
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+    
+    // Chart parameters
+    const mean = 4.8; // Global average CO2 emissions per person
+    const stdDev = 2.5; // Standard deviation
+    const maxValue = 12; // Maximum value on x-axis
+    const minValue = 0; // Minimum value on x-axis
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw grid
+    drawGrid(ctx, canvas.width, canvas.height, minValue, maxValue);
+    
+    // Draw Gaussian curve
+    drawGaussianCurve(ctx, canvas.width, canvas.height, mean, stdDev, minValue, maxValue);
+    
+    // Draw color zones
+    drawColorZones(ctx, canvas.width, canvas.height, minValue, maxValue);
+    
+    // Position user marker
+    positionUserMarker(userValue, canvas.width, canvas.height, minValue, maxValue);
+    
+    // Add click event for interactivity
+    canvas.addEventListener('click', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const value = minValue + (x / canvas.width) * (maxValue - minValue);
+        showValueTooltip(value, e.clientX, e.clientY);
+    });
+}
+
+function drawGrid(ctx, width, height, minValue, maxValue) {
+    ctx.strokeStyle = '#e9ecef';
+    ctx.lineWidth = 1;
+    
+    // Vertical lines
+    for (let i = 0; i <= 10; i++) {
+        const x = (i / 10) * width;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+    }
+    
+    // Horizontal lines
+    for (let i = 0; i <= 5; i++) {
+        const y = (i / 5) * height;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+    }
+    
+    // X-axis labels
+    ctx.fillStyle = '#6c757d';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= 10; i++) {
+        const x = (i / 10) * width;
+        const value = minValue + (i / 10) * (maxValue - minValue);
+        ctx.fillText(value.toFixed(1), x, height - 5);
+    }
+}
+
+function drawGaussianCurve(ctx, width, height, mean, stdDev, minValue, maxValue) {
+    ctx.strokeStyle = '#2c3e50';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    
+    const points = [];
+    for (let i = 0; i <= width; i++) {
+        const x = minValue + (i / width) * (maxValue - minValue);
+        const y = gaussian(x, mean, stdDev);
+        const canvasY = height - (y * height * 2);
+        points.push({x: i, y: canvasY});
+    }
+    
+    // Draw smooth curve
+    ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx = (prev.x + curr.x) / 2;
+        ctx.quadraticCurveTo(cpx, prev.y, curr.x, curr.y);
+    }
+    ctx.stroke();
+    
+    // Fill area under curve with gradient
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, 'rgba(40, 167, 69, 0.3)');
+    gradient.addColorStop(1, 'rgba(40, 167, 69, 0.1)');
+    
+    ctx.fillStyle = gradient;
+    ctx.lineTo(points[points.length - 1].x, height);
+    ctx.lineTo(points[0].x, height);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawColorZones(ctx, width, height, minValue, maxValue) {
+    // Green zone (0-3)
+    const greenEnd = (3 - minValue) / (maxValue - minValue) * width;
+    ctx.fillStyle = 'rgba(40, 167, 69, 0.2)';
+    ctx.fillRect(0, 0, greenEnd, height);
+    
+    // Yellow zone (3-7)
+    const yellowStart = greenEnd;
+    const yellowEnd = (7 - minValue) / (maxValue - minValue) * width;
+    ctx.fillStyle = 'rgba(255, 193, 7, 0.2)';
+    ctx.fillRect(yellowStart, 0, yellowEnd - yellowStart, height);
+    
+    // Red zone (7+)
+    ctx.fillStyle = 'rgba(220, 53, 69, 0.2)';
+    ctx.fillRect(yellowEnd, 0, width - yellowEnd, height);
+    
+    // Zone labels
+    ctx.fillStyle = '#2c3e50';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    
+    // Get translated labels from data attributes
+    const excellentLabel = document.querySelector('[data-translate="calculator.chart.zone.excellent"]')?.textContent || 'Excelent';
+    const mediumLabel = document.querySelector('[data-translate="calculator.chart.zone.medium"]')?.textContent || 'Mediu';
+    const highLabel = document.querySelector('[data-translate="calculator.chart.zone.high"]')?.textContent || 'Ridicat';
+    
+    ctx.fillText(excellentLabel, greenEnd / 2, height - 30);
+    ctx.fillText(mediumLabel, (yellowStart + yellowEnd) / 2, height - 30);
+    ctx.fillText(highLabel, (yellowEnd + width) / 2, height - 30);
+}
+
+function positionUserMarker(userValue, width, height, minValue, maxValue) {
+    const marker = document.getElementById('userMarker');
+    const tooltipValue = document.getElementById('tooltipValue');
+    
+    // Calculate position
+    const x = ((userValue - minValue) / (maxValue - minValue)) * width;
+    const clampedX = Math.max(0, Math.min(width, x));
+    
+    // Position marker
+    marker.style.left = `${clampedX}px`;
+    
+    // Update tooltip
+    tooltipValue.textContent = userValue.toFixed(2);
+    
+    // Animate marker appearance
+    marker.style.opacity = '0';
+    marker.style.transform = 'translateY(-50%) scale(0)';
+    
+    setTimeout(() => {
+        marker.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+        marker.style.opacity = '1';
+        marker.style.transform = 'translateY(-50%) scale(1)';
+    }, 100);
+    
+    // Add particles around marker
+    createParticles(clampedX, height / 2, getMarkerColor(userValue));
+}
+
+function gaussian(x, mean, stdDev) {
+    return Math.exp(-Math.pow(x - mean, 2) / (2 * Math.pow(stdDev, 2))) / (stdDev * Math.sqrt(2 * Math.PI));
+}
+
+function getMarkerColor(value) {
+    if (value <= 3) return '#28a745'; // Green
+    if (value <= 7) return '#ffc107'; // Yellow
+    return '#dc3545'; // Red
+}
+
+function createParticles(x, y, color) {
+    const container = document.querySelector('.chart-wrapper');
+    
+    for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: ${color};
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            left: ${x}px;
+            top: ${y}px;
+            animation: confetti 2s ease-out forwards;
+        `;
+        
+        container.appendChild(particle);
+        
+        // Remove particle after animation
+        setTimeout(() => {
+            particle.remove();
+        }, 2000);
+    }
+}
+
+function showValueTooltip(value, x, y) {
+    // Create temporary tooltip
+    const tooltip = document.createElement('div');
+    tooltip.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y - 40}px;
+        background: #2c3e50;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        z-index: 1000;
+        pointer-events: none;
+        transform: translateX(-50%);
+    `;
+    tooltip.textContent = `${value.toFixed(2)} tone CO₂e/an`;
+    
+    document.body.appendChild(tooltip);
+    
+    setTimeout(() => {
+        tooltip.remove();
+    }, 2000);
+}
+
+function showConfettiIfExcellent(value) {
+    if (value <= 3) {
+        createConfetti();
+    }
+}
+
+function createConfetti() {
+    const colors = ['#28a745', '#20c997', '#17a2b8', '#6f42c1', '#fd7e14'];
+    const container = document.body;
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            left: ${Math.random() * 100}vw;
+            top: -10px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: confetti 3s ease-out forwards;
+        `;
+        
+        container.appendChild(confetti);
+        
+        setTimeout(() => {
+            confetti.remove();
+        }, 3000);
+    }
 }
 </script>
 </body>
