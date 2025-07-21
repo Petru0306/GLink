@@ -374,8 +374,8 @@
         <div class="container header-content">
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center">
-<h1 class="display-4 mb-4 animate__animated animate__fadeInDown">Cursuri Educaționale</h1>
-<p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s">Explorează insula cunoștințelor și descoperă secretele sustenabilității</p>
+<h1 class="display-4 mb-4 animate__animated animate__fadeInDown" th:text="#{education.page.title}">Cursuri Educaționale</h1>
+<p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s" th:text="#{education.page.subtitle}">Explorează insula cunoștințelor și descoperă secretele sustenabilității</p>
                 </div>
             </div>
         </div>
@@ -386,7 +386,7 @@
         <div class="interactive-map-container animate__animated animate__fadeInUp">
             <!-- Progress Indicator -->
             <div class="progress-indicator">
-                <div class="progress-text">Progres: <span id="progress-text">0/6</span> cursuri</div>
+<div class="progress-text"><span th:text="#{education.progress.indicator}">Progres:</span> <span id="progress-text">0/6</span> <span th:text="#{education.progress.courses}">cursuri</span></div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                 </div>
@@ -449,8 +449,8 @@
         <div class="row mt-4">
             <div class="col-12">
 <div class="alert alert-info animate__animated animate__bounceIn" style="background: linear-gradient(135deg, #f1f9f9, #e3f2fd); border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-radius: 16px;" role="alert">
-                    <h5 class="d-flex align-items-center" style="color: #1e88e5; font-weight: 600;"><i class="bi bi-info-circle-fill me-2" style="font-size: 1.4rem;"></i>Cum să navighezi</h5>
-                    <p class="mb-0" style="color: #37474f; font-size: 1.05rem;">Apasă pe numerele roșii pentru a accesa cursurile. Parcurge cursurile în ordine pentru a debloca urmatoarele nivele și a câștiga trofeul final!</p>
+<h5 class="d-flex align-items-center" style="color: #1e88e5; font-weight: 600;"><i class="bi bi-info-circle-fill me-2" style="font-size: 1.4rem;"></i><span th:text="#{education.how.to.navigate.title}">Cum să navighezi</span></h5>
+                    <p class="mb-0" style="color: #37474f; font-size: 1.05rem;" th:text="#{education.how.to.navigate.instructions}">Apasă pe numerele roșii pentru a accesa cursurile. Parcurge cursurile în ordine pentru a debloca urmatoarele nivele și a câștiga trofeul final!</p>
                 </div>
             </div>
         </div>
