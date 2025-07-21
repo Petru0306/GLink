@@ -223,9 +223,28 @@ public class EducationController {
             // Total points earned
             int totalPointsEarned = pointsFromQuestions + reflectionPoints + imagePoints;
             
+            // Get course title - handle courses 4, 5, 6 that don't exist in database
+            String courseTitle;
+            if (courseId >= 4 && courseId <= 6) {
+                switch(courseId.intValue()) {
+                    case 4:
+                        courseTitle = "Începe un mini-compost acasă";
+                        break;
+                    case 5:
+                        courseTitle = "Plantează ceva (chiar și într-un ghiveci!)";
+                        break;
+                    case 6:
+                        courseTitle = "Adună gunoiul din cartierul tău";
+                        break;
+                    default:
+                        courseTitle = "Lecția " + courseId;
+                }
+            } else {
+                courseTitle = courseService.getCourseById(courseId).getTitle();
+            }
+            
             // Award points using PointsService
-            pointsService.awardLessonPoints(currentUser.getId(), courseId, 
-                courseService.getCourseById(courseId).getTitle(), totalPointsEarned);
+            pointsService.awardLessonPoints(currentUser.getId(), courseId, courseTitle, totalPointsEarned);
             
             // Create a quiz result record with reflection text
             courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, totalPointsEarned, reflectionText, null);
