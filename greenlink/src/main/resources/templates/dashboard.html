@@ -406,6 +406,13 @@
             font-size: 0.8rem;
             color: var(--secondary);
         }
+
+        .activity-points {
+            font-size: 0.8rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
         
 
         
@@ -645,40 +652,27 @@
         <div class="col-lg-4">
             <h2 class="section-title">Recent Activity</h2>
             <div class="activity-feed">
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="bi bi-book"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Completed Course: Ecologie și Biodiversitate</div>
-                        <div class="activity-time">Today</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Earned 80 points from educational quizzes</div>
-                        <div class="activity-time">Today</div>
+                <div th:each="event : ${recentEvents}" th:if="${#lists.size(recentEvents) > 0}">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title" th:text="${event.description}">Activity Description</div>
+                            <div class="activity-time" th:text="${#temporals.format(event.createdAt, 'MMM dd')}">Date</div>
+                            <div class="activity-points" th:text="${'+' + event.points + ' points'}">+0 points</div>
+                        </div>
                     </div>
                 </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="bi bi-trophy"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Completed Challenge: Reduce Plastic</div>
-                        <div class="activity-time">Yesterday</div>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon">
-                        <i class="bi bi-shop"></i>
-                    </div>
-                    <div class="activity-content">
-                        <div class="activity-title">Purchased Eco-friendly Product</div>
-                        <div class="activity-time">3 days ago</div>
+                <div th:if="${#lists.isEmpty(recentEvents)}">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="bi bi-info-circle text-muted"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">No recent activity</div>
+                            <div class="activity-time">Start earning points!</div>
+                        </div>
                     </div>
                 </div>
             </div>

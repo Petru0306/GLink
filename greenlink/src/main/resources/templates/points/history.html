@@ -172,6 +172,31 @@
             background: linear-gradient(45deg, #dc3545, #c82333);
         }
 
+        /* Recent Activity Scrollable Container */
+        .recent-activity-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .recent-activity-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .recent-activity-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .recent-activity-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .recent-activity-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
         .section-title {
             color: var(--text-dark);
             font-weight: 700;
@@ -334,17 +359,19 @@
                         <i class="bi bi-calendar-event"></i>
                         Recent Activity
                     </h5>
-                    <div th:each="event : ${recentEvents}" th:if="${#lists.size(recentEvents) > 0}">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd')}">Date</small>
-                                <div class="fw-bold" th:text="${event.description}">Description</div>
+                    <div class="recent-activity-container">
+                        <div th:each="event : ${recentEvents}" th:if="${#lists.size(recentEvents) > 0}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd')}">Date</small>
+                                    <div class="fw-bold" th:text="${event.description}">Description</div>
+                                </div>
+                                <span class="points-badge" th:text="'+' + ${event.points}">+0</span>
                             </div>
-                            <span class="points-badge" th:text="'+' + ${event.points}">+0</span>
                         </div>
-                    </div>
-                    <div th:if="${#lists.isEmpty(recentEvents)}">
-                        <p class="text-muted text-center">No recent activity</p>
+                        <div th:if="${#lists.isEmpty(recentEvents)}">
+                            <p class="text-muted text-center">No recent activity</p>
+                        </div>
                     </div>
                 </div>
             </div>
