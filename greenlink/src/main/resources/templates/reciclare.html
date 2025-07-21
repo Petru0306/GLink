@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Puncte de Reciclare</title>
+    <title th:text="#{recycling.page.title}">GreenLink - Puncte de Reciclare</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
@@ -338,16 +338,16 @@
         <div class="container hero-content">
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="hero-title animate__animated animate__fadeInDown">Puncte de Reciclare</h1>
-                    <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
+                    <h1 class="hero-title animate__animated animate__fadeInDown" th:text="#{recycling.hero.title}">Puncte de Reciclare</h1>
+                    <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s" th:text="#{recycling.hero.subtitle}">
                         Găsește punctele de reciclare din apropierea ta și contribuie la protejarea mediului
                     </p>
                     <div class="hero-buttons animate__animated animate__fadeInUp animate__delay-2s">
                         <a href="#map-section" class="btn btn-light btn-lg px-4 py-2 me-3">
-                            <i class="bi bi-geo-alt me-2"></i>Vezi Harta
+                            <i class="bi bi-geo-alt me-2"></i><span th:text="#{recycling.hero.view.map}">Vezi Harta</span>
                         </a>
                         <a href="#info-section" class="btn btn-outline-light btn-lg px-4 py-2">
-                            <i class="bi bi-info-circle me-2"></i>Află Mai Multe
+                            <i class="bi bi-info-circle me-2"></i><span th:text="#{recycling.hero.learn.more}">Află Mai Multe</span>
                         </a>
                     </div>
                 </div>
@@ -360,8 +360,8 @@
         <div class="container">
             <div class="row text-center mb-5">
                 <div class="col-lg-8 mx-auto">
-                    <h2 class="display-5 fw-bold text-dark mb-3">De ce să reciclezi?</h2>
-                    <p class="lead text-muted">Reciclarea este una dintre cele mai importante acțiuni pe care le poți face pentru a proteja mediul</p>
+                    <h2 class="display-5 fw-bold text-dark mb-3" th:text="#{recycling.why.recycle.title}">De ce să reciclezi?</h2>
+                    <p class="lead text-muted" th:text="#{recycling.why.recycle.subtitle}">Reciclarea este una dintre cele mai importante acțiuni pe care le poți face pentru a proteja mediul</p>
                 </div>
             </div>
             
@@ -371,8 +371,8 @@
                         <div class="info-icon">
                             <i class="bi bi-tree"></i>
                         </div>
-                        <h3 class="info-title">Salvează Pădurile</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.save.forests.title}">Salvează Pădurile</h3>
+                        <p class="info-text" th:text="#{recycling.save.forests.text}">
                             Reciclarea hârtiei reduce necesitatea de a tăia copaci și ajută la păstrarea ecosistemelor forestiere.
                         </p>
                     </div>
@@ -383,8 +383,8 @@
                         <div class="info-icon">
                             <i class="bi bi-droplet"></i>
                         </div>
-                        <h3 class="info-title">Economisește Apa</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.save.water.title}">Economisește Apa</h3>
+                        <p class="info-text" th:text="#{recycling.save.water.text}">
                             Producerea de materiale din materii prime reciclate folosește mult mai puțină apă decât producția din materiale noi.
                         </p>
                     </div>
@@ -395,8 +395,8 @@
                         <div class="info-icon">
                             <i class="bi bi-lightning"></i>
                         </div>
-                        <h3 class="info-title">Reduce Energia</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.reduce.energy.title}">Reduce Energia</h3>
+                        <p class="info-text" th:text="#{recycling.reduce.energy.text}">
                             Reciclarea necesită mai puțină energie decât producția de materiale noi, reducând emisiile de gaze cu efect de seră.
                         </p>
                     </div>
@@ -407,8 +407,8 @@
                         <div class="info-icon">
                             <i class="bi bi-recycle"></i>
                         </div>
-                        <h3 class="info-title">Reduce Deșeurile</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.reduce.waste.title}">Reduce Deșeurile</h3>
+                        <p class="info-text" th:text="#{recycling.reduce.waste.text}">
                             Reciclarea reduce cantitatea de deșeuri care ajung la gropile de gunoi și ajută la păstrarea curățeniei mediului.
                         </p>
                     </div>
@@ -419,8 +419,8 @@
                         <div class="info-icon">
                             <i class="bi bi-currency-dollar"></i>
                         </div>
-                        <h3 class="info-title">Economisește Bani</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.save.money.title}">Economisește Bani</h3>
+                        <p class="info-text" th:text="#{recycling.save.money.text}">
                             Reciclarea reduce costurile de gestionare a deșeurilor și creează locuri de muncă în industria reciclării.
                         </p>
                     </div>
@@ -431,8 +431,8 @@
                         <div class="info-icon">
                             <i class="bi bi-heart"></i>
                         </div>
-                        <h3 class="info-title">Protejează Sănătatea</h3>
-                        <p class="info-text">
+                        <h3 class="info-title" th:text="#{recycling.protect.health.title}">Protejează Sănătatea</h3>
+                        <p class="info-text" th:text="#{recycling.protect.health.text}">
                             Reducerea deșeurilor și a poluării ajută la menținerea unui mediu mai sănătos pentru toți.
                         </p>
                     </div>
@@ -448,13 +448,13 @@
                 <div class="map-header">
                     <h3>
                         <i class="bi bi-geo-alt"></i>
-                        Harta Punctelor de Reciclare
+                        <span th:text="#{recycling.map.title}">Harta Punctelor de Reciclare</span>
                     </h3>
                     <div class="map-status">
                         <div class="spinner-border" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <span>Se încarcă harta...</span>
+                        <span th:text="#{recycling.map.loading}">Se încarcă harta...</span>
                     </div>
                 </div>
                 
@@ -463,13 +463,13 @@
                         <div class="spinner-border" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p>Se încarcă harta punctelor de reciclare...</p>
+                        <p th:text="#{recycling.map.loading.detailed}">Se încarcă harta punctelor de reciclare...</p>
                     </div>
                     
                     <iframe 
                         src="https://localizare.hartareciclarii.ro/"
                         class="map-iframe"
-                        title="Harta Punctelor de Reciclare"
+                        th:title="#{recycling.map.title}"
                         frameborder="0"
                         loading="lazy"
                         allow="geolocation"
@@ -483,7 +483,7 @@
                 <div class="col-lg-8 mx-auto text-center">
                     <div class="alert alert-success" role="alert">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>Powered by Harta Reciclarii</strong> - Această hartă interactivă îți permite să găsești punctele de reciclare din apropierea ta și să afli ce tipuri de materiale sunt acceptate.
+                        <strong th:text="#{recycling.map.powered.by}">Powered by Harta Reciclarii</strong> - <span th:text="#{recycling.map.description}">Această hartă interactivă îți permite să găsești punctele de reciclare din apropierea ta și să afli ce tipuri de materiale sunt acceptate.</span>
                     </div>
                 </div>
             </div>
@@ -502,20 +502,20 @@
 
         iframe.addEventListener('load', function() {
             loading.style.display = 'none';
-            mapStatus.innerHTML = '<i class="bi bi-check-circle me-2"></i><span>Hartă încărcată cu succes</span>';
+            mapStatus.innerHTML = '<i class="bi bi-check-circle me-2"></i><span>[[#{recycling.map.loaded.success}]]</span>';
         });
 
         iframe.addEventListener('error', function() {
             loading.innerHTML = `
                 <div class="text-danger">
                     <i class="bi bi-exclamation-triangle display-4"></i>
-                    <p class="mt-3">Nu s-a putut încărca harta. Vă rugăm încercați să reîmprospătați pagina.</p>
+                    <p class="mt-3">[[#{recycling.map.load.error}]]</p>
                     <button class="btn btn-outline-danger" onclick="location.reload()">
-                        <i class="bi bi-arrow-clockwise me-2"></i>Reîmprospătează
+                        <i class="bi bi-arrow-clockwise me-2"></i>[[#{recycling.map.refresh}]]
                     </button>
                 </div>
             `;
-            mapStatus.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i><span>Eroare la încărcare</span>';
+            mapStatus.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i><span>[[#{recycling.map.load.error.title}]]</span>';
         });
 
         // Smooth scrolling for anchor links
