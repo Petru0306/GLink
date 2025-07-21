@@ -89,11 +89,133 @@
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
+        .result-container {
+            position: relative;
+            display: inline-block;
+            padding: 1rem;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .result-container.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .result-glow {
+            display: none;
+        }
+
+        .result-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #28a745, #20c997, #17a2b8, #6f42c1);
+            background-size: 400% 400%;
+            animation: glowShift 3s ease-in-out infinite reverse;
+            opacity: 0.5;
+            filter: blur(20px);
+        }
+
         .result-value {
-            font-size: 3.5rem;
+            font-size: 6rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            transition: all 0.6s ease-out 0.2s;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(20px);
+            letter-spacing: -3px;
+            color: #6c757d; /* Default color */
+        }
+
+        .result-container.show .result-value {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-value.excellent {
+            color: #00d084 !important;
+        }
+
+        .result-value.medium {
+            color: #ff9500 !important;
+        }
+
+        .result-value.high {
+            color: #ff3b30 !important;
+        }
+
+        /* More specific selectors to ensure colors are applied */
+        #carbonResult.excellent {
+            color: #00d084 !important;
+        }
+
+        #carbonResult.medium {
+            color: #ff9500 !important;
+        }
+
+        #carbonResult.high {
+            color: #ff3b30 !important;
+        }
+
+        .result-unit {
+            font-size: 1.6rem;
             font-weight: 700;
-            color: #28a745;
-            margin-bottom: 0;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s ease-out 0.4s;
+        }
+
+        .result-container.show .result-unit {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: badgePulse 2s ease-in-out infinite;
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            transition: all 0.6s ease-out 0.6s;
+        }
+
+        .result-container.show .result-badge {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .result-badge.excellent {
+            background: #00d084;
+            color: white;
+        }
+
+        .result-badge.medium {
+            background: #ff9500;
+            color: white;
+        }
+
+        .result-badge.high {
+            background: #ff3b30;
+            color: white;
         }
 
         .recommendation-item {
@@ -107,6 +229,35 @@
         .recommendation-item:hover {
             background: rgba(40, 167, 69, 0.1);
             transform: translateX(5px);
+        }
+
+        .impact-badge {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .impact-badge.high {
+            background: linear-gradient(135deg, #ff3b30 0%, #e74c3c 100%);
+            color: white;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .impact-badge.medium {
+            background: linear-gradient(135deg, #ff9500 0%, #ff7f00 100%);
+            color: white;
+        }
+
+        .recommendation-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
         }
 
         /* Enhanced styling for modern look - Match educatie page */
@@ -313,14 +464,7 @@
             }
         }
 
-        .result-value {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
+        /* Removed conflicting CSS that was preventing color changes */
 
         .recommendation-item {
             background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(32, 201, 151, 0.05) 100%);
@@ -393,11 +537,43 @@
         /* Gaussian Chart Styles */
         .gaussian-chart-container {
             background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 25px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
             position: relative;
             overflow: hidden;
+            border: 2px solid rgba(40, 167, 69, 0.1);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s ease-out;
+        }
+
+        .gaussian-chart-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gaussian-chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(40, 167, 69, 0.08) 50%, transparent 70%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+
+        .gaussian-chart-container::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(40, 167, 69, 0.05) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
         }
 
         .gaussian-chart-container::before {
@@ -416,15 +592,32 @@
             font-weight: 700;
             position: relative;
             z-index: 2;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s ease-out 0.2s;
+        }
+
+        .gaussian-chart-container.show .chart-title {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .chart-wrapper {
             position: relative;
             margin: 2rem 0;
             background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 15px;
-            padding: 1rem;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.1), 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.1);
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s ease-out 0.3s;
+        }
+
+        .gaussian-chart-container.show .chart-wrapper {
+            opacity: 1;
+            transform: scale(1);
         }
 
         #gaussianCanvas {
@@ -445,17 +638,38 @@
             top: 50%;
             transform: translateY(-50%);
             z-index: 10;
-            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .user-marker.show {
+            opacity: 1;
         }
 
         .marker-pulse {
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             background: radial-gradient(circle, #ff6b6b 0%, #ee5a52 100%);
             border-radius: 50%;
             position: relative;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
             animation: pulse 2s ease-in-out infinite;
+            border: 3px solid white;
+        }
+
+        .marker-pulse.excellent {
+            background: radial-gradient(circle, #00d084 0%, #00b894 100%);
+            box-shadow: 0 0 30px rgba(0, 208, 132, 0.8);
+        }
+
+        .marker-pulse.medium {
+            background: radial-gradient(circle, #ff9500 0%, #ff7f00 100%);
+            box-shadow: 0 0 30px rgba(255, 149, 0, 0.8);
+        }
+
+        .marker-pulse.high {
+            background: radial-gradient(circle, #ff3b30 0%, #e74c3c 100%);
+            box-shadow: 0 0 30px rgba(255, 59, 48, 0.8);
         }
 
         .marker-pulse::before {
@@ -501,6 +715,14 @@
             justify-content: center;
             gap: 2rem;
             flex-wrap: wrap;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out 0.6s;
+        }
+
+        .gaussian-chart-container.show .chart-legend {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .legend-item {
@@ -539,17 +761,61 @@
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 0.8; }
         }
 
         @keyframes ripple {
             0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
+            100% { transform: scale(3); opacity: 0; }
         }
 
         @keyframes confetti {
-            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            25% { transform: translateY(-50px) rotate(180deg) scale(1.2); opacity: 1; }
+            50% { transform: translateY(-100px) rotate(360deg) scale(0.8); opacity: 0.8; }
+            75% { transform: translateY(-150px) rotate(540deg) scale(0.6); opacity: 0.5; }
+            100% { transform: translateY(-200px) rotate(720deg) scale(0.3); opacity: 0; }
+        }
+
+        @keyframes resultAppear {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes glowShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes chartAppear {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes wrapperAppear {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
 
         /* Chart Responsive */
@@ -735,8 +1001,14 @@
                 <div class="card-body p-4 p-lg-5">
                     <h3 class="text-center mb-4" th:text="#{calculator.result.title}">Rezultatul tău</h3>
                     <div class="text-center mb-4">
-                        <p class="result-value" id="carbonResult">0</p>
-                        <p class="lead text-muted" th:text="#{calculator.result.unit}">tone CO₂e/an</p>
+                        <div class="result-container">
+                            <p class="result-value" id="carbonResult">0</p>
+                            <p class="lead result-unit" th:text="#{calculator.result.unit}">tone CO₂e/an</p>
+                            <div class="result-badge" id="resultBadge">
+                                <i class="bi bi-award-fill"></i>
+                                <span id="resultCategory">Excelent</span>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Gaussian Distribution Chart -->
@@ -808,14 +1080,25 @@ document.getElementById('carbonCalculator').addEventListener('submit', function(
     document.getElementById('resultCard').classList.remove('d-none');
     document.getElementById('carbonResult').textContent = totalTonnes;
     
+    // Update result styling based on value
+    updateResultStyling(parseFloat(totalTonnes));
+    
+    // Trigger smooth animation for result container
+    setTimeout(() => {
+        document.querySelector('.result-container').classList.add('show');
+    }, 100);
+    
     // Generate recommendations
     generateRecommendations();
     
     // Draw Gaussian chart with user's result
     setTimeout(() => {
-        drawGaussianChart(parseFloat(totalTonnes));
-        showConfettiIfExcellent(parseFloat(totalTonnes));
-    }, 500);
+        document.getElementById('gaussianChart').classList.add('show');
+        setTimeout(() => {
+            drawGaussianChart(parseFloat(totalTonnes));
+            showConfettiIfExcellent(parseFloat(totalTonnes));
+        }, 300);
+    }, 1200);
     
     // Method 1: Use the direct test-tracking endpoint which we know works
     fetch('/provocari/test-tracking?actionType=CARBON_CALCULATOR_USED', {
@@ -907,24 +1190,171 @@ function generateRecommendations() {
     const recommendationsDiv = document.getElementById('recommendations');
     recommendationsDiv.innerHTML = '';
     
+    // Get all form values
     const carKm = parseFloat(document.getElementById('carKm').value) || 0;
+    const fuelType = document.getElementById('fuelType').value;
+    const flights = parseFloat(document.getElementById('flights').value) || 0;
+    const electricity = parseFloat(document.getElementById('electricity').value) || 0;
+    const gas = parseFloat(document.getElementById('gas').value) || 0;
     const renewableEnergy = document.getElementById('renewableEnergy').checked;
     const diet = document.getElementById('diet').value;
+    const homeMeals = parseFloat(document.getElementById('homeMeals').value) || 0;
     const foodWaste = parseFloat(document.getElementById('foodWaste').value) || 0;
     const recycleTypes = ['recyclePlastic', 'recyclePaper', 'recycleGlass', 'recycleMetal']
         .filter(id => document.getElementById(id).checked).length;
+    const wasteGenerated = parseFloat(document.getElementById('wasteGenerated').value) || 0;
 
     const recommendations = [];
-    if (carKm > 100) recommendations.push('[[#{calculator.recommendation.car}]]');
-    if (!renewableEnergy) recommendations.push('[[#{calculator.recommendation.energy}]]');
-    if (diet === 'meat') recommendations.push('[[#{calculator.recommendation.diet}]]');
-    if (recycleTypes < 4) recommendations.push('[[#{calculator.recommendation.recycling}]]');
-    if (foodWaste > 2) recommendations.push('[[#{calculator.recommendation.food.waste}]]');
-    
-    recommendations.forEach(rec => {
+    const impactScores = [];
+
+    // Transport recommendations
+    if (carKm > 150) {
+        recommendations.push({
+            text: `🚗 Reducerea călătoriilor cu mașina de la ${carKm} km/săptămână la 100 km/săptămână ar reduce amprenta ta cu ~${((carKm - 100) * 52 * 0.2 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'high',
+            category: 'transport'
+        });
+        impactScores.push({ category: 'transport', score: carKm * 0.2 });
+    } else if (carKm > 50) {
+        recommendations.push({
+            text: `🚲 Încearcă să folosești bicicleta sau transportul public pentru călătoriile scurte (sub 5 km)`,
+            impact: 'medium',
+            category: 'transport'
+        });
+        impactScores.push({ category: 'transport', score: carKm * 0.15 });
+    }
+
+    if (fuelType === 'petrol' || fuelType === 'diesel') {
+        recommendations.push({
+            text: `⚡ Consideră trecerea la o mașină hibridă sau electrică pentru a reduce emisiile cu până la 70%`,
+            impact: 'high',
+            category: 'transport'
+        });
+        impactScores.push({ category: 'transport', score: 50 });
+    }
+
+    if (flights > 2) {
+        recommendations.push({
+            text: `✈️ Reducerea călătoriilor cu avionul de la ${flights} la 1-2 pe an ar reduce amprenta ta cu ~${((flights - 1) * 0.9).toFixed(2)} tone CO₂e/an`,
+            impact: 'high',
+            category: 'transport'
+        });
+        impactScores.push({ category: 'transport', score: flights * 0.9 });
+    }
+
+    // Energy recommendations
+    if (electricity > 300) {
+        recommendations.push({
+            text: `💡 Reducerea consumului de electricitate de la ${electricity} kWh/lună la 200 kWh/lună ar reduce amprenta ta cu ~${((electricity - 200) * 12 * 0.4 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'high',
+            category: 'energy'
+        });
+        impactScores.push({ category: 'energy', score: electricity * 0.4 });
+    }
+
+    if (!renewableEnergy) {
+        recommendations.push({
+            text: `☀️ Trecerea la energie din surse regenerabile ar reduce amprenta ta cu ~${(electricity * 12 * 0.4 * 0.5 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'high',
+            category: 'energy'
+        });
+        impactScores.push({ category: 'energy', score: electricity * 0.4 });
+    }
+
+    if (gas > 100) {
+        recommendations.push({
+            text: `🔥 Reducerea consumului de gaz de la ${gas} m³/lună la 50 m³/lună ar reduce amprenta ta cu ~${((gas - 50) * 12 * 0.2 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'medium',
+            category: 'energy'
+        });
+        impactScores.push({ category: 'energy', score: gas * 0.2 });
+    }
+
+    // Diet recommendations
+    if (diet === 'meat') {
+        recommendations.push({
+            text: `🥗 Reducerea consumului de carne la 2-3 mese pe săptămână ar reduce amprenta ta cu ~1.5 tone CO₂e/an`,
+            impact: 'high',
+            category: 'diet'
+        });
+        impactScores.push({ category: 'diet', score: 2.5 });
+    } else if (diet === 'flexitarian') {
+        recommendations.push({
+            text: `🌱 Consideră trecerea la o dietă vegetariană pentru a reduce amprenta cu încă ~0.5 tone CO₂e/an`,
+            impact: 'medium',
+            category: 'diet'
+        });
+        impactScores.push({ category: 'diet', score: 1.5 });
+    }
+
+    if (foodWaste > 3) {
+        recommendations.push({
+            text: `🍽️ Reducerea risipei alimentare de la ${foodWaste} kg/lună la 1 kg/lună ar reduce amprenta ta cu ~${((foodWaste - 1) * 12 * 0.1 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'medium',
+            category: 'diet'
+        });
+        impactScores.push({ category: 'diet', score: foodWaste * 0.1 });
+    }
+
+    // Waste recommendations
+    if (recycleTypes < 3) {
+        recommendations.push({
+            text: `♻️ Reciclarea tuturor materialelor (plastic, hârtie, sticlă, metal) ar reduce amprenta ta cu ~${(wasteGenerated * 12 * 0.1 * 0.3 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'medium',
+            category: 'waste'
+        });
+        impactScores.push({ category: 'waste', score: wasteGenerated * 0.1 });
+    }
+
+    if (wasteGenerated > 50) {
+        recommendations.push({
+            text: `🗑️ Reducerea deșeurilor de la ${wasteGenerated} kg/lună la 30 kg/lună ar reduce amprenta ta cu ~${((wasteGenerated - 30) * 12 * 0.1 / 1000).toFixed(2)} tone CO₂e/an`,
+            impact: 'medium',
+            category: 'waste'
+        });
+        impactScores.push({ category: 'waste', score: wasteGenerated * 0.1 });
+    }
+
+    // Sort recommendations by impact
+    recommendations.sort((a, b) => {
+        const aScore = impactScores.find(s => s.category === a.category)?.score || 0;
+        const bScore = impactScores.find(s => s.category === b.category)?.score || 0;
+        return bScore - aScore;
+    });
+
+    // Take top 5 recommendations
+    const topRecommendations = recommendations.slice(0, 5);
+
+    // Add general recommendation if no specific ones
+    if (topRecommendations.length === 0) {
+        recommendationsDiv.innerHTML = `
+            <div class="recommendation-item">
+                <i class="bi bi-star-fill text-success me-2"></i>
+                <strong>Felicitări!</strong> Amprenta ta de carbon este deja foarte bună. Continuă să menții aceste practici sustenabile!
+            </div>
+        `;
+        return;
+    }
+
+    // Display recommendations with impact indicators
+    topRecommendations.forEach((rec, index) => {
         const div = document.createElement('div');
         div.className = 'recommendation-item';
-        div.innerHTML = `<i class="bi bi-lightbulb text-success me-2"></i>${rec}`;
+        
+        const impactIcon = rec.impact === 'high' ? '🔥' : '💡';
+        const impactText = rec.impact === 'high' ? 'Impact Mare' : 'Impact Mediu';
+        
+        div.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="me-3">
+                    <span class="impact-badge ${rec.impact}">${impactIcon}</span>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="recommendation-text">${rec.text}</div>
+                    <small class="text-muted">${impactText} • ${index + 1}/${topRecommendations.length}</small>
+                </div>
+            </div>
+        `;
         recommendationsDiv.appendChild(div);
     });
 }
@@ -1071,6 +1501,7 @@ function drawColorZones(ctx, width, height, minValue, maxValue) {
 function positionUserMarker(userValue, width, height, minValue, maxValue) {
     const marker = document.getElementById('userMarker');
     const tooltipValue = document.getElementById('tooltipValue');
+    const markerPulse = marker.querySelector('.marker-pulse');
     
     // Calculate position
     const x = ((userValue - minValue) / (maxValue - minValue)) * width;
@@ -1082,15 +1513,20 @@ function positionUserMarker(userValue, width, height, minValue, maxValue) {
     // Update tooltip
     tooltipValue.textContent = userValue.toFixed(2);
     
-    // Animate marker appearance
-    marker.style.opacity = '0';
-    marker.style.transform = 'translateY(-50%) scale(0)';
+    // Update marker color based on value
+    markerPulse.classList.remove('excellent', 'medium', 'high');
+    if (userValue <= 3) {
+        markerPulse.classList.add('excellent');
+    } else if (userValue <= 7) {
+        markerPulse.classList.add('medium');
+    } else {
+        markerPulse.classList.add('high');
+    }
     
+    // Animate marker appearance
     setTimeout(() => {
-        marker.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
-        marker.style.opacity = '1';
-        marker.style.transform = 'translateY(-50%) scale(1)';
-    }, 100);
+        marker.classList.add('show');
+    }, 500);
     
     // Add particles around marker
     createParticles(clampedX, height / 2, getMarkerColor(userValue));
@@ -1100,28 +1536,77 @@ function gaussian(x, mean, stdDev) {
     return Math.exp(-Math.pow(x - mean, 2) / (2 * Math.pow(stdDev, 2))) / (stdDev * Math.sqrt(2 * Math.PI));
 }
 
+function updateResultStyling(value) {
+    const resultValue = document.getElementById('carbonResult');
+    const resultBadge = document.getElementById('resultBadge');
+    const resultCategory = document.getElementById('resultCategory');
+    
+    // Remove existing classes
+    resultValue.classList.remove('excellent', 'medium', 'high');
+    resultBadge.classList.remove('excellent', 'medium', 'high');
+    
+    let category, color;
+    if (value <= 3) {
+        category = 'Excelent';
+        color = '#00d084';
+        resultValue.classList.add('excellent');
+        resultBadge.classList.add('excellent');
+    } else if (value <= 7) {
+        category = 'Mediu';
+        color = '#ff9500';
+        resultValue.classList.add('medium');
+        resultBadge.classList.add('medium');
+    } else {
+        category = 'Ridicat';
+        color = '#ff3b30';
+        resultValue.classList.add('high');
+        resultBadge.classList.add('high');
+    }
+    
+    resultCategory.textContent = category;
+    
+    // Directly set the color style
+    resultValue.style.color = color;
+    
+    // Force the color change
+    setTimeout(() => {
+        resultValue.style.color = color;
+        console.log('Color applied:', resultValue.style.color);
+    }, 100);
+    
+    // Debug log
+    console.log('Setting color to:', color, 'for value:', value);
+}
+
 function getMarkerColor(value) {
-    if (value <= 3) return '#28a745'; // Green
-    if (value <= 7) return '#ffc107'; // Yellow
-    return '#dc3545'; // Red
+    if (value <= 3) return '#00d084'; // Green
+    if (value <= 7) return '#ff9500'; // Yellow
+    return '#ff3b30'; // Red
 }
 
 function createParticles(x, y, color) {
     const container = document.querySelector('.chart-wrapper');
     
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
         const particle = document.createElement('div');
+        const size = Math.random() * 6 + 2;
+        const angle = (Math.PI * 2 * i) / 20;
+        const distance = Math.random() * 50 + 20;
+        const startX = x + Math.cos(angle) * distance;
+        const startY = y + Math.sin(angle) * distance;
+        
         particle.style.cssText = `
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: ${size}px;
+            height: ${size}px;
             background: ${color};
             border-radius: 50%;
             pointer-events: none;
             z-index: 5;
-            left: ${x}px;
-            top: ${y}px;
-            animation: confetti 2s ease-out forwards;
+            left: ${startX}px;
+            top: ${startY}px;
+            animation: particleFloat 3s ease-out forwards;
+            box-shadow: 0 0 10px ${color};
         `;
         
         container.appendChild(particle);
@@ -1129,7 +1614,7 @@ function createParticles(x, y, color) {
         // Remove particle after animation
         setTimeout(() => {
             particle.remove();
-        }, 2000);
+        }, 3000);
     }
 }
 
@@ -1166,28 +1651,71 @@ function showConfettiIfExcellent(value) {
 }
 
 function createConfetti() {
-    const colors = ['#28a745', '#20c997', '#17a2b8', '#6f42c1', '#fd7e14'];
+    const colors = ['#00d084', '#00b894', '#17a2b8', '#6f42c1', '#ff9500', '#ff7f00', '#ff3b30'];
     const container = document.body;
+    const resultContainer = document.querySelector('.result-container');
+    const rect = resultContainer.getBoundingClientRect();
     
-    for (let i = 0; i < 50; i++) {
+    // Create confetti around the result
+    for (let i = 0; i < 100; i++) {
         const confetti = document.createElement('div');
+        const size = Math.random() * 15 + 5;
+        const startX = rect.left + Math.random() * rect.width;
+        const startY = rect.top + Math.random() * rect.height;
+        const endX = startX + (Math.random() - 0.5) * 200;
+        const endY = startY - Math.random() * 300 - 100;
+        
         confetti.style.cssText = `
             position: fixed;
-            width: 10px;
-            height: 10px;
+            width: ${size}px;
+            height: ${size}px;
             background: ${colors[Math.floor(Math.random() * colors.length)]};
-            left: ${Math.random() * 100}vw;
-            top: -10px;
+            left: ${startX}px;
+            top: ${startY}px;
             z-index: 1000;
             pointer-events: none;
-            animation: confetti 3s ease-out forwards;
+            border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+            animation: confetti 4s ease-out forwards;
+            box-shadow: 0 0 10px ${colors[Math.floor(Math.random() * colors.length)]};
         `;
         
         container.appendChild(confetti);
         
+        // Animate to end position
+        setTimeout(() => {
+            confetti.style.transition = 'all 4s ease-out';
+            confetti.style.left = `${endX}px`;
+            confetti.style.top = `${endY}px`;
+            confetti.style.transform = `rotate(${Math.random() * 720}deg)`;
+        }, 100);
+        
         setTimeout(() => {
             confetti.remove();
-        }, 3000);
+        }, 4000);
+    }
+    
+    // Add sparkle effect
+    for (let i = 0; i < 30; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.style.cssText = `
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: white;
+            left: ${rect.left + Math.random() * rect.width}px;
+            top: ${rect.top + Math.random() * rect.height}px;
+            z-index: 1001;
+            pointer-events: none;
+            border-radius: 50%;
+            animation: sparkle 2s ease-out forwards;
+            box-shadow: 0 0 10px white;
+        `;
+        
+        container.appendChild(sparkle);
+        
+        setTimeout(() => {
+            sparkle.remove();
+        }, 2000);
     }
 }
 </script>
