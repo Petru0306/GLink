@@ -367,8 +367,8 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4">🔄 Lecția 3: Redu deșeurile cu un singur schimb simplu</h1>
-            <p class="lead">Descoperă puterea schimbărilor mici pentru un impact mare</p>
+            <h1 class="display-4" th:text="#{course.3.title}">🔄 Lecția 3: Redu deșeurile cu un singur schimb simplu</h1>
+            <p class="lead" th:text="#{course.3.subtitle}">Descoperă puterea schimbărilor mici pentru un impact mare</p>
         </div>
     </header>
 
@@ -377,13 +377,13 @@
         <!-- Back Button -->
         <a href="/educatie" class="back-button">
             <i class="bi bi-arrow-left"></i>
-            Înapoi la harta cursurilor
+            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
         </a>
 
         <!-- Lesson completed message -->
         <div class="lesson-completed" th:if="${lessonCompleted}" sec:authorize="isAuthenticated()">
             <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
-            <strong>Felicitări!</strong> Ai completat această lecție cu succes!
+            <strong th:text="#{course.lesson.completed}">Felicitări! Ai completat această lecție cu succes!</strong>
         </div>
         
         <!-- Hidden authentication status indicator -->
@@ -392,7 +392,7 @@
         <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-label">
-                <span>Progresul lecției</span>
+                <span th:text="#{course.lesson.progress}">Progresul lecției</span>
                 <span id="progress-text">0/5</span>
             </div>
             <div class="progress">
@@ -429,7 +429,7 @@
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
                 <p class="mb-3"><strong>Ce sunt obiectele de unică folosință?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -473,7 +473,7 @@
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
                 <p class="mb-3"><strong>Câte sticle de plastic poate evita o singură sticlă reutilizabilă într-un an?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -519,7 +519,7 @@
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
                 <p class="mb-3"><strong>Ce este un exemplu de „eco-swap"?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -564,7 +564,7 @@
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
                 <p class="mb-3"><strong>Care este un beneficiu suplimentar al folosirii obiectelor reutilizabile?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
@@ -609,7 +609,7 @@
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
                 <p class="mb-3"><strong>Ce te ajută să continui cu schimbările sustenabile?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
