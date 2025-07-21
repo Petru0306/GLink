@@ -763,60 +763,85 @@
         }
 
         /* Marketplace Preview */
-        .product-showcase {
-            display: flex;
-            gap: 1rem;
+        .product-preview {
             margin-bottom: 1.5rem;
-            overflow-x: auto;
-            padding: 0.5rem 0;
         }
 
         .product-item {
-            min-width: 120px;
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             padding: 1rem;
-            text-align: center;
+            margin-bottom: 0.8rem;
+            background: rgba(40, 167, 69, 0.05);
+            border-radius: 12px;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            cursor: pointer;
         }
 
         .product-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--neon-green);
             background: rgba(0, 255, 136, 0.1);
+            border-color: var(--neon-green);
+            transform: translateX(5px);
         }
 
-        .product-image {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 0.5rem;
-            border-radius: 10px;
-            overflow: hidden;
+        .product-icon {
+            width: 50px;
+            height: 50px;
             background: white;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .product-image img {
+        .product-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
+        .product-info {
+            flex: 1;
+        }
+
         .product-info h4 {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #2c3e50;
             margin: 0 0 0.3rem 0;
         }
 
+        .product-desc {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .price {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--neon-green);
             margin: 0;
+        }
+
+        .product-badge {
+            font-size: 0.75rem;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 600;
         }
 
         /* Learning Hub */
@@ -2343,32 +2368,44 @@
                         <h3 th:text="#{home.hub.marketplace.title}">Marketplace Explorer</h3>
                     </div>
                     <div class="card-content">
-                        <div class="product-showcase">
-                            <div class="product-item" data-product="1">
-                                <div class="product-image">
+                        <div class="product-preview">
+                            <div class="product-item" data-product="1" onclick="window.location.href='/marketplace'">
+                                <div class="product-icon">
                                     <img src="/images/products/Bamboo Toothbrush.png" alt="Bamboo Toothbrush">
                                 </div>
                                 <div class="product-info">
                                     <h4>Bamboo Toothbrush</h4>
-                                    <p class="price">€3.50</p>
+                                    <p class="product-desc">Eco-friendly alternative</p>
+                                    <div class="product-price">
+                                        <span class="price">€3.50</span>
+                                        <span class="product-badge">🦷 Eco</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-item" data-product="2">
-                                <div class="product-image">
+                            <div class="product-item" data-product="2" onclick="window.location.href='/marketplace'">
+                                <div class="product-icon">
                                     <img src="/images/products/Organic cotton T-shirt.png" alt="Organic T-shirt">
                                 </div>
                                 <div class="product-info">
                                     <h4>Organic T-shirt</h4>
-                                    <p class="price">€15.00</p>
+                                    <p class="product-desc">Sustainable fashion</p>
+                                    <div class="product-price">
+                                        <span class="price">€15.00</span>
+                                        <span class="product-badge">👕 Organic</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="product-item" data-product="3">
-                                <div class="product-image">
+                            <div class="product-item" data-product="3" onclick="window.location.href='/marketplace'">
+                                <div class="product-icon">
                                     <img src="/images/products/Organic honey.png" alt="Organic Honey">
                                 </div>
                                 <div class="product-info">
                                     <h4>Organic Honey</h4>
-                                    <p class="price">€8.90</p>
+                                    <p class="product-desc">Pure natural sweetness</p>
+                                    <div class="product-price">
+                                        <span class="price">€8.90</span>
+                                        <span class="product-badge">🍯 Natural</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
