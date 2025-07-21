@@ -134,7 +134,7 @@
                         <a class="nav-link" href="/provocari" th:text="#{nav.challenges}">Challenges</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="pointsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="pointsDropdown" role="button" aria-expanded="false">
                             <i class="bi bi-trophy-fill text-warning"></i> <span th:text="#{nav.points}">Points</span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="pointsDropdown">
@@ -203,28 +203,54 @@
     <!-- Dropdown hover script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const dropdownToggle = document.querySelector('#marketplaceDropdown');
-            const dropdownMenu = dropdownToggle.nextElementSibling;
-            let timeoutId;
+            // Marketplace dropdown hover
+            const marketplaceDropdownToggle = document.querySelector('#marketplaceDropdown');
+            const marketplaceDropdownMenu = marketplaceDropdownToggle.nextElementSibling;
+            let marketplaceTimeoutId;
 
-            // Show dropdown on hover
-            dropdownToggle.parentElement.addEventListener('mouseenter', function() {
-                clearTimeout(timeoutId);
-                dropdownToggle.classList.add('show');
-                dropdownMenu.classList.add('show');
+            // Show marketplace dropdown on hover
+            marketplaceDropdownToggle.parentElement.addEventListener('mouseenter', function() {
+                clearTimeout(marketplaceTimeoutId);
+                marketplaceDropdownToggle.classList.add('show');
+                marketplaceDropdownMenu.classList.add('show');
             });
 
-            // Hide dropdown when mouse leaves
-            dropdownToggle.parentElement.addEventListener('mouseleave', function() {
-                timeoutId = setTimeout(() => {
-                    dropdownToggle.classList.remove('show');
-                    dropdownMenu.classList.remove('show');
+            // Hide marketplace dropdown when mouse leaves
+            marketplaceDropdownToggle.parentElement.addEventListener('mouseleave', function() {
+                marketplaceTimeoutId = setTimeout(() => {
+                    marketplaceDropdownToggle.classList.remove('show');
+                    marketplaceDropdownMenu.classList.remove('show');
                 }, 200);
             });
 
-            // Keep dropdown visible when hovering the menu
-            dropdownMenu.addEventListener('mouseenter', function() {
-                clearTimeout(timeoutId);
+            // Keep marketplace dropdown visible when hovering the menu
+            marketplaceDropdownMenu.addEventListener('mouseenter', function() {
+                clearTimeout(marketplaceTimeoutId);
+            });
+
+            // Points dropdown hover
+            const pointsDropdownToggle = document.querySelector('#pointsDropdown');
+            const pointsDropdownMenu = pointsDropdownToggle.nextElementSibling;
+            let pointsTimeoutId;
+
+            // Show points dropdown on hover
+            pointsDropdownToggle.parentElement.addEventListener('mouseenter', function() {
+                clearTimeout(pointsTimeoutId);
+                pointsDropdownToggle.classList.add('show');
+                pointsDropdownMenu.classList.add('show');
+            });
+
+            // Hide points dropdown when mouse leaves
+            pointsDropdownToggle.parentElement.addEventListener('mouseleave', function() {
+                pointsTimeoutId = setTimeout(() => {
+                    pointsDropdownToggle.classList.remove('show');
+                    pointsDropdownMenu.classList.remove('show');
+                }, 200);
+            });
+
+            // Keep points dropdown visible when hovering the menu
+            pointsDropdownMenu.addEventListener('mouseenter', function() {
+                clearTimeout(pointsTimeoutId);
             });
 
             dropdownMenu.addEventListener('mouseleave', function() {

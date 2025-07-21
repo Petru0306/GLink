@@ -93,6 +93,16 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
+        /* Clickable rank card styles */
+        .rank-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+
+        .rank-card:hover {
+            background-color: #f8f9fa;
+        }
+
         .rank-card::before {
             content: '';
             position: absolute;
@@ -335,35 +345,36 @@
                 </a>
             </div>
             
-            <div th:each="user, iterStat : ${topUsers}" 
-                 th:class="'rank-card ' + (${iterStat.index == 0} ? 'gold' : '') + (${iterStat.index == 1} ? 'silver' : '') + (${iterStat.index == 2} ? 'bronze' : '')">
-                <div class="row align-items-center">
-                    <div class="col-lg-1 col-md-2 col-3 text-center mb-3 mb-md-0">
-                        <div th:class="'rank-number ' + (${iterStat.index == 0} ? 'gold' : '') + (${iterStat.index == 1} ? 'silver' : '') + (${iterStat.index == 2} ? 'bronze' : '')"
-                             th:text="${iterStat.index + 1}">1</div>
-                    </div>
-                    <div class="col-lg-8 col-md-7 col-6">
-                        <div class="d-flex align-items-center">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-info">
-                                <h5 th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
-                                <p th:text="${user.email}">user@example.com</p>
+            <a th:href="@{'/profile/' + ${user.id}}" class="text-decoration-none" th:each="user, iterStat : ${topUsers}">
+                <div th:class="'rank-card ' + (${iterStat.index == 0} ? 'gold' : '') + (${iterStat.index == 1} ? 'silver' : '') + (${iterStat.index == 2} ? 'bronze' : '')">
+                    <div class="row align-items-center">
+                        <div class="col-lg-1 col-md-2 col-3 text-center mb-3 mb-md-0">
+                            <div th:class="'rank-number ' + (${iterStat.index == 0} ? 'gold' : '') + (${iterStat.index == 1} ? 'silver' : '') + (${iterStat.index == 2} ? 'bronze' : '')"
+                                 th:text="${iterStat.index + 1}">1</div>
+                        </div>
+                        <div class="col-lg-8 col-md-7 col-6">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <div class="user-info">
+                                    <h5 th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
+                                    <p th:text="${user.email}">user@example.com</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-3 text-end">
-                        <div class="points-display">
-                            <i class="bi bi-star-fill me-2"></i>
-                            <span th:text="${user.points}">0</span>
-                        </div>
-                        <div class="level-badge mt-2 d-inline-block">
-                            Level <span th:text="${user.level}">1</span>
+                        <div class="col-lg-3 col-md-3 col-3 text-end">
+                            <div class="points-display">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <span th:text="${user.points}">0</span>
+                            </div>
+                            <div class="level-badge mt-2 d-inline-block">
+                                Level <span th:text="${user.level}">1</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Call to Action -->
