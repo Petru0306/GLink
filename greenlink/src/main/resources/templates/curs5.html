@@ -403,41 +403,41 @@
         <!-- Paragraph 1 -->
         <section class="lesson-section">
             <div class="paragraph-number">1</div>
-            <h2>De ce e important să plantezi ceva</h2>
+            <h2 th:text="#{course.5.paragraph.1.title}">De ce e important să plantezi ceva</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.5.paragraph.1.content}">
                 Plantele joacă un rol esențial în viața noastră, chiar dacă uneori nu le acordăm atenția meritată. Ele curăță aerul, răcesc mediul înconjurător, atrag insecte benefice și contribuie la sănătatea noastră fizică și mentală.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Chiar și o singură plantă într-un ghiveci mic:</h4>
+                <h4 class="section-subtitle" th:text="#{course.5.paragraph.1.benefits.title}">Chiar și o singură plantă într-un ghiveci mic:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🌿 Absoarbe dioxidul de carbon și produce oxigen</strong></li>
-                    <li><strong>💧 Ajută la reglarea umidității din aer</strong></li>
-                    <li><strong>😊 Oferă o stare de calm și reduce stresul</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.1.benefits.item.1}">🌿 Absoarbe dioxidul de carbon și produce oxigen</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.1.benefits.item.2}">💧 Ajută la reglarea umidității din aer</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.1.benefits.item.3}">😊 Oferă o stare de calm și reduce stresul</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.5.paragraph.1.conclusion}">
                 Nu ai nevoie de o grădină pentru a avea grijă de o plantă. Poți începe cu ceva simplu, cum ar fi busuioc, ceapă verde, mentă sau chiar o plantă ornamentală. Cu puțină grijă, vei vedea cum crește — și cu ea și responsabilitatea ta față de natură.
             </p>
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
-                <p class="mb-3"><strong>Ce face o plantă, chiar și într-un ghiveci mic?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
+                <p class="mb-3"><strong th:text="#{course.5.paragraph.1.question}">Ce face o plantă, chiar și într-un ghiveci mic?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Poluează aerul
+                    <strong>A)</strong> <span th:text="#{course.5.paragraph.1.option.a}">Poluează aerul</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>B)</strong> Produce oxigen
+                    <strong>B)</strong> <span th:text="#{course.5.paragraph.1.option.b}">Produce oxigen</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Crește plastic
+                    <strong>C)</strong> <span th:text="#{course.5.paragraph.1.option.c}">Crește plastic</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Consumă energie electrică
+                    <strong>D)</strong> <span th:text="#{course.5.paragraph.1.option.d}">Consumă energie electrică</span>
                 </div>
 
                 <div class="quiz-result" id="result-1"></div>
@@ -447,41 +447,41 @@
         <!-- Paragraph 2 -->
         <section class="lesson-section">
             <div class="paragraph-number">2</div>
-            <h2>Plantele te ajută să te reconectezi cu natura</h2>
+            <h2 th:text="#{course.5.paragraph.2.title}">Plantele te ajută să te reconectezi cu natura</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.5.paragraph.2.content}">
                 În viața de zi cu zi, suntem deseori deconectați de la natură — stăm în case, mergem cu mașina, privim ecrane. Plantatul e o formă simplă, dar eficientă, de a reaprinde legătura cu pământul și cu ciclurile naturale.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Când plantezi și îngrijești o plantă:</h4>
+                <h4 class="section-subtitle" th:text="#{course.5.paragraph.2.learning.title}">Când plantezi și îngrijești o plantă:</h4>
                 <ul class="bullet-list">
-                    <li><strong>👀 Vezi în mod direct cum crește ceva</strong> datorită grijii tale</li>
-                    <li><strong>🧠 Înveți despre răbdare și procese naturale</strong></li>
-                    <li><strong>💡 Devii mai atent(ă) la consumul tău</strong> — apă, sol, lumina necesară</li>
+                    <li><strong th:text="#{course.5.paragraph.2.learning.item.1}">👀 Vezi în mod direct cum crește ceva datorită grijii tale</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.2.learning.item.2}">🧠 Înveți despre răbdare și procese naturale</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.2.learning.item.3}">💡 Devii mai atent(ă) la consumul tău — apă, sol, lumina necesară</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.5.paragraph.2.conclusion}">
                 Chiar și copii sau persoane fără experiență pot învăța rapid. Este un gest care îți aduce bucurie și în același timp îți dezvoltă respectul față de natură.
             </p>
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
-                <p class="mb-3"><strong>Ce te învață plantatul?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
+                <p class="mb-3"><strong th:text="#{course.5.paragraph.2.question}">Ce te învață plantatul?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Să consumi mai mult
+                    <strong>A)</strong> <span th:text="#{course.5.paragraph.2.option.a}">Să consumi mai mult</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Să grăbești procesele
+                    <strong>B)</strong> <span th:text="#{course.5.paragraph.2.option.b}">Să grăbești procesele</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Să ai răbdare și grijă
+                    <strong>C)</strong> <span th:text="#{course.5.paragraph.2.option.c}">Să ai răbdare și grijă</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Să eviți natura
+                    <strong>D)</strong> <span th:text="#{course.5.paragraph.2.option.d}">Să eviți natura</span>
                 </div>
 
                 <div class="quiz-result" id="result-2"></div>
@@ -491,42 +491,42 @@
         <!-- Paragraph 3 -->
         <section class="lesson-section">
             <div class="paragraph-number">3</div>
-            <h2>Cum poți planta ceva simplu, chiar acum</h2>
+            <h2 th:text="#{course.5.paragraph.3.title}">Cum poți planta ceva simplu, chiar acum</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.5.paragraph.3.content}">
                 Nu ai nevoie de materiale sofisticate. Iată cum poți începe imediat:
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Pași simpli pentru a începe:</h4>
+                <h4 class="section-subtitle" th:text="#{course.5.paragraph.3.steps.title}">Pași simpli pentru a începe:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🥬 Ia resturi de ceapă verde sau salată</strong> – pune-le într-un pahar cu apă și vei vedea cum cresc din nou!</li>
-                    <li><strong>🌿 Cumpără un plic cu semințe de busuioc, mentă sau ridichi</strong> – ușor de crescut în ghivece.</li>
-                    <li><strong>🌱 Folosește un ghiveci vechi, un borcan sau chiar o cutie de iaurt</strong> ca recipient.</li>
-                    <li><strong>💧 Udă-le zilnic și pune-le la lumină naturală.</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.3.steps.item.1}">🥬 Ia resturi de ceapă verde sau salată – pune-le într-un pahar cu apă și vei vedea cum cresc din nou!</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.3.steps.item.2}">🌿 Cumpără un plic cu semințe de busuioc, mentă sau ridichi – ușor de crescut în ghivece.</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.3.steps.item.3}">🌱 Folosește un ghiveci vechi, un borcan sau chiar o cutie de iaurt ca recipient.</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.3.steps.item.4}">💧 Udă-le zilnic și pune-le la lumină naturală.</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.5.paragraph.3.conclusion}">
                 Nu există „prea mic" când vine vorba de plantat. Fiecare frunză contează. Și e foarte satisfăcător să vezi ceva verde crescând din mâinile tale.
             </p>
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
-                <p class="mb-3"><strong>Ce poți folosi ca ghiveci pentru a planta?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
+                <p class="mb-3"><strong th:text="#{course.5.paragraph.3.question}">Ce poți folosi ca ghiveci pentru a planta?</strong></p>
                 
                 <div class="quiz-option" data-correct="true">
-                    <strong>A)</strong> Un borcan sau o cutie de iaurt
+                    <strong>A)</strong> <span th:text="#{course.5.paragraph.3.option.a}">Un borcan sau o cutie de iaurt</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> O pungă de plastic
+                    <strong>B)</strong> <span th:text="#{course.5.paragraph.3.option.b}">O pungă de plastic</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> O sticlă cu ulei
+                    <strong>C)</strong> <span th:text="#{course.5.paragraph.3.option.c}">O sticlă cu ulei</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> O cutie de carton murdar
+                    <strong>D)</strong> <span th:text="#{course.5.paragraph.3.option.d}">O cutie de carton murdar</span>
                 </div>
 
                 <div class="quiz-result" id="result-3"></div>
@@ -536,42 +536,42 @@
         <!-- Paragraph 4 -->
         <section class="lesson-section">
             <div class="paragraph-number">4</div>
-            <h2>Ce plante sunt potrivite pentru începători</h2>
+            <h2 th:text="#{course.5.paragraph.4.title}">Ce plante sunt potrivite pentru începători</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.5.paragraph.4.content}">
                 Dacă ești la început, alege plante care cresc ușor și nu cer prea multă întreținere. Iată câteva recomandări:
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Plante ușor de crescut:</h4>
+                <h4 class="section-subtitle" th:text="#{course.5.paragraph.4.easy.title}">Plante ușor de crescut:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🌿 Busuioc</strong> – germinează repede și miroase frumos</li>
-                    <li><strong>🧅 Ceapă verde</strong> – crește chiar și în apă</li>
-                    <li><strong>🌱 Ridichi</strong> – cresc rapid, chiar și în spații mici</li>
-                    <li><strong>🌼 Menta</strong> – rezistentă, ideală pentru ceaiuri</li>
+                    <li><strong th:text="#{course.5.paragraph.4.easy.item.1}">🌿 Busuioc — germinează repede și miroase frumos</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.4.easy.item.2}">🧅 Ceapă verde — crește chiar și în apă</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.4.easy.item.3}">🌱 Ridichi — cresc rapid, chiar și în spații mici</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.4.easy.item.4}">🌼 Menta — rezistentă, ideală pentru ceaiuri</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.5.paragraph.4.conclusion}">
                 E important să alegi plante care îți plac — așa vei fi mai motivat(ă) să ai grijă de ele. Poți începe cu una singură și, treptat, să creezi un mic colț verde în camera ta sau pe balcon.
             </p>
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
-                <p class="mb-3"><strong>Care dintre următoarele plante este ușor de crescut într-un apartament?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
+                <p class="mb-3"><strong th:text="#{course.5.paragraph.4.question}">Care dintre următoarele plante este ușor de crescut într-un apartament?</strong></p>
                 
                 <div class="quiz-option" data-correct="true">
-                    <strong>A)</strong> Menta
+                    <strong>A)</strong> <span th:text="#{course.5.paragraph.4.option.a}">Menta</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Trandafirul sălbatic
+                    <strong>B)</strong> <span th:text="#{course.5.paragraph.4.option.b}">Trandafirul sălbatic</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Arborele de mango
+                    <strong>C)</strong> <span th:text="#{course.5.paragraph.4.option.c}">Arborele de mango</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Părul
+                    <strong>D)</strong> <span th:text="#{course.5.paragraph.4.option.d}">Părul</span>
                 </div>
 
                 <div class="quiz-result" id="result-4"></div>
@@ -581,41 +581,41 @@
         <!-- Paragraph 5 -->
         <section class="lesson-section">
             <div class="paragraph-number">5</div>
-            <h2>Fă-ți propria ta legătură cu pământul</h2>
+            <h2 th:text="#{course.5.paragraph.5.title}">Fă-ți propria ta legătură cu pământul</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.5.paragraph.5.content}">
                 Să vezi cum crește ceva din mâinile tale îți oferă un sentiment unic. Nu doar că ai creat ceva, dar te și conectezi cu ceva viu. Este un mic act de grijă față de planetă, dar și față de tine.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Mulți oameni care încep cu o plantă ajung să:</h4>
+                <h4 class="section-subtitle" th:text="#{course.5.paragraph.5.development.title}">Mulți oameni care încep cu o plantă ajung să:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🌱 Dezvolte o pasiune pentru grădinărit</strong></li>
-                    <li><strong>🌍 Devină mai atenți la sezon, vreme și tipuri de sol</strong></li>
-                    <li><strong>🥗 Își dorească să consume mai sustenabil și local</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.5.development.item.1}">🌱 Dezvolte o pasiune pentru grădinărit</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.5.development.item.2}">🌍 Devină mai atenți la sezon, vreme și tipuri de sol</strong></li>
+                    <li><strong th:text="#{course.5.paragraph.5.development.item.3}">🥗 Își dorească să consume mai sustenabil și local</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.5.paragraph.5.conclusion}">
                 Totul începe cu un ghiveci, o mână de pământ și un pic de răbdare. Natura te răsplătește cu verde, viață și liniște.
             </p>
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
-                <p class="mb-3"><strong>Ce sentiment poți avea după ce ai crescut o plantă?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
+                <p class="mb-3"><strong th:text="#{course.5.paragraph.5.question}">Ce sentiment poți avea după ce ai crescut o plantă?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Frustrare
+                    <strong>A)</strong> <span th:text="#{course.5.paragraph.5.option.a}">Frustrare</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>B)</strong> Conectare și satisfacție
+                    <strong>B)</strong> <span th:text="#{course.5.paragraph.5.option.b}">Conectare și satisfacție</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Indiferență
+                    <strong>C)</strong> <span th:text="#{course.5.paragraph.5.option.c}">Indiferență</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Plictiseală
+                    <strong>D)</strong> <span th:text="#{course.5.paragraph.5.option.d}">Plictiseală</span>
                 </div>
 
                 <div class="quiz-result" id="result-5"></div>
@@ -627,8 +627,8 @@
             <h2 class="text-center mb-4" th:text="#{course.final.task}">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
-                <p>
+                <h4><i class="bi bi-camera me-2"></i><span th:text="#{course.photo.task}">Foto (10 pts)</span></h4>
+                <p th:text="#{course.5.photo.instructions}">
                     Fă o poză cu planta ta — poate fi semința plantată, un borcan cu ceapă verde, un ghiveci improvizat sau orice ai început să crești.
                 </p>
                 <input type="file" class="form-control" id="image-upload" accept="image/*">
@@ -639,14 +639,14 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
-                <p class="mb-3">
+                <h4><i class="bi bi-pencil me-2"></i><span th:text="#{course.write.task}">Scrie (5 pts)</span></h4>
+                <p class="mb-3" th:text="#{course.5.write.instructions}">
                     Scrie o propoziție despre cum te-a făcut să te simți faptul că ai plantat și îngrijit ceva cu mâinile tale.
                 </p>
                 <textarea 
                     class="reflection-input" 
                     id="reflection-text" 
-                    placeholder="Scrie aici reflecția ta..."
+                    th:placeholder="#{course.write.placeholder}"
                     rows="4"></textarea>
             </div>
 

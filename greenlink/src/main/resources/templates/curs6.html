@@ -403,41 +403,41 @@
         <!-- Paragraph 1 -->
         <section class="lesson-section">
             <div class="paragraph-number">1</div>
-            <h2>De ce este gunoiul o problemă reală în spațiile publice</h2>
+            <h2 th:text="#{course.6.paragraph.1.title}">De ce este gunoiul o problemă reală în spațiile publice</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.6.paragraph.1.content}">
                 Ai observat vreodată ambalaje, sticle sau mucuri de țigară pe trotuar sau în parc? Gunoiul lăsat în spații publice nu este doar inestetic — el are efecte reale și dăunătoare.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Efectele gunoiului în spații publice:</h4>
+                <h4 class="section-subtitle" th:text="#{course.6.paragraph.1.effects.title}">Efectele gunoiului în spații publice:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🐦 Poate fi ingerat de animale</strong> care se îmbolnăvesc sau mor</li>
-                    <li><strong>🌧️ Obstrucționează canalizările</strong> și cauzează inundații</li>
-                    <li><strong>😷 Degradează calitatea aerului</strong> și a solului</li>
+                    <li><strong th:text="#{course.6.paragraph.1.effects.item.1}">🐦 Poate fi ingerat de animale care se îmbolnăvesc sau mor</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.1.effects.item.2}">🌧️ Obstrucționează canalizările și cauzează inundații</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.1.effects.item.3}">😷 Degradează calitatea aerului și a solului</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.6.paragraph.1.conclusion}">
                 Din păcate, multe persoane aruncă gunoiul la întâmplare, crezând că „nu contează". Dar fiecare obiect aruncat aiurea contează. Și fiecare persoană care ia inițiativa să curețe un spațiu face deja o diferență vizibilă.
             </p>
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
-                <p class="mb-3"><strong>Ce efect poate avea gunoiul aruncat pe jos?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
+                <p class="mb-3"><strong th:text="#{course.6.paragraph.1.question}">Ce efect poate avea gunoiul aruncat pe jos?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Îmbunătățește aerul
+                    <strong>A)</strong> <span th:text="#{course.6.paragraph.1.option.a}">Îmbunătățește aerul</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Hrănește plantele
+                    <strong>B)</strong> <span th:text="#{course.6.paragraph.1.option.b}">Hrănește plantele</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Poate îmbolnăvi animalele
+                    <strong>C)</strong> <span th:text="#{course.6.paragraph.1.option.c}">Poate îmbolnăvi animalele</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Este inofensiv
+                    <strong>D)</strong> <span th:text="#{course.6.paragraph.1.option.d}">Este inofensiv</span>
                 </div>
 
                 <div class="quiz-result" id="result-1"></div>
@@ -447,41 +447,41 @@
         <!-- Paragraph 2 -->
         <section class="lesson-section">
             <div class="paragraph-number">2</div>
-            <h2>Cum contribuie curățenia la o comunitate mai sănătoasă</h2>
+            <h2 th:text="#{course.6.paragraph.2.title}">Cum contribuie curățenia la o comunitate mai sănătoasă</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.6.paragraph.2.content}">
                 Când spațiile comune sunt curate, întreaga comunitate beneficiază. O zonă curată este mai sigură și mai primitoare pentru copii, bătrâni și turiști.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Beneficiile unui spațiu curat:</h4>
+                <h4 class="section-subtitle" th:text="#{course.6.paragraph.2.benefits.title}">Beneficiile unui spațiu curat:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🏠 Este mai sigură și mai primitoare</strong> pentru copii, bătrâni și turiști</li>
-                    <li><strong>🤝 Creează un sentiment de respect</strong> și apartenență între vecini</li>
-                    <li><strong>💡 Încurajează alți oameni</strong> să nu arunce gunoiul la întâmplare</li>
+                    <li><strong th:text="#{course.6.paragraph.2.benefits.item.1}">🏠 Este mai sigură și mai primitoare pentru copii, bătrâni și turiști</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.2.benefits.item.2}">🤝 Creează un sentiment de respect și apartenență între vecini</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.2.benefits.item.3}">💡 Încurajează alți oameni să nu arunce gunoiul la întâmplare</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.6.paragraph.2.conclusion}">
                 Mulți oameni se rușinează sau nu cred că pot face o schimbare. Dar uneori e nevoie doar de o persoană care începe. O acțiune simplă, cum ar fi să aduni gunoaiele din parc timp de 10–15 minute, poate transforma complet acel loc.
             </p>
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
-                <p class="mb-3"><strong>Ce efect are un spațiu public curat asupra comunității?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
+                <p class="mb-3"><strong th:text="#{course.6.paragraph.2.question}">Ce efect are un spațiu public curat asupra comunității?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> O face mai dezorganizată
+                    <strong>A)</strong> <span th:text="#{course.6.paragraph.2.option.a}">O face mai dezorganizată</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Încurajează aruncarea gunoiului
+                    <strong>B)</strong> <span th:text="#{course.6.paragraph.2.option.b}">Încurajează aruncarea gunoiului</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Creează respect și siguranță
+                    <strong>C)</strong> <span th:text="#{course.6.paragraph.2.option.c}">Creează respect și siguranță</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Nu are niciun impact
+                    <strong>D)</strong> <span th:text="#{course.6.paragraph.2.option.d}">Nu are niciun impact</span>
                 </div>
 
                 <div class="quiz-result" id="result-2"></div>
@@ -491,42 +491,42 @@
         <!-- Paragraph 3 -->
         <section class="lesson-section">
             <div class="paragraph-number">3</div>
-            <h2>Pașii simpli pentru a aduna gunoiul în siguranță</h2>
+            <h2 th:text="#{course.6.paragraph.3.title}">Pașii simpli pentru a aduna gunoiul în siguranță</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.6.paragraph.3.content}">
                 Curățarea unei zone publice nu trebuie să fie dificilă sau periculoasă. Urmează acești pași simpli:
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Pași pentru curățenie în siguranță:</h4>
+                <h4 class="section-subtitle" th:text="#{course.6.paragraph.3.steps.title}">Pași pentru curățenie în siguranță:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🧤 Ia mănuși</strong> (de preferat de grădinărit sau de unică folosință)</li>
-                    <li><strong>🗑️ Folosește un sac rezistent</strong> pentru gunoi</li>
-                    <li><strong>🚮 Alege o zonă sigură și vizibilă</strong> — parc, trotuar, pădure urbană</li>
-                    <li><strong>🧴 Poartă o sticlă cu dezinfectant</strong> și spală-te pe mâni după</li>
+                    <li><strong th:text="#{course.6.paragraph.3.steps.item.1}">🧤 Ia mănuși (de preferat de grădinărit sau de unică folosință)</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.3.steps.item.2}">🗑️ Folosește un sac rezistent pentru gunoi</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.3.steps.item.3}">🚮 Alege o zonă sigură și vizibilă — parc, trotuar, pădure urbană</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.3.steps.item.4}">🧴 Poartă o sticlă cu dezinfectant și spală-te pe mâni după</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.6.paragraph.3.conclusion}">
                 Ideal e să nu faci asta singur(ă). Invită un prieten sau un membru al familiei. În grup e mai eficient și mai distractiv. Nu uita să te bucuri de rezultat!
             </p>
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
-                <p class="mb-3"><strong>Ce e important să folosești când aduni gunoaie?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
+                <p class="mb-3"><strong th:text="#{course.6.paragraph.3.question}">Ce e important să folosești când aduni gunoaie?</strong></p>
                 
                 <div class="quiz-option" data-correct="true">
-                    <strong>A)</strong> Mănuși
+                    <strong>A)</strong> <span th:text="#{course.6.paragraph.3.option.a}">Mănuși</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> O umbrelă
+                    <strong>B)</strong> <span th:text="#{course.6.paragraph.3.option.b}">O umbrelă</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> Ulei
+                    <strong>C)</strong> <span th:text="#{course.6.paragraph.3.option.c}">Ulei</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Cărți
+                    <strong>D)</strong> <span th:text="#{course.6.paragraph.3.option.d}">Cărți</span>
                 </div>
 
                 <div class="quiz-result" id="result-3"></div>
@@ -536,41 +536,41 @@
         <!-- Paragraph 4 -->
         <section class="lesson-section">
             <div class="paragraph-number">4</div>
-            <h2>Gunoiul este doar o parte din problemă</h2>
+            <h2 th:text="#{course.6.paragraph.4.title}">Gunoiul este doar o parte din problemă</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.6.paragraph.4.content}">
                 Adunarea gunoiului este un prim pas vizibil, dar problema e mai complexă: de multe ori, lipsa coșurilor de gunoi, educația scăzută sau comoditatea contribuie la poluare.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Curățenia trebuie să fie însoțită de:</h4>
+                <h4 class="section-subtitle" th:text="#{course.6.paragraph.4.accompanied.title}">Curățenia trebuie să fie însoțită de:</h4>
                 <ul class="bullet-list">
-                    <li><strong>🧠 Educație ecologică</strong></li>
-                    <li><strong>🗣️ Convorbiri în comunitate</strong></li>
-                    <li><strong>🧰 Infrastructură mai bună</strong> (mai multe coșuri, reciclare accesibilă)</li>
+                    <li><strong th:text="#{course.6.paragraph.4.accompanied.item.1}">🧠 Educație ecologică</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.4.accompanied.item.2}">🗣️ Convorbiri în comunitate</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.4.accompanied.item.3}">🧰 Infrastructură mai bună (mai multe coșuri, reciclare accesibilă)</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.6.paragraph.4.conclusion}">
                 Când iei inițiativa și postezi o poză sau vorbești despre ce ai făcut, poți inspira alți oameni. Ai un impact mai mare decât crezi — nu doar curățând, ci schimbând mentalități.
             </p>
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
-                <p class="mb-3"><strong>Ce alt pas e important pe lângă curățenie?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
+                <p class="mb-3"><strong th:text="#{course.6.paragraph.4.question}">Ce alt pas e important pe lângă curățenie?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Să ignori gunoiul
+                    <strong>A)</strong> <span th:text="#{course.6.paragraph.4.option.a}">Să ignori gunoiul</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Să arunci tot la grămadă
+                    <strong>B)</strong> <span th:text="#{course.6.paragraph.4.option.b}">Să arunci tot la grămadă</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Să educi și să vorbești cu ceilalți
+                    <strong>C)</strong> <span th:text="#{course.6.paragraph.4.option.c}">Să educi și să vorbești cu ceilalți</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Să păstrezi sacii cu tine
+                    <strong>D)</strong> <span th:text="#{course.6.paragraph.4.option.d}">Să păstrezi sacii cu tine</span>
                 </div>
 
                 <div class="quiz-result" id="result-4"></div>
@@ -580,41 +580,41 @@
         <!-- Paragraph 5 -->
         <section class="lesson-section">
             <div class="paragraph-number">5</div>
-            <h2>Un obicei care poate deveni o tradiție</h2>
+            <h2 th:text="#{course.6.paragraph.5.title}">Un obicei care poate deveni o tradiție</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.6.paragraph.5.content}">
                 Ce începe ca o acțiune unică — curățarea unei alei sau a unui parc — poate deveni un obicei sau chiar o tradiție între prieteni sau colegi. Unele școli sau cartiere organizează „Zilele curățeniei", unde voluntarii curăță zone publice împreună.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">De ce să faci asta regulat?</h4>
+                <h4 class="section-subtitle" th:text="#{course.6.paragraph.5.why.title}">De ce să faci asta regulat?</h4>
                 <ul class="bullet-list">
-                    <li><strong>😊 Îți oferă satisfacție imediată</strong> — vezi rezultatul clar</li>
-                    <li><strong>🏃 E un mod activ și sănătos</strong> de a petrece timpul</li>
-                    <li><strong>🌍 Contribui direct la o lume</strong> mai curată, mai frumoasă</li>
+                    <li><strong th:text="#{course.6.paragraph.5.why.item.1}">😊 Îți oferă satisfacție imediată — vezi rezultatul clar</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.5.why.item.2}">🏃 E un mod activ și sănătos de a petrece timpul</strong></li>
+                    <li><strong th:text="#{course.6.paragraph.5.why.item.3}">🌍 Contribui direct la o lume mai curată, mai frumoasă</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.6.paragraph.5.conclusion}">
                 Nu e nevoie de aprobări sau campanii. E nevoie doar de 20 de minute, un sac de gunoi și o atitudine pozitivă.
             </p>
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
-                <p class="mb-3"><strong>Ce poate deveni curățarea unui loc public?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
+                <p class="mb-3"><strong th:text="#{course.6.paragraph.5.question}">Ce poate deveni curățarea unui loc public?</strong></p>
                 
                 <div class="quiz-option" data-correct="true">
-                    <strong>A)</strong> Un obicei sustenabil
+                    <strong>A)</strong> <span th:text="#{course.6.paragraph.5.option.a}">Un obicei sustenabil</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> O risipă de timp
+                    <strong>B)</strong> <span th:text="#{course.6.paragraph.5.option.b}">O risipă de timp</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> O pedeapsă
+                    <strong>C)</strong> <span th:text="#{course.6.paragraph.5.option.c}">O pedeapsă</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> O joacă inutilă
+                    <strong>D)</strong> <span th:text="#{course.6.paragraph.5.option.d}">O joacă inutilă</span>
                 </div>
 
                 <div class="quiz-result" id="result-5"></div>
@@ -626,8 +626,8 @@
             <h2 class="text-center mb-4" th:text="#{course.final.task}">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
-                <p>
+                <h4><i class="bi bi-camera me-2"></i><span th:text="#{course.photo.task}">Foto (10 pts)</span></h4>
+                <p th:text="#{course.6.photo.instructions}">
                     Fă o poză cu locul pe care l-ai curățat sau cu sacul tău plin de gunoaie adunate dintr-o zonă publică.
                 </p>
                 <input type="file" class="form-control" id="image-upload" accept="image/*">
@@ -638,14 +638,14 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
-                <p class="mb-3">
+                <h4><i class="bi bi-pencil me-2"></i><span th:text="#{course.write.task}">Scrie (5 pts)</span></h4>
+                <p class="mb-3" th:text="#{course.6.write.instructions}">
                     Scrie o propoziție despre cum te-ai simțit știind că ai lăsat un loc mai curat decât l-ai găsit.
                 </p>
                 <textarea 
                     class="reflection-input" 
                     id="reflection-text" 
-                    placeholder="Scrie aici reflecția ta..."
+                    th:placeholder="#{course.write.placeholder}"
                     rows="4"></textarea>
             </div>
 
