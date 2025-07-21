@@ -64,6 +64,8 @@ public class ChallengeController {
         }
         return "provocari";
     }
+
+
     
     // Filter challenges to show only those that are not active or completed
     private List<Challenge> filterAvailableChallenges(List<Challenge> allChallenges, 
