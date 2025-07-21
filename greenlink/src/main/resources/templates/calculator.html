@@ -254,6 +254,12 @@
             color: white;
         }
 
+        .impact-badge.excellent {
+            background: linear-gradient(135deg, #00d084 0%, #00b894 100%);
+            color: white;
+            animation: glow 2s ease-in-out infinite;
+        }
+
         .recommendation-text {
             font-size: 1rem;
             line-height: 1.5;
@@ -818,6 +824,17 @@
             100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
 
+        @keyframes glow {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(0, 208, 132, 0.5);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(0, 208, 132, 0.8);
+                transform: scale(1.05);
+            }
+        }
+
         /* Chart Responsive */
         @media (max-width: 768px) {
             .gaussian-chart-container {
@@ -1208,14 +1225,14 @@ function generateRecommendations() {
     const impactScores = [];
 
     // Transport recommendations
-    if (carKm > 150) {
+    if (carKm > 200) {
         recommendations.push({
             text: `🚗 Reducerea călătoriilor cu mașina de la ${carKm} km/săptămână la 100 km/săptămână ar reduce amprenta ta cu ~${((carKm - 100) * 52 * 0.2 / 1000).toFixed(2)} tone CO₂e/an`,
             impact: 'high',
             category: 'transport'
         });
         impactScores.push({ category: 'transport', score: carKm * 0.2 });
-    } else if (carKm > 50) {
+    } else if (carKm > 100) {
         recommendations.push({
             text: `🚲 Încearcă să folosești bicicleta sau transportul public pentru călătoriile scurte (sub 5 km)`,
             impact: 'medium',
@@ -1233,7 +1250,7 @@ function generateRecommendations() {
         impactScores.push({ category: 'transport', score: 50 });
     }
 
-    if (flights > 2) {
+    if (flights > 3) {
         recommendations.push({
             text: `✈️ Reducerea călătoriilor cu avionul de la ${flights} la 1-2 pe an ar reduce amprenta ta cu ~${((flights - 1) * 0.9).toFixed(2)} tone CO₂e/an`,
             impact: 'high',
@@ -1243,7 +1260,7 @@ function generateRecommendations() {
     }
 
     // Energy recommendations
-    if (electricity > 300) {
+    if (electricity > 400) {
         recommendations.push({
             text: `💡 Reducerea consumului de electricitate de la ${electricity} kWh/lună la 200 kWh/lună ar reduce amprenta ta cu ~${((electricity - 200) * 12 * 0.4 / 1000).toFixed(2)} tone CO₂e/an`,
             impact: 'high',
@@ -1261,7 +1278,7 @@ function generateRecommendations() {
         impactScores.push({ category: 'energy', score: electricity * 0.4 });
     }
 
-    if (gas > 100) {
+    if (gas > 150) {
         recommendations.push({
             text: `🔥 Reducerea consumului de gaz de la ${gas} m³/lună la 50 m³/lună ar reduce amprenta ta cu ~${((gas - 50) * 12 * 0.2 / 1000).toFixed(2)} tone CO₂e/an`,
             impact: 'medium',
@@ -1287,7 +1304,7 @@ function generateRecommendations() {
         impactScores.push({ category: 'diet', score: 1.5 });
     }
 
-    if (foodWaste > 3) {
+    if (foodWaste > 5) {
         recommendations.push({
             text: `🍽️ Reducerea risipei alimentare de la ${foodWaste} kg/lună la 1 kg/lună ar reduce amprenta ta cu ~${((foodWaste - 1) * 12 * 0.1 / 1000).toFixed(2)} tone CO₂e/an`,
             impact: 'medium',
@@ -1306,7 +1323,7 @@ function generateRecommendations() {
         impactScores.push({ category: 'waste', score: wasteGenerated * 0.1 });
     }
 
-    if (wasteGenerated > 50) {
+    if (wasteGenerated > 80) {
         recommendations.push({
             text: `🗑️ Reducerea deșeurilor de la ${wasteGenerated} kg/lună la 30 kg/lună ar reduce amprenta ta cu ~${((wasteGenerated - 30) * 12 * 0.1 / 1000).toFixed(2)} tone CO₂e/an`,
             impact: 'medium',
@@ -1325,7 +1342,44 @@ function generateRecommendations() {
     // Take top 5 recommendations
     const topRecommendations = recommendations.slice(0, 5);
 
-    // Add general recommendation if no specific ones
+    // Get the calculated carbon footprint value
+    const carbonResult = document.getElementById('carbonResult');
+    const carbonValue = parseFloat(carbonResult.textContent) || 0;
+    
+    // If user is in green zone (excellent), show different recommendations
+    if (carbonValue <= 3) {
+        recommendationsDiv.innerHTML = `
+            <div class="recommendation-item">
+                <div class="d-flex align-items-start">
+                    <div class="me-3">
+                        <span class="impact-badge excellent">🏆</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="recommendation-text">
+                            <strong>Felicitări! 🎉</strong> Amprenta ta de carbon de ${carbonValue.toFixed(2)} tone CO₂e/an este excelentă și sub media globală de 4.8 tone!
+                        </div>
+                        <small class="text-muted">Impact Excelent • Exemplu pentru alții</small>
+                    </div>
+                </div>
+            </div>
+            <div class="recommendation-item">
+                <div class="d-flex align-items-start">
+                    <div class="me-3">
+                        <span class="impact-badge medium">💚</span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="recommendation-text">
+                            Continuă să menții aceste practici sustenabile și împărtășește-ți experiența cu prietenii și familia!
+                        </div>
+                        <small class="text-muted">Impact Mediu • Inspirație</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Add general recommendation if no specific ones for other zones
     if (topRecommendations.length === 0) {
         recommendationsDiv.innerHTML = `
             <div class="recommendation-item">
