@@ -19,9 +19,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/marketplace")
@@ -40,6 +43,9 @@ public class MarketplaceController {
 
     @Autowired
     private ChallengeTrackingService challengeTrackingService;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping("/{branch}")
     public String showBranchMarketplace(
@@ -103,11 +109,12 @@ public class MarketplaceController {
             model.addAttribute("maxPrice", maxPrice);
             
             // Set branch title based on branch parameter
+            Locale currentLocale = LocaleContextHolder.getLocale();
             String branchTitle;
             switch (branchEnum) {
-                case VERDE -> branchTitle = "Marketplace Verde";
-                case FOOD -> branchTitle = "Food Market";
-                case ELECTRO -> branchTitle = "Electro & Fashion Market";
+                case VERDE -> branchTitle = messageSource.getMessage("marketplace.branch.verde", null, currentLocale);
+                case FOOD -> branchTitle = messageSource.getMessage("marketplace.branch.food", null, currentLocale);
+                case ELECTRO -> branchTitle = messageSource.getMessage("marketplace.branch.electro", null, currentLocale);
                 default -> branchTitle = "Marketplace";
             }
             model.addAttribute("branchTitle", branchTitle);
@@ -155,13 +162,14 @@ public class MarketplaceController {
                 model.addAttribute("isCurrentUserSeller", isCurrentUserSeller);
                 
                 // Set branch title based on branch parameter
+                Locale currentLocale = LocaleContextHolder.getLocale();
                 String branchTitle;
                 try {
                     Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
                     switch (branchEnum) {
-                        case VERDE -> branchTitle = "Marketplace Verde";
-                        case FOOD -> branchTitle = "Food Market";
-                        case ELECTRO -> branchTitle = "Electro Market";
+                        case VERDE -> branchTitle = messageSource.getMessage("marketplace.branch.verde", null, currentLocale);
+                        case FOOD -> branchTitle = messageSource.getMessage("marketplace.branch.food", null, currentLocale);
+                        case ELECTRO -> branchTitle = messageSource.getMessage("marketplace.branch.electro", null, currentLocale);
                         default -> branchTitle = "Marketplace";
                     }
                 } catch (IllegalArgumentException e) {
@@ -178,13 +186,14 @@ public class MarketplaceController {
                 model.addAttribute("branch", branch);
                 
                 // Set branch title based on branch parameter
+                Locale currentLocale = LocaleContextHolder.getLocale();
                 String branchTitle;
                 try {
                     Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
                     switch (branchEnum) {
-                        case VERDE -> branchTitle = "Marketplace Verde";
-                        case FOOD -> branchTitle = "Food Market";
-                        case ELECTRO -> branchTitle = "Electro Market";
+                        case VERDE -> branchTitle = messageSource.getMessage("marketplace.branch.verde", null, currentLocale);
+                        case FOOD -> branchTitle = messageSource.getMessage("marketplace.branch.food", null, currentLocale);
+                        case ELECTRO -> branchTitle = messageSource.getMessage("marketplace.branch.electro", null, currentLocale);
                         default -> branchTitle = "Marketplace";
                     }
                 } catch (IllegalArgumentException e) {
@@ -312,7 +321,7 @@ public class MarketplaceController {
             // Track marketplace item listing for challenges
             challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_ITEM_LISTED", productDto);
             
-            redirectAttributes.addFlashAttribute("success", "Produsul tău a fost listat cu succes în marketplace!");
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("marketplace.product.added.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
             logger.error("Error adding product: {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("error", "A apărut o eroare la listarea produsului: " + e.getMessage());
@@ -368,10 +377,10 @@ public class MarketplaceController {
             productService.deleteProduct(id);
             logger.info("Product deleted successfully");
             
-            redirectAttributes.addFlashAttribute("success", "Produsul a fost șters cu succes!");
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("marketplace.product.deleted.success", null, LocaleContextHolder.getLocale()));
         } catch (Exception e) {
             logger.error("Error deleting product with ID {}: {}", id, e.getMessage(), e);
-            redirectAttributes.addFlashAttribute("error", "A apărut o eroare la ștergerea produsului: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("marketplace.product.delete.error", null, LocaleContextHolder.getLocale()) + " " + e.getMessage());
         }
         
         // Always redirect to my-products page

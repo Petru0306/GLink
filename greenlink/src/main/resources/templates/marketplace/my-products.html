@@ -189,7 +189,7 @@
                                 <span th:text="${product.stock}">0</span> în stoc
                             </span>
                             <span class="badge" th:classappend="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'bg-success' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'bg-warning text-dark' : 'bg-info text-dark')}">
-                                <span th:text="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Verde' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food' : 'Electro')}">Branch</span>
+                                <span th:text="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde.short} : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food.short} : #{marketplace.branch.electro.short})}">Branch</span>
                             </span>
                         </div>
                     </div>
@@ -336,7 +336,7 @@
                                             <select class="form-select" name="branch" id="modalBranch" required>
                                                 <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
                                                         th:value="${branch}"
-                                                        th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion')}">
+                                                        th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde} : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food} : #{marketplace.branch.electro})}">
                                                 </option>
                                             </select>
                                         </div>
@@ -348,7 +348,7 @@
                                             <div class="form-check form-switch mt-2">
                                                 <input type="checkbox" class="form-check-input" name="ecoFriendly" id="modalEcoFriendly">
                                                 <label class="form-check-label">
-                                                    <i class="bi bi-leaf-fill text-success"></i> Produs Eco-Friendly
+                                                    <i class="bi bi-leaf-fill text-success"></i> <span th:text="#{marketplace.eco.friendly.product}">Produs Eco-Friendly</span>
                                                 </label>
                                             </div>
                                         </div>

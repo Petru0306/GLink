@@ -320,24 +320,24 @@
 
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label">Marketplace*</label>
+                                <label class="form-label" th:text="#{marketplace.choose.marketplace}">Marketplace*</label>
                                 <select class="form-select" th:field="*{branch}" required>
                                     <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
                                             th:value="${branch}"
-                                            th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion')}">
+                                            th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde} : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food} : #{marketplace.branch.electro})}">
                                     </option>
                                 </select>
-                                <div class="form-text">Alege secțiunea din marketplace unde va apărea produsul tău</div>
+                                <div class="form-text" th:text="#{marketplace.choose.marketplace.section}">Alege secțiunea din marketplace unde va apărea produsul tău</div>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="mb-3">
-                                <label class="form-label">Descriere Produs*</label>
+                                <label class="form-label" th:text="#{marketplace.description}">Descriere Produs*</label>
                                 <textarea class="form-control" th:field="*{description}" 
                                           rows="4" required
                                           placeholder="Descrieți produsul în detaliu..."></textarea>
-                                <div class="form-text">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
+                                <div class="form-text" th:text="#{marketplace.product.description.help}">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
                             </div>
                         </div>
 
