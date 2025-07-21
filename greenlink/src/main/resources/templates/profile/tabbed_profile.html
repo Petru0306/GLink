@@ -4,232 +4,659 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - GreenLink</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'green': {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'bounce-in': 'bounceIn 0.8s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Bootstrap CSS for navbar and footer -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Site's main styles -->
     <link rel="stylesheet" href="/css/styles.css?v=1.0.9">
-    <link rel="stylesheet" href="/css/profile-tabs.css?v=1.0.0">
-    <link rel="stylesheet" href="/css/dm-modal.css?v=1.0.0">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     
     <!-- CSRF Token -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Smooth transitions */
+        * {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        /* Glass morphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Gradient backgrounds */
+        .gradient-bg {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+        
+        .gradient-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        /* Hover effects */
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Progress bar animation */
+        .progress-bar-animated {
+            background: linear-gradient(90deg, #22c55e, #4ade80, #22c55e);
+            background-size: 200% 100%;
+            animation: progressShimmer 2s infinite;
+        }
+        
+        @keyframes progressShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Tab animations */
+        .tab-content {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Card hover effects */
+        .stat-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Avatar animation */
+        .avatar-container {
+            position: relative;
+        }
+        
+        .avatar-container::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: linear-gradient(45deg, #22c55e, #4ade80, #16a34a);
+            border-radius: 50%;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty state animations */
+        .empty-state-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Ensure navbar works properly with Tailwind */
+        .navbar {
+            z-index: 1030 !important;
+        }
+        
+        .navbar-nav {
+            display: flex !important;
+            flex-direction: row !important;
+        }
+        
+        .navbar-nav .nav-item {
+            display: flex !important;
+        }
+        
+        .navbar-nav .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0.5rem 1rem !important;
+            color: #2c3e50 !important;
+            text-decoration: none !important;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #22c55e !important;
+        }
+        
+        .dropdown-menu {
+            display: none !important;
+            position: absolute !important;
+            background: white !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.375rem !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            z-index: 1000 !important;
+        }
+        
+        .dropdown-menu.show {
+            display: block !important;
+        }
+        
+        .dropdown-item {
+            display: block !important;
+            width: 100% !important;
+            padding: 0.5rem 1rem !important;
+            clear: both !important;
+            font-weight: 400 !important;
+            color: #212529 !important;
+            text-align: inherit !important;
+            text-decoration: none !important;
+            white-space: nowrap !important;
+            background-color: transparent !important;
+            border: 0 !important;
+        }
+        
+        .dropdown-item:hover {
+            color: #1e2125 !important;
+            background-color: #f8f9fa !important;
+        }
+        
+        .navbar-toggler {
+            display: none !important;
+        }
+        
+        @media (max-width: 991.98px) {
+            .navbar-toggler {
+                display: block !important;
+            }
+            
+            .navbar-collapse {
+                display: none !important;
+            }
+            
+            .navbar-collapse.show {
+                display: block !important;
+            }
+            
+            .navbar-nav {
+                flex-direction: column !important;
+            }
+        }
+        
+        /* Ensure buttons are visible */
+        .btn {
+            display: inline-block !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+            text-align: center !important;
+            text-decoration: none !important;
+            vertical-align: middle !important;
+            cursor: pointer !important;
+            user-select: none !important;
+            border: 1px solid transparent !important;
+            padding: 0.375rem 0.75rem !important;
+            font-size: 1rem !important;
+            border-radius: 0.375rem !important;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+        }
+        
+        .btn-success {
+            color: #fff !important;
+            background-color: #22c55e !important;
+            border-color: #22c55e !important;
+        }
+        
+        .btn-outline-success {
+            color: #22c55e !important;
+            border-color: #22c55e !important;
+        }
+        
+        .btn-outline-success:hover {
+            color: #fff !important;
+            background-color: #22c55e !important;
+            border-color: #22c55e !important;
+        }
+        
+        .btn-outline-primary {
+            color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
+        
+        .btn-outline-primary:hover {
+            color: #fff !important;
+            background-color: #0d6efd !important;
+            border-color: #0d6efd !important;
+        }
+        
+        .btn-outline-secondary {
+            color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+        
+        .btn-outline-secondary:hover {
+            color: #fff !important;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+        
+        /* Modal styling to match the new design */
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .btn-close {
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            padding: 0.5rem;
+        }
+        
+        .btn-close:hover {
+            background-color: #e5e7eb;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-green-50 to-green-100 min-h-screen">
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <div class="container mt-4">
-        <!-- Profile Header -->
-        <div class="profile-header">
-            <div class="row align-items-center">
-                <div class="col-md-3 text-center text-md-start">
-                    <!-- Profile Avatar -->
-                    <div class="profile-avatar-placeholder">
+    <!-- Main Content with proper spacing -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl mt-4">
+        <!-- Profile Header Card -->
+        <div class="gradient-bg rounded-3xl p-8 mb-8 shadow-2xl animate-fade-in">
+            <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+                <!-- Profile Avatar -->
+                <div class="avatar-container animate-bounce-in">
+                    <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center text-white text-6xl backdrop-blur-sm">
                         <i class="bi bi-person-circle"></i>
                     </div>
                 </div>
-                <div class="col-md-6 text-center text-md-start">
-                    <!-- Profile Info -->
-                    <h1 class="profile-name" th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">User Name</h1>
-                    <p class="profile-username" th:text="${profileUser != null ? ('@' + profileUser.email.split('@')[0]) : '@username'}">@username</p>
-                    <div class="eco-score">
-                        <i class="bi bi-trophy-fill"></i>
-                        <span th:text="${profileUser != null ? profileUser.points : 0}">0</span> GreenLink Points
-                        <span class="badge bg-light text-dark ms-2">Level <span th:text="${profileUser != null ? (profileUser.points / 50 + 1) : 1}">1</span></span>
-                    </div>
-                </div>
-                <div class="col-md-3 text-center text-md-end">
-                    <!-- Action Buttons -->
-                    <div class="d-flex flex-column gap-2">
-                        <!-- DM Button - only show for other users' profiles and if they are friends -->
-                        <button th:if="${!isPersonalProfile and canSendMessage}" 
-                                class="btn btn-success" 
-                                onclick="openDMModal(event)"
-                                th:data-user-id="${profileUser.id}"
-                                th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
-                            <i class="bi bi-chat-dots me-2"></i>DM
-                        </button>
+                
+                <!-- Profile Info -->
+                <div class="flex-1 text-center lg:text-left">
+                    <h1 class="text-4xl lg:text-5xl font-bold text-white mb-2 animate-slide-up" 
+                        th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">
+                        User Name
+                    </h1>
+                    <p class="text-xl text-white/80 mb-4 animate-slide-up" 
+                       th:text="${profileUser != null ? ('@' + profileUser.email.split('@')[0]) : '@username'}">
+                        @username
+                    </p>
+                    
+                    <!-- Points and Level -->
+                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                        <div class="flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 animate-slide-up">
+                            <i class="bi bi-trophy-fill text-yellow-300 text-2xl"></i>
+                            <span class="text-white font-bold text-xl" th:text="${profileUser != null ? profileUser.points : 0}">0</span>
+                            <span class="text-white/90">GreenLink Points</span>
+                        </div>
                         
-                        <!-- Edit Profile Button - only show for personal profile -->
-                        <a th:if="${isPersonalProfile}" href="/profile/edit" class="btn btn-outline-light">
-                            <i class="bi bi-pencil me-2"></i>Edit Profile
-                        </a>
+                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 animate-slide-up">
+                            <span class="text-white font-bold text-xl">Level</span>
+                            <span class="text-white font-bold text-2xl ml-2" 
+                                  th:text="${profileUser != null ? (profileUser.points / 50 + 1) : 1}">1</span>
+                        </div>
                     </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-4 animate-slide-up">
+                        <div class="progress-bar-animated h-3 rounded-full" 
+                             th:style="'width: ' + ${profileUser != null ? (profileUser.points % 50) * 2 : 0} + '%'"></div>
+                    </div>
+                    <p class="text-white/80 text-sm animate-slide-up">
+                        <span th:text="${profileUser != null ? (50 - (profileUser.points % 50)) : 50}">50</span> points to next level
+                    </p>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col gap-4 animate-slide-up">
+                    <!-- DM Button -->
+                    <button th:if="${!isPersonalProfile and canSendMessage}" 
+                            class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift"
+                            onclick="openDMModal(event)"
+                            th:data-user-id="${profileUser.id}"
+                            th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
+                        <i class="bi bi-chat-dots mr-2 group-hover:scale-110 transition-transform"></i>
+                        Send Message
+                    </button>
+                    
+                    <!-- Edit Profile Button -->
+                    <a th:if="${isPersonalProfile}" 
+                       href="/profile/edit" 
+                       class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift text-center">
+                        <i class="bi bi-pencil mr-2 group-hover:scale-110 transition-transform"></i>
+                        Edit Profile
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">
-                    <i class="bi bi-house me-2"></i>Overview
+        <!-- Navigation Tabs Card -->
+        <div class="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
+            <div class="flex flex-wrap border-b border-gray-200">
+                <button class="tab-btn active flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
+                        data-tab="overview">
+                    <i class="bi bi-house mr-2"></i>Overview
                 </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="challenges-tab" data-bs-toggle="tab" data-bs-target="#challenges" type="button" role="tab" aria-controls="challenges" aria-selected="false">
-                    <i class="bi bi-trophy me-2"></i>Challenges
+                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
+                        data-tab="challenges">
+                    <i class="bi bi-trophy mr-2"></i>Challenges
                 </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="lessons-tab" data-bs-toggle="tab" data-bs-target="#lessons" type="button" role="tab" aria-controls="lessons" aria-selected="false">
-                    <i class="bi bi-book me-2"></i>Lessons
+                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
+                        data-tab="lessons">
+                    <i class="bi bi-book mr-2"></i>Lessons
                 </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab" aria-controls="activity" aria-selected="false">
-                    <i class="bi bi-activity me-2"></i>Activity
+                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
+                        data-tab="activity">
+                    <i class="bi bi-activity mr-2"></i>Activity
                 </button>
-            </li>
-        </ul>
+            </div>
+        </div>
 
-        <!-- Main Content -->
-        <div class="tab-content" id="profileTabsContent">
+                <!-- Tab Content -->
+        <div class="tab-content-container">
             <!-- Overview Tab -->
-            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                <div class="main-content">
-                    <h2 class="mb-4">Welcome, <span th:text="${profileUser.firstName}">User</span>!</h2>
-                    <div th:if="${profileUser?.bio}" class="mb-4">
-                        <h4>About</h4>
-                        <div class="bg-light p-3 rounded" th:text="${profileUser.bio}">
-                            User bio...
+            <div id="overview" class="tab-content active">
+                <div class="animate-fade-in">
+                    <!-- Welcome Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                            Welcome back, <span class="text-green-600" th:text="${profileUser.firstName}">User</span>! 🌱
+                        </h2>
+                        <p class="text-gray-600 text-lg">Your eco-friendly journey continues here</p>
+                    </div>
+                    
+                    <!-- Bio Section Card -->
+                    <div th:if="${profileUser?.bio}" class="mb-8">
+                        <div class="bg-white rounded-2xl p-8 shadow-xl hover-lift">
+                            <h3 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                                <i class="bi bi-person-lines-fill text-green-600 mr-3 text-3xl"></i>
+                                About Me
+                            </h3>
+                            <p class="text-gray-600 leading-relaxed text-lg" th:text="${profileUser.bio}">
+                                User bio...
+                            </p>
                         </div>
                     </div>
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-3">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-box-seam text-success mb-2" style="font-size: 2rem;"></i>
-                                    <h5 class="card-title">Products Listed</h5>
-                                    <div class="display-6 fw-bold text-success" th:text="${products != null ? products.size() : 0}">0</div>
-                                    <small class="text-muted">Total products in marketplace</small>
-                                </div>
+                    
+                    <!-- Stats Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                        <!-- Products Listed Card -->
+                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
+                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-box-seam text-white text-3xl"></i>
                             </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Products Listed</h3>
+                            <div class="text-5xl font-bold text-green-600 mb-3" th:text="${products != null ? products.size() : 0}">0</div>
+                            <p class="text-gray-500">Total products in marketplace</p>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-trophy text-success mb-2" style="font-size: 2rem;"></i>
-                                    <h5 class="card-title">Challenges Completed</h5>
-                                    <div class="display-6 fw-bold text-success" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
-                                    <small class="text-muted">Environmental challenges</small>
-                                </div>
+                        
+                        <!-- Challenges Completed Card -->
+                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
+                            <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-trophy text-white text-3xl"></i>
                             </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Challenges Completed</h3>
+                            <div class="text-5xl font-bold text-yellow-600 mb-3" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
+                            <p class="text-gray-500">Environmental challenges</p>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-book text-warning mb-2" style="font-size: 2rem;"></i>
-                                    <h5 class="card-title">Lessons Completed</h5>
-                                    <div class="display-6 fw-bold text-warning" th:text="${completedLessons != null ? completedLessons.size() : 0}">0</div>
-                                    <small class="text-muted">Educational content</small>
-                                </div>
+                        
+                        <!-- Lessons Completed Card -->
+                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
+                            <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-book text-white text-3xl"></i>
                             </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Lessons Completed</h3>
+                            <div class="text-5xl font-bold text-blue-600 mb-3" th:text="${completedLessons != null ? completedLessons.size() : 0}">0</div>
+                            <p class="text-gray-500">Educational content</p>
                         </div>
-                        <div class="col-md-3">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body text-center">
-                                    <i class="bi bi-people text-info mb-2" style="font-size: 2rem;"></i>
-                                    <h5 class="card-title">Friends</h5>
-                                    <div class="display-6 fw-bold text-info" th:text="${friends != null ? friends.size() : 0}">0</div>
-                                    <small class="text-muted">Community connections</small>
-                                </div>
+                        
+                        <!-- Friends Card -->
+                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
+                            <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                <i class="bi bi-people text-white text-3xl"></i>
                             </div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Friends</h3>
+                            <div class="text-5xl font-bold text-purple-600 mb-3" th:text="${friends != null ? friends.size() : 0}">0</div>
+                            <p class="text-gray-500">Community connections</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <!-- Challenges Tab -->
-            <div class="tab-pane fade" id="challenges" role="tabpanel" aria-labelledby="challenges-tab">
-                <div class="main-content">
-                    <h2 class="mb-4">Completed Challenges</h2>
+            <div id="challenges" class="tab-content hidden">
+                <div class="animate-fade-in">
+                    <!-- Header Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                            <i class="bi bi-trophy text-yellow-500 mr-3 text-4xl"></i>
+                            Completed Challenges
+                        </h2>
+                        <p class="text-gray-600 text-lg">Your environmental achievements and milestones</p>
+                    </div>
+                    
                     <div th:if="${not #lists.isEmpty(completedChallenges)}">
-                        <div class="list-group">
-                            <div th:each="challenge : ${completedChallenges}" class="list-group-item">
-                                <h6 class="mb-1" th:text="${challenge.challenge.title}">Challenge Name</h6>
-                                <p class="mb-1" th:text="${challenge.challenge.description}">Challenge description...</p>
-                                <small class="text-muted" th:text="${#temporals.format(challenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</small>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div th:each="challenge : ${completedChallenges}" 
+                                 class="bg-white rounded-2xl p-8 shadow-xl hover-lift group">
+                                <div class="flex items-start justify-between mb-6">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="bi bi-trophy text-white text-2xl"></i>
+                                    </div>
+                                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" th:text="${#temporals.format(challenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4" th:text="${challenge.challenge.title}">Challenge Name</h3>
+                                <p class="text-gray-600 leading-relaxed" th:text="${challenge.challenge.description}">Challenge description...</p>
                             </div>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="empty-state">
-                        <i class="bi bi-trophy empty-state-icon"></i>
-                        <h3 class="empty-state-title">No Completed Challenges Yet</h3>
-                        <p class="empty-state-text">Start your eco-friendly journey by taking on some challenges!</p>
-                        <a href="/provocari" class="btn btn-success">View Challenges</a>
+                    
+                    <div th:if="${#lists.isEmpty(completedChallenges)}" class="empty-state text-center py-16">
+                        <div class="bg-white rounded-2xl p-12 shadow-xl hover-lift">
+                            <div class="empty-state-icon w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                                <i class="bi bi-trophy text-gray-400 text-6xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-6">No Completed Challenges Yet</h3>
+                            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">Start your eco-friendly journey by taking on some challenges and making a positive impact on the environment!</p>
+                            <a href="/provocari" class="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-all duration-300 hover-lift text-lg">
+                                <i class="bi bi-arrow-right mr-3"></i>
+                                View Challenges
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Lessons Tab -->
-            <div class="tab-pane fade" id="lessons" role="tabpanel" aria-labelledby="lessons-tab">
-                <div class="main-content">
-                    <h2 class="mb-4">Completed Lessons</h2>
+            <div id="lessons" class="tab-content hidden">
+                <div class="animate-fade-in">
+                    <!-- Header Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                            <i class="bi bi-book text-blue-500 mr-3 text-4xl"></i>
+                            Completed Lessons
+                        </h2>
+                        <p class="text-gray-600 text-lg">Your educational achievements and knowledge gained</p>
+                    </div>
+                    
                     <div th:if="${not #lists.isEmpty(completedLessons)}">
-                        <div class="row g-4">
-                            <div th:each="lesson : ${completedLessons}" class="col-md-6 col-lg-4">
-                                <div class="card lesson-completion-card h-100">
-                                    <div class="card-body">
-                                        <h5 class="card-title" th:text="${lesson.title}">Lesson Title</h5>
-                                        <p class="card-text" th:text="${lesson.description}">Lesson description...</p>
-                                        <div class="d-flex justify-content-between align-items-center mt-3">
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-trophy-fill me-1"></i>
-                                                <span th:text="${lesson.pointsEarned}">10</span> points
-                                            </span>
-                                            <small class="text-muted" th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</small>
-                                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div th:each="lesson : ${completedLessons}" 
+                                 class="bg-white rounded-2xl p-8 shadow-xl hover-lift group">
+                                <div class="flex items-start justify-between mb-6">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="bi bi-book text-white text-2xl"></i>
                                     </div>
+                                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-4" th:text="${lesson.title}">Lesson Title</h3>
+                                <p class="text-gray-600 leading-relaxed mb-6" th:text="${lesson.description}">Lesson description...</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 font-medium rounded-full">
+                                        <i class="bi bi-trophy-fill mr-2"></i>
+                                        <span th:text="${lesson.pointsEarned}">10</span> points earned
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(completedLessons)}" class="empty-state">
-                        <i class="bi bi-book empty-state-icon"></i>
-                        <h3 class="empty-state-title">No Completed Lessons Yet</h3>
-                        <p class="empty-state-text">Learn about sustainability and earn points by completing lessons.</p>
-                        <a href="/educatie" class="btn btn-success">Start Learning</a>
+                    
+                    <div th:if="${#lists.isEmpty(completedLessons)}" class="empty-state text-center py-16">
+                        <div class="bg-white rounded-2xl p-12 shadow-xl hover-lift">
+                            <div class="empty-state-icon w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                                <i class="bi bi-book text-gray-400 text-6xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-6">No Completed Lessons Yet</h3>
+                            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">Learn about sustainability and earn points by completing educational lessons. Knowledge is power!</p>
+                            <a href="/educatie" class="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-all duration-300 hover-lift text-lg">
+                                <i class="bi bi-arrow-right mr-3"></i>
+                                Start Learning
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Activity Tab -->
-            <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
-                <div class="main-content">
-                    <h2 class="mb-4">Recent Activity</h2>
+            <div id="activity" class="tab-content hidden">
+                <div class="animate-fade-in">
+                    <!-- Header Card -->
+                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                            <i class="bi bi-activity text-purple-500 mr-3 text-4xl"></i>
+                            Recent Activity
+                        </h2>
+                        <p class="text-gray-600 text-lg">Your latest actions and achievements on the platform</p>
+                    </div>
+                    
                     <div th:if="${not #lists.isEmpty(recentActivity)}">
-                        <div class="list-group">
-                            <div th:each="activity : ${recentActivity}" class="list-group-item">
-                                <div class="d-flex align-items-start">
-                                    <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                        <i class="bi bi-plus-circle text-white"></i>
+                        <div class="space-y-6">
+                            <div th:each="activity : ${recentActivity}" 
+                                 class="bg-white rounded-2xl p-8 shadow-xl hover-lift group">
+                                <div class="flex items-start gap-6">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        <i class="bi bi-plus-circle text-white text-2xl"></i>
                                     </div>
-                                    <div>
-                                        <div class="fw-medium" th:text="${activity.description}">Activity description</div>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="text-success fw-bold" th:text="'+' + ${activity.points} + ' pts'">+10 pts</span>
-                                            <small class="text-muted" th:text="${#temporals.format(activity.createdAt, 'dd MMM yyyy')}">01 Jan</small>
+                                    <div class="flex-1">
+                                        <p class="text-gray-800 font-semibold text-lg mb-3" th:text="${activity.description}">Activity description</p>
+                                        <div class="flex items-center gap-6">
+                                            <span class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 font-medium rounded-full">
+                                                <i class="bi bi-star-fill mr-2"></i>
+                                                <span th:text="'+' + ${activity.points} + ' pts'">+10 pts</span>
+                                            </span>
+                                            <span class="text-gray-500 bg-gray-100 px-4 py-2 rounded-full" th:text="${#temporals.format(activity.createdAt, 'dd MMM yyyy')}">01 Jan</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(recentActivity)}" class="empty-state">
-                        <i class="bi bi-activity empty-state-icon"></i>
-                        <h3 class="empty-state-title">No Recent Activity</h3>
-                        <p class="empty-state-text">Your recent activities will be shown here as you engage with the platform.</p>
+                    
+                    <div th:if="${#lists.isEmpty(recentActivity)}" class="empty-state text-center py-16">
+                        <div class="bg-white rounded-2xl p-12 shadow-xl hover-lift">
+                            <div class="empty-state-icon w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                                <i class="bi bi-activity text-gray-400 text-6xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800 mb-6">No Recent Activity</h3>
+                            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">Your recent activities will be shown here as you engage with the platform. Start exploring to see your activity feed!</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer th:replace="fragments/footer :: footer"></footer>
+    <!-- Footer with proper spacing -->
+    <footer th:replace="fragments/footer :: footer" class="mt-16"></footer>
 
     <!-- DM Modal -->
     <div class="modal fade" id="dmModal" tabindex="-1" aria-labelledby="dmModalLabel" aria-hidden="true">
@@ -259,16 +686,41 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS for modal functionality -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     
     <script th:inline="javascript">
-        // DM Modal functionality
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and contents
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.add('hidden'));
+                    
+                    // Add active class to clicked button and show target content
+                    this.classList.add('active');
+                    document.getElementById(targetTab).classList.remove('hidden');
+                    
+                    // Add animation to the active tab button
+                    this.style.borderBottomColor = '#22c55e';
+                    this.style.color = '#22c55e';
+                });
+            });
+        });
+
+        // DM Modal functionality (keeping existing logic)
         let currentDMConversationId = null;
         let dmProcessedMessageIds = new Set();
-        let currentUserId = null; // Will be set when conversation starts
+        let currentUserId = null;
         
         // Get CSRF token
         const token = $("meta[name='_csrf']").attr("content");
@@ -313,15 +765,12 @@
                     console.log('DM conversation started successfully:', response);
                     currentDMConversationId = response.conversationId;
                     
-                    // Get current user ID from the first message or set it based on conversation
                     if (response.currentUserId) {
                         currentUserId = response.currentUserId;
                     }
                     
-                    // Clear message processing set
                     dmProcessedMessageIds.clear();
                     
-                    // Load messages and start polling
                     loadDMMessages();
                     startMessagePolling();
                 },
@@ -355,8 +804,8 @@
             });
         }
         
-        let lastMessageTimestamp = 0; // Track last message time to avoid unnecessary refreshes
-        let messageLoadInProgress = false; // Prevent concurrent message loads
+        let lastMessageTimestamp = 0;
+        let messageLoadInProgress = false;
         
         function loadDMMessages() {
             if (!currentDMConversationId || messageLoadInProgress) return;
@@ -368,19 +817,15 @@
                 .done(function(messages) {
                     console.log('Loaded messages:', messages.length);
                     
-                    // Set currentUserId from the first message if available
                     if (messages && messages.length > 0 && !currentUserId) {
-                        // Find a message where currentUserSender is true to get current user ID
                         const myMessage = messages.find(m => m.currentUserSender);
                         if (myMessage) {
                             currentUserId = myMessage.senderId;
                         }
                     }
                     
-                    // Check if there are any new messages to display
                     let newestTimestamp = lastMessageTimestamp;
                     if (messages && messages.length > 0) {
-                        // Find the newest message timestamp
                         messages.forEach(msg => {
                             const msgTime = new Date(msg.sentAt).getTime();
                             if (msgTime > newestTimestamp) {
@@ -389,7 +834,6 @@
                         });
                     }
                     
-                    // Only refresh if it's the first load or we have new messages
                     const isFirstLoad = lastMessageTimestamp === 0;
                     const hasNewMessages = newestTimestamp > lastMessageTimestamp;
                     
@@ -421,8 +865,8 @@
             if (!messages || messages.length === 0) return;
             
             const container = document.getElementById('dmMessages');
-            container.innerHTML = ''; // Clear the container before adding messages
-            dmProcessedMessageIds.clear(); // Reset processed IDs to avoid duplicates
+            container.innerHTML = '';
+            dmProcessedMessageIds.clear();
             
             console.log('Displaying ' + messages.length + ' messages');
             messages.forEach(function(message) {
@@ -434,17 +878,14 @@
             console.log('Attempting to append message:', message);
             const messageId = message.id || message.messageId || message.tempId;
             
-            // For temporary messages, always show them
             if (message.isTemporary) {
                 console.log('Showing temporary message:', messageId);
             }
-            // Skip if we've already displayed this message (except for temp messages)
             else if (messageId && dmProcessedMessageIds.has(messageId)) {
                 console.log('Skipping duplicate message with ID:', messageId);
                 return;
             }
             
-            // Only add non-temporary messages to the processed set
             if (messageId && !message.isTemporary) {
                 console.log('Adding message ID to processed set:', messageId);
                 dmProcessedMessageIds.add(messageId);
@@ -454,21 +895,16 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message mb-3';
             
-            // Add data attribute for temporary messages
             if (message.tempId) {
                 messageDiv.setAttribute('data-temp-id', message.tempId);
             }
             
-            // Determine if current user is sender
-            // For temporary messages, always show as current user
-            // For real messages, check the senderId against currentUserId
             let isCurrentUser = false;
             if (message.isTemporary) {
                 isCurrentUser = true;
             } else if (message.senderId && currentUserId) {
                 isCurrentUser = message.senderId === currentUserId;
             } else if (message.currentUserSender !== undefined) {
-                // Fallback to the flag if senderId is not available
                 isCurrentUser = message.currentUserSender;
             }
             const alignment = isCurrentUser ? 'text-end' : 'text-start';
@@ -488,11 +924,9 @@
             container.appendChild(messageDiv);
         }
         
-        // We'll replace WebSockets with polling for more reliable messaging
         let messagePollingInterval = null;
         
         function startMessagePolling() {
-            // Clear any existing polling
             stopMessagePolling();
             
             if (!currentDMConversationId) {
@@ -502,9 +936,7 @@
             
             console.log('Starting message polling for conversation:', currentDMConversationId);
             
-            // Poll at a slower rate (3 seconds) to avoid excessive refreshes
             messagePollingInterval = setInterval(function() {
-                // Only poll when modal is visible and we're not already loading messages
                 if (document.getElementById('dmModal').classList.contains('show') && !messageLoadInProgress) {
                     console.log('Polling for new messages...');
                     loadDMMessages();
@@ -520,56 +952,12 @@
             }
         }
         
-        function onDMMessageReceived(payload) {
-            console.log('Raw message received:', payload.body);
-            const message = JSON.parse(payload.body);
-            console.log('Parsed message:', message);
-            
-            // Skip ping messages
-            if (message.type === 'PING') {
-                console.log('Skipping PING message');
-                return;
-            }
-            
-            // Skip join confirmations
-            if (message.type === 'JOINED') {
-                console.log('Skipping JOINED message');
-                return;
-            }
-            
-            // Skip if this is a response to our own temporary message
-            if (message.tempId && dmProcessedMessageIds.has(message.tempId)) {
-                console.log('Found temporary message to replace:', message.tempId);
-                // Remove the temporary message and add the real one
-                removeTemporaryMessage(message.tempId);
-                dmProcessedMessageIds.delete(message.tempId);
-                // Don't return here - we want to show the real message
-            }
-            
-            // Skip if we've already displayed this message (but allow temp message replacement)
-            const messageId = message.id || message.messageId;
-            if (messageId && dmProcessedMessageIds.has(messageId) && !message.tempId) {
-                console.log("Skipping duplicate message:", messageId);
-                return;
-            }
-            
-            if (messageId) {
-                console.log('Adding message ID to processed set:', messageId);
-                dmProcessedMessageIds.add(messageId);
-            }
-            
-            console.log("Displaying message:", message);
-            appendDMMessage(message);
-            scrollToBottom();
-        }
-        
         function sendDMMessage() {
             const input = document.getElementById('dmMessageInput');
             const content = input.value.trim();
             
             if (!content || !currentDMConversationId) return;
             
-            // Display temporary message first
             const tempId = 'temp-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
             const tempMessage = {
                 id: tempId,
@@ -581,14 +969,11 @@
                 tempId: tempId
             };
             
-            // Show temporary message immediately
             appendDMMessage(tempMessage);
             scrollToBottom();
             
-            // Clear input right away
             input.value = '';
             
-            // Use AJAX instead of WebSocket for more reliability
             console.log('Sending message via AJAX');
             $.ajax({
                 url: '/dm/conversation/' + currentDMConversationId + '/message',
@@ -600,7 +985,6 @@
                 success: function(response) {
                     console.log('Message sent successfully:', response);
                     
-                    // Set the timestamp from the response to update our tracking
                     if (response.sentAt) {
                         const sentTime = new Date(response.sentAt).getTime();
                         if (sentTime > lastMessageTimestamp) {
@@ -608,7 +992,6 @@
                         }
                     }
                     
-                    // Replace temp message with real one
                     removeTemporaryMessage(tempId);
                     if (dmProcessedMessageIds.has(tempId)) {
                         dmProcessedMessageIds.delete(tempId);
@@ -616,7 +999,6 @@
                     appendDMMessage(response);
                     scrollToBottom();
                     
-                    // Force a full refresh of messages after sending
                     setTimeout(function() {
                         loadDMMessages();
                     }, 500);
@@ -663,7 +1045,6 @@
             }
         });
         
-        // Add function to show error for a temporary message
         function showSendError(tempId) {
             const container = document.getElementById('dmMessages');
             const tempMessage = container.querySelector(`[data-temp-id="${tempId}"]`);
@@ -673,21 +1054,17 @@
                 errorMsg.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Not sent. Tap to retry.';                
                 tempMessage.appendChild(errorMsg);
                 
-                // Make the message clickable for retry
                 tempMessage.style.cursor = 'pointer';
                 tempMessage.addEventListener('click', function() {
-                    // Implement retry logic here if needed
-                    loadDMMessages(); // For now, just refresh messages
+                    loadDMMessages();
                 });
             }
         }
         
         // Clean up when modal is closed
         document.getElementById('dmModal').addEventListener('hidden.bs.modal', function() {
-            // Stop polling
             stopMessagePolling();
             
-            // Clear the messages container, but don't reset other state
             const container = document.getElementById('dmMessages');
             container.innerHTML = '';
             
@@ -698,15 +1075,11 @@
         document.getElementById('dmModal').addEventListener('shown.bs.modal', function() {
             console.log('DM modal opened, ensuring polling is active');
             
-            // Reset message timestamp to force a fresh load
             lastMessageTimestamp = 0;
             
-            // Make sure polling is active when the modal is shown
             if (currentDMConversationId) {
-                // Load messages immediately
                 loadDMMessages();
                 
-                // Start polling after messages are loaded
                 setTimeout(function() {
                     startMessagePolling();
                 }, 500);
@@ -716,7 +1089,6 @@
         // Listen for page visibility changes
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible' && currentDMConversationId) {
-                // Refresh messages when the page becomes visible
                 console.log('Page became visible, refreshing messages');
                 loadDMMessages();
             }
