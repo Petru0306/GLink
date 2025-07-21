@@ -2391,7 +2391,7 @@
                     </div>
                     <div class="card-content">
                         <div class="lesson-preview">
-                            <div class="lesson-item active" data-lesson="1" onclick="window.location.href='/educatie/curs/1'">
+                            <div class="lesson-item" data-lesson="1" onclick="window.location.href='/educatie/curs/1'">
                                 <div class="lesson-icon">
                                     <i class="bi bi-leaf"></i>
                                 </div>
@@ -2399,10 +2399,11 @@
                                     <h4 th:text="#{home.lesson.center.1.title}">Ce este sustenabilitatea?</h4>
                                     <p class="lesson-desc" th:text="#{home.lesson.center.1.desc}">Învață principiile fundamentale</p>
                                     <div class="lesson-progress">
-                                        <div class="progress-fill" style="width: 85%"></div>
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('1') ? '100%' : '0%') : '0%'}"></div>
                                     </div>
                                     <div class="lesson-status">
-                                        <span class="status-badge completed">✓ Completat</span>
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('1') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('1') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
                                         <span class="lesson-duration">15 min</span>
                                     </div>
                                 </div>
@@ -2415,10 +2416,11 @@
                                     <h4 th:text="#{home.lesson.center.2.title}">Cum să reciclezi corect</h4>
                                     <p class="lesson-desc" th:text="#{home.lesson.center.2.desc}">Regulile de bază pentru reciclare</p>
                                     <div class="lesson-progress">
-                                        <div class="progress-fill" style="width: 60%"></div>
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('2') ? '100%' : '0%') : '0%'}"></div>
                                     </div>
                                     <div class="lesson-status">
-                                        <span class="status-badge in-progress">🔄 În curs</span>
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('2') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('2') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
                                         <span class="lesson-duration">20 min</span>
                                     </div>
                                 </div>
@@ -2431,15 +2433,16 @@
                                     <h4 th:text="#{home.lesson.center.3.title}">Redu deșeurile cu un singur schimb</h4>
                                     <p class="lesson-desc" th:text="#{home.lesson.center.3.desc}">Schimbări mici pentru impact mare</p>
                                     <div class="lesson-progress">
-                                        <div class="progress-fill" style="width: 30%"></div>
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('3') ? '100%' : '0%') : '0%'}"></div>
                                     </div>
                                     <div class="lesson-status">
-                                        <span class="status-badge in-progress">🔄 În curs</span>
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('3') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('3') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
                                         <span class="lesson-duration">18 min</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="lesson-item locked" data-lesson="4" onclick="window.location.href='/educatie/curs/4'">
+                            <div class="lesson-item" data-lesson="4" onclick="window.location.href='/educatie/curs/4'">
                                 <div class="lesson-icon">
                                     <i class="bi bi-tree"></i>
                                 </div>
@@ -2447,11 +2450,46 @@
                                     <h4 th:text="#{home.lesson.center.4.title}">Începe un mini-compost acasă</h4>
                                     <p class="lesson-desc" th:text="#{home.lesson.center.4.desc}">Transformă resturile în viață nouă</p>
                                     <div class="lesson-progress">
-                                        <div class="progress-fill" style="width: 0%"></div>
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('4') ? '100%' : '0%') : '0%'}"></div>
                                     </div>
                                     <div class="lesson-status">
-                                        <span class="status-badge locked">🔒 Blocat</span>
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('4') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('4') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
                                         <span class="lesson-duration">25 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lesson-item" data-lesson="5" onclick="window.location.href='/educatie/curs/5'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-flower1"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4 th:text="#{home.lesson.center.5.title}">Plantează ceva (chiar și într-un ghiveci!)</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.5.desc}">Conectează-te cu natura prin plantat</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('5') ? '100%' : '0%') : '0%'}"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('5') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('5') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
+                                        <span class="lesson-duration">22 min</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lesson-item" data-lesson="6" onclick="window.location.href='/educatie/curs/6'">
+                                <div class="lesson-icon">
+                                    <i class="bi bi-trash"></i>
+                                </div>
+                                <div class="lesson-info">
+                                    <h4 th:text="#{home.lesson.center.6.title}">Adună gunoiul din cartierul tău</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.6.desc}">Fă diferența în comunitatea ta</p>
+                                    <div class="lesson-progress">
+                                        <div class="progress-fill" th:style="'width: ' + ${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('6') ? '100%' : '0%') : '0%'}"></div>
+                                    </div>
+                                    <div class="lesson-status">
+                                        <span class="status-badge" th:class="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('6') ? 'completed' : 'available') : 'available'}" 
+                                              th:text="${#authorization.expression('isAuthenticated()') ? (userCourseProgress != null && userCourseProgress.contains('6') ? '✓ Completat' : '📖 Disponibil') : '📖 Disponibil'}">📖 Disponibil</span>
+                                        <span class="lesson-duration">30 min</span>
                                     </div>
                                 </div>
                             </div>
@@ -2477,81 +2515,81 @@
                         <div class="challenge-showcase">
                             <div class="challenge-item daily" onclick="window.location.href='/provocari'">
                                 <div class="challenge-badge">
-                                    <i class="bi bi-person-circle"></i>
+                                    <i class="bi bi-calculator"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4 th:text="#{home.challenge.1.title}">Profile Perfectionist</h4>
-                                    <p th:text="#{home.challenge.1.desc}">Upload a profile photo</p>
+                                    <h4 th:text="#{home.challenge.1.title}">Folosește Calculatorul de Carbon</h4>
+                                    <p th:text="#{home.challenge.1.desc}">Știe ce mărime de pantof de carbon porți</p>
                                     <div class="challenge-reward">
-                                        <span class="reward-points">+30 puncte</span>
-                                        <span class="reward-badge">📸 Photographer Badge</span>
+                                        <span class="reward-points">+50 puncte</span>
+                                        <span class="reward-badge">🧮 Profetul Amprentei</span>
                                     </div>
                                     <div class="challenge-status">
-                                        <span class="status-complete">✓ Completat</span>
+                                        <span class="status-available">📖 Disponibil</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="challenge-item weekly" onclick="window.location.href='/provocari'">
                                 <div class="challenge-badge">
-                                    <i class="bi bi-book"></i>
+                                    <i class="bi bi-map"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4 th:text="#{home.challenge.2.title}">Knowledge Seeker</h4>
-                                    <p th:text="#{home.challenge.2.desc}">Complete 3 lessons in the education section</p>
+                                    <h4 th:text="#{home.challenge.2.title}">Explorează Harta de Reciclare</h4>
+                                    <p th:text="#{home.challenge.2.desc}">A deschis harta antică a lore-ului ascuns de reciclare</p>
                                     <div class="challenge-reward">
-                                        <span class="reward-points">+100 puncte</span>
-                                        <span class="reward-badge">🎓 Scholar Badge</span>
+                                        <span class="reward-points">+40 puncte</span>
+                                        <span class="reward-badge">🗺️ Căutătorul de Coșuri</span>
                                     </div>
                                     <div class="challenge-status">
-                                        <span class="status-progress">2/3</span>
+                                        <span class="status-available">📖 Disponibil</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="challenge-item monthly" onclick="window.location.href='/provocari'">
                                 <div class="challenge-badge">
-                                    <i class="bi bi-shop"></i>
+                                    <i class="bi bi-book"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4 th:text="#{home.challenge.3.title}">Marketplace Explorer</h4>
-                                    <p th:text="#{home.challenge.3.desc}">List your first item in the marketplace</p>
+                                    <h4 th:text="#{home.challenge.3.title}">Completează 1 Lecție</h4>
+                                    <p th:text="#{home.challenge.3.desc}">Tocmai a părăsit Shire-ul cu o cană reutilizabilă</p>
                                     <div class="challenge-reward">
-                                        <span class="reward-points">+75 puncte</span>
-                                        <span class="reward-badge">🛒 Trader Badge</span>
+                                        <span class="reward-points">+80 puncte</span>
+                                        <span class="reward-badge">🌱 Hobbitul Verde</span>
                                     </div>
                                     <div class="challenge-status">
-                                        <span class="status-locked">🔒 Blocat</span>
+                                        <span class="status-available">📖 Disponibil</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="challenge-item special" onclick="window.location.href='/provocari'">
                                 <div class="challenge-badge">
-                                    <i class="bi bi-gem"></i>
+                                    <i class="bi bi-tags"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4 th:text="#{home.challenge.4.title}">Education Master</h4>
-                                    <p th:text="#{home.challenge.4.desc}">Complete all available lessons</p>
+                                    <h4 th:text="#{home.challenge.4.title}">Listează Primul Articol</h4>
+                                    <p th:text="#{home.challenge.4.desc}">A găsit comoară într-o grămadă de Tupperware vechi</p>
                                     <div class="challenge-reward">
-                                        <span class="reward-points">+500 puncte</span>
-                                        <span class="reward-badge">👑 Maester Badge</span>
+                                        <span class="reward-points">+100 puncte</span>
+                                        <span class="reward-badge">🏷️ Gremlinul de Thrift</span>
                                     </div>
                                     <div class="challenge-status">
-                                        <span class="status-progress">4/6</span>
+                                        <span class="status-available">📖 Disponibil</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="challenge-item special" onclick="window.location.href='/provocari'">
                                 <div class="challenge-badge">
-                                    <i class="bi bi-calculator"></i>
+                                    <i class="bi bi-chat-text"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4 th:text="#{home.challenge.5.title}">Carbon Expert</h4>
-                                    <p th:text="#{home.challenge.5.desc}">Use the carbon calculator 10 times</p>
+                                    <h4 th:text="#{home.challenge.5.title}">Trimite Primul Tău Mesaj</h4>
+                                    <p th:text="#{home.challenge.5.desc}">Ecosistemul îți mulțumește pentru că ai rupt tăcerea</p>
                                     <div class="challenge-reward">
-                                        <span class="reward-points">+400 puncte</span>
-                                        <span class="reward-badge">🧮 Carbon Expert Badge</span>
+                                        <span class="reward-points">+30 puncte</span>
+                                        <span class="reward-badge">💬 Mesagerul Zeilor Verzi</span>
                                     </div>
                                     <div class="challenge-status">
-                                        <span class="status-progress">3/10</span>
+                                        <span class="status-available">📖 Disponibil</span>
                                     </div>
                                 </div>
                             </div>
@@ -2720,7 +2758,7 @@
         window.addEventListener('load', function() {
             setTimeout(() => {
                 document.getElementById('loadingScreen').classList.add('hidden');
-            }, 500);
+            }, 300);
         });
 
         // Smooth scrolling for anchor links
