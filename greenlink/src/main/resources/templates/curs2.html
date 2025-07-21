@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Lecția 2: Cum să reciclezi corect</title>
+    <title>GreenLink - <span th:text="#{course.2.title}">Lecția 2: Cum să reciclezi corect</span></title>
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -367,8 +367,8 @@
     <!-- Course Header -->
     <header class="course-header text-center">
         <div class="container">
-            <h1 class="display-4" th:text="#{home.lesson.center.2.title}">♻️ Lecția 2: Cum să reciclezi corect</h1>
-            <p class="lead" th:text="#{home.lesson.center.2.desc}">Învață regulile de bază pentru o reciclare eficientă</p>
+            <h1 class="display-4" th:text="#{course.2.title}">♻️ Lecția 2: Cum să reciclezi corect</h1>
+            <p class="lead" th:text="#{course.2.subtitle}">Învață regulile de bază pentru o reciclare eficientă</p>
         </div>
     </header>
 
@@ -377,7 +377,7 @@
         <!-- Back Button -->
         <a href="/educatie" class="back-button">
             <i class="bi bi-arrow-left"></i>
-            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
+            <span th:text="#{course.2.back.button}">Înapoi la harta cursurilor</span>
         </a>
 
         <!-- Lesson completed message -->
@@ -403,41 +403,41 @@
         <!-- Paragraph 1 -->
         <section class="lesson-section">
             <div class="paragraph-number">1</div>
-            <h2>Ce este reciclarea și de ce contează</h2>
+            <h2 th:text="#{course.2.paragraph.1.title}">Ce este reciclarea și de ce contează</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.2.paragraph.1.content}">
                 Reciclarea înseamnă să transformi materiale vechi sau folosite — cum ar fi hârtia, plasticul și metalul — în produse noi, în loc să le arunci la gunoi. Este una dintre cele mai simple și eficiente moduri de a reduce poluarea, de a economisi resurse naturale și de a preveni supraîncărcarea gropilor de gunoi.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Când reciclăm corect:</h4>
+                <h4 class="section-subtitle" th:text="#{course.2.paragraph.1.benefits.title}">Când reciclăm corect:</h4>
                 <ul class="bullet-list">
-                    <li><strong>♻️ Salvăm energie</strong> (ex: reciclarea aluminiului folosește cu 95% mai puțină energie decât producerea lui de la zero).</li>
-                    <li><strong>🌲 Salvăm resurse naturale</strong>, cum ar fi lemnul și apa.</li>
-                    <li><strong>🐢 Protejăm natura</strong> — mai puține deșeuri ajung în râuri și oceane.</li>
+                    <li><strong th:text="#{course.2.paragraph.1.benefit.1}">♻️ Salvăm energie (ex: reciclarea aluminiului folosește cu 95% mai puțină energie decât producerea lui de la zero).</strong></li>
+                    <li><strong th:text="#{course.2.paragraph.1.benefit.2}">🌲 Salvăm resurse naturale, cum ar fi lemnul și apa.</strong></li>
+                    <li><strong th:text="#{course.2.paragraph.1.benefit.3}">🐢 Protejăm natura — mai puține deșeuri ajung în râuri și oceane.</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.2.paragraph.1.conclusion}">
                 Însă reciclarea funcționează doar când este făcută corect. Aruncarea obiectelor greșite în coșul de reciclare poate contamina tot lotul, iar totul ajunge la gunoi.
             </p>
 
             <!-- Quiz for Paragraph 1 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 1:</h4>
-                <p class="mb-3"><strong>Ce este reciclarea?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 1:</h4>
+                <p class="mb-3"><strong th:text="#{course.2.paragraph.1.question}">Ce este reciclarea?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Aruncarea obiectelor în natură
+                    <strong>A)</strong> <span th:text="#{course.2.paragraph.1.option.a}">Aruncarea obiectelor în natură</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Arderea deșeurilor pentru energie
+                    <strong>B)</strong> <span th:text="#{course.2.paragraph.1.option.b}">Arderea deșeurilor pentru energie</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Transformarea materialelor folosite în produse noi
+                    <strong>C)</strong> <span th:text="#{course.2.paragraph.1.option.c}">Transformarea materialelor folosite în produse noi</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Depozitarea gunoiului în subteran
+                    <strong>D)</strong> <span th:text="#{course.2.paragraph.1.option.d}">Depozitarea gunoiului în subteran</span>
                 </div>
 
                 <div class="quiz-result" id="result-1"></div>
@@ -447,56 +447,56 @@
         <!-- Paragraph 2 -->
         <section class="lesson-section">
             <div class="paragraph-number">2</div>
-            <h2>Ce se poate și ce nu se poate recicla</h2>
+            <h2 th:text="#{course.2.paragraph.2.title}">Ce se poate și ce nu se poate recicla</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.2.paragraph.2.content}">
                 Mulți oameni cred că tot ce „pare reciclabil" merge în coșul de reciclare, dar nu e chiar așa. Reguli de reciclare pot fi diferite în funcție de zona în care locuiești, așa că este important să te informezi local.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">În general:</h4>
+                <h4 class="section-subtitle" th:text="#{course.2.paragraph.2.general.title}">În general:</h4>
                 <div class="row">
                     <div class="col-md-6">
-                        <h5 class="text-success">✅ Se pot recicla:</h5>
+                        <h5 class="text-success" th:text="#{course.2.paragraph.2.recyclable.title}">✅ Se pot recicla:</h5>
                         <ul class="bullet-list">
-                            <li>Sticle și borcane din sticlă</li>
-                            <li>PET-uri și recipiente curate din plastic</li>
-                            <li>Doze de aluminiu</li>
-                            <li>Carton curat și hârtie</li>
+                            <li th:text="#{course.2.paragraph.2.recyclable.item.1}">Sticle și borcane din sticlă</li>
+                            <li th:text="#{course.2.paragraph.2.recyclable.item.2}">PET-uri și recipiente curate din plastic</li>
+                            <li th:text="#{course.2.paragraph.2.recyclable.item.3}">Doze de aluminiu</li>
+                            <li th:text="#{course.2.paragraph.2.recyclable.item.4}">Carton curat și hârtie</li>
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h5 class="text-danger">❌ Nu se pot recicla:</h5>
+                        <h5 class="text-danger" th:text="#{course.2.paragraph.2.non.recyclable.title}">❌ Nu se pot recicla:</h5>
                         <ul class="bullet-list">
-                            <li>Cutii de pizza unse</li>
-                            <li>Hârtie cerată sau plastifiată</li>
-                            <li>Sticle sparte</li>
-                            <li>Ambalaje contaminate cu mâncare</li>
+                            <li th:text="#{course.2.paragraph.2.non.recyclable.item.1}">Cutii de pizza unse</li>
+                            <li th:text="#{course.2.paragraph.2.non.recyclable.item.2}">Hârtie cerată sau plastifiată</li>
+                            <li th:text="#{course.2.paragraph.2.non.recyclable.item.3}">Sticle sparte</li>
+                            <li th:text="#{course.2.paragraph.2.non.recyclable.item.4}">Ambalaje contaminate cu mâncare</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <p>
+            <p th:text="#{course.2.paragraph.2.conclusion}">
                 Un lucru murdar poate strica tot coșul. De aceea e important să clătești recipientele înainte de a le recicla.
             </p>
 
             <!-- Quiz for Paragraph 2 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 2:</h4>
-                <p class="mb-3"><strong>Care dintre următoarele NU poate fi reciclată?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 2:</h4>
+                <p class="mb-3"><strong th:text="#{course.2.paragraph.2.question}">Care dintre următoarele NU poate fi reciclată?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Doză de aluminiu
+                    <strong>A)</strong> <span th:text="#{course.2.paragraph.2.option.a}">Doză de aluminiu</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Sticlă curată
+                    <strong>B)</strong> <span th:text="#{course.2.paragraph.2.option.b}">Sticlă curată</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Cutie de pizza unsă
+                    <strong>C)</strong> <span th:text="#{course.2.paragraph.2.option.c}">Cutie de pizza unsă</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> PET clătit
+                    <strong>D)</strong> <span th:text="#{course.2.paragraph.2.option.d}">PET clătit</span>
                 </div>
 
                 <div class="quiz-result" id="result-2"></div>
@@ -506,42 +506,42 @@
         <!-- Paragraph 3 -->
         <section class="lesson-section">
             <div class="paragraph-number">3</div>
-            <h2>Pașii simpli pentru a recicla corect</h2>
+            <h2 th:text="#{course.2.paragraph.3.title}">Pașii simpli pentru a recicla corect</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.2.paragraph.3.content}">
                 Reciclarea eficientă începe acasă. Nu ai nevoie de echipamente speciale, doar de atenție și bună organizare.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Urmează acești pași simpli:</h4>
+                <h4 class="section-subtitle" th:text="#{course.2.paragraph.3.steps.title}">Urmează acești pași simpli:</h4>
                 <ol class="bullet-list">
-                    <li><strong>Separă:</strong> ține un coș de reciclare diferit de cel de gunoi.</li>
-                    <li><strong>Curăță:</strong> clătește recipientele de iaurt, conservele sau sticlele.</li>
-                    <li><strong>Verifică</strong> simbolul ♻️ pe ambalaje.</li>
-                    <li><strong>Comprimă</strong> ambalajele ușoare (ex: sticle) ca să economisești spațiu.</li>
+                    <li><strong>Separă:</strong> <span th:text="#{course.2.paragraph.3.step.1}">ține un coș de reciclare diferit de cel de gunoi.</span></li>
+                    <li><strong>Curăță:</strong> <span th:text="#{course.2.paragraph.3.step.2}">clătește recipientele de iaurt, conservele sau sticlele.</span></li>
+                    <li><strong>Verifică</strong> <span th:text="#{course.2.paragraph.3.step.3}">simbolul ♻️ pe ambalaje.</span></li>
+                    <li><strong>Comprimă</strong> <span th:text="#{course.2.paragraph.3.step.4}">ambalajele ușoare (ex: sticle) ca să economisești spațiu.</span></li>
                 </ol>
             </div>
 
-            <p>
+            <p th:text="#{course.2.paragraph.3.conclusion}">
                 Poți începe prin a sorta gunoiul dintr-o singură zi. Vei fi surprins(ă) câte lucruri reciclabile arunci fără să-ți dai seama.
             </p>
 
             <!-- Quiz for Paragraph 3 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 3:</h4>
-                <p class="mb-3"><strong>Ce trebuie să faci înainte să reciclezi o cutie de iaurt?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 3:</h4>
+                <p class="mb-3"><strong th:text="#{course.2.paragraph.3.question}">Ce trebuie să faci înainte să reciclezi o cutie de iaurt?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> S-o umpli cu apă
+                    <strong>A)</strong> <span th:text="#{course.2.paragraph.3.option.a}">S-o umpli cu apă</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>B)</strong> S-o clătești
+                    <strong>B)</strong> <span th:text="#{course.2.paragraph.3.option.b}">S-o clătești</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>C)</strong> S-o spargi
+                    <strong>C)</strong> <span th:text="#{course.2.paragraph.3.option.c}">S-o spargi</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> S-o pui direct în gunoi
+                    <strong>D)</strong> <span th:text="#{course.2.paragraph.3.option.d}">S-o pui direct în gunoi</span>
                 </div>
 
                 <div class="quiz-result" id="result-3"></div>
@@ -551,41 +551,41 @@
         <!-- Paragraph 4 -->
         <section class="lesson-section">
             <div class="paragraph-number">4</div>
-            <h2>Impactul reciclării asupra planetei</h2>
+            <h2 th:text="#{course.2.paragraph.4.title}">Impactul reciclării asupra planetei</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.2.paragraph.4.content}">
                 Reciclarea ajută în mod direct la reducerea emisiilor de carbon, la conservarea resurselor și la protejarea ecosistemelor.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">De exemplu:</h4>
+                <h4 class="section-subtitle" th:text="#{course.2.paragraph.4.examples.title}">De exemplu:</h4>
                 <ul class="bullet-list">
-                    <li><strong>Reciclarea unei singure doze de aluminiu</strong> economisește suficientă energie pentru a ține un laptop pornit timp de 3 ore.</li>
-                    <li><strong>Fiecare tonă de hârtie reciclată</strong> salvează aproximativ 17 copaci.</li>
-                    <li><strong>Reciclarea sticlei</strong> reduce poluarea aerului cu până la 20%.</li>
+                    <li><strong th:text="#{course.2.paragraph.4.example.1}">Reciclarea unei singure doze de aluminiu economisește suficientă energie pentru a ține un laptop pornit timp de 3 ore.</strong></li>
+                    <li><strong th:text="#{course.2.paragraph.4.example.2}">Fiecare tonă de hârtie reciclată salvează aproximativ 17 copaci.</strong></li>
+                    <li><strong th:text="#{course.2.paragraph.4.example.3}">Reciclarea sticlei reduce poluarea aerului cu până la 20%.</strong></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.2.paragraph.4.conclusion}">
                 Cu cât reciclăm mai bine, cu atât industria are nevoie de mai puține resurse noi. Și da — contează chiar și acea sticlă de plastic pe care o reciclezi azi.
             </p>
 
             <!-- Quiz for Paragraph 4 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 4:</h4>
-                <p class="mb-3"><strong>Ce economisește reciclarea unei doze de aluminiu?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 4:</h4>
+                <p class="mb-3"><strong th:text="#{course.2.paragraph.4.question}">Ce economisește reciclarea unei doze de aluminiu?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Hârtie
+                    <strong>A)</strong> <span th:text="#{course.2.paragraph.4.option.a}">Hârtie</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Apă potabilă
+                    <strong>B)</strong> <span th:text="#{course.2.paragraph.4.option.b}">Apă potabilă</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Energie
+                    <strong>C)</strong> <span th:text="#{course.2.paragraph.4.option.c}">Energie</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Hârtie cerată
+                    <strong>D)</strong> <span th:text="#{course.2.paragraph.4.option.d}">Hârtie cerată</span>
                 </div>
 
                 <div class="quiz-result" id="result-4"></div>
@@ -595,41 +595,41 @@
         <!-- Paragraph 5 -->
         <section class="lesson-section">
             <div class="paragraph-number">5</div>
-            <h2>Învață, greșește, dar continuă</h2>
+            <h2 th:text="#{course.2.paragraph.5.title}">Învață, greșește, dar continuă</h2>
             
-            <p class="lead mb-4">
+            <p class="lead mb-4" th:text="#{course.2.paragraph.5.content}">
                 Toată lumea face greșeli când începe să recicleze. Poate ai aruncat ceva greșit — e OK. Important este să înveți din asta și să te informezi mai bine.
             </p>
 
             <div class="highlight-box">
-                <h4 class="section-subtitle">Lucruri care te pot ajuta:</h4>
+                <h4 class="section-subtitle" th:text="#{course.2.paragraph.5.help.title}">Lucruri care te pot ajuta:</h4>
                 <ul class="bullet-list">
-                    <li><strong>Află regulile de reciclare</strong> din orașul tău (site-ul primăriei sau al firmei de salubritate).</li>
-                    <li><strong>Întreabă la școală, la birou</strong> sau în comunitatea ta dacă există puncte de colectare.</li>
-                    <li><strong>Fă-ți un obicei</strong> din a verifica simbolurile ♻️.</li>
+                    <li><strong>Află regulile de reciclare</strong> <span th:text="#{course.2.paragraph.5.help.item.1}">din orașul tău (site-ul primăriei sau al firmei de salubritate).</span></li>
+                    <li><strong>Întreabă la școală, la birou</strong> <span th:text="#{course.2.paragraph.5.help.item.2}">sau în comunitatea ta dacă există puncte de colectare.</span></li>
+                    <li><strong>Fă-ți un obicei</strong> <span th:text="#{course.2.paragraph.5.help.item.3}">din a verifica simbolurile ♻️.</span></li>
                 </ul>
             </div>
 
-            <p>
+            <p th:text="#{course.2.paragraph.5.conclusion}">
                 Reciclarea corectă este un obicei care devine tot mai ușor cu timpul. Poți chiar să-i înveți pe alții și să devii un exemplu în familie sau între prieteni.
             </p>
 
             <!-- Quiz for Paragraph 5 -->
             <div class="quiz-section" data-attempts="0">
-                <h4><i class="bi bi-question-circle me-2"></i>Întrebare 5:</h4>
-                <p class="mb-3"><strong>Ce ar trebui să faci dacă greșești când reciclezi?</strong></p>
+                <h4><i class="bi bi-question-circle me-2"></i><span th:text="#{course.question}">Întrebare</span> 5:</h4>
+                <p class="mb-3"><strong th:text="#{course.2.paragraph.5.question}">Ce ar trebui să faci dacă greșești când reciclezi?</strong></p>
                 
                 <div class="quiz-option" data-correct="false">
-                    <strong>A)</strong> Să te oprești complet
+                    <strong>A)</strong> <span th:text="#{course.2.paragraph.5.option.a}">Să te oprești complet</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>B)</strong> Să arunci totul la gunoi
+                    <strong>B)</strong> <span th:text="#{course.2.paragraph.5.option.b}">Să arunci totul la gunoi</span>
                 </div>
                 <div class="quiz-option" data-correct="true">
-                    <strong>C)</strong> Să înveți din greșeli și să continui
+                    <strong>C)</strong> <span th:text="#{course.2.paragraph.5.option.c}">Să înveți din greșeli și să continui</span>
                 </div>
                 <div class="quiz-option" data-correct="false">
-                    <strong>D)</strong> Să pui totul în același coș
+                    <strong>D)</strong> <span th:text="#{course.2.paragraph.5.option.d}">Să pui totul în același coș</span>
                 </div>
 
                 <div class="quiz-result" id="result-5"></div>
@@ -638,11 +638,11 @@
 
         <!-- Final Task -->
         <section class="final-task">
-            <h2 class="text-center mb-4">✅ Sarcina finală</h2>
+            <h2 class="text-center mb-4" th:text="#{course.final.task}">✅ Sarcina finală</h2>
             
             <div class="task-section">
-                <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
-                <p>
+                <h4><i class="bi bi-camera me-2"></i><span th:text="#{course.photo.task}">Foto (10 pts)</span></h4>
+                <p th:text="#{course.2.photo.instructions}">
                     Fă o poză cu reciclarea ta corect sortată — sticle, hârtie sau plastic curat și aranjat într-un coș sau într-o pungă.
                 </p>
                 <input type="file" class="form-control" id="image-upload" accept="image/*">
@@ -653,21 +653,21 @@
             </div>
 
             <div class="task-section">
-                <h4><i class="bi bi-pencil me-2"></i>Scrie (5 pts)</h4>
-                <p class="mb-3">
+                <h4><i class="bi bi-pencil me-2"></i><span th:text="#{course.write.task}">Scrie (5 pts)</span></h4>
+                <p class="mb-3" th:text="#{course.2.write.instructions}">
                     Scrie o propoziție despre ce te-a surprins cel mai mult în legătură cu reciclarea corectă.
                 </p>
                 <textarea 
                     class="reflection-input" 
                     id="reflection-text" 
-                    placeholder="Scrie aici reflecția ta..."
+                    th:placeholder="#{course.write.placeholder}"
                     rows="4"></textarea>
             </div>
 
             <div class="text-center">
                 <button class="btn btn-success btn-lg" id="complete-lesson" disabled>
                     <i class="bi bi-check-circle me-2"></i>
-                    Completează lecția
+                    <span th:text="#{course.complete.lesson}">Completează lecția</span>
                 </button>
             </div>
         </section>
@@ -682,21 +682,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">
-                        <i class="bi bi-lock me-2"></i>Autentificare necesară
+                        <i class="bi bi-lock me-2"></i><span th:text="#{course.login.required}">Autentificare necesară</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
+                    <p th:text="#{course.login.required.message}">Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>De ce?</strong> Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.
+                        <strong th:text="#{course.login.why}">De ce?</strong> <span th:text="#{course.login.why}">Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.</span>
                     </div>
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{course.cancel}">Anulează</button>
                         <a href="/login?redirect=curs2" class="btn btn-success">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Autentificare
+                            <i class="bi bi-box-arrow-in-right me-2"></i><span th:text="#{course.login}">Autentificare</span>
                         </a>
                     </div>
             </div>

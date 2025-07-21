@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink - Lecția 6: Adună gunoiul din cartierul tău</title>
+    <title>GreenLink - <span th:text="#{course.6.title}">Lecția 6: Adună gunoiul din cartierul tău</span></title>
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}"/>
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -377,7 +377,7 @@
         <!-- Back Button -->
         <a href="/educatie" class="back-button">
             <i class="bi bi-arrow-left"></i>
-            <span th:text="#{course.back.button}">Înapoi la harta cursurilor</span>
+            <span th:text="#{course.6.back.button}">Înapoi la harta cursurilor</span>
         </a>
 
         <!-- Lesson completed message -->
@@ -623,7 +623,7 @@
 
         <!-- Final Task -->
         <section class="final-task">
-            <h2 class="text-center mb-4">✅ Sarcina finală</h2>
+            <h2 class="text-center mb-4" th:text="#{course.final.task}">✅ Sarcina finală</h2>
             
             <div class="task-section">
                 <h4><i class="bi bi-camera me-2"></i>Foto (10 pts)</h4>
@@ -667,21 +667,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="loginModalLabel">
-                        <i class="bi bi-lock me-2"></i>Autentificare necesară
+                        <i class="bi bi-lock me-2"></i><span th:text="#{course.login.required}">Autentificare necesară</span>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
+                    <p th:text="#{course.login.required.message}">Pentru a completa lecția și a-ți salva progresul, trebuie să fii autentificat.</p>
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle me-2"></i>
-                        <strong>De ce?</strong> Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.
+                        <strong th:text="#{course.login.why}">De ce?</strong> <span th:text="#{course.login.why}">Vrem să-ți salvăm progresul și să-ți oferim o experiență personalizată.</span>
                     </div>
                 </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{course.cancel}">Anulează</button>
                         <a href="/login?redirect=curs6" class="btn btn-success">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Autentificare
+                            <i class="bi bi-box-arrow-in-right me-2"></i><span th:text="#{course.login}">Autentificare</span>
                         </a>
                     </div>
             </div>
