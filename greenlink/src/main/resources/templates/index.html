@@ -2023,7 +2023,7 @@
             <img src="/images/logo.svg" alt="GreenLink" class="loading-logo">
             <div class="loading-spinner"></div>
             <h3>GreenLink</h3>
-            <p>Se încarcă platforma sustenabilă...</p>
+            <p th:text="#{common.loading}">Se încarcă platforma sustenabilă...</p>
         </div>
     </div>
 
@@ -2041,18 +2041,18 @@
         </div>
         <div class="hero-content">
             <h1 class="hero-title">GreenLink</h1>
-            <p class="hero-subtitle">Platforma digitală care transformă sustenabilitatea într-o experiență socială interactivă</p>
-            <p class="hero-description">
+            <p class="hero-subtitle" th:text="#{home.subtitle}">Platforma digitală care transformă sustenabilitatea într-o experiență socială interactivă</p>
+            <p class="hero-description" th:text="#{home.description}">
                 Îmbinăm activitățile ecologice cu dinamica rețelelor sociale pentru a crea o nouă formă de identitate digitală - una care reflectă valori, impact și responsabilitate față de mediu.
             </p>
             <div class="hero-buttons">
                 <a href="/register" class="btn-hero btn-primary-hero">
                     <i class="bi bi-person-plus"></i>
-                    Începe Aventura
+                    <span th:text="#{home.start.adventure}">Începe Aventura</span>
                 </a>
                 <a href="#platform-overview" class="btn-hero btn-secondary-hero">
                     <i class="bi bi-play-circle"></i>
-                    Descoperă Platforma
+                    <span th:text="#{home.discover.platform}">Descoperă Platforma</span>
                 </a>
             </div>
         </div>
@@ -2062,8 +2062,8 @@
     <section class="platform-overview" id="platform-overview">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">O Platformă Completă pentru Sustenabilitate</h2>
-                <p class="section-subtitle">
+                <h2 class="section-title" th:text="#{home.platform.title}">O Platformă Completă pentru Sustenabilitate</h2>
+                <p class="section-subtitle" th:text="#{home.platform.subtitle}">
                     GreenLink este mai mult decât o aplicație - este o comunitate digitală care încurajează acțiuni sustenabile prin gamificare, educație și conectivitate socială.
                 </p>
             </div>
@@ -2075,16 +2075,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-trophy-fill me-2" style="color: var(--neon-green);"></i>
-                        Sistem de Puncte & Niveluri
+                        <span th:text="#{home.points.system}">Sistem de Puncte & Niveluri</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-star-fill me-1" style="color: var(--electric-green);"></i>
-                        Obține puncte și avansează în niveluri prin acțiuni sustenabile. Fiecare activitate ecologică este recompensată și afișată în profilul tău digital.
+                        <span th:text="#{home.points.system.desc}">Obține puncte și avansează în niveluri prin acțiuni sustenabile. Fiecare activitate ecologică este recompensată și afișată în profilul tău digital.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-check-circle"></i> Gamificare</span>
-                        <span class="feature-tag"><i class="bi bi-award"></i> Recompense</span>
-                        <span class="feature-tag"><i class="bi bi-graph-up"></i> Progres</span>
+                        <span class="feature-tag"><i class="bi bi-check-circle"></i> <span th:text="#{home.gamification}">Gamificare</span></span>
+                        <span class="feature-tag"><i class="bi bi-award"></i> <span th:text="#{home.rewards}">Recompense</span></span>
+                        <span class="feature-tag"><i class="bi bi-graph-up"></i> <span th:text="#{home.progress}">Progres</span></span>
                     </div>
                 </div>
 
@@ -2094,16 +2094,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-mortarboard-fill me-2" style="color: var(--neon-green);"></i>
-                        Educație Interactivă
+                        <span th:text="#{home.interactive.education}">Educație Interactivă</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
-                        Cursuri gamificate despre sustenabilitate, biodiversitate, energie verde și reciclare. Învață prin experiențe interactive și teste.
+                        <span th:text="#{home.interactive.education.desc}">Cursuri gamificate despre sustenabilitate, biodiversitate, energie verde și reciclare. Învață prin experiențe interactive și teste.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-play-circle"></i> Cursuri</span>
-                        <span class="feature-tag"><i class="bi bi-question-circle"></i> Teste</span>
-                        <span class="feature-tag"><i class="bi bi-emoji-smile"></i> Interactiv</span>
+                        <span class="feature-tag"><i class="bi bi-play-circle"></i> <span th:text="#{home.courses}">Cursuri</span></span>
+                        <span class="feature-tag"><i class="bi bi-question-circle"></i> <span th:text="#{home.tests}">Teste</span></span>
+                        <span class="feature-tag"><i class="bi bi-emoji-smile"></i> <span th:text="#{home.interactive}">Interactiv</span></span>
                     </div>
                 </div>
 
@@ -2113,16 +2113,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-bag-heart-fill me-2" style="color: var(--neon-green);"></i>
-                        Marketplace Sustenabil
+                        <span th:text="#{home.sustainable.marketplace}">Marketplace Sustenabil</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-recycle me-1" style="color: var(--electric-green);"></i>
-                        Vinde și cumpără produse eco-friendly, second-hand sau sustenabile. Fiecare tranzacție contribuie la economia circulară.
+                        <span th:text="#{home.sustainable.marketplace.desc}">Vinde și cumpără produse eco-friendly, second-hand sau sustenabile. Fiecare tranzacție contribuie la economia circulară.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-cart-plus"></i> Vânzare</span>
-                        <span class="feature-tag"><i class="bi bi-cart-check"></i> Cumpărare</span>
-                        <span class="feature-tag"><i class="bi bi-currency-exchange"></i> Plăți</span>
+                        <span class="feature-tag"><i class="bi bi-cart-plus"></i> <span th:text="#{home.sale}">Vânzare</span></span>
+                        <span class="feature-tag"><i class="bi bi-cart-check"></i> <span th:text="#{home.purchase}">Cumpărare</span></span>
+                        <span class="feature-tag"><i class="bi bi-currency-exchange"></i> <span th:text="#{home.payments}">Plăți</span></span>
                     </div>
                 </div>
 
@@ -2132,16 +2132,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-geo-alt-fill me-2" style="color: var(--neon-green);"></i>
-                        Hartă de Reciclare
+                        <span th:text="#{home.recycling.map}">Hartă de Reciclare</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-map me-1" style="color: var(--electric-green);"></i>
-                        Găsește puncte de reciclare apropiate și învață cum să reciclezi corect diferitele tipuri de materiale.
+                        <span th:text="#{home.recycling.map.desc}">Găsește puncte de reciclare apropiate și învață cum să reciclezi corect diferitele tipuri de materiale.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-geo-alt"></i> Localizare</span>
-                        <span class="feature-tag"><i class="bi bi-info-circle"></i> Ghiduri</span>
-                        <span class="feature-tag"><i class="bi bi-pin-map"></i> Hartă</span>
+                        <span class="feature-tag"><i class="bi bi-geo-alt"></i> <span th:text="#{home.location}">Localizare</span></span>
+                        <span class="feature-tag"><i class="bi bi-info-circle"></i> <span th:text="#{home.guides}">Ghiduri</span></span>
+                        <span class="feature-tag"><i class="bi bi-pin-map"></i> <span th:text="#{home.map}">Hartă</span></span>
                     </div>
                 </div>
 
@@ -2151,16 +2151,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-speedometer2 me-2" style="color: var(--neon-green);"></i>
-                        Calculator de Carbon
+                        <span th:text="#{home.carbon.calculator}">Calculator de Carbon</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-graph-down me-1" style="color: var(--electric-green);"></i>
-                        Calculează amprenta ta de carbon și primește recomandări personalizate pentru a o reduce.
+                        <span th:text="#{home.carbon.calculator.desc}">Calculează amprenta ta de carbon și primește recomandări personalizate pentru a o reduce.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-calculator"></i> Calcul</span>
-                        <span class="feature-tag"><i class="bi bi-lightbulb"></i> Recomandări</span>
-                        <span class="feature-tag"><i class="bi bi-arrow-down-circle"></i> Reducere</span>
+                        <span class="feature-tag"><i class="bi bi-calculator"></i> <span th:text="#{home.calculation}">Calcul</span></span>
+                        <span class="feature-tag"><i class="bi bi-lightbulb"></i> <span th:text="#{home.recommendations}">Recomandări</span></span>
+                        <span class="feature-tag"><i class="bi bi-arrow-down-circle"></i> <span th:text="#{home.reduction}">Reducere</span></span>
                     </div>
                 </div>
 
@@ -2170,16 +2170,16 @@
                     </div>
                     <h3 class="platform-title">
                         <i class="bi bi-heart-fill me-2" style="color: var(--neon-green);"></i>
-                        Comunitate Socială
+                        <span th:text="#{home.social.community}">Comunitate Socială</span>
                     </h3>
                     <p class="platform-description">
                         <i class="bi bi-chat-heart me-1" style="color: var(--electric-green);"></i>
-                        Conectează-te cu alți utilizatori pasionați de sustenabilitate, împărtășește realizările și participă la provocări.
+                        <span th:text="#{home.social.community.desc}">Conectează-te cu alți utilizatori pasionați de sustenabilitate, împărtășește realizările și participă la provocări.</span>
                     </p>
                     <div class="platform-features">
-                        <span class="feature-tag"><i class="bi bi-people-fill"></i> Prieteni</span>
-                        <span class="feature-tag"><i class="bi bi-chat-dots"></i> Mesaje</span>
-                        <span class="feature-tag"><i class="bi bi-share"></i> Partajare</span>
+                        <span class="feature-tag"><i class="bi bi-people-fill"></i> <span th:text="#{home.friends}">Prieteni</span></span>
+                        <span class="feature-tag"><i class="bi bi-chat-dots"></i> <span th:text="#{home.messages}">Mesaje</span></span>
+                        <span class="feature-tag"><i class="bi bi-share"></i> <span th:text="#{home.sharing}">Partajare</span></span>
                     </div>
                 </div>
             </div>
@@ -2190,8 +2190,8 @@
     <section class="features-showcase">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">Funcționalități Avansate</h2>
-                <p class="section-subtitle">
+                <h2 class="section-title" th:text="#{home.features.title}">Funcționalități Avansate</h2>
+                <p class="section-subtitle" th:text="#{home.features.subtitle}">
                     Descoperă toate instrumentele și funcționalitățile care fac din GreenLink o platformă unică pentru sustenabilitate.
                 </p>
             </div>
@@ -2202,17 +2202,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-trophy"></i>
                         </div>
-                        <h3 class="feature-title">Provocări Ecologice</h3>
+                        <h3 class="feature-title" th:text="#{home.eco.challenges}">Provocări Ecologice</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.eco.challenges.desc}">
                             Participă la provocări zilnice, săptămânale și lunare pentru a-ți testa cunoștințele și a-ți îmbunătăți impactul ecologic.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Provocări personalizate în funcție de nivel</li>
-                            <li>Recompense și badge-uri exclusive</li>
-                            <li>Clasament global și local</li>
-                            <li>Tracking progres în timp real</li>
+                            <li th:text="#{home.feature.challenges.personalized}">Provocări personalizate în funcție de nivel</li>
+                            <li th:text="#{home.feature.challenges.rewards}">Recompense și badge-uri exclusive</li>
+                            <li th:text="#{home.feature.challenges.leaderboard}">Clasament global și local</li>
+                            <li th:text="#{home.feature.challenges.tracking}">Tracking progres în timp real</li>
                         </ul>
                     </div>
                 </div>
@@ -2222,17 +2222,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-chat-dots"></i>
                         </div>
-                        <h3 class="feature-title">Sistem de Mesaje</h3>
+                        <h3 class="feature-title" th:text="#{home.message.system}">Sistem de Mesaje</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.message.system.desc}">
                             Comunică cu alți utilizatori, împărtășește experiențe și creează conexiuni în comunitatea sustenabilă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Mesaje private și grupuri</li>
-                            <li>Împărtășire de realizări</li>
-                            <li>Notificări în timp real</li>
-                            <li>Traducere automată RO/EN</li>
+                            <li th:text="#{home.feature.messages.private}">Mesaje private și grupuri</li>
+                            <li th:text="#{home.feature.messages.sharing}">Împărtășire de realizări</li>
+                            <li th:text="#{home.feature.messages.notifications}">Notificări în timp real</li>
+                            <li th:text="#{home.feature.messages.translation}">Traducere automată RO/EN</li>
                         </ul>
                     </div>
                 </div>
@@ -2242,17 +2242,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-heart"></i>
                         </div>
-                        <h3 class="feature-title">Lista de Favorite</h3>
+                        <h3 class="feature-title" th:text="#{home.favorites.list}">Lista de Favorite</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.favorites.list.desc}">
                             Salvează produsele și cursurile preferate pentru a le accesa rapid și a-ți organiza experiența pe platformă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Organizare personalizată</li>
-                            <li>Sincronizare cross-device</li>
-                            <li>Recomandări bazate pe preferințe</li>
-                            <li>Partajare cu prietenii</li>
+                            <li th:text="#{home.feature.favorites.organization}">Organizare personalizată</li>
+                            <li th:text="#{home.feature.favorites.sync}">Sincronizare cross-device</li>
+                            <li th:text="#{home.feature.favorites.recommendations}">Recomandări bazate pe preferințe</li>
+                            <li th:text="#{home.feature.favorites.sharing}">Partajare cu prietenii</li>
                         </ul>
                     </div>
                 </div>
@@ -2262,17 +2262,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-credit-card"></i>
                         </div>
-                        <h3 class="feature-title">Plăți Securizate</h3>
+                        <h3 class="feature-title" th:text="#{home.secure.payments}">Plăți Securizate</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.secure.payments.desc}">
                             Tranzacții sigure prin Stripe pentru marketplace, cu protecție completă a datelor și suport pentru multiple metode de plată.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Integrare Stripe completă</li>
-                            <li>Plăți cu card și transfer bancar</li>
-                            <li>Istoric tranzacții detaliat</li>
-                            <li>Suport pentru vânzători</li>
+                            <li th:text="#{home.feature.payments.stripe}">Integrare Stripe completă</li>
+                            <li th:text="#{home.feature.payments.methods}">Plăți cu card și transfer bancar</li>
+                            <li th:text="#{home.feature.payments.history}">Istoric tranzacții detaliat</li>
+                            <li th:text="#{home.feature.payments.support}">Suport pentru vânzători</li>
                         </ul>
                     </div>
                 </div>
@@ -2282,17 +2282,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-translate"></i>
                         </div>
-                        <h3 class="feature-title">Internaționalizare</h3>
+                        <h3 class="feature-title" th:text="#{home.internationalization}">Internaționalizare</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.internationalization.desc}">
                             Platformă disponibilă în română și engleză, cu suport pentru multiple regiuni și culturi.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Interfață bilingvă completă</li>
-                            <li>Conținut adaptat cultural</li>
-                            <li>Suport pentru multiple timezone-uri</li>
-                            <li>Traducere automată mesaje</li>
+                            <li th:text="#{home.feature.i18n.interface}">Interfață bilingvă completă</li>
+                            <li th:text="#{home.feature.i18n.content}">Conținut adaptat cultural</li>
+                            <li th:text="#{home.feature.i18n.timezones}">Suport pentru multiple timezone-uri</li>
+                            <li th:text="#{home.feature.i18n.translation}">Traducere automată mesaje</li>
                         </ul>
                     </div>
                 </div>
@@ -2302,17 +2302,17 @@
                         <div class="feature-icon-large">
                             <i class="bi bi-phone"></i>
                         </div>
-                        <h3 class="feature-title">Design Responsive</h3>
+                        <h3 class="feature-title" th:text="#{home.responsive.design}">Design Responsive</h3>
                     </div>
                     <div class="feature-content">
-                        <p class="feature-description">
+                        <p class="feature-description" th:text="#{home.responsive.design.desc}">
                             Experiență optimizată pentru toate dispozitivele - desktop, tabletă și mobil, cu interfață adaptivă.
                         </p>
                         <ul class="feature-benefits">
-                            <li>Design mobile-first</li>
-                            <li>Performanță optimizată</li>
-                            <li>Accesibilitate îmbunătățită</li>
-                            <li>Suport pentru touch gestures</li>
+                            <li th:text="#{home.feature.responsive.mobile}">Design mobile-first</li>
+                            <li th:text="#{home.feature.responsive.performance}">Performanță optimizată</li>
+                            <li th:text="#{home.feature.responsive.accessibility}">Accesibilitate îmbunătățită</li>
+                            <li th:text="#{home.feature.responsive.touch}">Suport pentru touch gestures</li>
                         </ul>
                     </div>
                 </div>
@@ -2324,11 +2324,11 @@
     <section class="experience-hub">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">
+                <h2 class="section-title" th:text="#{home.experience.hub.title}">
                     <i class="bi bi-stars me-3" style="color: var(--neon-green);"></i>
                     GreenLink Experience Hub
                 </h2>
-                <p class="section-subtitle">
+                <p class="section-subtitle" th:text="#{home.experience.hub.subtitle}">
                     Explorează și interacționează cu toate funcționalitățile platformei într-un mod creativ și distractiv!
                 </p>
             </div>
@@ -2340,7 +2340,7 @@
                         <div class="card-icon">
                             <i class="bi bi-shop"></i>
                         </div>
-                        <h3>Marketplace Explorer</h3>
+                        <h3 th:text="#{home.hub.marketplace.title}">Marketplace Explorer</h3>
                     </div>
                     <div class="card-content">
                         <div class="product-showcase">
@@ -2375,7 +2375,7 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/marketplace'">
                                 <i class="bi bi-arrow-right"></i>
-                                Explorează Marketplace
+                                <span th:text="#{home.hub.marketplace.button}">Explorează Marketplace</span>
                             </button>
                         </div>
                     </div>
@@ -2387,7 +2387,7 @@
                         <div class="card-icon">
                             <i class="bi bi-book"></i>
                         </div>
-                        <h3>Learning Center</h3>
+                        <h3 th:text="#{home.hub.learning.title}">Learning Center</h3>
                     </div>
                     <div class="card-content">
                         <div class="lesson-preview">
@@ -2396,8 +2396,8 @@
                                     <i class="bi bi-leaf"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Ce este sustenabilitatea?</h4>
-                                    <p class="lesson-desc">Învață principiile fundamentale</p>
+                                    <h4 th:text="#{home.lesson.center.1.title}">Ce este sustenabilitatea?</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.1.desc}">Învață principiile fundamentale</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 85%"></div>
                                     </div>
@@ -2412,8 +2412,8 @@
                                     <i class="bi bi-recycle"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Cum să reciclezi corect</h4>
-                                    <p class="lesson-desc">Regulile de bază pentru reciclare</p>
+                                    <h4 th:text="#{home.lesson.center.2.title}">Cum să reciclezi corect</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.2.desc}">Regulile de bază pentru reciclare</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 60%"></div>
                                     </div>
@@ -2428,8 +2428,8 @@
                                     <i class="bi bi-lightning"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Redu deșeurile cu un singur schimb</h4>
-                                    <p class="lesson-desc">Schimbări mici pentru impact mare</p>
+                                    <h4 th:text="#{home.lesson.center.3.title}">Redu deșeurile cu un singur schimb</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.3.desc}">Schimbări mici pentru impact mare</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 30%"></div>
                                     </div>
@@ -2444,8 +2444,8 @@
                                     <i class="bi bi-tree"></i>
                                 </div>
                                 <div class="lesson-info">
-                                    <h4>Începe un mini-compost acasă</h4>
-                                    <p class="lesson-desc">Transformă resturile în viață nouă</p>
+                                    <h4 th:text="#{home.lesson.center.4.title}">Începe un mini-compost acasă</h4>
+                                    <p class="lesson-desc" th:text="#{home.lesson.center.4.desc}">Transformă resturile în viață nouă</p>
                                     <div class="lesson-progress">
                                         <div class="progress-fill" style="width: 0%"></div>
                                     </div>
@@ -2459,7 +2459,7 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/educatie'">
                                 <i class="bi bi-play-circle"></i>
-                                Explorează Toate Lecțiile
+                                <span th:text="#{home.hub.learning.button}">Explorează Toate Lecțiile</span>
                             </button>
                         </div>
                     </div>
@@ -2471,7 +2471,7 @@
                         <div class="card-icon">
                             <i class="bi bi-trophy"></i>
                         </div>
-                        <h3>Challenge Arena</h3>
+                        <h3 th:text="#{home.hub.challenges.title}">Challenge Arena</h3>
                     </div>
                     <div class="card-content">
                         <div class="challenge-showcase">
@@ -2480,8 +2480,8 @@
                                     <i class="bi bi-person-circle"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Profile Perfectionist</h4>
-                                    <p>Upload a profile photo</p>
+                                    <h4 th:text="#{home.challenge.1.title}">Profile Perfectionist</h4>
+                                    <p th:text="#{home.challenge.1.desc}">Upload a profile photo</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+30 puncte</span>
                                         <span class="reward-badge">📸 Photographer Badge</span>
@@ -2496,8 +2496,8 @@
                                     <i class="bi bi-book"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Knowledge Seeker</h4>
-                                    <p>Complete 3 lessons in the education section</p>
+                                    <h4 th:text="#{home.challenge.2.title}">Knowledge Seeker</h4>
+                                    <p th:text="#{home.challenge.2.desc}">Complete 3 lessons in the education section</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+100 puncte</span>
                                         <span class="reward-badge">🎓 Scholar Badge</span>
@@ -2512,8 +2512,8 @@
                                     <i class="bi bi-shop"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Marketplace Explorer</h4>
-                                    <p>List your first item in the marketplace</p>
+                                    <h4 th:text="#{home.challenge.3.title}">Marketplace Explorer</h4>
+                                    <p th:text="#{home.challenge.3.desc}">List your first item in the marketplace</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+75 puncte</span>
                                         <span class="reward-badge">🛒 Trader Badge</span>
@@ -2528,8 +2528,8 @@
                                     <i class="bi bi-gem"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Education Master</h4>
-                                    <p>Complete all available lessons</p>
+                                    <h4 th:text="#{home.challenge.4.title}">Education Master</h4>
+                                    <p th:text="#{home.challenge.4.desc}">Complete all available lessons</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+500 puncte</span>
                                         <span class="reward-badge">👑 Maester Badge</span>
@@ -2544,8 +2544,8 @@
                                     <i class="bi bi-calculator"></i>
                                 </div>
                                 <div class="challenge-info">
-                                    <h4>Carbon Expert</h4>
-                                    <p>Use the carbon calculator 10 times</p>
+                                    <h4 th:text="#{home.challenge.5.title}">Carbon Expert</h4>
+                                    <p th:text="#{home.challenge.5.desc}">Use the carbon calculator 10 times</p>
                                     <div class="challenge-reward">
                                         <span class="reward-points">+400 puncte</span>
                                         <span class="reward-badge">🧮 Carbon Expert Badge</span>
@@ -2559,62 +2559,12 @@
                         <div class="interaction-area">
                             <button class="hub-btn" onclick="window.location.href='/provocari'">
                                 <i class="bi bi-flag"></i>
-                                Acceptă Provocări
+                                <span th:text="#{home.hub.challenges.button}">Acceptă Provocări</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Community Hub -->
-                <div class="hub-card community-hub" data-aos="fade-up" data-aos-delay="400">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="bi bi-people"></i>
-                        </div>
-                        <h3>Community Hub</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="community-preview">
-                            <div class="user-avatars">
-                                <div class="avatar" style="background: var(--gradient-neon);">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="avatar" style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4);">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="avatar" style="background: linear-gradient(45deg, #45b7d1, #96ceb4);">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="avatar" style="background: linear-gradient(45deg, #feca57, #ff9ff3);">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <div class="avatar-more">
-                                    <span>+25</span>
-                                </div>
-                            </div>
-                            <div class="community-stats">
-                                <div class="stat-item">
-                                    <span class="stat-number">89</span>
-                                    <span class="stat-label">Membri</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-number">156</span>
-                                    <span class="stat-label">Produse</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-number">42</span>
-                                    <span class="stat-label">Lecții</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="interaction-area">
-                            <button class="hub-btn" onclick="window.location.href='/friends'">
-                                <i class="bi bi-chat-dots"></i>
-                                Conectează-te
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Interactive Floating Elements -->
@@ -2639,11 +2589,11 @@
     <section class="epic-leaderboard">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">
+                <h2 class="section-title" th:text="#{home.leaderboard.title}">
                     <i class="bi bi-trophy-fill me-3" style="color: var(--neon-green);"></i>
                     Epic Leaderboard
                 </h2>
-                <p class="section-subtitle">
+                <p class="section-subtitle" th:text="#{home.leaderboard.subtitle}">
                     Meet the top environmental champions who are leading the eco-revolution!
                 </p>
             </div>
@@ -2655,7 +2605,33 @@
                 </div>
                 
                 <div class="leaderboard-entries">
-                    <div class="leaderboard-entry gold" onclick="window.location.href='/points/leaderboard'">
+                    <!-- Display real leaderboard data -->
+                    <div th:each="user, iterStat : ${topUsers}" 
+                         th:class="'leaderboard-entry ' + (${iterStat.index == 0 ? 'gold' : ''}) + (${iterStat.index == 1 ? 'silver' : ''}) + (${iterStat.index == 2 ? 'bronze' : ''})" 
+                         onclick="window.location.href='/points/leaderboard'">
+                        <div class="rank-badge">
+                            <i th:if="${iterStat.index == 0}" class="bi bi-trophy-fill"></i>
+                            <i th:if="${iterStat.index == 1}" class="bi bi-award-fill"></i>
+                            <i th:if="${iterStat.index == 2}" class="bi bi-patch-check-fill"></i>
+                            <span class="rank-number" th:text="${iterStat.index + 1}">1</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div class="user-details">
+                                <h5 th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>
+                                <p th:text="'Level ' + ${user.level} + ' • ' + ${user.points} + ' points'">Level info</p>
+                            </div>
+                        </div>
+                        <div class="achievement-badge">
+                            <i th:class="'bi ' + (${iterStat.index == 0 ? 'bi-gem' : iterStat.index == 1 ? 'bi-star' : iterStat.index == 2 ? 'bi-book' : iterStat.index == 3 ? 'bi-recycle' : 'bi-tree'})"></i>
+                            <span th:text="${iterStat.index == 0 ? 'Maester' : iterStat.index == 1 ? 'Advocate' : iterStat.index == 2 ? 'Scholar' : iterStat.index == 3 ? 'Recycler' : 'Planter'}">Achievement</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Fallback entries if no users exist -->
+                    <div th:if="${#lists.isEmpty(topUsers)}" class="leaderboard-entry gold" onclick="window.location.href='/points/leaderboard'">
                         <div class="rank-badge">
                             <i class="bi bi-trophy-fill"></i>
                             <span class="rank-number">1</span>
@@ -2665,107 +2641,29 @@
                                 <i class="bi bi-person"></i>
                             </div>
                             <div class="user-details">
-                                <h5>Eco Master</h5>
-                                <p>Level 15 • 2,450 points</p>
+                                <h5>No users yet</h5>
+                                <p>Be the first to join!</p>
                             </div>
                         </div>
                         <div class="achievement-badge">
                             <i class="bi bi-gem"></i>
-                            <span>Maester</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry silver" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <i class="bi bi-award-fill"></i>
-                            <span class="rank-number">2</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Green Champion</h5>
-                                <p>Level 12 • 1,890 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-star"></i>
-                            <span>Advocate</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry bronze" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <i class="bi bi-patch-check-fill"></i>
-                            <span class="rank-number">3</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Sustainability Pro</h5>
-                                <p>Level 10 • 1,567 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-book"></i>
-                            <span>Scholar</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <span class="rank-number">4</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Recycling Hero</h5>
-                                <p>Level 8 • 1,234 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-recycle"></i>
-                            <span>Recycler</span>
-                        </div>
-                    </div>
-                    
-                    <div class="leaderboard-entry" onclick="window.location.href='/points/leaderboard'">
-                        <div class="rank-badge">
-                            <span class="rank-number">5</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="user-details">
-                                <h5>Nature Lover</h5>
-                                <p>Level 6 • 987 points</p>
-                            </div>
-                        </div>
-                        <div class="achievement-badge">
-                            <i class="bi bi-tree"></i>
-                            <span>Planter</span>
+                            <span>Pioneer</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="leaderboard-stats">
                     <div class="stat-item">
-                        <span class="stat-number">89</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #lists.size(topUsers) : 0}">0</span>
                         <span class="stat-label">Competitors</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">15,420</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![points]) : 0}">0</span>
                         <span class="stat-label">Total Points</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">42</span>
-                        <span class="stat-label">Badges Earned</span>
+                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![level]) : 0}">0</span>
+                        <span class="stat-label">Levels Achieved</span>
                     </div>
                 </div>
                 
@@ -2784,8 +2682,8 @@
         <div class="cta-background"></div>
         <div class="container">
             <div class="cta-content" data-aos="fade-up">
-                <h2 class="cta-title">Gata să-ți Construiești Viitorul Sustenabil?</h2>
-                <p class="cta-description">
+                <h2 class="cta-title" th:text="#{home.cta.title}">Gata să-ți Construiești Viitorul Sustenabil?</h2>
+                <p class="cta-description" th:text="#{home.cta.description}">
                     Alătură-te comunității GreenLink și începe să-ți construiești identitatea digitală sustenabilă. Fiecare acțiune contează pentru viitorul nostru comun.
                 </p>
                 <div class="cta-buttons">
