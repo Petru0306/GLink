@@ -1,10 +1,12 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.model.PointEvent;
 import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.ChallengeService;
+import com.greenlink.greenlink.service.PointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/dashboard")
@@ -25,6 +28,9 @@ public class DashboardController {
     
     @Autowired
     private ChallengeService challengeService;
+    
+    @Autowired
+    private PointsService pointsService;
 
     public DashboardController(UserService userService) { 
         this.userService = userService;
@@ -71,6 +77,14 @@ public class DashboardController {
         } catch (Exception e) {
             model.addAttribute("completedChallengesCount", 0);
             model.addAttribute("currentStreak", 0);
+        }
+        
+        // Add recent events for Recent Activity section
+        try {
+            List<PointEvent> recentEvents = pointsService.getRecentEvents(user.getId(), 5); // Last 5 events
+            model.addAttribute("recentEvents", recentEvents);
+        } catch (Exception e) {
+            model.addAttribute("recentEvents", new ArrayList<>());
         }
         
         return "dashboard";
