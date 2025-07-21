@@ -36,6 +36,8 @@
         
         .page-header {
             background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
             padding: 7rem 0; /* Increase padding to make header taller */
             color: white;
             margin-bottom: 2rem;
@@ -165,6 +167,8 @@
             margin: 0 auto;
             padding: 2rem;
             background: linear-gradient(180deg, #87CEEB 0%, #98D8E8 100%);
+            background-size: 200% 200%;
+            animation: backgroundShift 12s ease infinite;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -221,17 +225,7 @@
             color: white;
         }
         
-        .lesson-button.locked {
-            background: rgba(149, 165, 166, 0.3);
-            cursor: not-allowed;
-        }
-        
-        .lesson-button.locked:hover {
-            transform: none;
-            background: rgba(149, 165, 166, 0.3);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            color: transparent;
-        }
+
         
         /* Remove ripple effect to not interfere with original markers */
         .lesson-button::before {
@@ -445,16 +439,135 @@
             </div>
         </div>
         
-        <!-- Instructions -->
-        <div class="row mt-4">
-            <div class="col-12">
-<div class="alert alert-info animate__animated animate__bounceIn" style="background: linear-gradient(135deg, #f1f9f9, #e3f2fd); border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border-radius: 16px;" role="alert">
-<h5 class="d-flex align-items-center" style="color: #1e88e5; font-weight: 600;"><i class="bi bi-info-circle-fill me-2" style="font-size: 1.4rem;"></i><span th:text="#{education.how.to.navigate.title}">Cum să navighezi</span></h5>
-                    <p class="mb-0" style="color: #37474f; font-size: 1.05rem;" th:text="#{education.how.to.navigate.instructions}">Apasă pe numerele roșii pentru a accesa cursurile. Parcurge cursurile în ordine pentru a debloca urmatoarele nivele și a câștiga trofeul final!</p>
+    </main>
+
+    <!-- Lesson Cards Section -->
+    <section class="platform-overview" id="lessons-overview">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title" th:text="#{education.lessons.title}">Lecțiile Tale</h2>
+                <p class="section-subtitle" th:text="#{education.lessons.subtitle}">
+                    Explorează fiecare lecție și construiește-ți cunoștințele despre sustenabilitate pas cu pas
+                </p>
+            </div>
+            
+            <div class="platform-grid">
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="100" onclick="window.location.href='/educatie/curs/1'">
+                    <div class="platform-icon">
+                        <i class="bi bi-leaf"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-1-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.1.title}">Ce este sustenabilitatea?</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.1.desc}">Învață principiile fundamentale ale sustenabilității și cum să aplici aceste concepte în viața de zi cu zi.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">15 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Începător</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+50 puncte</span></span>
+                    </div>
+                </div>
+
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="200" onclick="window.location.href='/educatie/curs2'">
+                    <div class="platform-icon">
+                        <i class="bi bi-recycle"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-2-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.2.title}">Cum să reciclezi corect</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.2.desc}">Descoperă regulile de bază pentru reciclare și cum să organizezi deșeurile în mod eficient.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">20 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Începător</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+50 puncte</span></span>
+                    </div>
+                </div>
+
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="300" onclick="window.location.href='/educatie/curs/3'">
+                    <div class="platform-icon">
+                        <i class="bi bi-lightning"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-3-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.3.title}">Redu deșeurile cu un singur schimb</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.3.desc}">Învață schimbări mici care au un impact mare asupra reducerii deșeurilor în casa ta.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">18 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Începător</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+50 puncte</span></span>
+                    </div>
+                </div>
+
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="400" onclick="window.location.href='/educatie/curs/4'">
+                    <div class="platform-icon">
+                        <i class="bi bi-tree"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-4-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.4.title}">Începe un mini-compost acasă</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.4.desc}">Transformă resturile organice în compost valoroas și redu impactul asupra mediului.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">25 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Intermediar</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+75 puncte</span></span>
+                    </div>
+                </div>
+
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="500" onclick="window.location.href='/educatie/curs/5'">
+                    <div class="platform-icon">
+                        <i class="bi bi-flower1"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-5-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.5.title}">Plantează ceva (chiar și într-un ghiveci!)</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.5.desc}">Conectează-te cu natura prin plantat și învață să îngrijești plantele în casa ta.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">22 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Intermediar</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+75 puncte</span></span>
+                    </div>
+                </div>
+
+                <div class="platform-card" data-aos="fade-up" data-aos-delay="600" onclick="window.location.href='/educatie/curs/6'">
+                    <div class="platform-icon">
+                        <i class="bi bi-trash"></i>
+                    </div>
+                    <h3 class="platform-title">
+                        <i class="bi bi-6-circle-fill me-2" style="color: var(--neon-green);"></i>
+                        <span th:text="#{education.lesson.6.title}">Adună gunoiul din cartierul tău</span>
+                    </h3>
+                    <p class="platform-description">
+                        <i class="bi bi-lightbulb-fill me-1" style="color: var(--electric-green);"></i>
+                        <span th:text="#{education.lesson.6.desc}">Fă diferența în comunitatea ta prin acțiuni de curățenie și conștientizare ecologică.</span>
+                    </p>
+                    <div class="platform-features">
+                        <span class="feature-tag"><i class="bi bi-clock"></i> <span th:text="#{education.duration}">30 min</span></span>
+                        <span class="feature-tag"><i class="bi bi-star"></i> <span th:text="#{education.level}">Avansat</span></span>
+                        <span class="feature-tag"><i class="bi bi-trophy"></i> <span th:text="#{education.points}">+100 puncte</span></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
@@ -532,7 +645,6 @@
                 // Mark the completed lesson as completed immediately
                 const completedLesson = document.querySelector(`[data-lesson="${lessonNumber}"]`);
                 if (completedLesson && !completedLesson.classList.contains('completed')) {
-                    completedLesson.classList.remove('locked');
                     completedLesson.classList.add('completed');
                     completedLesson.innerHTML = `✓`;
                     
@@ -544,15 +656,6 @@
                 }
                 
                 updateProgressDisplay();
-                
-                // Unlock next lesson if available
-                if (lessonNumber < totalLessons) {
-                    const nextLesson = document.querySelector(`[data-lesson="${lessonNumber + 1}"]`);
-                    if (nextLesson) {
-                        nextLesson.classList.remove('locked');
-                        nextLesson.href = lessonNumber + 1 === 2 ? "/educatie/curs2" : `/educatie/curs/${lessonNumber + 1}`;
-                    }
-                }
             } else {
                 console.log("User not logged in, cannot mark lesson as complete");
             }
@@ -561,16 +664,6 @@
         // Add click handlers for lesson buttons
         document.addEventListener('DOMContentLoaded', function() {
             checkProgress();
-            
-            // Add click handlers for lesson buttons
-            document.querySelectorAll('.lesson-button').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (this.classList.contains('locked')) {
-                        e.preventDefault();
-                        alert('Completează cursurile anterioare pentru a debloca acest curs!');
-                    }
-                });
-            });
         });
         
         // Check if user is returning from a lesson page
@@ -580,5 +673,306 @@
             markLessonComplete(parseInt(completedLesson));
         }
     </script>
+
+
+
+    <style>
+        /* CSS Variables for Platform Overview */
+        :root {
+            --neon-green: #00ff88;
+            --electric-green: #39ff14;
+            --light-green: #e8f5e8;
+            --secondary-green: #20c997;
+            --dark-green: #155724;
+            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.2);
+            --shadow-neon: 0 0 20px rgba(0, 255, 136, 0.5);
+            --glow-green: 0 0 30px rgba(0, 255, 136, 0.3);
+            --gradient-primary: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-neon: linear-gradient(135deg, #00ff88 0%, #39ff14 100%);
+        }
+
+        /* Page Background Animations */
+        body {
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f0f8f0, #e8f5e8, #f0f8f0);
+            background-size: 400% 400%;
+            animation: backgroundShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2328a745' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Ccircle cx='80' cy='80' r='2'/%3E%3Ccircle cx='50' cy='50' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: floatPattern 20s linear infinite;
+            z-index: -1;
+        }
+
+
+
+        /* Platform Overview Section - Same as index page */
+        .platform-overview {
+            padding: 8rem 0;
+            background: white;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-subtitle {
+            font-size: 1.3rem;
+            color: #6c757d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+            justify-items: center;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .platform-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            width: 100%;
+            max-width: 380px;
+            border: 2px solid transparent;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: var(--shadow-heavy), var(--glow-green);
+            border-color: var(--neon-green);
+        }
+
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .platform-card:hover::after {
+            left: 100%;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .platform-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .platform-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .platform-icon {
+            width: 90px;
+            height: 90px;
+            background: var(--gradient-primary);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-neon);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .platform-card:hover .platform-icon::before {
+            opacity: 1;
+        }
+
+        .platform-card:hover .platform-icon {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .platform-icon i {
+            font-size: 2.2rem;
+            color: white;
+            z-index: 2;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .platform-card:hover .platform-icon i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+        }
+
+        .platform-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .platform-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .platform-description {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .feature-tag {
+            background: linear-gradient(45deg, var(--light-green), var(--secondary-green));
+            color: var(--dark-green);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .platform-card:hover .feature-tag {
+            background: var(--gradient-neon);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: var(--shadow-neon);
+        }
+
+        /* Animations */
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+
+        @keyframes floatPattern {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .platform-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .platform-card {
+                padding: 1.5rem;
+            }
+
+            .feature-item {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+
 </body>
 </html>
