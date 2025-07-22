@@ -280,6 +280,15 @@ public class User implements UserDetails {
     }
 
     /**
+     * Get points remaining until next level
+     */
+    public int getPointsRemainingForNextLevel() {
+        int pointsForNextLevel = getPointsForNextLevel();
+        int remaining = pointsForNextLevel - this.points;
+        return Math.max(0, remaining);
+    }
+
+    /**
      * Get progress percentage to next level
      */
     public int getProgressToNextLevel() {

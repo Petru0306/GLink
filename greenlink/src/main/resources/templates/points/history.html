@@ -96,16 +96,19 @@
         }
 
         .level-progress {
-            height: 12px;
-            border-radius: 10px;
+            height: 25px;
+            border-radius: 15px;
             background: rgba(255, 255, 255, 0.3);
             overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
         }
 
         .progress-bar {
             background: linear-gradient(90deg, #ffc107, #ff8c00);
-            border-radius: 10px;
+            border-radius: 15px;
             transition: width 1s ease;
+            height: 100%;
         }
 
         .stat-item {
@@ -352,11 +355,12 @@
                                 <small class="text-light mb-2 d-block" th:text="#{points.progress.next.level}">Progress to next level</small>
                                 <div class="level-progress">
                                     <div class="progress-bar" role="progressbar" 
-                                         th:style="'width: ' + ${currentUser.progressToNextLevel} + '%'"
-                                         th:text="${currentUser.progressToNextLevel} + '%'">
+                                         th:style="'width: ' + ${currentUser.progressToNextLevel} + '%'">
                                     </div>
                                 </div>
-                                <div class="progress-percentage" th:text="${currentUser.progressToNextLevel} + '%'">0%</div>
+                                <small class="text-light mt-2 d-block" th:if="${currentUser.progressToNextLevel < 100}">
+                                    <span th:text="${currentUser.pointsRemainingForNextLevel}">0</span> <span th:text="#{points.points.remaining}">points remaining until next level</span>
+                                </small>
                             </div>
                             <!-- Debug info -->
                             <div class="debug-info" th:if="${currentUser.progressToNextLevel == null}">
