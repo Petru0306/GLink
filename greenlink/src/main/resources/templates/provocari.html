@@ -817,9 +817,13 @@
                     
                     <!-- Challenge Footer -->
                     <div class="challenge-footer">
-                        <div class="completion-status in-progress">
+                        <div class="completion-status in-progress" th:if="${userChallenge.challenge.targetValue > 1}">
                             <i class="bi bi-clock"></i>
                             <span th:text="${userChallenge.currentValue} + ' / ' + ${userChallenge.challenge.targetValue}">0 / 1</span>
+                        </div>
+                        <div class="completion-status in-progress" th:if="${userChallenge.challenge.targetValue == 1}">
+                            <i class="bi bi-clock"></i>
+                            <span th:text="#{challenges.in.progress}">In Progress</span>
                         </div>
                         <div class="badge bg-warning text-dark" th:if="${userChallenge.challenge.badge}" th:text="${userChallenge.challenge.badge}">
                             Badge Name
