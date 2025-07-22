@@ -30,7 +30,7 @@
                     <div th:if="${error}" class="alert alert-danger" th:text="${error}">
                     </div>
 
-                    <form th:action="@{/register}" th:object="${user}" method="post">
+                    <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm">
                         <div class="mb-3">
                             <label for="firstName" class="form-label" th:text="#{register.first.name}">First Name</label>
                             <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
@@ -72,16 +72,21 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 mb-3" th:text="#{register.submit}">Register</button>
-                    </form>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label" th:text="#{register.confirm.password}">Confirm Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="text-danger" id="confirmPasswordError" style="display: none;">
+                                <small>Passwords do not match</small>
+                            </div>
+                        </div>
 
-                    <div class="text-center">
-                        <p class="mb-0" th:text="#{register.already.have.account}">Already have an account?
-                            <button type="button" class="btn btn-link text-success p-0 border-0 text-decoration-underline" onclick="showLoginModal()" th:text="#{register.login.here}">
-                                Login here
-                            </button>
-                        </p>
-                    </div>
+                        <button type="submit" class="btn btn-success w-100 mb-3" th:text="#{register.submit}" id="submitBtn">Register</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -153,23 +158,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Password toggle for login form
-    const toggleLoginPassword = document.getElementById('toggleLoginPassword');
-    const loginPasswordInput = document.getElementById('loginPassword');
-    if (toggleLoginPassword && loginPasswordInput) {
-        toggleLoginPassword.addEventListener('click', function() {
-            const type = loginPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            loginPasswordInput.setAttribute('type', type);
+    // Confirm password toggle
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    if (toggleConfirmPassword && confirmPasswordInput) {
+        toggleConfirmPassword.addEventListener('click', function() {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
             this.querySelector('i').classList.toggle('bi-eye');
             this.querySelector('i').classList.toggle('bi-eye-slash');
         });
     }
 
     // Password validation
-    const passwordField = document.getElementById('password');
-    if (passwordField) {
-        passwordField.addEventListener('input', function() {
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
             validatePassword(this.value);
+            checkPasswordMatch();
+        });
+    }
+
+    // Confirm password validation
+    if (confirmPasswordInput) {
+        confirmPasswordInput.addEventListener('input', function() {
+            checkPasswordMatch();
+        });
+    }
+
+    // Form submission
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            if (!validatePassword(passwordInput.value) || !checkPasswordMatch()) {
+                e.preventDefault();
+                return false;
+            }
         });
     }
 
@@ -201,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const allValid = Object.values(requirements).every(req => req);
         
         // Update submit button state
-        const submitButton = document.querySelector('button[type="submit"]');
+        const submitButton = document.getElementById('submitBtn');
         if (submitButton) {
             submitButton.disabled = !allValid;
             if (!allValid) {
@@ -214,6 +237,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         return allValid;
+    }
+
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword === '') {
+            document.getElementById('confirmPasswordError').style.display = 'none';
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.remove('is-valid');
+            updateSubmitButton();
+            return true;
+        }
+        
+        if (password === confirmPassword) {
+            document.getElementById('confirmPasswordError').style.display = 'none';
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            updateSubmitButton();
+            return true;
+        } else {
+            document.getElementById('confirmPasswordError').style.display = 'block';
+            confirmPasswordInput.classList.remove('is-valid');
+            confirmPasswordInput.classList.add('is-invalid');
+            updateSubmitButton();
+            return false;
+        }
+    }
+
+    function updateSubmitButton() {
+        const passwordValid = validatePassword(passwordInput.value);
+        const passwordsMatch = checkPasswordMatch();
+        
+        const submitButton = document.getElementById('submitBtn');
+        if (submitButton) {
+            if (passwordValid && passwordsMatch) {
+                submitButton.disabled = false;
+                submitButton.classList.remove('btn-secondary');
+                submitButton.classList.add('btn-success');
+            } else {
+                submitButton.disabled = true;
+                submitButton.classList.add('btn-secondary');
+                submitButton.classList.remove('btn-success');
+            }
+        }
     }
 });
 </script>
