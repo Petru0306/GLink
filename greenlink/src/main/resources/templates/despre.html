@@ -3,378 +3,604 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="#{about.page.title}">Despre GreenLink</title>
+    <title>Despre GreenLink - Revoluția Verde Digitală</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
+        /* CRAZY MODERN STYLES */
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --dark-bg: #0a0a0a;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* FLOATING PARTICLES */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        /* HERO SECTION */
         .hero-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 4rem 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue), var(--neon-purple));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        /* GLASS CARDS */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-        
-        .hero-section::before {
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-green);
+        }
+
+        /* FEATURE CARDS */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('/images/pattern.svg') repeat;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .feature-card:hover::before {
             opacity: 0.1;
         }
 
-        .hero-content {
-            position: relative;
-            z-index: 1;
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: var(--neon-green);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
         }
 
-        .value-card {
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: white;
-            overflow: hidden;
-            height: 100%;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.6s ease;
+            display: inline-block;
         }
 
-        .value-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg);
         }
 
-        .value-icon {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(40, 167, 69, 0.1);
+
+
+        /* TEAM SECTION */
+        .team-section {
+            padding: 4rem 0;
+        }
+
+        .team-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-green);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            margin: 0 auto 1.5rem;
-        }
-
-        .mission-section {
-            background-color: #f8f9fa;
-            border-radius: 15px;
-            padding: 3rem;
-            margin-bottom: 4rem;
-        }
-
-        .team-card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-
-        .team-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .team-image-container {
-            height: 350px;
-            overflow: hidden;
+            margin: 0 auto 1rem;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f8f9fa;
+            font-size: 3rem;
+            color: white;
+            overflow: hidden;
+            border: 3px solid var(--neon-green);
         }
 
-        .team-image {
-            height: auto;
-            max-height: 100%;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            object-position: center;
+        .team-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
-        .social-links a {
-            color: #28a745;
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
         }
 
-        .social-links a:hover {
-            color: #20c997;
+        .social-link:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+            color: white;
         }
 
-        /* Enhanced animations and improved styles */
-        .value-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 2px solid rgba(40, 167, 69, 0.1);
-            position: relative;
-            overflow: hidden;
+        /* CTA SECTION */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            padding: 4rem 0;
+            text-align: center;
         }
 
-        .value-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
-            transition: left 0.8s;
+        .cta-button {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 1rem;
         }
 
-        .value-card:hover::before {
-            left: 100%;
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+            color: white;
         }
 
-        .value-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 1rem 2rem rgba(40, 167, 69, 0.2);
-            border-color: #28a745;
+        /* ANIMATIONS */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
         }
 
-        .value-icon {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);
-            border: 3px solid rgba(40, 167, 69, 0.2);
-            transition: all 0.5s ease;
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .value-icon:hover {
-            transform: rotate(360deg) scale(1.1);
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2) 0%, rgba(32, 201, 151, 0.2) 100%);
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .team-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 2px solid rgba(40, 167, 69, 0.1);
-            position: relative;
-            overflow: hidden;
+        @media (max-width: 576px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .team-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
-            transition: left 0.8s;
+        /* CUSTOM SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 10px;
         }
 
-        .team-card:hover::before {
-            left: 100%;
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
         }
 
-        .team-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 1rem 2rem rgba(40, 167, 69, 0.2);
-            border-color: #28a745;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            border-radius: 5px;
         }
 
-        .mission-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid rgba(40, 167, 69, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mission-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.05), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        /* Bold titles */
-        h2.display-5 {
-            font-weight: 700 !important;
-            color: #2d3748;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h3.h4 {
-            font-weight: 600 !important;
-            color: #2d3748;
-        }
-
-        h5 {
-            font-weight: 600 !important;
-            color: #2d3748;
-        }
-
-        /* Enhanced hero section */
-        .hero-section {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            transform: rotate(-45deg);
-            animation: wave 20s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        @keyframes wave {
-            0% { transform: translate(-50%, -50%) rotate(-45deg); }
-            100% { transform: translate(-50%, -50%) rotate(315deg); }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
         }
     </style>
 </head>
-<body class="bg-light">
-<!-- Navbar -->
-<nav th:replace="fragments/navbar :: navbar"></nav>
-
-<!-- Hero Section -->
-<header class="hero-section text-white">
-    <div class="container hero-content">
-        <div class="row align-items-center">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown" th:text="#{about.hero.title}">Despre GreenLink</h1>
-                <p class="lead fs-4 mb-0 animate__animated animate__fadeInUp animate__delay-1s" th:text="#{about.hero.subtitle}">Conectăm oameni pasionați de un viitor sustenabil prin educație, produse eco și soluții de reciclare</p>
-            </div>
-        </div>
+<body>
+    <!-- Floating Particles -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-</header>
 
-<main class="container py-5">
-    <!-- Mission Section -->
-    <section class="mission-section text-center" data-aos="fade-up" data-aos-duration="1000">
-        <h2 class="display-5 mb-4" th:text="#{about.mission.title}">Misiunea Noastră</h2>
-        <p class="lead mb-4" th:text="#{about.mission.subtitle}">Creăm o comunitate dedicată protecției mediului și dezvoltării sustenabile.</p>
-        <p class="mb-0" th:text="#{about.mission.description}">GreenLink este platforma care conectează oamenii pasionați de mediu cu resurse educaționale,
-            produse eco-friendly și soluții de reciclare. Împreună construim un viitor mai verde și mai sustenabil.</p>
-    </section>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <!-- Values Section -->
-    <section class="mb-5" data-aos="fade-up" data-aos-duration="1000">
-        <h2 class="text-center display-5 mb-5" th:text="#{about.values.title}">Valorile Noastre</h2>
-        <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="value-card">
-                    <div class="card-body text-center p-4">
-                        <div class="value-icon">
-                            <i class="bi bi-heart-fill text-success fs-1"></i>
-                        </div>
-                        <h3 class="h4 mb-3" th:text="#{about.value.environment.title}">Grijă pentru Mediu</h3>
-                        <p class="text-muted mb-0" th:text="#{about.value.environment.description}">Promovăm acțiuni și produse care protejează natura și resursele naturale.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="value-card">
-                    <div class="card-body text-center p-4">
-                        <div class="value-icon">
-                            <i class="bi bi-lightbulb-fill text-success fs-1"></i>
-                        </div>
-                        <h3 class="h4 mb-3" th:text="#{about.value.innovation.title}">Inovație Sustenabilă</h3>
-                        <p class="text-muted mb-0" th:text="#{about.value.innovation.description}">Căutăm constant soluții inovatoare pentru a reduce impactul asupra mediului.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="value-card">
-                    <div class="card-body text-center p-4">
-                        <div class="value-icon">
-                            <i class="bi bi-people-fill text-success fs-1"></i>
-                        </div>
-                        <h3 class="h4 mb-3" th:text="#{about.value.community.title}">Comunitate Unită</h3>
-                        <p class="text-muted mb-0" th:text="#{about.value.community.description}">Construim împreună o comunitate dedicată unui viitor mai sustenabil.</p>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center hero-content">
+                    <h1 class="hero-title mb-4">GreenLink</h1>
+                    <p class="hero-subtitle">Revoluția Verde Digitală - Unde Sustenabilitatea Întâlnește Social Media</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/register" class="cta-button">
+                            <i class="bi bi-rocket-takeoff me-2"></i>Începe Aventura
+                        </a>
+                        <a href="#features" class="cta-button" style="background: transparent; border: 2px solid var(--neon-green);">
+                            <i class="bi bi-play-circle me-2"></i>Descoperă Mai Mult
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Mission Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="glass-card fade-in">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            Viziunea Noastră
+                        </h2>
+                        <p class="lead mb-4">
+                            GreenLink este mai mult decât o platformă digitală - este o revoluție în modul în care interacționăm cu sustenabilitatea. 
+                            Combinăm puterea social media cu impactul ecologic pentru a crea prima identitate digitală verde a lumii.
+                        </p>
+                        <p class="mb-4">
+                            În era digitală, unde prezența online definește cine suntem, GreenLink propune o nouă formă de auto-reprezentare - 
+                            una care reflectă valorile, impactul și responsabilitatea față de mediu.
+                        </p>
+                    </div>
+                    <div class="col-lg-6 text-center">
+                        <div class="feature-icon">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <h3>O Lume Mai Verde, Un Click la Un Timp</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Funcționalități Revoluționare
+                </h2>
+                <p class="lead">Descoperă cum transformăm sustenabilitatea într-o experiență socială captivantă</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-trophy"></i>
+                    </div>
+                    <h3>Gamificare Verde</h3>
+                    <p>Obține puncte și avansează în niveluri prin acțiuni sustenabile. Fiecare activitate ecologică te aduce mai aproape de următorul milestone.</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <h3>Marketplace Sustenabil</h3>
+                    <p>Vinde și cumpără produse second-hand într-un marketplace dedicat. Fiecare tranzacție contribuie la reducerea amprentei de carbon.</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h3>Educație Interactivă</h3>
+                    <p>Parcurge lecții educaționale gamificate și rezolvă provocări ecologice pentru a-ți extinde cunoștințele despre sustenabilitate.</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-map"></i>
+                    </div>
+                    <h3>Hartă de Reciclare</h3>
+                    <p>Explorează punctele de reciclare din apropierea ta și contribuie la o comunitate mai curată și mai organizată.</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <h3>Calculator de Carbon</h3>
+                    <p>Calculează-ți amprenta personală de carbon și descoperă modalități de a o reduce prin acțiuni simple și eficiente.</p>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h3>Comunitate Verde</h3>
+                    <p>Conectează-te cu alți eco-entuziaști, împărtășește realizările tale și inspiră-ți prietenii să adopte un stil de viață sustenabil.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
 
     <!-- Team Section -->
-    <section data-aos="fade-up" data-aos-duration="1000">
-        <h2 class="text-center display-5 mb-5" th:text="#{about.team.title}">Echipa Noastră</h2>
-        <div class="row g-4 justify-content-center">
-            <div class="col-md-5" data-aos="fade-up" data-aos-delay="100">
-                <div class="team-card">
-                    <div class="team-image-container">
-                        <img src="/images/about/Panait Mihai-Petru.jpg" class="team-image" alt="Panait Mihai-Petru">
-                    </div>
-                    <div class="card-body text-center p-4">
-                        <h5 class="mb-2">Panait Mihai-Petru</h5>
-                        <p class="text-muted mb-3" th:text="#{about.team.cofounder}">Co-founder</p>
+    <section class="team-section">
+        <div class="container">
+            <div class="text-center mb-5 fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Echipa din Spatele Revoluției
+                </h2>
+                <p class="lead">Cunoaște mințile creative care au transformat sustenabilitatea într-o experiență socială</p>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="team-card fade-in">
+                        <div class="team-avatar">
+                            <img src="/images/about/Batea Andrei-Daniel.jpg" alt="Batea Andrei-Daniel" class="team-photo">
+                        </div>
+                        <h3>Batea Andrei-Daniel</h3>
+                        <p class="text-white fw-bold">Co-Founder</p>
                         <div class="social-links">
-                            <a href="https://www.instagram.com/petru_mp1615?igsh=MjJ2M3BsYjY2ZXRn" class="me-3" target="_blank"><i class="bi bi-instagram fs-5"></i></a>
-                            <a href="https://www.facebook.com/share/1EmANyKH7g/?mibextid=wwXIfr" class="me-3" target="_blank"><i class="bi bi-facebook fs-5"></i></a>
-                            <a href="mailto:petru.panait77@gmail.com"><i class="bi bi-envelope fs-5"></i></a>
+                            <a href="https://www.instagram.com/andrei_abi_?igsh=MTVpN3pla2prOTM3Nw%3D%3D&utm_source=qr" target="_blank" class="social-link">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/share/1ZdvKj29fX/?mibextid=wwXIfr" target="_blank" class="social-link">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="mailto:andrei.batea@gmail.com" class="social-link">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-5" data-aos="fade-up" data-aos-delay="200">
-                <div class="team-card">
-                    <div class="team-image-container">
-                        <img src="/images/about/Batea Andrei-Daniel.jpg" class="team-image" alt="Batea Andrei-Daniel">
-                    </div>
-                    <div class="card-body text-center p-4">
-                        <h5 class="mb-2">Batea Andrei-Daniel</h5>
-                        <p class="text-muted mb-3" th:text="#{about.team.cofounder}">Co-founder</p>
+                <div class="col-lg-6 mb-4">
+                    <div class="team-card fade-in">
+                        <div class="team-avatar">
+                            <img src="/images/about/Panait Mihai-Petru.jpg" alt="Panait Mihai-Petru" class="team-photo">
+                        </div>
+                        <h3>Panait Mihai-Petru</h3>
+                        <p class="text-white fw-bold">Co-Founder</p>
                         <div class="social-links">
-                            <a href="https://www.instagram.com/andrei_abi_?igsh=MTVpN3pla2prOTM3Nw%3D%3D&utm_source=qr" class="me-3" target="_blank"><i class="bi bi-instagram fs-5"></i></a>
-                            <a href="https://www.facebook.com/share/1ZdvKj29fX/?mibextid=wwXIfr" class="me-3" target="_blank"><i class="bi bi-facebook fs-5"></i></a>
-                            <a href="mailto:andrei.batea@gmail.com"><i class="bi bi-envelope fs-5"></i></a>
+                            <a href="https://www.instagram.com/petru_mp1615?igsh=MjJ2M3BsYjY2ZXRn" target="_blank" class="social-link">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/share/1EmANyKH7g/?mibextid=wwXIfr" target="_blank" class="social-link">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="mailto:petru.panait77@gmail.com" class="social-link">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-</main>
 
-<!-- Footer -->
-<footer th:replace="fragments/footer :: footer"></footer>
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container text-center">
+            <div class="glass-card fade-in">
+                <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Gata să Începi Revoluția Verde?
+                </h2>
+                <p class="lead mb-4">
+                    Alătură-te mișcării care transformă sustenabilitatea într-o experiență socială captivantă. 
+                    Fiecare acțiune contează, fiecare click face diferența.
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/register" class="cta-button">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Înregistrează-te Gratuit
+                    </a>
+                    <a href="/educatie" class="cta-button" style="background: transparent; border: 2px solid var(--neon-green);">
+                        <i class="bi bi-book me-2"></i>Explorează Educația
+                    </a>
+                    <a href="/marketplace" class="cta-button" style="background: transparent; border: 2px solid var(--neon-blue);">
+                        <i class="bi bi-shop me-2"></i>Vizitează Marketplace
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Bootstrap Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize AOS (Animate On Scroll) library
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: false,
-        mirror: true
-    });
-});
-</script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    
+    <script>
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+
+
+        // Parallax effect for particles
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const speed = 0.5 + (index * 0.1);
+                particle.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
