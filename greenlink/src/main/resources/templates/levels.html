@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLink Levels - Level System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="bg-success text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold">GreenLink Level System</h1>
+                    <p class="lead">Progress through 15 unique levels and unlock your eco-warrior potential!</p>
+                </div>
+                <div class="col-lg-4 text-center text-lg-end">
+                    <a href="/profile" class="btn btn-outline-light rounded-pill px-4 py-2">
+                        <i class="bi bi-person-circle me-2"></i>My Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="h3 mb-4">Level Progression</h2>
+                <div class="row g-4">
+                    <div th:each="level : ${#numbers.sequence(1, 15)}" class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="bi bi-star-fill text-white" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <h5 class="card-title fw-bold" th:text="${levelNames.get(level)}">Level Name</h5>
+                                <p class="text-muted mb-2">Level <span th:text="${level}">1</span></p>
+                                <div class="badge bg-primary fs-6">
+                                    <span th:text="${xpRequirements.get(level)}">0</span> XP Required
+                                </div>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <span th:if="${level > 1}">
+                                            +<span th:text="${xpRequirements.get(level) - xpRequirements.get(level - 1)}">0</span> XP from previous level
+                                        </span>
+                                        <span th:if="${level == 1}">Starting level</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- XP Requirements Table -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="h3 mb-4">Detailed XP Requirements</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>Level</th>
+                                <th>Level Name</th>
+                                <th>Total XP Required</th>
+                                <th>XP from Previous Level</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="level : ${#numbers.sequence(1, 15)}">
+                                <td class="fw-bold" th:text="${level}">1</td>
+                                <td th:text="${levelNames.get(level)}">Level Name</td>
+                                <td>
+                                    <span class="badge bg-primary" th:text="${xpRequirements.get(level)}">0</span> XP
+                                </td>
+                                <td>
+                                    <span th:if="${level > 1}" th:text="${xpRequirements.get(level) - xpRequirements.get(level - 1)}">0</span>
+                                    <span th:if="${level == 1}">-</span>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             th:style="'width: ' + ${(level / 15) * 100} + '%'"
+                                             th:attr="aria-valuenow=${(level / 15) * 100}"
+                                             aria-valuemin="0" aria-valuemax="100">
+                                            <span th:text="${#numbers.formatDecimal((level / 15) * 100, 0, 0)}">0</span>%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Earn XP -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="h3 mb-4">How to Earn XP</h2>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-trophy-fill text-warning mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Complete Challenges</h5>
+                                <p class="card-text">Earn 50 XP for each environmental challenge you complete.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-mortarboard-fill text-success mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Finish Lessons</h5>
+                                <p class="card-text">Gain 25 XP for each educational lesson you complete.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-shop text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Marketplace Activity</h5>
+                                <p class="card-text">Earn points for buying and selling eco-friendly products.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-calculator text-info mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Carbon Calculator</h5>
+                                <p class="card-text">Get 15 XP for using the carbon footprint calculator.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-recycle text-success mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Recycling Map</h5>
+                                <p class="card-text">Earn 10 XP for exploring recycling locations.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people-fill text-warning mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Social Activities</h5>
+                                <p class="card-text">Gain XP for adding friends and sending messages.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

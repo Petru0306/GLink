@@ -248,6 +248,57 @@
             margin-top: 1rem;
         }
 
+        /* Scrollable points history container */
+        .points-history-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .points-history-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .points-history-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .points-history-container::-webkit-scrollbar-thumb {
+            background: #28a745;
+            border-radius: 4px;
+        }
+
+        .points-history-container::-webkit-scrollbar-thumb:hover {
+            background: #218838;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-card.level-up {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffffff 100%);
+        }
+
+        .activity-card:last-child {
+            margin-bottom: 0;
+        }
+
         @media (max-width: 768px) {
             .main-stats-card {
                 padding: 1.5rem;
@@ -420,22 +471,24 @@
                         </a>
                     </div>
                     
-                    <div th:each="event : ${pointEvents.content}" 
-                         th:class="'activity-card ' + (${event.leveledUp} ? 'level-up' : '') + ' ' + (${event.eventType != null ? event.eventType.toLowerCase() : ''})">
-                        <div class="row align-items-center">
-                            <div class="col-lg-8">
-                                <h6 class="card-title mb-1" th:text="${event.description}">Event Description</h6>
-                                <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd, yyyy HH:mm')}">Date</small>
-                                <span th:if="${event.leveledUp}" class="badge bg-warning text-dark ms-2">
-                                    <i class="bi bi-arrow-up-circle"></i> Level Up!
-                                </span>
-                            </div>
-                            <div class="col-lg-4 text-lg-end">
-                                <span class="points-badge" 
-                                      th:class="${event.points > 0 ? 'points-badge' : 'points-badge negative'}"
-                                      th:text="${event.points > 0 ? '+' + event.points : event.points}">
-                                    +0
-                                </span>
+                    <div class="points-history-container" th:if="${not #lists.isEmpty(pointEvents.content)}">
+                        <div th:each="event : ${pointEvents.content}" 
+                             th:class="'activity-card ' + (${event.leveledUp} ? 'level-up' : '') + ' ' + (${event.eventType != null ? event.eventType.toLowerCase() : ''})">
+                            <div class="row align-items-center">
+                                <div class="col-lg-8">
+                                    <h6 class="card-title mb-1" th:text="${event.description}">Event Description</h6>
+                                    <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd, yyyy HH:mm')}">Date</small>
+                                    <span th:if="${event.leveledUp}" class="badge bg-warning text-dark ms-2">
+                                        <i class="bi bi-arrow-up-circle"></i> Level Up!
+                                    </span>
+                                </div>
+                                <div class="col-lg-4 text-lg-end">
+                                    <span class="points-badge" 
+                                          th:class="${event.points > 0 ? 'points-badge' : 'points-badge negative'}"
+                                          th:text="${event.points > 0 ? '+' + event.points : event.points}">
+                                        +0
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
