@@ -1,8 +1,52 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
+<!-- Navbar Fragment -->
+<th:block th:fragment="navbar">
     <style>
+        /* Enhanced Nav Links with Lifting Animation */
+        .navbar-nav .nav-link {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            margin: 0 2px;
+            padding: 8px 12px;
+            transform: translateY(0);
+            display: inline-block;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            width: 80%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #28a745 !important;
+            transform: translateY(-3px);
+            background: rgba(40, 167, 69, 0.1);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+
+        /* Enhanced Dropdown Toggle Buttons */
+        .navbar-nav .dropdown-toggle {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+            display: inline-block;
+        }
+
+        .navbar-nav .dropdown-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
+
         /* Dropdown animation */
         .dropdown-menu-animate {
             animation: slideIn 0.2s ease-out;
@@ -91,10 +135,7 @@
             background: #bb2d3b;
         }
     </style>
-</head>
-<body>
-<!-- Navbar Fragment -->
-<th:block th:fragment="navbar">
+
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand text-success fw-bold" href="/">
@@ -156,6 +197,7 @@
                         <a class="nav-link" href="/despre" th:text="#{nav.about}">About</a>
                     </li>
                 </ul>
+                
                 <!-- Language Toggle -->
                 <div class="dropdown me-2">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -303,6 +345,4 @@
         connectNotificationWebSocket();
     });
     </script>
-</th:block>
-</body>
-</html> 
+</th:block> 
