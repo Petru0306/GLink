@@ -291,9 +291,9 @@
             <div class="leaderboard-hero-content text-center">
                 <h1 class="display-4 mb-3">
                     <i class="bi bi-trophy-fill text-warning"></i>
-                    Leaderboard
+                    <span th:text="#{leaderboard.title}">Leaderboard</span>
                 </h1>
-                <p class="lead mb-0">See who's leading the eco-friendly revolution</p>
+                <p class="lead mb-0" th:text="#{leaderboard.subtitle}">See who's leading the eco-friendly revolution</p>
             </div>
         </div>
     </div>
@@ -304,9 +304,9 @@
             <div class="leaderboard-header-content">
                 <h2 class="mb-3">
                     <i class="bi bi-list-ol me-2"></i>
-                    Top Eco Warriors
+                    <span th:text="#{leaderboard.top.eco.warriors}">Top Eco Warriors</span>
                 </h2>
-                <p class="mb-0">Celebrating the most dedicated environmental champions</p>
+                <p class="mb-0" th:text="#{leaderboard.subtitle}">Celebrating the most dedicated environmental champions</p>
             </div>
         </div>
 
@@ -314,15 +314,15 @@
         <div class="filter-buttons">
             <a th:href="@{/points/leaderboard(limit=10)}" 
                th:class="'filter-btn ' + (${limit == 10} ? 'active' : '')">
-                <i class="bi bi-trophy me-2"></i>Top 10
+                <i class="bi bi-trophy me-2"></i><span th:text="#{leaderboard.top.10}">Top 10</span>
             </a>
             <a th:href="@{/points/leaderboard(limit=25)}" 
                th:class="'filter-btn ' + (${limit == 25} ? 'active' : '')">
-                <i class="bi bi-award me-2"></i>Top 25
+                <i class="bi bi-award me-2"></i><span th:text="#{leaderboard.top.50}">Top 25</span>
             </a>
             <a th:href="@{/points/leaderboard(limit=50)}" 
                th:class="'filter-btn ' + (${limit == 50} ? 'active' : '')">
-                <i class="bi bi-star me-2"></i>Top 50
+                <i class="bi bi-star me-2"></i><span th:text="#{leaderboard.top.100}">Top 50</span>
             </a>
         </div>
 
@@ -335,13 +335,13 @@
             
             <div th:if="${#lists.isEmpty(topUsers)}" class="empty-state">
                 <i class="bi bi-people"></i>
-                <h4>No users found</h4>
-                <p>Be the first to earn points and climb the leaderboard!</p>
+                <h4 th:text="#{leaderboard.no.users}">No users found</h4>
+                <p th:text="#{leaderboard.no.users.desc}">Be the first to earn points and climb the leaderboard!</p>
                 <a href="/educatie" class="btn btn-success me-2">
-                    <i class="bi bi-book me-2"></i>Start Learning
+                    <i class="bi bi-book me-2"></i><span th:text="#{points.take.quiz}">Start Learning</span>
                 </a>
                 <a href="/provocari" class="btn btn-outline-success">
-                    <i class="bi bi-trophy me-2"></i>Take Challenges
+                    <i class="bi bi-trophy me-2"></i><span th:text="#{points.complete.challenges}">Take Challenges</span>
                 </a>
             </div>
             
@@ -369,7 +369,7 @@
                                 <span th:text="${user.points}">0</span>
                             </div>
                             <div class="level-badge mt-2 d-inline-block">
-                                Level <span th:text="${user.level}">1</span>
+                                <span th:text="#{points.level}">Level</span> <span th:text="${user.level}">1</span>
                             </div>
                         </div>
                     </div>
@@ -379,16 +379,16 @@
 
         <!-- Call to Action -->
         <div class="text-center mt-4">
-            <h4 class="text-muted mb-3">Want to climb the leaderboard?</h4>
+            <h4 class="text-muted mb-3" th:text="#{leaderboard.subtitle}">Want to climb the leaderboard?</h4>
             <div class="d-flex justify-content-center gap-3 flex-wrap">
                 <a href="/educatie" class="btn btn-success btn-lg">
-                    <i class="bi bi-book me-2"></i>Complete Quizzes
+                    <i class="bi bi-book me-2"></i><span th:text="#{points.take.quiz}">Complete Quizzes</span>
                 </a>
                 <a href="/provocari" class="btn btn-outline-success btn-lg">
-                    <i class="bi bi-trophy me-2"></i>Take Challenges
+                    <i class="bi bi-trophy me-2"></i><span th:text="#{points.complete.challenges}">Take Challenges</span>
                 </a>
                 <a href="/marketplace" class="btn btn-outline-primary btn-lg">
-                    <i class="bi bi-shop me-2"></i>Buy & Sell
+                    <i class="bi bi-shop me-2"></i><span th:text="#{nav.marketplace}">Buy & Sell</span>
                 </a>
             </div>
         </div>
