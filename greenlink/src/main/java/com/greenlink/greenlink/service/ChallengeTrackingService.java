@@ -9,6 +9,7 @@ import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserChallengeRepository;
 import com.greenlink.greenlink.repository.FriendRepository;
 import com.greenlink.greenlink.repository.UserRepository;
+import com.greenlink.greenlink.repository.MessageRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +50,15 @@ public class ChallengeTrackingService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MessageRepository messageRepository;
+
     @Transactional
     public void trackUserAction(Long userId, String actionType, Object actionData) {
-        logger.info("Tracking user action: userId={}, actionType={}, actionData={}", userId, actionType, actionData);
+        logger.info("=== TRACKING USER ACTION ===");
+        logger.info("User ID: {}", userId);
+        logger.info("Action Type: {}", actionType);
+        logger.info("Action Data: {}", actionData);
         
         List<Challenge> allChallenges = challengeService.getAllChallenges();
         logger.info("Found {} total challenges", allChallenges.size());
@@ -63,6 +70,7 @@ public class ChallengeTrackingService {
                 updateChallengeProgress(userId, challenge);
             }
         }
+        logger.info("=== END TRACKING ===");
     }
 
     @Transactional
@@ -98,6 +106,13 @@ public class ChallengeTrackingService {
             (title.contains("complete") && title.contains("lesson"))) {
             int completedLessons = getCompletedLessonsCount(userId);
             return completedLessons >= 1;
+        }
+        
+        // For offer challenges, activate if user has any offers made
+        if (title.contains("deal maker") || title.contains("bargain hunter") || title.contains("deal master") ||
+            (title.contains("offer") && title.contains("marketplace")) || title.contains("make an offer")) {
+            int offersMade = getOffersMadeCount(userId);
+            return offersMade >= 1;
         }
         
         // For friend challenges, activate if user has any friends
@@ -403,6 +418,26 @@ public class ChallengeTrackingService {
             }
         }
         
+        if (title.contains("deal maker") || title.contains("bargain hunter") || title.contains("deal master") ||
+            (title.contains("offer") && title.contains("marketplace")) || title.contains("make an offer")) {
+            int offersMade = getOffersMadeCount(userId);
+            logger.debug("Offers made count: {}", offersMade);
+            
+            if (title.contains("deal maker") || title.contains("first offer") || title.contains("make your first offer")) {
+                int progress = offersMade >= 1 ? 100 : 0;
+                logger.debug("First offer challenge - progress: {}%", progress);
+                return progress;
+            } else if (title.contains("bargain hunter") || title.contains("10 offers") || title.contains("make 10 offers")) {
+                int progress = Math.min(100, (offersMade * 100) / 10);
+                logger.debug("10 offers challenge - progress: {}%", progress);
+                return progress;
+            } else if (title.contains("deal master") || title.contains("5 deals") || title.contains("negotiate 5 deals")) {
+                int progress = Math.min(100, (offersMade * 100) / 5);
+                logger.debug("5 deals challenge - progress: {}%", progress);
+                return progress;
+            }
+        }
+        
         if (title.contains("friend")) {
             int friendsCount = getFriendsCount(userId);
             logger.debug("Friends count: {}", friendsCount);
@@ -482,6 +517,11 @@ public class ChallengeTrackingService {
             return getPurchasedItemsCount(userId);
         }
         
+        if (title.contains("deal maker") || title.contains("bargain hunter") || title.contains("deal master") ||
+            (title.contains("offer") && title.contains("marketplace")) || title.contains("make an offer")) {
+            return getOffersMadeCount(userId);
+        }
+        
         if (title.contains("friend")) {
             return getFriendsCount(userId);
         }
@@ -541,6 +581,22 @@ public class ChallengeTrackingService {
         // This would need to be implemented when you add a purchase/order system
         logger.debug("Purchased items count for user {}: 0 (not implemented)", userId);
         return 0;
+    }
+
+    private int getOffersMadeCount(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            logger.debug("User not found for ID: {}", userId);
+            return 0;
+        }
+        
+        long count = messageRepository.countOffersMadeByUser(user);
+        logger.info("=== OFFER COUNT DEBUG ===");
+        logger.info("User ID: {}", userId);
+        logger.info("User email: {}", user.getEmail());
+        logger.info("Offers made count: {}", count);
+        logger.info("=========================");
+        return (int) count;
     }
 
     private int getFriendsCount(Long userId) {

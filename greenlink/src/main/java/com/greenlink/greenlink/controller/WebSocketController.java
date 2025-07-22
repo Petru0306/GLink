@@ -5,6 +5,8 @@ import com.greenlink.greenlink.dto.MessageDto;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
+import com.greenlink.greenlink.service.PointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -32,6 +34,12 @@ public class WebSocketController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
+
+    @Autowired
+    private PointsService pointsService;
     
     /**
      * Handle ping messages to confirm WebSocket connectivity
@@ -135,6 +143,17 @@ public class WebSocketController {
                     currentUser,
                     chatMessage.getOfferAmount()
             );
+            
+            // Track marketplace offer for challenges
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_OFFER_MADE", null);
+            
+            // Award points for making offer
+            try {
+                String productName = "Product"; // We'll get this from the conversation if needed
+                pointsService.awardOfferMadePoints(currentUser.getId(), 1L, productName, chatMessage.getOfferAmount(), 5);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Error awarding points for offer made: " + e.getMessage());
+            }
             
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);

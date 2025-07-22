@@ -339,7 +339,7 @@
                 <p th:text="#{leaderboard.no.users.desc}">Be the first to earn points and climb the leaderboard!</p>
             </div>
             
-            <a th:href="@{'/profile/' + ${user.id}}" class="text-decoration-none" th:each="user, iterStat : ${topUsers}">
+            <a th:href="@{'/profile/user/' + ${user.id}}" class="text-decoration-none" th:each="user, iterStat : ${topUsers}">
                 <div th:class="'rank-card ' + (${iterStat.index == 0} ? 'gold' : '') + (${iterStat.index == 1} ? 'silver' : '') + (${iterStat.index == 2} ? 'bronze' : '')">
                     <div class="row align-items-center">
                         <div class="col-lg-1 col-md-2 col-3 text-center mb-3 mb-md-0">
