@@ -125,18 +125,51 @@
             border-radius: 50px;
             font-weight: 600;
             letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
             border: 2px solid transparent;
+            background: transparent;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-category:hover::before {
+            left: 100%;
         }
 
         .btn-category:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
+        .btn-category:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        /* Active states with much lighter backgrounds */
         .btn-category.active {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border: none;
-            color: white;
+            border: 2px solid;
+            color: inherit;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+        }
+
+        .btn-category[data-challenge-type="ALL"].active {
+            background: rgba(108, 117, 125, 0.15);
+            border-color: #6c757d;
+            color: #495057;
         }
 
         .btn-category[data-challenge-type="DEFAULT_CHALLENGES"] {
@@ -144,9 +177,31 @@
             color: #28a745;
         }
 
+        .btn-category[data-challenge-type="DEFAULT_CHALLENGES"].active {
+            background: rgba(40, 167, 69, 0.15);
+            border-color: #28a745;
+            color: #198754;
+        }
+
+        .btn-category[data-challenge-type="DEFAULT_CHALLENGES"]:hover {
+            background: rgba(40, 167, 69, 0.1);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        }
+
         .btn-category[data-challenge-type="AMBASSADOR"] {
             border-color: #ffd700;
             color: #ffd700;
+        }
+
+        .btn-category[data-challenge-type="AMBASSADOR"].active {
+            background: rgba(255, 215, 0, 0.15);
+            border-color: #ffd700;
+            color: #b8860b;
+        }
+
+        .btn-category[data-challenge-type="AMBASSADOR"]:hover {
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
         }
 
         .btn-category[data-challenge-type="MAESTER"] {
@@ -154,14 +209,47 @@
             color: #dc3545;
         }
 
+        .btn-category[data-challenge-type="MAESTER"].active {
+            background: rgba(220, 53, 69, 0.15);
+            border-color: #dc3545;
+            color: #c82333;
+        }
+
+        .btn-category[data-challenge-type="MAESTER"]:hover {
+            background: rgba(220, 53, 69, 0.1);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
         .btn-category[data-challenge-type="SHELF_WHISPERER"] {
             border-color: #6f42c1;
             color: #6f42c1;
         }
 
+        .btn-category[data-challenge-type="SHELF_WHISPERER"].active {
+            background: rgba(111, 66, 193, 0.15);
+            border-color: #6f42c1;
+            color: #5a32a3;
+        }
+
+        .btn-category[data-challenge-type="SHELF_WHISPERER"]:hover {
+            background: rgba(111, 66, 193, 0.1);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.3);
+        }
+
         .btn-category[data-challenge-type="CART_GOBLIN"] {
             border-color: #0d6efd;
             color: #0d6efd;
+        }
+
+        .btn-category[data-challenge-type="CART_GOBLIN"].active {
+            background: rgba(13, 110, 253, 0.15);
+            border-color: #0d6efd;
+            color: #0b5ed7;
+        }
+
+        .btn-category[data-challenge-type="CART_GOBLIN"]:hover {
+            background: rgba(13, 110, 253, 0.1);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
         }
 
         .progress {
