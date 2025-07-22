@@ -1015,13 +1015,13 @@ function showChallengeCompleted(event) {
                         <i class="bi bi-trophy-fill display-1 text-warning"></i>
                         <div class="confetti-container"></div>
                     </div>
-                    <h3 class="mb-3">🎉 Challenge Completed! 🎉</h3>
+                    <h3 class="mb-3" th:text="#{challenge.completed.title}">🎉 Challenge Completed! 🎉</h3>
                     <h5 class="mb-3">${event.title}</h5>
                     <div class="badge bg-warning text-dark fs-5 mb-3">${event.badge}</div>
-                    <p class="fs-4 mb-0">+${event.points} points earned!</p>
+                    <p class="fs-4 mb-0" th:text="#{challenge.completed.points(${event.points})}">+${event.points} points earned!</p>
                 </div>
                 <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Awesome!</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" th:text="#{challenge.completed.button}">Awesome!</button>
                 </div>
             </div>
         </div>
@@ -1074,7 +1074,7 @@ function showNewChallengeActivated(challenge) {
     toast.innerHTML = `
         <div class="toast-header" style="background: transparent; color: white; border-bottom: 1px solid rgba(255,255,255,0.2);">
             <i class="bi bi-star-fill me-2"></i>
-            <strong class="me-auto">New Challenge!</strong>
+            <strong class="me-auto" th:text="#{challenge.activated.title}">New Challenge!</strong>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
         </div>
         <div class="toast-body">

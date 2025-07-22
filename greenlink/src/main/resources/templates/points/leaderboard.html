@@ -337,12 +337,6 @@
                 <i class="bi bi-people"></i>
                 <h4 th:text="#{leaderboard.no.users}">No users found</h4>
                 <p th:text="#{leaderboard.no.users.desc}">Be the first to earn points and climb the leaderboard!</p>
-                <a href="/educatie" class="btn btn-success me-2">
-                    <i class="bi bi-book me-2"></i><span th:text="#{points.take.quiz}">Start Learning</span>
-                </a>
-                <a href="/provocari" class="btn btn-outline-success">
-                    <i class="bi bi-trophy me-2"></i><span th:text="#{points.complete.challenges}">Take Challenges</span>
-                </a>
             </div>
             
             <a th:href="@{'/profile/' + ${user.id}}" class="text-decoration-none" th:each="user, iterStat : ${topUsers}">
@@ -377,21 +371,7 @@
             </a>
         </div>
 
-        <!-- Call to Action -->
-        <div class="text-center mt-4">
-            <h4 class="text-muted mb-3" th:text="#{leaderboard.subtitle}">Want to climb the leaderboard?</h4>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="/educatie" class="btn btn-success btn-lg">
-                    <i class="bi bi-book me-2"></i><span th:text="#{points.take.quiz}">Complete Quizzes</span>
-                </a>
-                <a href="/provocari" class="btn btn-outline-success btn-lg">
-                    <i class="bi bi-trophy me-2"></i><span th:text="#{points.complete.challenges}">Take Challenges</span>
-                </a>
-                <a href="/marketplace" class="btn btn-outline-primary btn-lg">
-                    <i class="bi bi-shop me-2"></i><span th:text="#{nav.marketplace}">Buy & Sell</span>
-                </a>
-            </div>
-        </div>
+
     </div>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
