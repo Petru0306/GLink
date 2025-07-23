@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <!-- Google reCAPTCHA v2 -->
+    <script th:if="${recaptchaEnabled}" src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="bg-light">
 <!-- Navbar -->
@@ -83,6 +85,14 @@
                             <div class="text-danger" id="confirmPasswordError" style="display: none;">
                                 <small>Passwords do not match</small>
                             </div>
+                        </div>
+                        
+                        <!-- reCAPTCHA widget -->
+                        <div th:if="${recaptchaEnabled}" class="mb-3 d-flex justify-content-center">
+                            <div class="g-recaptcha" th:data-sitekey="${recaptchaSiteKey}"></div>
+                        </div>
+                        <div th:if="${recaptchaEnabled}" class="text-danger text-center mb-3" id="recaptchaError" style="display: none;">
+                            <small>Please complete the reCAPTCHA verification</small>
                         </div>
 
                         <button type="submit" class="btn btn-success w-100 mb-3" th:text="#{register.submit}" id="submitBtn">Register</button>
@@ -189,9 +199,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
+            // Check password requirements
             if (!validatePassword(passwordInput.value) || !checkPasswordMatch()) {
                 e.preventDefault();
                 return false;
+            }
+            
+            // Check reCAPTCHA if enabled
+            const recaptchaError = document.getElementById('recaptchaError');
+            if (recaptchaError) { // This means reCAPTCHA is enabled
+                const recaptchaResponse = grecaptcha && grecaptcha.getResponse ? grecaptcha.getResponse() : null;
+                if (!recaptchaResponse) {
+                    e.preventDefault();
+                    recaptchaError.style.display = 'block';
+                    return false;
+                } else {
+                    recaptchaError.style.display = 'none';
+                }
             }
         });
     }

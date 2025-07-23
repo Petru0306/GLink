@@ -1,10 +1,13 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.service.ReCaptchaService;
 import com.greenlink.greenlink.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,10 +25,18 @@ public class AuthController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final ReCaptchaService reCaptchaService;
+    
+    @Value("${recaptcha.site-key}")
+    private String recaptchaSiteKey;
+    
+    @Value("${recaptcha.enabled:false}")
+    private boolean recaptchaEnabled;
 
-    public AuthController(UserService userService, PasswordEncoder passwordEncoder) {
+    public AuthController(UserService userService, PasswordEncoder passwordEncoder, ReCaptchaService reCaptchaService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.reCaptchaService = reCaptchaService;
     }
 
     @GetMapping("/register")
@@ -34,6 +45,8 @@ public class AuthController {
             return "redirect:/dashboard";
         }
         model.addAttribute("user", new User());
+        model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+        model.addAttribute("recaptchaEnabled", recaptchaEnabled);
         return "register";
     }
 
@@ -41,15 +54,34 @@ public class AuthController {
     public String registerUser(@Valid @ModelAttribute("user") User user, 
                               BindingResult result, 
                               Model model,
-                              @RequestParam("confirmPassword") String confirmPassword) {
+                              @RequestParam("confirmPassword") String confirmPassword,
+                              @RequestParam(value = "g-recaptcha-response", required = false) String recaptchaResponse,
+                              HttpServletRequest request) {
         if (result.hasErrors()) {
+            model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+            model.addAttribute("recaptchaEnabled", recaptchaEnabled);
             return "register";
         }
 
         // Check if passwords match
         if (!user.getPassword().equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match");
+            model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+            model.addAttribute("recaptchaEnabled", recaptchaEnabled);
             return "register";
+        }
+        
+        // Validate reCAPTCHA if enabled
+        if (recaptchaEnabled) {
+            String clientIp = request.getRemoteAddr();
+            boolean isValidCaptcha = reCaptchaService.validateCaptcha(recaptchaResponse, clientIp);
+            
+            if (!isValidCaptcha) {
+                model.addAttribute("error", "Please validate the reCAPTCHA");
+                model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
+                model.addAttribute("recaptchaEnabled", recaptchaEnabled);
+                return "register";
+            }
         }
 
         try {
