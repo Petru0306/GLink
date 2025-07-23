@@ -8,115 +8,593 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
+        /* CRAZY Inbox Styles */
+        :root {
+            --primary-green: #28a745;
+            --secondary-green: #20c997;
+            --accent-green: #198754;
+            --neon-green: #00ff88;
+            --electric-green: #39ff14;
+            --gradient-primary: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-neon: linear-gradient(45deg, #00ff88, #39ff14, #50c878);
+            --gradient-rainbow: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            --shadow-light: 0 10px 30px rgba(40, 167, 69, 0.1);
+            --shadow-medium: 0 20px 40px rgba(40, 167, 69, 0.15);
+            --shadow-heavy: 0 30px 60px rgba(40, 167, 69, 0.2);
+            --shadow-neon: 0 0 20px rgba(0, 255, 136, 0.5);
+            --glow-green: 0 0 30px rgba(40, 167, 69, 0.6);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+
+        /* CRAZY Hero Section with Educatie Animations */
         .hero-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 3rem 0;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 7rem 0;
             color: white;
             position: relative;
             overflow: hidden;
+            margin-bottom: 2rem;
         }
 
+        /* Fluid background animation */
         .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating bubbles from educatie */
+        .hero-section .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        .hero-section .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+
+        .hero-section .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+
+        .hero-section .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+
+        .hero-section .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+
+        .hero-section .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+
+        .hero-section .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 1.5s;
+            animation-duration: 16s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-title::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('/images/pattern.svg') repeat;
-            opacity: 0.1;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+            z-index: -1;
         }
 
-        .hero-content {
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: subtitleFloat 4s ease-in-out infinite;
+        }
+
+        /* CRAZY Conversation Cards */
+        .conversation-card {
+            background: white;
+            border: none;
+            border-radius: 25px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 20px;
+            cursor: pointer;
             position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .conversation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+            transition: left 0.6s ease;
             z-index: 1;
         }
 
-        .conversation-list {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .conversation-card {
-            border: none;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
-            cursor: pointer;
+        .conversation-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: all 0.4s ease;
         }
 
         .conversation-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(40, 167, 69, 0.2);
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .conversation-card:hover::before {
+            left: 100%;
+        }
+
+        .conversation-card:hover::after {
+            width: 8px;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.6);
         }
 
         .conversation-card.unread {
-            border-left: 4px solid #28a745;
+            border-left: 5px solid var(--neon-green);
+            animation: unreadPulse 2s ease-in-out infinite;
         }
 
+        .conversation-card.unread:hover::after {
+            background: var(--gradient-neon);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
+        }
+
+        /* CRAZY Product Image */
         .product-img {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
         }
 
+        .conversation-card:hover .product-img {
+            transform: scale(1.1) rotate(5deg);
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .conversation-card:hover .product-img::before {
+            left: 100%;
+        }
+
+        /* CRAZY Text Animations */
         .conversation-title {
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #343a40;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .conversation-card:hover .conversation-title {
+            color: var(--primary-green);
+            transform: translateX(10px);
+        }
+
+        .conversation-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+
+        .conversation-card:hover .conversation-title::after {
+            width: 100%;
         }
 
         .conversation-preview {
             color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .conversation-card:hover .conversation-preview {
+            color: #495057;
+            transform: translateX(10px);
         }
 
         .conversation-time {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #6c757d;
+            transition: all 0.3s ease;
         }
 
+        .conversation-card:hover .conversation-time {
+            color: var(--primary-green);
+            transform: translateX(10px);
+        }
+
+        /* CRAZY Unread Badge */
         .unread-badge {
-            background-color: #28a745;
+            background: var(--gradient-neon);
             color: white;
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 20px;
+            animation: badgePulse 1.5s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+            position: relative;
+            overflow: hidden;
         }
 
+        .unread-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .conversation-card:hover .unread-badge::before {
+            left: 100%;
+        }
+
+        /* CRAZY Price Badge */
+        .price-badge {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .conversation-card:hover .price-badge {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.5);
+        }
+
+        /* CRAZY System Message Icon */
+        .system-icon {
+            font-size: 2rem;
+            color: var(--primary-green);
+            transition: all 0.4s ease;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        .conversation-card:hover .system-icon {
+            transform: scale(1.2) rotate(10deg);
+            color: var(--neon-green);
+        }
+
+        /* CRAZY Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            background: #f8f9fa;
-            border-radius: 1rem;
-            margin: 2rem 0;
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 30px;
+            margin: 3rem 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(40, 167, 69, 0.05) 0%, transparent 100%);
+            animation: emptyStateFloat 8s ease-in-out infinite;
         }
 
         .empty-icon {
-            font-size: 4rem;
-            color: #6c757d;
+            font-size: 6rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            animation: emptyIconBounce 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state h3 {
+            font-weight: 700;
+            color: #2c3e50;
             margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .empty-state .btn {
+            background: var(--gradient-primary);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .empty-state .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .empty-state .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+        }
+
+        .empty-state .btn:hover::before {
+            left: 100%;
+        }
+
+        /* CRAZY Section Headers */
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: sectionHeaderFloat 6s ease-in-out infinite;
+        }
+
+        .section-header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* CRAZY Animations */
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-45deg) translateX(-100%); }
+            100% { transform: rotate(-45deg) translateX(100%); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+            50% { text-shadow: 0 4px 30px rgba(0, 255, 136, 0.5); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes unreadPulse {
+            0%, 100% { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); }
+            50% { box-shadow: 0 8px 25px rgba(0, 255, 136, 0.2); }
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes emptyStateFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        @keyframes emptyIconBounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes sectionHeaderFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(180deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .conversation-card:hover {
+                transform: translateY(-5px) scale(1.01);
+            }
+            
+            .product-img {
+                width: 60px;
+                height: 60px;
+            }
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <!-- Hero Section -->
+    <!-- CRAZY Hero Section -->
     <header class="hero-section">
+        <!-- Floating Bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
         <div class="container hero-content">
             <div class="row align-items-center">
                 <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold mb-3">Inbox</h1>
-                    <p class="lead mb-0">Gestionează conversațiile și ofertele tale</p>
+                    <h1 class="hero-title" th:text="#{messages.inbox}">Inbox</h1>
+                    <p class="hero-subtitle" th:text="#{messages.inbox.subtitle}">Gestionează conversațiile și ofertele tale</p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="bi bi-chat-dots" style="font-size: 8rem; opacity: 0.3; animation: iconFloat 4s ease-in-out infinite;"></i>
                 </div>
             </div>
         </div>
@@ -138,23 +616,29 @@
 
         <!-- System Messages Section -->
         <div th:if="${not #lists.isEmpty(systemMessages)}" class="mb-5">
-            <h2 class="h4 mb-4">
-                <i class="bi bi-bell me-2"></i>
-                Notifications
-                <span th:if="${unreadSystemCount > 0}" class="badge bg-warning ms-2" th:text="${unreadSystemCount}"></span>
-            </h2>
+            <div class="section-header">
+                <div class="section-header-content">
+                        <h2 class="section-title">
+                            <i class="bi bi-bell me-3"></i>
+                            <span th:text="#{messages.notifications}">Notifications</span>
+                            <span th:if="${unreadSystemCount > 0}" class="badge bg-warning ms-2" th:text="${unreadSystemCount}"></span>
+                        </h2>
+                        <p class="section-subtitle" th:text="#{messages.notifications.subtitle}">Stay updated with system notifications</p>
+                </div>
+            </div>
+            
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="card shadow-sm">
+                    <div class="card shadow-sm border-0" style="border-radius: 25px;">
                         <div class="card-body p-0">
-                            <div class="conversation-list p-3">
+                            <div class="p-4">
                                 <div th:each="message : ${systemMessages}" 
                                      th:classappend="${!message.read ? 'unread' : ''}"
-                                     class="conversation-card card">
+                                     class="conversation-card">
                                     <div class="card-body">
                                         <div class="d-flex align-items-center">
                                             <div class="me-3">
-                                                <i class="bi bi-person-plus-fill text-success" style="font-size: 1.5rem;"></i>
+                                                <i class="bi bi-person-plus-fill system-icon"></i>
                                             </div>
                                             <div class="flex-grow-1">
                                                 <h6 class="conversation-title" th:text="${message.content}">Notification content</h6>
@@ -166,8 +650,8 @@
                                             <div class="text-end">
                                                 <form th:action="@{/inbox/mark-read}" method="POST" class="d-inline">
                                                     <input type="hidden" name="messageId" th:value="${message.id}">
-                                                    <button type="submit" class="btn btn-outline-success btn-sm">
-                                                        <i class="bi bi-check"></i> Mark as Read
+                                                    <button type="submit" class="btn btn-outline-success btn-sm" style="border-radius: 20px;">
+                                                        <i class="bi bi-check"></i> <span th:text="#{messages.mark.as.read}">Mark as Read</span>
                                                     </button>
                                                 </form>
                                             </div>
@@ -181,32 +665,36 @@
             </div>
         </div>
 
-        <!-- Empty State -->
+        <!-- CRAZY Empty State -->
         <div th:if="${#lists.isEmpty(conversations) && #lists.isEmpty(systemMessages)}" class="empty-state">
             <i class="bi bi-chat-left-text empty-icon"></i>
-            <h3 class="mt-3">Nu ai nicio conversație</h3>
-            <p class="text-muted mb-4">Vizitează marketplace-ul pentru a începe conversații cu vânzătorii.</p>
+            <h3 th:text="#{messages.empty.conversations}">Nu ai nicio conversație</h3>
+            <p th:text="#{messages.empty.conversations.desc}">Vizitează marketplace-ul pentru a începe conversații cu vânzătorii.</p>
             <a href="/marketplace" class="btn btn-success btn-lg">
-                <i class="bi bi-shop me-2"></i>Vizitează Marketplace
+                <i class="bi bi-shop me-2"></i><span th:text="#{messages.visit.marketplace}">Vizitează Marketplace</span>
             </a>
         </div>
 
-        <!-- Conversations List -->
+        <!-- CRAZY Conversations List -->
         <div th:if="${not #lists.isEmpty(conversations)}" class="row">
             <div class="col-lg-12">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0">
-                            <i class="bi bi-chat-left-text me-2"></i>
-                            Conversații
+                <div class="section-header">
+                    <div class="section-header-content">
+                        <h2 class="section-title">
+                            <i class="bi bi-chat-left-text me-3"></i>
+                            <span th:text="#{messages.conversations}">Conversații</span>
                             <span th:if="${unreadCount > 0}" class="badge bg-success ms-2" th:text="${unreadCount}"></span>
-                        </h5>
+                        </h2>
+                        <p class="section-subtitle" th:text="#{messages.conversations.subtitle}">Manage your conversations and offers</p>
                     </div>
+                </div>
+                
+                <div class="card shadow-sm border-0" style="border-radius: 25px;">
                     <div class="card-body p-0">
-                        <div class="conversation-list p-3">
+                        <div class="p-4">
                             <div th:each="conversation : ${conversations}" 
                                  th:classappend="${conversation.hasUnreadMessages ? 'unread' : ''}"
-                                 class="conversation-card card"
+                                 class="conversation-card"
                                  th:onclick="'window.location.href=\'/inbox/conversation/' + ${conversation.id} + '\''">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -227,7 +715,7 @@
                                                 3
                                             </div>
                                             <div class="mt-2">
-                                                <span class="badge bg-secondary" th:text="${#numbers.formatDecimal(conversation.productPrice, 1, 2) + ' RON'}">
+                                                <span class="price-badge" th:text="${#numbers.formatDecimal(conversation.productPrice, 1, 2) + ' RON'}">
                                                     Price
                                                 </span>
                                             </div>

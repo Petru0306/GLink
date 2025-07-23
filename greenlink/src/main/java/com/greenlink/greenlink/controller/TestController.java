@@ -1,39 +1,31 @@
 package com.greenlink.greenlink.controller;
 
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/test")
 public class TestController {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
-    
-    @GetMapping("/simple")
-    public String testSimplePage(Model model) {
-        logger.info("Test simple page accessed");
-        model.addAttribute("message", "This is a test page");
-        return "test-simple";
-    }
-    
-    @GetMapping("/marketplace")
-    public String testMarketplacePage(Model model) {
-        logger.info("Test marketplace page accessed");
+
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
+
+    @GetMapping("/test-offer-challenge")
+    public String testOfferChallenge(@RequestParam Long userId) {
         try {
-            model.addAttribute("message", "This is a test marketplace page");
-            model.addAttribute("products", java.util.List.of());
-            model.addAttribute("isMyProducts", true);
-            model.addAttribute("currentUser", null); // Add this to prevent template errors
-            logger.info("Test marketplace page model attributes set successfully");
-            return "test-my-products"; // Use simplified template
+            challengeTrackingService.trackUserAction(userId, "MARKETPLACE_OFFER_MADE", null);
+            return "Offer challenge tracking triggered for user: " + userId;
         } catch (Exception e) {
-            logger.error("Error in test marketplace page", e);
-            model.addAttribute("error", "Test page error: " + e.getMessage());
-            return "error";
+            return "Error: " + e.getMessage();
         }
     }
     

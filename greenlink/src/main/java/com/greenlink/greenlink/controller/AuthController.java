@@ -38,8 +38,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") User user, BindingResult result, Model model) {
+    public String registerUser(@Valid @ModelAttribute("user") User user, 
+                              BindingResult result, 
+                              Model model,
+                              @RequestParam("confirmPassword") String confirmPassword) {
         if (result.hasErrors()) {
+            return "register";
+        }
+
+        // Check if passwords match
+        if (!user.getPassword().equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match");
             return "register";
         }
 
@@ -70,10 +79,6 @@ public class AuthController {
         return "login";
     }
 
-    /**
-     * Generate password hash for admin password reset
-     * Usage: /auth-test/generate-password?password=yourNewPassword
-     */
     @GetMapping("/auth-test/generate-password")
     @ResponseBody
     public String generatePasswordHash(@RequestParam String password) {

@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -139,17 +140,7 @@
             100% { transform: translateY(0) scale(1) rotate(0); }
         }
         
-        .page-header::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            bottom: -2px; /* Move slightly down to prevent white line */
-            left: 0;
-            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDBweCIgdmlld0JveD0iMCAwIDEyODAgMTQwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiNmOGY5ZmEiPjxwYXRoIGQ9Ik0xMjgwIDBsLTI2Mi4xIDExNi4yNmE3My4yOSA3My4yOSAwIDAgMS0zOS4wOSA2TDAgMHYxNDBoMTI4MHoiLz48L2c+PC9zdmc+');
-            background-size: 100% 102px; /* Slightly larger to cover any gap */
-            height: 100px;
-            z-index: 2;
-        }
+
         
         @keyframes wave {
             0% { transform: translate(-50%, -50%) rotate(-45deg); }
