@@ -225,9 +225,7 @@
                         </span>
                     </a>
                     <a href="/dashboard" class="btn btn-outline-success" th:text="#{nav.dashboard}">Dashboard</a>
-                    <form th:action="@{/logout}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-success" th:text="#{auth.logout}">Logout</button>
-                    </form>
+                    <button id="logoutBtn" class="btn btn-success" th:text="#{auth.logout}">Logout</button>
                 </div>
             </div>
         </div>
@@ -345,4 +343,38 @@
         connectNotificationWebSocket();
     });
     </script>
-</th:block> 
+    
+    <!-- Logout Button Functionality -->
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                // Create a form element
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/logout';
+                form.style.display = 'none';
+                
+                // Add CSRF token (Thymeleaf way)
+                const csrfToken = /*[[${_csrf.token}]]*/ '';
+                const csrfParameterName = /*[[${_csrf.parameterName}]]*/ '_csrf';
+                
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = csrfParameterName;
+                    csrfInput.value = csrfToken;
+                    form.appendChild(csrfInput);
+                }
+                
+                // Append form to body
+                document.body.appendChild(form);
+                
+                // Submit the form - Spring Security will handle the logout and redirect
+                form.submit();
+            });
+        }
+    });
+    </script>
+</th:block>

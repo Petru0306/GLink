@@ -29,10 +29,12 @@ public class User implements UserDetails {
     private String email;
 
     @NotBlank
+    // Validation constraints only apply for form submissions, not for OAuth2 users
+    // These are skipped when entities are directly saved in repositories
     @Size(min = 8, max = 120, message = "Password must be at least 8 characters long")
     @Pattern(
-        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.,])(?=\\S+$).{8,}$",
-        message = "Password must contain at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=!.,)"
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%&+=!.,])(?=\\S+$).{8,}$",
+        message = "Password must contain at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%&+=!.,)"
     )
     private String password;
 

@@ -69,9 +69,21 @@ public class OAuth2ServiceImpl implements OAuth2Service {
             // Create new user
             User newUser = new User();
             newUser.setEmail(email);
+            
+            // Use username from email if name is not available
+            if (name == null || name.trim().isEmpty()) {
+                String usernameFromEmail = extractUsernameFromEmail(email);
+                if (usernameFromEmail != null && !usernameFromEmail.isEmpty()) {
+                    name = usernameFromEmail;
+                    logger.info("Using username from email as name: {}", name);
+                }
+            }
+            
             newUser.setFirstName(extractFirstName(name));
             newUser.setLastName(extractLastName(name));
-            newUser.setPassword(passwordEncoder.encode("oauth2_user_" + System.currentTimeMillis())); // Random password
+            // Generate a strong random password that meets validation requirements
+            String randomPassword = generateSecureRandomPassword();
+            newUser.setPassword(passwordEncoder.encode(randomPassword));
             newUser.setRole(Role.USER);
             newUser.setPoints(0);
             newUser.setLevel(1);
@@ -121,6 +133,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
                         String login = (String) attributes.get("login");
                         if (login != null) {
                             email = login + "@github.user";
+                            // We'll set the name in the parent method using this login ID 
                             logger.warn("No email found for GitHub user {}, using placeholder: {}", login, email);
                         }
                     }
@@ -194,11 +207,57 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         return parts[0];
     }
     
+    /**
+     * Extract username from email address (part before @)
+     */
+    private String extractUsernameFromEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return null;
+        }
+        return email.substring(0, email.indexOf('@'));
+    }
+    
     private String extractLastName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return "User";
         }
         String[] parts = fullName.trim().split("\\s+");
         return parts.length > 1 ? parts[1] : "";
+    }
+    
+    /**
+     * Generate a secure random password that meets our password requirements
+     * Requirements: at least one number, lowercase letter, uppercase letter, and special character
+     */
+    private String generateSecureRandomPassword() {
+        String uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+        String numberChars = "0123456789";
+        String specialChars = "@#$%^&+=!.,";
+        
+        StringBuilder password = new StringBuilder();
+        
+        // Ensure at least one of each required character type
+        password.append(uppercaseChars.charAt((int) (Math.random() * uppercaseChars.length())));
+        password.append(lowercaseChars.charAt((int) (Math.random() * lowercaseChars.length())));
+        password.append(numberChars.charAt((int) (Math.random() * numberChars.length())));
+        password.append(specialChars.charAt((int) (Math.random() * specialChars.length())));
+        
+        // Add more random characters to reach minimum length
+        String allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+        while (password.length() < 16) { // Create a 16-character password
+            password.append(allChars.charAt((int) (Math.random() * allChars.length())));
+        }
+        
+        // Shuffle the password characters
+        char[] passwordArray = password.toString().toCharArray();
+        for (int i = 0; i < passwordArray.length; i++) {
+            int j = (int) (Math.random() * passwordArray.length);
+            char temp = passwordArray[i];
+            passwordArray[i] = passwordArray[j];
+            passwordArray[j] = temp;
+        }
+        
+        return new String(passwordArray);
     }
 } 

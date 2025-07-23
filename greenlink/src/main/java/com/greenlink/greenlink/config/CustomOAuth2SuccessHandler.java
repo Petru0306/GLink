@@ -52,7 +52,32 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             // Don't throw the exception, just log it and continue with the redirect
         }
         
-        super.onAuthenticationSuccess(request, response, authentication);
+        // Check if this is a popup window request
+        String referer = request.getHeader("Referer");
+        boolean isPopup = request.getParameter("popup") != null || 
+                          (referer != null && referer.contains("popup=true"));
+        
+        if (isPopup) {
+            // Handle popup window flow - send a message to the parent window
+            String redirectUrl = determineTargetUrl(request, response, authentication);
+            response.setContentType("text/html");
+            String htmlResponse = "<!DOCTYPE html>\n" +
+                                 "<html>\n" +
+                                 "<head><title>Login Successful</title></head>\n" +
+                                 "<body>\n" +
+                                 "<script>\n" +
+                                 "  window.opener.postMessage({type: 'oauth2-success', redirectUrl: '" + redirectUrl + "'}, window.location.origin);\n" +
+                                 "  window.close();\n" +
+                                 "</script>\n" +
+                                 "<p>Login successful. You can close this window.</p>\n" +
+                                 "</body>\n" +
+                                 "</html>";
+            response.getWriter().write(htmlResponse);
+            response.flushBuffer();
+        } else {
+            // Normal redirect flow
+            super.onAuthenticationSuccess(request, response, authentication);
+        }
     }
     
     private String determineProvider(HttpServletRequest request, Authentication authentication) {
