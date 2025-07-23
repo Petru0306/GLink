@@ -569,31 +569,52 @@
             border-radius: 25px;
             padding: 3rem;
             box-shadow: var(--shadow-light);
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
             position: relative;
             overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-neon);
+            transform: scaleX(0);
+            transition: transform 0.6s ease;
+            z-index: 2;
+        }
+
+        .feature-item:hover::before {
+            transform: scaleX(1);
         }
 
         .feature-item::after {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.8s ease;
             z-index: 1;
         }
 
         .feature-item:hover::after {
-            opacity: 0.05;
+            left: 100%;
         }
 
         .feature-item:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: var(--shadow-heavy);
+            transform: translateY(-15px) scale(1.03) rotateX(3deg);
+            box-shadow: var(--shadow-heavy), var(--glow-green);
+            border-color: var(--neon-green);
         }
 
         .feature-header {
@@ -613,22 +634,56 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+        }
+
+        .feature-icon-large::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-neon);
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .feature-item:hover .feature-icon-large {
-            transform: scale(1.1) rotate(10deg);
+            transform: scale(1.2) rotate(15deg);
+            box-shadow: var(--shadow-neon);
+        }
+        
+        .feature-item:hover .feature-icon-large::before {
+            opacity: 1;
         }
 
         .feature-icon-large i {
             font-size: 1.5rem;
             color: white;
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s ease;
+        }
+        
+        .feature-item:hover .feature-icon-large i {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
         }
 
         .feature-title {
             font-size: 1.4rem;
             font-weight: 700;
             color: #2c3e50;
+            transition: all 0.5s ease;
+        }
+        
+        .feature-item:hover .feature-title {
+            color: var(--primary-green);
+            transform: translateX(5px);
         }
 
         .feature-content {
@@ -652,6 +707,7 @@
             color: #495057;
             position: relative;
             padding-left: 1.5rem;
+            transition: all 0.3s ease;
         }
 
         .feature-benefits li::before {
@@ -660,6 +716,16 @@
             left: 0;
             color: var(--primary-green);
             font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover .feature-benefits li {
+            transform: translateX(5px);
+        }
+        
+        .feature-item:hover .feature-benefits li::before {
+            color: var(--neon-green);
+            transform: scale(1.2);
         }
 
         /* GreenLink Experience Hub */
@@ -2223,7 +2289,7 @@
             </div>
 
             <div class="features-grid">
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="100">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="100" onclick="window.location.href='/challenges'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-trophy"></i>
@@ -2243,7 +2309,7 @@
                     </div>
                 </div>
 
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="200">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="200" onclick="window.location.href='/messages'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-chat-dots"></i>
@@ -2263,7 +2329,7 @@
                     </div>
                 </div>
 
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="300">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="300" onclick="window.location.href='/favorites'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-heart"></i>
@@ -2283,7 +2349,7 @@
                     </div>
                 </div>
 
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="400" onclick="window.location.href='/payments'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-credit-card"></i>
@@ -2303,7 +2369,7 @@
                     </div>
                 </div>
 
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="500">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="500" onclick="window.location.href='/settings'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-translate"></i>
@@ -2323,7 +2389,7 @@
                     </div>
                 </div>
 
-                <div class="feature-item" data-aos="fade-up" data-aos-delay="600">
+<div class="feature-item" data-aos="fade-up" data-aos-delay="600" onclick="window.location.href='/responsive'">
                     <div class="feature-header">
                         <div class="feature-icon-large">
                             <i class="bi bi-phone"></i>
