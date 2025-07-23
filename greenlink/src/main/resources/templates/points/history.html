@@ -573,12 +573,12 @@
                         </div>
                     </div>
 
-                    <!-- Pagination -->
+            <!-- Pagination -->
                     <nav th:if="${pointEvents.totalPages > 1}" class="mt-4">
                         <ul class="pagination justify-content-center flex-wrap">
                             <!-- Previous Button -->
                             <li class="page-item" th:classappend="${pointEvents.first} ? 'disabled'">
-                                <a class="page-link" th:href="@{/points(page=${pointEvents.number - 1})}" th:if="${!pointEvents.first}">
+                                <a class="page-link" th:href="@{/points(page=${pointEvents.number - 1})}" data-page-action="true" th:if="${!pointEvents.first}">
                                     <i class="bi bi-chevron-left"></i> <span th:text="#{points.previous}">Previous</span>
                                 </a>
                                 <span class="page-link" th:if="${pointEvents.first}">
@@ -589,12 +589,12 @@
                             <!-- Page Numbers -->
                             <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, pointEvents.totalPages - 1)}"
                                 th:classappend="${pageNum == pointEvents.number} ? 'active'">
-                                <a class="page-link" th:href="@{/points(page=${pageNum})}" th:text="${pageNum + 1}">1</a>
+                                <a class="page-link" th:href="@{/points(page=${pageNum})}" data-page-action="true" th:text="${pageNum + 1}">1</a>
                             </li>
                             
                             <!-- Next Button -->
                             <li class="page-item" th:classappend="${pointEvents.last} ? 'disabled'">
-                                <a class="page-link" th:href="@{/points(page=${pointEvents.number + 1})}" th:if="${!pointEvents.last}">
+                                <a class="page-link" th:href="@{/points(page=${pointEvents.number + 1})}" data-page-action="true" th:if="${!pointEvents.last}">
                                     <span th:text="#{points.next}">Next</span> <i class="bi bi-chevron-right"></i>
                                 </a>
                                 <span class="page-link" th:if="${pointEvents.last}">
@@ -614,30 +614,25 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Use event delegation for pagination clicks
             document.addEventListener('click', function(e) {
-                // Check if clicked element is a pagination link
-                if (e.target.classList.contains('page-link') || e.target.closest('.page-link')) {
+                // Check if clicked element is a pagination action link or its child
+                const linkElement = e.target.closest('[data-page-action]');
+                
+                if (linkElement) {
                     e.preventDefault();
                     
-                    // Get the actual link element (might be the icon or span inside)
-                    const link = e.target.classList.contains('page-link') ? e.target : e.target.closest('.page-link');
-                    
-                    // Get page number from href or data attribute
-                    let page;
-                    if (link.dataset.page !== undefined) {
-                        page = link.dataset.page;
-                    } else if (link.href && link.href.includes('page=')) {
-                        page = link.href.split('page=')[1];
-                        if (page.includes('&')) {
-                            page = page.split('&')[0];
+                    // Extract page parameter from the URL
+                    let page = null;
+                    if (linkElement.href) {
+                        const hrefParts = linkElement.href.split('page=');
+                        if (hrefParts.length > 1) {
+                            page = hrefParts[1].split('&')[0];
                         }
                     }
                     
-                    // Update URL hash without refreshing
-                    history.pushState(null, null, '#page=' + page);
-                    
-                    if (page !== undefined) {
+                    if (page !== null) {
+                        // Update URL without refreshing
+                        history.pushState(null, null, window.location.pathname + '?page=' + page);
                         fetchPage(page);
-                        return false;
                     }
                 }
             });
@@ -685,9 +680,9 @@
                     prevLi.classList.add('page-item');
                     const prevLink = document.createElement('a');
                     prevLink.classList.add('page-link');
-                    prevLink.href = `#`;
-                    prevLink.innerHTML = `&laquo; Previous`;
-                    prevLink.dataset.page = data.currentPage - 1;
+                    prevLink.href = `/points?page=${data.currentPage - 1}`;
+                    prevLink.setAttribute('data-page-action', 'true');
+                    prevLink.innerHTML = `<i class="bi bi-chevron-left"></i> Previous`;
                     prevLi.appendChild(prevLink);
                     pagination.appendChild(prevLi);
                 }
@@ -700,9 +695,9 @@
                     }
                     const pageLink = document.createElement('a');
                     pageLink.classList.add('page-link');
-                    pageLink.href = `#`;
+                    pageLink.href = `/points?page=${i}`;
+                    pageLink.setAttribute('data-page-action', 'true');
                     pageLink.innerText = i + 1;
-                    pageLink.dataset.page = i;
                     pageLi.appendChild(pageLink);
                     pagination.appendChild(pageLi);
                 }
@@ -712,21 +707,12 @@
                     nextLi.classList.add('page-item');
                     const nextLink = document.createElement('a');
                     nextLink.classList.add('page-link');
-                    nextLink.href = `#`;
-                    nextLink.innerHTML = `Next &raquo;`;
-                    nextLink.dataset.page = data.currentPage + 1;
+                    nextLink.href = `/points?page=${data.currentPage + 1}`;
+                    nextLink.setAttribute('data-page-action', 'true');
+                    nextLink.innerHTML = `Next <i class="bi bi-chevron-right"></i>`;
                     nextLi.appendChild(nextLink);
                     pagination.appendChild(nextLi);
                 }
-                
-                // Add event listeners to new pagination links
-                pagination.querySelectorAll('a.page-link').forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const page = this.dataset.page;
-                        fetchPage(page);
-                    });
-                });
             };
         });
     </script>

@@ -181,7 +181,7 @@
             border-radius: 50%;
             background: rgba(226, 76, 59, 0.3);
             border: 3px solid rgba(72, 21, 21, 0.6);
-            color: transparent;
+            color: white;
             font-weight: bold;
             font-size: 0%;
             display: flex;
@@ -192,6 +192,12 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             text-decoration: none;
             z-index: 10;
+        }
+        
+        .lesson-button i {
+            font-size: 30px;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         
         .lesson-button:hover {
@@ -381,7 +387,7 @@
             <div class="island-map" th:data-authenticated="${isAuthenticated}" th:data-completed-lessons="${completedLessons}">
                 <!-- Lesson Buttons -->
                 <a href="/educatie/curs/1" class="lesson-button lesson-1" data-lesson="1">
-                    1
+                    <i class="bi bi-leaf"></i>
                     <div class="lesson-info">
                         <h6>Ce este sustenabilitatea?</h6>
                         <p>Învață principiile fundamentale ale sustenabilității</p>
@@ -389,7 +395,7 @@
                 </a>
                 
                 <a href="/educatie/curs2" class="lesson-button lesson-2" data-lesson="2">
-                    2
+                    <i class="bi bi-recycle"></i>
                     <div class="lesson-info">
                         <h6>Cum să reciclezi corect</h6>
                         <p>Învață regulile de bază pentru o reciclare eficientă</p>
@@ -397,7 +403,7 @@
                 </a>
                 
                 <a href="/educatie/curs/3" class="lesson-button lesson-3" data-lesson="3">
-                    3
+                    <i class="bi bi-lightning"></i>
                     <div class="lesson-info">
                         <h6>Redu deșeurile cu un singur schimb simplu</h6>
                         <p>Descoperă puterea schimbărilor mici pentru un impact mare</p>
@@ -405,7 +411,7 @@
                 </a>
                 
                 <a href="/educatie/curs/4" class="lesson-button lesson-4" data-lesson="4">
-                    4
+                    <i class="bi bi-tree"></i>
                     <div class="lesson-info">
                         <h6>Începe un mini-compost acasă</h6>
                         <p>Transformă resturile în viață nouă</p>
@@ -413,7 +419,7 @@
                 </a>
                 
                 <a href="/educatie/curs/5" class="lesson-button lesson-5" data-lesson="5">
-                    5
+                    <i class="bi bi-flower1"></i>
                     <div class="lesson-info">
                         <h6>Plantează ceva (chiar și într-un ghiveci!)</h6>
                         <p>Conectează-te cu natura prin plantat</p>
@@ -421,7 +427,7 @@
                 </a>
                 
                 <a href="/educatie/curs/6" class="lesson-button lesson-6" data-lesson="6">
-                    6
+                    <i class="bi bi-trash"></i>
                     <div class="lesson-info">
                         <h6>Adună gunoiul din cartierul tău</h6>
                         <p>Fă diferența în comunitatea ta</p>
@@ -852,6 +858,10 @@
             z-index: 2;
             position: relative;
             transition: all 0.4s ease;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .platform-card:hover .platform-icon i {
@@ -860,8 +870,14 @@
         }
 
         .platform-icon i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
         }
 
         .platform-title {
