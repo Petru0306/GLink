@@ -64,7 +64,7 @@ public class ProductService {
                 sellerId,
                 sellerName,
                 sellerLevel,
-                product.getBranch()
+                product.getBranch() != null ? product.getBranch() : Product.Branch.VERDE
         );
         
         // Set sale-related fields
@@ -106,7 +106,7 @@ public class ProductService {
                 sellerId,
                 sellerName,
                 sellerLevel,
-                product.getBranch(),
+                product.getBranch() != null ? product.getBranch() : Product.Branch.VERDE,
                 negotiatedPrice
         );
         

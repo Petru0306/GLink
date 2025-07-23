@@ -179,29 +179,35 @@ public class MarketplaceController {
                 
             } catch (Exception ex) {
                 // User not authenticated; get product without negotiated price
-                ProductDto product = productService.getProductById(id);
-                List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4);
-                model.addAttribute("product", product);
-                model.addAttribute("similarProducts", similarProducts);
-                model.addAttribute("branch", branch);
-                
-                // Set branch title based on branch parameter
-                Locale currentLocale = LocaleContextHolder.getLocale();
-                String branchTitle;
                 try {
-                    Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
-                    switch (branchEnum) {
-                        case VERDE -> branchTitle = messageSource.getMessage("marketplace.branch.verde", null, currentLocale);
-                        case FOOD -> branchTitle = messageSource.getMessage("marketplace.branch.food", null, currentLocale);
-                        case ELECTRO -> branchTitle = messageSource.getMessage("marketplace.branch.electro", null, currentLocale);
-                        default -> branchTitle = "Marketplace";
+                    ProductDto product = productService.getProductById(id);
+                    List<ProductDto> similarProducts = productService.getSimilarProducts(id, 4);
+                    model.addAttribute("product", product);
+                    model.addAttribute("similarProducts", similarProducts);
+                    model.addAttribute("branch", branch);
+                    
+                    // Set branch title based on branch parameter
+                    Locale currentLocale = LocaleContextHolder.getLocale();
+                    String branchTitle;
+                    try {
+                        Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
+                        switch (branchEnum) {
+                            case VERDE -> branchTitle = messageSource.getMessage("marketplace.branch.verde", null, currentLocale);
+                            case FOOD -> branchTitle = messageSource.getMessage("marketplace.branch.food", null, currentLocale);
+                            case ELECTRO -> branchTitle = messageSource.getMessage("marketplace.branch.electro", null, currentLocale);
+                            default -> branchTitle = "Marketplace";
+                        }
+                    } catch (IllegalArgumentException e) {
+                        branchTitle = "Marketplace";
                     }
-                } catch (IllegalArgumentException e) {
-                    branchTitle = "Marketplace";
+                    model.addAttribute("branchTitle", branchTitle);
+                    
+                    logger.warn("User not authenticated or error getting user: {}", ex.getMessage());
+                } catch (Exception e) {
+                    logger.error("Error getting product for unauthenticated user", e);
+                    model.addAttribute("error", "Produsul nu a fost găsit");
+                    return "redirect:/marketplace";
                 }
-                model.addAttribute("branchTitle", branchTitle);
-                
-                logger.warn("User not authenticated or error getting user: {}", ex.getMessage());
             }
 
             return "product-details";
@@ -214,13 +220,12 @@ public class MarketplaceController {
     @GetMapping("/product/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductDto());
-        return "marketplace/product-form";
+        return "marketplace/minimal-product-form";
     }
     
     @GetMapping("/sell")
     public String showSellForm(Model model, @RequestHeader(value = "Referer", required = false) String referer) {
         try {
-            User currentUser = userService.getCurrentUser();
             
             // Check if user has Stripe account for selling
             // TEMPORARILY DISABLED: Allow users to list items without Stripe Connect
@@ -235,6 +240,7 @@ public class MarketplaceController {
             */
             
             ProductDto product = new ProductDto();
+            logger.info("Created new ProductDto with branch: {}", product.getBranch());
             model.addAttribute("product", product);
             model.addAttribute("isSelling", true);
             
@@ -255,7 +261,7 @@ public class MarketplaceController {
                 model.addAttribute("refererPath", "/dashboard");
             }
             
-            return "marketplace/product-form";
+            return "marketplace/minimal-product-form";
         } catch (Exception e) {
             logger.error("Error showing sell form", e);
             return "redirect:/login";
@@ -267,7 +273,7 @@ public class MarketplaceController {
         try {
             ProductDto product = productService.getProductById(id);
             model.addAttribute("product", product);
-            return "marketplace/product-form";
+            return "marketplace/minimal-product-form";
         } catch (RuntimeException e) {
             return "redirect:/marketplace";
         }
@@ -299,6 +305,9 @@ public class MarketplaceController {
         try {
             logger.info("Starting to process product listing with image: {}", 
                       !imageFile.isEmpty() ? imageFile.getOriginalFilename() : "no image");
+            logger.info("Product DTO details - Name: {}, Price: {}, Category: {}, Branch: {}, Stock: {}", 
+                      productDto.getName(), productDto.getPrice(), productDto.getCategory(), 
+                      productDto.getBranch(), productDto.getStock());
                       
             if (!imageFile.isEmpty()) {
                 String fileName = fileStorageService.storeFile(imageFile);
