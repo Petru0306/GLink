@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Despre GreenLink - Revoluția Verde Digitală</title>
+<title th:text="#{about.page.title}">About GreenLink - The Digital Green Revolution</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
@@ -364,13 +364,13 @@
             <div class="row align-items-center">
                 <div class="col-lg-8 mx-auto text-center hero-content">
                     <h1 class="hero-title mb-4">GreenLink</h1>
-                    <p class="hero-subtitle">Revoluția Verde Digitală - Unde Sustenabilitatea Întâlnește Social Media</p>
+                    <p class="hero-subtitle" th:text="#{about.hero.subtitle}">The Digital Green Revolution - Where Sustainability Meets Social Media</p>
                     <div class="d-flex justify-content-center gap-3">
                         <a href="/register" class="cta-button">
-                            <i class="bi bi-rocket-takeoff me-2"></i>Începe Aventura
+                            <i class="bi bi-rocket-takeoff me-2"></i><span th:text="#{home.start.adventure}">Begin the Adventure</span>
                         </a>
                         <a href="#features" class="cta-button" style="background: transparent; border: 2px solid var(--neon-green);">
-                            <i class="bi bi-play-circle me-2"></i>Descoperă Mai Mult
+                            <i class="bi bi-play-circle me-2"></i><span th:text="#{home.discover.platform}">Discover More</span>
                         </a>
                     </div>
                 </div>
@@ -385,22 +385,20 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6">
                         <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                            Viziunea Noastră
+                            <span th:text="#{about.mission.title}">Our Vision</span>
                         </h2>
                         <p class="lead mb-4">
-                            GreenLink este mai mult decât o platformă digitală - este o revoluție în modul în care interacționăm cu sustenabilitatea. 
-                            Combinăm puterea social media cu impactul ecologic pentru a crea prima identitate digitală verde a lumii.
+                            <span th:text="#{about.mission.description}">GreenLink is more than a digital platform - it is a revolution in how we interact with sustainability. We combine the power of social media with ecological impact to create the world's first green digital identity.</span>
                         </p>
                         <p class="mb-4">
-                            În era digitală, unde prezența online definește cine suntem, GreenLink propune o nouă formă de auto-reprezentare - 
-                            una care reflectă valorile, impactul și responsabilitatea față de mediu.
+                            <span th:text="#{home.description}">In the digital era, where online presence defines who we are, GreenLink proposes a new form of self-representation - one that reflects values, impact, and responsibility towards the environment.</span>
                         </p>
                     </div>
                     <div class="col-lg-6 text-center">
                         <div class="feature-icon">
                             <i class="bi bi-globe"></i>
                         </div>
-                        <h3>O Lume Mai Verde, Un Click la Un Timp</h3>
+                        <h3 th:text="#{about.mission.subtitle}">A Greener World, One Click at a Time</h3>
                     </div>
                 </div>
             </div>
@@ -412,9 +410,9 @@
         <div class="container">
             <div class="text-center mb-5 fade-in">
                 <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                    Funcționalități Revoluționare
+                    <span th:text="#{about.values.title}">Revolutionary Features</span>
                 </h2>
-                <p class="lead">Descoperă cum transformăm sustenabilitatea într-o experiență socială captivantă</p>
+                <p class="lead" th:text="#{home.platform.subtitle}">Discover how we transform sustainability into a captivating social experience</p>
             </div>
 
             <div class="feature-grid">
@@ -422,48 +420,48 @@
                     <div class="feature-icon">
                         <i class="bi bi-trophy"></i>
                     </div>
-                    <h3>Gamificare Verde</h3>
-                    <p>Obține puncte și avansează în niveluri prin acțiuni sustenabile. Fiecare activitate ecologică te aduce mai aproape de următorul milestone.</p>
+                    <h3 th:text="#{about.value.environment.title}">Green Gamification</h3>
+                    <p th:text="#{about.value.environment.description}">Earn points and advance in levels through sustainable actions. Each eco-friendly activity brings you closer to the next milestone.</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="bi bi-shop"></i>
                     </div>
-                    <h3>Marketplace Sustenabil</h3>
-                    <p>Vinde și cumpără produse second-hand într-un marketplace dedicat. Fiecare tranzacție contribuie la reducerea amprentei de carbon.</p>
+                    <h3 th:text="#{about.value.innovation.title}">Sustainable Marketplace</h3>
+                    <p th:text="#{about.value.innovation.description}">Sell and buy second-hand products in a dedicated marketplace. Each transaction contributes to reducing the carbon footprint.</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="bi bi-book"></i>
                     </div>
-                    <h3>Educație Interactivă</h3>
-                    <p>Parcurge lecții educaționale gamificate și rezolvă provocări ecologice pentru a-ți extinde cunoștințele despre sustenabilitate.</p>
+                    <h3 th:text="#{about.value.community.title}">Interactive Education</h3>
+                    <p th:text="#{about.value.community.description}">Go through gamified educational lessons and solve ecological challenges to expand your knowledge about sustainability.</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="bi bi-map"></i>
                     </div>
-                    <h3>Hartă de Reciclare</h3>
-                    <p>Explorează punctele de reciclare din apropierea ta și contribuie la o comunitate mai curată și mai organizată.</p>
+                    <h3 th:text="#{home.recycling.map}">Recycling Map</h3>
+                    <p th:text="#{home.recycling.map.desc}">Explore recycling points near you and contribute to a cleaner and more organized community.</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="bi bi-calculator"></i>
                     </div>
-                    <h3>Calculator de Carbon</h3>
-                    <p>Calculează-ți amprenta personală de carbon și descoperă modalități de a o reduce prin acțiuni simple și eficiente.</p>
+                    <h3 th:text="#{home.carbon.calculator}">Carbon Calculator</h3>
+                    <p th:text="#{home.carbon.calculator.desc}">Calculate your personal carbon footprint and discover ways to reduce it through simple and efficient actions.</p>
                 </div>
 
                 <div class="feature-card fade-in">
                     <div class="feature-icon">
                         <i class="bi bi-people"></i>
                     </div>
-                    <h3>Comunitate Verde</h3>
-                    <p>Conectează-te cu alți eco-entuziaști, împărtășește realizările tale și inspiră-ți prietenii să adopte un stil de viață sustenabil.</p>
+                    <h3 th:text="#{home.social.community}">Green Community</h3>
+                    <p th:text="#{home.social.community.desc}">Connect with other eco-enthusiasts, share your achievements and inspire your friends to adopt a sustainable lifestyle.</p>
                 </div>
             </div>
         </div>
@@ -476,9 +474,9 @@
         <div class="container">
             <div class="text-center mb-5 fade-in">
                 <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                    Echipa din Spatele Revoluției
+                    <span th:text="#{about.team.title}">The Team Behind the Revolution</span>
                 </h2>
-                <p class="lead">Cunoaște mințile creative care au transformat sustenabilitatea într-o experiență socială</p>
+                <p class="lead" th:text="#{home.platform.subtitle}">Meet the creative minds who have transformed sustainability into a social experience</p>
             </div>
 
             <div class="row">
@@ -488,7 +486,7 @@
                             <img src="/images/about/Batea Andrei-Daniel.jpg" alt="Batea Andrei-Daniel" class="team-photo">
                         </div>
                         <h3>Batea Andrei-Daniel</h3>
-                        <p class="text-white fw-bold">Co-Founder</p>
+                        <p class="text-white fw-bold" th:text="#{about.team.cofounder}">Co-Founder</p>
                         <div class="social-links">
                             <a href="https://www.instagram.com/andrei_abi_?igsh=MTVpN3pla2prOTM3Nw%3D%3D&utm_source=qr" target="_blank" class="social-link">
                                 <i class="bi bi-instagram"></i>
@@ -508,7 +506,7 @@
                             <img src="/images/about/Panait Mihai-Petru.jpg" alt="Panait Mihai-Petru" class="team-photo">
                         </div>
                         <h3>Panait Mihai-Petru</h3>
-                        <p class="text-white fw-bold">Co-Founder</p>
+                        <p class="text-white fw-bold" th:text="#{about.team.cofounder}">Co-Founder</p>
                         <div class="social-links">
                             <a href="https://www.instagram.com/petru_mp1615?igsh=MjJ2M3BsYjY2ZXRn" target="_blank" class="social-link">
                                 <i class="bi bi-instagram"></i>
@@ -531,21 +529,21 @@
         <div class="container text-center">
             <div class="glass-card fade-in">
                 <h2 class="display-4 fw-bold mb-4" style="background: linear-gradient(45deg, var(--neon-green), var(--neon-blue)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                    Gata să Începi Revoluția Verde?
+                    <span th:text="#{home.cta.title}">Ready to Start the Green Revolution?</span>
                 </h2>
-                <p class="lead mb-4">
-                    Alătură-te mișcării care transformă sustenabilitatea într-o experiență socială captivantă. 
-                    Fiecare acțiune contează, fiecare click face diferența.
+                <p class="lead mb-4" th:text="#{home.cta.description}">
+                    Join the movement that transforms sustainability into a captivating social experience. 
+                    Every action counts, every click makes a difference.
                 </p>
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
                     <a href="/register" class="cta-button">
-                        <i class="bi bi-rocket-takeoff me-2"></i>Înregistrează-te Gratuit
+                        <i class="bi bi-rocket-takeoff me-2"></i><span th:text="#{auth.register}">Register for Free</span>
                     </a>
                     <a href="/educatie" class="cta-button" style="background: transparent; border: 2px solid var(--neon-green);">
-                        <i class="bi bi-book me-2"></i>Explorează Educația
+                        <i class="bi bi-book me-2"></i><span th:text="#{nav.education}">Explore Education</span>
                     </a>
                     <a href="/marketplace" class="cta-button" style="background: transparent; border: 2px solid var(--neon-blue);">
-                        <i class="bi bi-shop me-2"></i>Vizitează Marketplace
+                        <i class="bi bi-shop me-2"></i><span th:text="#{nav.marketplace}">Visit Marketplace</span>
                     </a>
                 </div>
             </div>
