@@ -132,9 +132,9 @@
         }
 
         .page-link {
-            border-radius: 50%;
+            border-radius: 10px;
             margin: 0 0.25rem;
-            width: 2.5rem;
+            min-width: 40px;
             height: 2.5rem;
             display: flex;
             align-items: center;
@@ -142,6 +142,8 @@
             color: #198754;
             border: none;
             transition: all 0.3s ease;
+            text-align: center;
+            padding: 0.5rem 0.75rem;
         }
 
         .page-link:hover {
@@ -157,6 +159,21 @@
         .page-item.disabled .page-link {
             background-color: transparent;
             color: #6c757d;
+            pointer-events: none;
+        }
+
+        .page-item:first-child .page-link,
+        .page-item:last-child .page-link {
+            min-width: 50px;
+            font-weight: 600;
+        }
+
+        .page-item:first-child .page-link {
+            margin-right: 0.5rem;
+        }
+
+        .page-item:last-child .page-link {
+            margin-left: 0.5rem;
         }
 
         .eco-badge {
@@ -308,6 +325,43 @@
         .quick-favorite-btn[data-is-favorite="true"]:hover i {
             color: #dc3545;
             transform: scale(1.15);
+        }
+
+        @media (max-width: 768px) {
+            .page-link {
+                min-width: 35px;
+                height: 2.25rem;
+                padding: 0.375rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .page-item:first-child .page-link,
+            .page-item:last-child .page-link {
+                min-width: 45px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .page-item {
+                margin: 0.125rem;
+            }
+
+            .page-link {
+                min-width: 32px;
+                height: 2rem;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .page-item:first-child .page-link,
+            .page-item:last-child .page-link {
+                min-width: 40px;
+            }
         }
     </style>
 </head>
@@ -514,20 +568,31 @@
 
                 <!-- Pagination -->
                 <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
-                    <ul class="pagination justify-content-center">
+                    <ul class="pagination justify-content-center flex-wrap">
+                        <!-- Previous Button -->
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/marketplace(page=${currentPage - 1})}" aria-label="Previous">
+                            <a class="page-link" th:href="@{/marketplace(page=${currentPage - 1})}" aria-label="Previous" th:if="${currentPage > 0}">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
+                            <span class="page-link" aria-label="Previous" th:if="${currentPage == 0}">
+                                <i class="bi bi-chevron-left"></i>
+                            </span>
                         </li>
+                        
+                        <!-- Page Numbers -->
                         <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                             th:classappend="${currentPage == i} ? 'active'">
                             <a class="page-link" th:href="@{/marketplace(page=${i})}" th:text="${i + 1}">1</a>
                         </li>
+                        
+                        <!-- Next Button -->
                         <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/marketplace(page=${currentPage + 1})}" aria-label="Next">
+                            <a class="page-link" th:href="@{/marketplace(page=${currentPage + 1})}" aria-label="Next" th:if="${currentPage < totalPages - 1}">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
+                            <span class="page-link" aria-label="Next" th:if="${currentPage == totalPages - 1}">
+                                <i class="bi bi-chevron-right"></i>
+                            </span>
                         </li>
                     </ul>
                 </nav>

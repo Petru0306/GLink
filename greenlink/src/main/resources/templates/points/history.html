@@ -231,6 +231,9 @@
             border: none;
             color: var(--primary-color);
             font-weight: 500;
+            min-width: 40px;
+            text-align: center;
+            padding: 0.5rem 0.75rem;
         }
 
         .pagination .page-link:hover {
@@ -241,6 +244,32 @@
         .pagination .page-item.active .page-link {
             background-color: var(--primary-color);
             border-color: var(--primary-color);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background-color: transparent;
+            border-color: transparent;
+        }
+
+        .pagination .page-item:first-child .page-link,
+        .pagination .page-item:last-child .page-link {
+            min-width: 80px;
+            font-weight: 600;
+        }
+
+        .pagination .page-item:first-child .page-link {
+            margin-right: 0.5rem;
+        }
+
+        .pagination .page-item:last-child .page-link {
+            margin-left: 0.5rem;
+        }
+
+        .pagination .page-item:first-child .page-link i,
+        .pagination .page-item:last-child .page-link i {
+            margin: 0 0.25rem;
         }
 
         .debug-info {
@@ -314,6 +343,50 @@
             .level-badge {
                 font-size: 1rem;
                 padding: 0.5rem 1rem;
+            }
+
+            .pagination .page-link {
+                min-width: 35px;
+                padding: 0.375rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .pagination .page-item:first-child .page-link,
+            .pagination .page-item:last-child .page-link {
+                min-width: 70px;
+                font-size: 0.8rem;
+            }
+
+            .pagination .page-item:first-child .page-link span,
+            .pagination .page-item:last-child .page-link span {
+                display: none;
+            }
+
+            .pagination .page-item:first-child .page-link i,
+            .pagination .page-item:last-child .page-link i {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination {
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+
+            .pagination .page-item {
+                margin: 0.125rem;
+            }
+
+            .pagination .page-link {
+                min-width: 32px;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .pagination .page-item:first-child .page-link,
+            .pagination .page-item:last-child .page-link {
+                min-width: 60px;
             }
         }
     </style>
@@ -500,20 +573,31 @@
 
                     <!-- Pagination -->
                     <nav th:if="${pointEvents.totalPages > 1}" class="mt-4">
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination justify-content-center flex-wrap">
+                            <!-- Previous Button -->
                             <li class="page-item" th:classappend="${pointEvents.first} ? 'disabled'">
-                                <a class="page-link" th:href="@{/points(page=${pointEvents.number - 1})}">
+                                <a class="page-link" th:href="@{/points(page=${pointEvents.number - 1})}" th:if="${!pointEvents.first}">
                                     <i class="bi bi-chevron-left"></i> <span th:text="#{points.previous}">Previous</span>
                                 </a>
+                                <span class="page-link" th:if="${pointEvents.first}">
+                                    <i class="bi bi-chevron-left"></i> <span th:text="#{points.previous}">Previous</span>
+                                </span>
                             </li>
+                            
+                            <!-- Page Numbers -->
                             <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, pointEvents.totalPages - 1)}"
                                 th:classappend="${pageNum == pointEvents.number} ? 'active'">
                                 <a class="page-link" th:href="@{/points(page=${pageNum})}" th:text="${pageNum + 1}">1</a>
                             </li>
+                            
+                            <!-- Next Button -->
                             <li class="page-item" th:classappend="${pointEvents.last} ? 'disabled'">
-                                <a class="page-link" th:href="@{/points(page=${pointEvents.number + 1})}">
+                                <a class="page-link" th:href="@{/points(page=${pointEvents.number + 1})}" th:if="${!pointEvents.last}">
                                     <span th:text="#{points.next}">Next</span> <i class="bi bi-chevron-right"></i>
                                 </a>
+                                <span class="page-link" th:if="${pointEvents.last}">
+                                    <span th:text="#{points.next}">Next</span> <i class="bi bi-chevron-right"></i>
+                                </span>
                             </li>
                         </ul>
                     </nav>
