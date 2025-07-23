@@ -45,4 +45,28 @@ public class TestController {
         model.addAttribute("isSelling", true);
         return "marketplace/product-form";
     }
+    
+    @GetMapping("/debug/product-form")
+    public String debugProductForm(Model model) {
+        logger.info("Debug product form accessed");
+        
+        // Create a ProductDto with all fields set
+        com.greenlink.greenlink.dto.ProductDto product = new com.greenlink.greenlink.dto.ProductDto();
+        product.setName("Test Product");
+        product.setPrice(10.0);
+        product.setStock(5);
+        product.setDescription("Test description");
+        product.setCategory(com.greenlink.greenlink.model.Product.Category.BIO);
+        product.setBranch(com.greenlink.greenlink.model.Product.Branch.VERDE);
+        product.setEcoFriendly(true);
+        
+        model.addAttribute("product", product);
+        model.addAttribute("isSelling", true);
+        model.addAttribute("debug", true);
+        
+        logger.info("Product branch: {}", product.getBranch());
+        logger.info("Product category: {}", product.getCategory());
+        
+        return "marketplace/product-form";
+    }
 } 

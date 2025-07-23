@@ -29,7 +29,9 @@ public class ProductDto {
     private LocalDateTime soldAt;
 
     // Constructori
-    public ProductDto() {}
+    public ProductDto() {
+        this.branch = Branch.VERDE; // Set default branch
+    }
 
     public ProductDto(Long id, String name, String description, double price,
                       Category category, String imageUrl, boolean ecoFriendly,
