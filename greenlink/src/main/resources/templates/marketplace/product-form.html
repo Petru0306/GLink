@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" style="height: auto; min-height: 100%;">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,277 +7,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/product-form.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <style>
-body {
-            min-height: 100vh;
-            height: auto !important;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding-bottom: 8rem !important; /* Add substantial padding to ensure all content is visible */
-            overflow-y: auto !important; /* Ensure scrolling is enabled */
-            margin-bottom: 6rem !important; /* Add extra margin to the bottom */
-            position: relative;
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 3rem 0;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.2;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .form-container {
-            max-width: 900px;
-            margin: -2rem auto 5rem;
-            position: relative;
-            z-index: 2;
-            padding-bottom: 2rem;
-        }
-
-        .form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-            font-weight: 700;
-            color: #28a745;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -10px;
-            width: 50px;
-            height: 3px;
-            background: #28a745;
-            border-radius: 2px;
-        }
-        
-        .image-preview {
-            width: 100%;
-            height: 250px;
-            border-radius: 15px;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 2px dashed rgba(40, 167, 69, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .image-preview.has-image {
-            border: none;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-        }
-        
-        .upload-label {
-            display: block;
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 50px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #28a745;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .upload-label:hover {
-            background: rgba(40, 167, 69, 0.1);
-            transform: translateY(-2px);
-        }
-        
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            border: 2px solid rgba(40, 167, 69, 0.1);
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
-        }
-        
-        .btn-submit {
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            min-width: 140px;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .btn-submit.btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            border: none;
-        }
-
-        .form-check-input:checked {
-            background-color: #28a745;
-            border-color: #28a745;
-        }
-
-        .form-check-input:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-text {
-            color: #6c757d;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .eco-friendly-check {
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            margin-bottom: 2rem;
-        }
-
-        .eco-friendly-check:hover {
-            background: rgba(40, 167, 69, 0.1);
-        }
-        
-        .seller-info {
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .seller-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #28a745;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-right: 1rem;
-        }
-        
-        .tips-card {
-            background: rgba(13, 110, 253, 0.05);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .tips-card h5 {
-            color: #0d6efd;
-            margin-bottom: 1rem;
-        }
-        
-        .tips-card ul {
-            padding-left: 1.5rem;
-            margin-bottom: 0;
-        }
-        
-        .tips-card li {
-            margin-bottom: 0.5rem;
-        }
-
-        .form-section {
-            margin-bottom: 2rem;
-        }
-
-        .form-section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #28a745;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(40, 167, 69, 0.1);
-        }
-
-        .marketplace-select {
-            background: rgba(40, 167, 69, 0.05);
-            border: 2px solid rgba(40, 167, 69, 0.1);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .marketplace-select:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
-        }
-
-        .form-actions {
-            background: rgba(248, 249, 250, 0.8);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 1px solid rgba(40, 167, 69, 0.1);
-        }
-
-        /* Form validation styles */
-        .form-control.is-invalid,
-        .form-select.is-invalid {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.1);
-        }
-
-        .form-control.is-valid,
-        .form-select.is-valid {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.1);
-        }
-
-        .marketplace-select.is-invalid {
-            border-color: #dc3545;
-            background-color: rgba(220, 53, 69, 0.05);
-        }
-
-        .marketplace-select.is-valid {
-            border-color: #28a745;
-            background-color: rgba(40, 167, 69, 0.05);
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-<body style="min-height: 100vh; height: auto !important; margin-bottom: 6rem !important; padding-bottom: 6rem !important;">
+<body>
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
@@ -302,188 +36,178 @@ body {
     </header>
 
     <!-- Main Content -->
-    <div class="container">
-        <div class="form-container">
-            <div class="form-card">
-                <h2 class="section-title" th:text="${isSelling ? 'Detalii Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs Nou')}">
-                    Adaugă Produs Nou
-                </h2>
+    <div class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-card">
+                    <h2 class="section-title" th:text="${isSelling ? 'Detalii Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs Nou')}">
+                        Adaugă Produs Nou
+                    </h2>
 
-                <!-- Seller Information (only for selling) -->
-                <div th:if="${isSelling}" class="seller-info d-flex align-items-center">
-                    <div class="seller-avatar">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Vei lista acest produs ca:</h6>
-                        <p class="mb-0" th:text="${#authentication.principal.firstName + ' ' + #authentication.principal.lastName}">Nume Utilizator</p>
-                    </div>
-                </div>
-
-                <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : 
-                          (isSelling ? '/marketplace/sell' : '/marketplace/product/add')}}"
-                      method="post"
-                      enctype="multipart/form-data"
-                      th:object="${product}">
-
-                    <!-- Hidden referer path field -->
-                    <input type="hidden" name="refererPath" th:if="${refererPath != null}" th:value="${refererPath}" />
-
-                    <!-- Image Upload Section -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="bi bi-image me-2"></i>Imagine Produs
-                        </h3>
-                        <img th:if="*{imageUrl != null and !imageUrl.isEmpty()}" th:src="*{imageUrl}" 
-                             class="image-preview has-image" id="imagePreview" alt="Product Image">
-                        <img th:unless="*{imageUrl != null and !imageUrl.isEmpty()}" src="/images/placeholder-product.jpg" 
-                             class="image-preview" id="imagePreview" alt="Product Image">
-                        
-                        <label class="upload-label">
-                            <i class="bi bi-cloud-upload me-2"></i>
-                            Încarcă Imagine Produs
-                            <input type="file" name="imageFile" id="imageFile" 
-                                   accept="image/*" style="display: none;"
-                                   onchange="previewImage(this)">
-                        </label>
-                        <div class="form-text">Imaginile de calitate cresc șansele de vânzare. Recomandăm o imagine clară, pe un fundal neutru.</div>
+                    <!-- Seller Information (only for selling) -->
+                    <div th:if="${isSelling}" class="seller-info d-flex align-items-center">
+                        <div class="seller-avatar">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">Vei lista acest produs ca:</h6>
+                            <p class="mb-0" th:text="${#authentication.principal.firstName + ' ' + #authentication.principal.lastName}">Nume Utilizator</p>
+                        </div>
                     </div>
 
-                    <!-- Product Details Section -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="bi bi-info-circle me-2"></i>Informații Produs
-                        </h3>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Nume Produs*</label>
-                                    <input type="text" class="form-control" th:field="*{name}" required
-                                           placeholder="Introduceți numele produsului">
-                                    <div class="form-text">Un nume scurt și descriptiv pentru produsul tău</div>
-                                </div>
-                            </div>
+                    <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : 
+                              (isSelling ? '/marketplace/sell' : '/marketplace/product/add')}}"
+                          method="post"
+                          enctype="multipart/form-data"
+                          th:object="${product}">
+
+                        <!-- Hidden referer path field -->
+                        <input type="hidden" name="refererPath" th:if="${refererPath != null}" th:value="${refererPath}" />
+
+                        <!-- Image Upload Section -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="bi bi-image me-2"></i>Imagine Produs
+                            </h3>
+                            <img th:if="*{imageUrl != null and !imageUrl.isEmpty()}" th:src="*{imageUrl}" 
+                                 class="image-preview has-image" id="imagePreview" alt="Product Image">
+                            <img th:unless="*{imageUrl != null and !imageUrl.isEmpty()}" src="/images/placeholder-product.jpg" 
+                                 class="image-preview" id="imagePreview" alt="Product Image">
                             
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Preț (RON)*</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" th:field="*{price}" 
-                                               step="0.01" min="0" required
-                                               placeholder="0.00">
-                                        <span class="input-group-text">RON</span>
+                            <label class="upload-label">
+                                <i class="bi bi-cloud-upload me-2"></i>
+                                Încarcă Imagine Produs
+                                <input type="file" name="imageFile" id="imageFile" 
+                                       accept="image/*" style="display: none;"
+                                       onchange="previewImage(this)">
+                            </label>
+                            <div class="form-text">Imaginile de calitate cresc șansele de vânzare. Recomandăm o imagine clară, pe un fundal neutru.</div>
+                        </div>
+
+                        <!-- Product Details Section -->
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="bi bi-info-circle me-2"></i>Informații Produs
+                            </h3>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nume Produs*</label>
+                                        <input type="text" class="form-control" th:field="*{name}" required
+                                               placeholder="Introduceți numele produsului">
+                                        <div class="form-text">Un nume scurt și descriptiv pentru produsul tău</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Preț (RON)*</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" th:field="*{price}" 
+                                                   step="0.01" min="0" required
+                                                   placeholder="0.00">
+                                            <span class="input-group-text">RON</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Categorie*</label>
+                                        <select class="form-select" th:field="*{category}" required>
+                                            <option value="">Selectează categoria</option>
+                                            <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
+                                                    th:value="${cat}"
+                                                    th:text="${cat.displayName}">
+                                            </option>
+                                        </select>
+                                        <div class="form-text">Alege categoria care se potrivește cel mai bine produsului tău</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Stoc Disponibil*</label>
+                                        <input type="number" class="form-control" th:field="*{stock}" 
+                                               min="1" required
+                                               placeholder="Cantitate disponibilă">
+                                        <div class="form-text">Numărul de unități disponibile pentru vânzare</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" th:text="#{marketplace.choose.marketplace}">Marketplace*</label>
+                                        <select class="form-select marketplace-select" th:field="*{branch}" required>
+                                            <option value="">Selectează marketplace-ul</option>
+                                            <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                                    th:value="${branch}"
+                                                    th:selected="${branch == product.branch}"
+                                                    th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde} : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food} : #{marketplace.branch.electro})}">
+                                            </option>
+                                        </select>
+                                        <div class="form-text" th:text="#{marketplace.choose.marketplace.section}">Alege secțiunea din marketplace unde va apărea produsul tău</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="mb-3">
+                                        <label class="form-label" th:text="#{marketplace.description}">Descriere Produs*</label>
+                                        <textarea class="form-control" th:field="*{description}" 
+                                                  rows="4" required
+                                                  placeholder="Descrieți produsul în detaliu..."></textarea>
+                                        <div class="form-text" th:text="#{marketplace.product.description.help}">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Categorie*</label>
-                                    <select class="form-select" th:field="*{category}" required>
-                                        <option value="">Selectează categoria</option>
-                                        <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
-                                                th:value="${cat}"
-                                                th:text="${cat.displayName}">
-                                        </option>
-                                    </select>
-                                    <div class="form-text">Alege categoria care se potrivește cel mai bine produsului tău</div>
+                        <!-- Eco-Friendly Section -->
+                        <div class="form-section">
+                            <div class="eco-friendly-check">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" th:field="*{ecoFriendly}">
+                                    <label class="form-check-label">
+                                        <i class="bi bi-leaf-fill text-success me-2"></i>
+                                        Acest produs este Eco-Friendly
+                                    </label>
                                 </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Stoc Disponibil*</label>
-                                    <input type="number" class="form-control" th:field="*{stock}" 
-                                           min="1" required
-                                           placeholder="Cantitate disponibilă">
-                                    <div class="form-text">Numărul de unități disponibile pentru vânzare</div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label" th:text="#{marketplace.choose.marketplace}">Marketplace*</label>
-                                    <select class="form-select marketplace-select" th:field="*{branch}" required>
-                                        <option value="">Selectează marketplace-ul</option>
-                                        <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
-                                                th:value="${branch}"
-                                                th:selected="${branch == product.branch}"
-                                                th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde} : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food} : #{marketplace.branch.electro})}">
-                                        </option>
-                                    </select>
-                                    <!-- Debug info -->
-                                    <div th:if="${debug}" class="alert alert-info mt-2">
-                                        <small>Debug: Product branch = <span th:text="${product.branch}">null</span></small><br>
-                                        <small>Available branches: <span th:text="${T(com.greenlink.greenlink.model.Product.Branch).values()}">[]</span></small><br>
-                                        <small>Product name = <span th:text="${product.name}">null</span></small><br>
-                                        <small>Product price = <span th:text="${product.price}">null</span></small>
-                                    </div>
-                                    <div class="form-text" th:text="#{marketplace.choose.marketplace.section}">Alege secțiunea din marketplace unde va apărea produsul tău</div>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label class="form-label" th:text="#{marketplace.description}">Descriere Produs*</label>
-                                    <textarea class="form-control" th:field="*{description}" 
-                                              rows="4" required
-                                              placeholder="Descrieți produsul în detaliu..."></textarea>
-                                    <div class="form-text" th:text="#{marketplace.product.description.help}">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
-                                </div>
+                                <div class="form-text">Produsele eco-friendly sunt mai vizibile în marketplace și contribuie la un mediu mai sănătos</div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Eco-Friendly Section -->
-                    <div class="form-section">
-                        <div class="eco-friendly-check">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" th:field="*{ecoFriendly}">
-                                <label class="form-check-label">
-                                    <i class="bi bi-leaf-fill text-success me-2"></i>
-                                    Acest produs este Eco-Friendly
-                                </label>
+                        <!-- Tips for Sellers -->
+                        <div th:if="${isSelling}" class="tips-card">
+                            <h5><i class="bi bi-lightbulb me-2"></i>Sfaturi pentru Vânzători</h5>
+                            <ul>
+                                <li>Folosește imagini clare și de calitate pentru produsul tău</li>
+                                <li>Oferă o descriere detaliată, menționând materialele și dimensiunile</li>
+                                <li>Specifică dacă produsul este eco-friendly și de ce</li>
+                                <li>Stabilește un preț competitiv, verificând produse similare din marketplace</li>
+                                <li>Actualizează stocul disponibil pentru a evita comenzi pe care nu le poți onora</li>
+                            </ul>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="form-actions">
+                            <div class="d-flex gap-3 justify-content-center">
+                                <button type="submit" class="btn btn-success btn-submit">
+                                    <i class="bi bi-check-lg me-2"></i>
+                                    <span th:text="${isSelling ? 'Listează Produsul' : (product.id != null ? 'Salvează Modificările' : 'Adaugă Produs')}">
+                                        Adaugă Produs
+                                    </span>
+                                </button>
+                                <a th:href="${isSelling ? (refererPath != null ? refererPath : '/dashboard') : (product.id != null ? '/marketplace/my-products' : '/marketplace')}" class="btn btn-outline-secondary btn-submit">
+                                    <i class="bi bi-x-lg me-2"></i>
+                                    Anulează
+                                </a>
                             </div>
-                            <div class="form-text">Produsele eco-friendly sunt mai vizibile în marketplace și contribuie la un mediu mai sănătos</div>
                         </div>
-                    </div>
-
-                    <!-- Tips for Sellers -->
-                    <div th:if="${isSelling}" class="tips-card">
-                        <h5><i class="bi bi-lightbulb me-2"></i>Sfaturi pentru Vânzători</h5>
-                        <ul>
-                            <li>Folosește imagini clare și de calitate pentru produsul tău</li>
-                            <li>Oferă o descriere detaliată, menționând materialele și dimensiunile</li>
-                            <li>Specifică dacă produsul este eco-friendly și de ce</li>
-                            <li>Stabilește un preț competitiv, verificând produse similare din marketplace</li>
-                            <li>Actualizează stocul disponibil pentru a evita comenzi pe care nu le poți onora</li>
-                        </ul>
-                    </div>
-
-                    <!-- Submit Buttons -->
-                    <div class="form-actions">
-                        <div class="d-flex gap-3 justify-content-center">
-                            <button type="submit" class="btn btn-success btn-submit">
-                                <i class="bi bi-check-lg me-2"></i>
-                                <span th:text="${isSelling ? 'Listează Produsul' : (product.id != null ? 'Salvează Modificările' : 'Adaugă Produs')}">
-                                    Adaugă Produs
-                                </span>
-                            </button>
-                            <a th:href="${isSelling ? (refererPath != null ? refererPath : '/dashboard') : (product.id != null ? '/marketplace/my-products' : '/marketplace')}" class="btn btn-outline-secondary btn-submit">
-                                <i class="bi bi-x-lg me-2"></i>
-                                Anulează
-                            </a>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-        <!-- Extra spacer to ensure all content is visible -->
-        <div style="height: 300px; width: 100%; clear: both;"></div>
     </div>
-    
-    <!-- Invisible iframe to force correct rendering -->
-    <iframe src="about:blank" style="height:0;width:0;border:0;visibility:hidden;display:none;"></iframe>
 
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
@@ -502,65 +226,8 @@ body {
             }
         }
 
-        // Ensure the page loads completely and content is visible
+        // Form validation
         document.addEventListener('DOMContentLoaded', function() {
-            // Force entire page to be visible
-            document.documentElement.style.height = 'auto';
-            document.documentElement.style.overflow = 'visible';
-            document.body.style.height = 'auto';
-            document.body.style.minHeight = '100vh';
-            document.body.style.overflow = 'visible';
-            document.body.style.paddingBottom = '10rem';
-            document.body.style.marginBottom = '10rem';
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
-            
-            // Fix form container 
-            const formContainer = document.querySelector('.form-container');
-            if (formContainer) {
-                formContainer.style.paddingBottom = '6rem';
-                formContainer.style.marginBottom = '6rem';
-            }
-            
-            // Make form card fully visible
-            const formCard = document.querySelector('.form-card');
-            if (formCard) {
-                formCard.style.marginBottom = '5rem';
-                
-                // Calculate the total height needed
-                const formHeight = formCard.scrollHeight;
-                const bodyHeight = Math.max(document.body.scrollHeight, window.innerHeight);
-                const totalRequiredHeight = formHeight + 400; // Extra space for footer and padding
-                
-                // Set minimum heights
-                document.body.style.minHeight = totalRequiredHeight + 'px';
-                document.documentElement.style.minHeight = totalRequiredHeight + 'px';
-            }
-            
-            // Add a spacer div at the bottom to ensure content is visible
-            const spacer = document.createElement('div');
-            spacer.style.height = '200px';
-            spacer.style.width = '100%';
-            spacer.style.clear = 'both';
-            document.body.appendChild(spacer);
-            
-            // Add resize handler to adjust height if window is resized
-            window.addEventListener('resize', function() {
-                if (formCard) {
-                    const formHeight = formCard.scrollHeight;
-                    const totalRequiredHeight = formHeight + 400;
-                    document.body.style.minHeight = totalRequiredHeight + 'px';
-                }
-            });
-            
-            // Add smooth scrolling to form sections
-            const formSections = document.querySelectorAll('.form-section');
-            formSections.forEach(section => {
-                section.style.scrollMarginTop = '100px';
-            });
-            
-            // Form validation and marketplace dropdown handling
             const form = document.querySelector('form');
             const marketplaceSelect = document.querySelector('.marketplace-select');
             

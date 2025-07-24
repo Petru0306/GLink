@@ -220,7 +220,7 @@ public class MarketplaceController {
     @GetMapping("/product/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductDto());
-        return "marketplace/minimal-product-form";
+        return "marketplace/product-form";
     }
     
     @GetMapping("/sell")
@@ -261,7 +261,7 @@ public class MarketplaceController {
                 model.addAttribute("refererPath", "/dashboard");
             }
             
-            return "marketplace/minimal-product-form";
+            return "marketplace/product-form";
         } catch (Exception e) {
             logger.error("Error showing sell form", e);
             return "redirect:/login";
@@ -273,7 +273,7 @@ public class MarketplaceController {
         try {
             ProductDto product = productService.getProductById(id);
             model.addAttribute("product", product);
-            return "marketplace/minimal-product-form";
+            return "marketplace/product-form";
         } catch (RuntimeException e) {
             return "redirect:/marketplace";
         }
