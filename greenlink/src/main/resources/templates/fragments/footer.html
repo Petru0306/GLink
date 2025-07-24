@@ -1,43 +1,542 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer" class="bg-dark text-light py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 mb-4">
-                <h5 class="text-success mb-3">GreenLink</h5>
-                <p th:text="#{footer.tagline}">Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.</p>
+<footer th:fragment="footer" class="modern-footer">
+    <!-- Animated Background Particles -->
+    <div class="footer-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="footer-content">
+        <div class="container">
+            <div class="row g-3">
+                <!-- Company Info Section -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="footer-section glass-card">
+                        <div class="section-header">
+                            <div class="logo-container">
+                                <i class="bi bi-leaf-fill logo-icon"></i>
+                                <h5 class="company-name">GreenLink</h5>
+                            </div>
+                        </div>
+                        <p class="company-tagline" th:text="#{footer.tagline}">
+                            Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Quick Links Section -->
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <div class="footer-section glass-card">
+                        <div class="section-header">
+                            <i class="bi bi-lightning-fill section-icon"></i>
+                            <h5 class="section-title" th:text="#{footer.quick.links}">Link-uri Rapide</h5>
+                        </div>
+                        <ul class="footer-links">
+                            <li>
+                                <a href="/educatie" class="footer-link">
+                                    <i class="bi bi-book-fill link-icon"></i>
+                                    <span th:text="#{footer.education}">Educație</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/marketplace" class="footer-link">
+                                    <i class="bi bi-shop link-icon"></i>
+                                    <span th:text="#{footer.marketplace}">Marketplace</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/reciclare" class="footer-link">
+                                    <i class="bi bi-recycle link-icon"></i>
+                                    <span th:text="#{footer.recycling}">Reciclare</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/calculator" class="footer-link">
+                                    <i class="bi bi-calculator-fill link-icon"></i>
+                                    <span th:text="#{footer.calculator}">Calculator Carbon</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Legal Section -->
+                <div class="col-lg-2 col-md-6 mb-3">
+                    <div class="footer-section glass-card">
+                        <div class="section-header">
+                            <i class="bi bi-shield-check-fill section-icon"></i>
+                            <h5 class="section-title" th:text="#{footer.legal}">Legal</h5>
+                        </div>
+                        <ul class="footer-links">
+                            <li>
+                                <a href="/termeni" class="footer-link">
+                                    <i class="bi bi-file-earmark-text-fill link-icon"></i>
+                                    <span th:text="#{footer.terms}">Termeni și Condiții</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/confidentialitate" class="footer-link">
+                                    <i class="bi bi-shield-lock-fill link-icon"></i>
+                                    <span th:text="#{footer.privacy}">Politica de Confidențialitate</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div class="col-lg-4 col-md-6 mb-3">
+                    <div class="footer-section glass-card">
+                        <div class="section-header">
+                            <i class="bi bi-envelope-fill section-icon"></i>
+                            <h5 class="section-title" th:text="#{footer.contact}">Contact</h5>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <i class="bi bi-envelope-at-fill contact-icon"></i>
+                                <div class="contact-details">
+                                    <span class="contact-label">Email</span>
+                                    <a href="mailto:greenlink.ro@gmail.com" class="contact-link">greenlink.ro@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-telephone-fill contact-icon"></i>
+                                <div class="contact-details">
+                                    <span class="contact-label">Phone</span>
+                                    <div class="phone-numbers">
+                                        <a href="tel:+40756010835" class="contact-link">+40756010835</a>
+                                        <span class="contact-separator">/</span>
+                                        <a href="tel:+40799234469" class="contact-link">+40799234469</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="bi bi-geo-alt-fill contact-icon"></i>
+                                <div class="contact-details">
+                                    <span class="contact-label">Location</span>
+                                    <span class="contact-text">București, România</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <h5 class="text-success mb-3" th:text="#{footer.quick.links}">Link-uri Rapide</h5>
-                <ul class="list-unstyled">
-                    <li><a href="/educatie" class="text-light text-decoration-none" th:text="#{footer.education}">Educație</a></li>
-                    <li><a href="/marketplace" class="text-light text-decoration-none" th:text="#{footer.marketplace}">Marketplace</a></li>
-                    <li><a href="/reciclare" class="text-light text-decoration-none" th:text="#{footer.recycling}">Reciclare</a></li>
-                    <li><a href="/calculator" class="text-light text-decoration-none" th:text="#{footer.calculator}">Calculator Carbon</a></li>
-                </ul>
+
+            <!-- Copyright Section -->
+            <div class="copyright-section">
+                <div class="copyright-content">
+                    <div class="copyright-text">
+                        <i class="bi bi-c-circle copyright-icon"></i>
+                        <span th:text="#{footer.copyright}">© 2025 GreenLink. Toate drepturile rezervate.</span>
+                    </div>
+                    <div class="footer-decoration">
+                        <div class="decoration-line"></div>
+                        <i class="bi bi-leaf-fill decoration-icon"></i>
+                        <div class="decoration-line"></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-3 mb-4">
-                <h5 class="text-success mb-3"><i class="bi bi-shield-check me-2"></i><span th:text="#{footer.legal}">Legal</span></h5>
-                <ul class="list-unstyled">
-                    <li><a href="/termeni" class="text-light text-decoration-none"><i class="bi bi-shield me-2"></i><span th:text="#{footer.terms}">Termeni și Condiții</span></a></li>
-                    <li><a href="/confidentialitate" class="text-light text-decoration-none"><i class="bi bi-lock-fill me-2"></i><span th:text="#{footer.privacy}">Politica de Confidențialitate</span></a></li>
-                </ul>
-            </div>
-            <div class="col-md-3 mb-4">
-                <h5 class="text-success mb-3" th:text="#{footer.contact}">Contact</h5>
-                <ul class="list-unstyled">
-                    <li><i class="bi bi-envelope me-2"></i>greenlink@gmail.com</li>
-                    <li><i class="bi bi-telephone me-2"></i>+40756010835 / +40799234469</li>
-                    <li><i class="bi bi-geo-alt me-2"></i>București, România</li>
-                </ul>
-            </div>
-        </div>
-        <hr class="border-secondary">
-        <div class="text-center">
-            <p class="mb-0" th:text="#{footer.copyright}">&copy; 2025 GreenLink. Toate drepturile rezervate.</p>
         </div>
     </div>
+
+    <style>
+        /* Modern Footer Styles - Compact Version */
+        .modern-footer {
+            position: relative;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            padding: 2rem 0 1rem 0;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Animated Background Particles - Reduced */
+        .footer-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: floatParticle 6s infinite ease-in-out;
+            opacity: 0.4;
+        }
+
+        .particle:nth-child(1) { left: 15%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 45%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 75%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 90%; animation-delay: 1s; }
+
+        @keyframes floatParticle {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.2; 
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg); 
+                opacity: 0.6; 
+            }
+        }
+
+        /* Footer Content */
+        .footer-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Glass Card Effect - Compact */
+        .footer-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .footer-section:hover::before {
+            left: 100%;
+        }
+
+        .footer-section:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.15);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        /* Section Headers - Compact */
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .section-icon {
+            font-size: 1.25rem;
+            margin-right: 0.5rem;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-section:hover .section-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Company Section - Compact */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            color: #00ff88;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .company-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+        }
+
+        .company-tagline {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Footer Links - Compact */
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.4rem;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+
+        .footer-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .footer-link:hover::before {
+            left: 100%;
+        }
+
+        .footer-link:hover {
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateX(8px);
+            box-shadow: 0 3px 10px rgba(0, 255, 136, 0.2);
+        }
+
+        .link-icon {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link:hover .link-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+
+        /* Contact Section - Compact */
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            font-size: 1rem;
+            margin-right: 0.75rem;
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover .contact-icon {
+            transform: scale(1.1);
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .contact-link:hover {
+            color: #00ff88;
+        }
+
+        .contact-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .contact-separator {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 0.3rem;
+        }
+
+        .phone-numbers {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Copyright Section - Compact */
+        .copyright-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .copyright-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .copyright-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+
+        .copyright-icon {
+            color: #00ff88;
+            font-size: 0.9rem;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+
+        .footer-decoration {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .decoration-line {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff88, transparent);
+        }
+
+        .decoration-icon {
+            color: #00ff88;
+            font-size: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Responsive Design - Compact */
+        @media (max-width: 768px) {
+            .modern-footer {
+                padding: 1.5rem 0 1rem 0;
+            }
+
+            .footer-section {
+                padding: 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.4rem;
+            }
+
+            .section-icon {
+                margin-right: 0;
+                margin-bottom: 0.4rem;
+            }
+
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.4rem;
+            }
+
+            .contact-icon {
+                margin-right: 0;
+                margin-bottom: 0.4rem;
+            }
+
+            .copyright-content {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .footer-section {
+                padding: 1rem;
+            }
+
+            .company-name {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+
+            .footer-link {
+                font-size: 0.85rem;
+            }
+
+            .contact-link, .contact-text {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </footer>
 </body>
 </html> 
