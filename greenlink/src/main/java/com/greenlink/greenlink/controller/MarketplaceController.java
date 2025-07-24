@@ -267,6 +267,24 @@ public class MarketplaceController {
             return "redirect:/login";
         }
     }
+    
+    @GetMapping("/sell/test")
+    public String showSellFormTest(Model model) {
+        try {
+            ProductDto product = new ProductDto();
+            model.addAttribute("product", product);
+            model.addAttribute("isSelling", true);
+            return "marketplace/product-form-test";
+        } catch (Exception e) {
+            logger.error("Error showing test sell form", e);
+            return "redirect:/login";
+        }
+    }
+    
+    @GetMapping("/diagnostic")
+    public String showDiagnostic(Model model) {
+        return "marketplace/diagnostic";
+    }
 
     @GetMapping("/product/edit/{id}")
     public String showEditProductForm(@PathVariable Long id, Model model) {

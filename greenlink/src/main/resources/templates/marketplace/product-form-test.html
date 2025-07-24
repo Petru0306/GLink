@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Product Form - GreenLink</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Simple Test Form -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">Test Product Form</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">This is a test version to verify form rendering.</p>
+                        
+                        <!-- Test Authentication -->
+                        <div class="alert alert-info">
+                            <strong>Authentication Test:</strong>
+                            <span th:if="${#authentication != null and #authentication.principal != null}">
+                                ✅ User is authenticated: <span th:text="${#authentication.principal.firstName}">User</span>
+                            </span>
+                            <span th:unless="${#authentication != null and #authentication.principal != null}">
+                                ❌ User is not authenticated
+                            </span>
+                        </div>
+                        
+                        <!-- Test Product Object -->
+                        <div class="alert alert-info">
+                            <strong>Product Object Test:</strong>
+                            <span th:if="${product != null}">
+                                ✅ Product object exists: <span th:text="${product.name}">Product Name</span>
+                            </span>
+                            <span th:unless="${product != null}">
+                                ❌ Product object is null
+                            </span>
+                        </div>
+                        
+                        <!-- Test IsSelling Flag -->
+                        <div class="alert alert-info">
+                            <strong>IsSelling Flag Test:</strong>
+                            <span th:if="${isSelling != null and isSelling}">
+                                ✅ IsSelling is true
+                            </span>
+                            <span th:unless="${isSelling != null and isSelling}">
+                                ❌ IsSelling is false or null
+                            </span>
+                        </div>
+                        
+                        <!-- Simple Form -->
+                        <form th:action="@{/marketplace/sell}" method="post" enctype="multipart/form-data" th:object="${product}">
+                            <div class="mb-3">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" th:field="*{name}" placeholder="Enter product name">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Price</label>
+                                <input type="number" class="form-control" th:field="*{price}" step="0.01" min="0">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" th:field="*{category}">
+                                    <option value="">Select category</option>
+                                    <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
+                                            th:value="${cat}"
+                                            th:text="${cat.displayName}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Branch</label>
+                                <select class="form-select" th:field="*{branch}">
+                                    <option value="">Select branch</option>
+                                    <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                            th:value="${branch}"
+                                            th:text="${branch}">
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" th:field="*{description}" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Stock</label>
+                                <input type="number" class="form-control" th:field="*{stock}" min="1">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" th:field="*{ecoFriendly}">
+                                    <label class="form-check-label">Eco-Friendly</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" name="imageFile" accept="image/*">
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-success">Submit Test</button>
+                                <a href="/marketplace" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
