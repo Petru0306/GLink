@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify Your GreenLink Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>GreenLink</h1>
+        </div>
+        <div class="content">
+            <h2>Welcome to GreenLink!</h2>
+            <p>Hello <span th:text="${name}">User</span>,</p>
+            <p>Thank you for registering with GreenLink. To activate your account and verify your email address, please click the button below:</p>
+            
+            <div style="text-align: center;">
+                <a th:href="${verificationUrl}" class="button">Verify Email Address</a>
+            </div>
+            
+            <p>If the button doesn't work, you can also copy and paste the following link into your browser:</p>
+            <p><a th:href="${verificationUrl}" th:text="${verificationUrl}">Verification Link</a></p>
+            
+            <p>This link will expire in 24 hours.</p>
+            
+            <p>If you did not create an account with GreenLink, please ignore this email.</p>
+            
+            <p>Best regards,<br>
+            The GreenLink Team</p>
+        </div>
+        <div class="footer">
+            <p>© 2024 GreenLink. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
+        </div>
+    </div>
+</body>
+</html>

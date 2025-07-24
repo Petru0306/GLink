@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle ?: 'Termeni și Condiții - GreenLink'}">Termeni și Condiții - GreenLink</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Hero section styling (matching education page but smaller) */
+        .page-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 5rem 0; /* Reduced padding to make the hero smaller */
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Fluid background animation */
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* Add floating bubbles */
+        .page-header .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+        
+        .page-header .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+        
+        .page-header .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+        
+        .page-header .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+        
+        .page-header .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+        
+        .page-header .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+        
+        .page-header .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 0.5s;
+            animation-duration: 18s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 3;
+        }
+        
+        .display-4 {
+            letter-spacing: -0.5px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .lead {
+            font-weight: 500;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1.3rem;
+        }
+        
+        .hero-emphasis {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Terms content styling */
+        .terms-section {
+            padding: 5rem 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .terms-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .terms-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+        
+        .terms-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .terms-subtitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .terms-subtitle i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .terms-date {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .terms-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        .terms-list {
+            list-style-type: none;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .terms-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+        }
+        
+        .terms-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        /* Page background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+        
+        .particle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+        
+        .particle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+        
+        .particle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 15%;
+            right: 10%;
+            animation-duration: 22s;
+            animation-delay: 4s;
+        }
+        
+        .particle:nth-child(4) {
+            width: 150px;
+            height: 150px;
+            bottom: 25%;
+            left: 5%;
+            animation-duration: 28s;
+            animation-delay: 1s;
+        }
+        
+        .particle:nth-child(5) {
+            width: 70px;
+            height: 70px;
+            top: 45%;
+            left: 20%;
+            animation-duration: 20s;
+            animation-delay: 3s;
+        }
+        
+        .particle:nth-child(6) {
+            width: 90px;
+            height: 90px;
+            top: 50%;
+            right: 25%;
+            animation-duration: 26s;
+            animation-delay: 5s;
+        }
+        
+        .particle:nth-child(7) {
+            width: 110px;
+            height: 110px;
+            bottom: 40%;
+            right: 40%;
+            animation-duration: 24s;
+            animation-delay: 0s;
+        }
+        
+        .particle:nth-child(8) {
+            width: 60px;
+            height: 60px;
+            bottom: 60%;
+            left: 40%;
+            animation-duration: 18s;
+            animation-delay: 6s;
+        }
+        
+        .particle:nth-child(9) {
+            width: 130px;
+            height: 130px;
+            top: 30%;
+            left: 30%;
+            animation-duration: 32s;
+            animation-delay: 7s;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0) scale(1) rotate(0); }
+            25% { transform: translateY(-25px) scale(1.05) rotate(2deg); }
+            50% { transform: translateY(-40px) scale(1.1) rotate(0); }
+            75% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+            100% { transform: translateY(0) scale(1) rotate(0); }
+        }
+        
+        @keyframes wave {
+            0% { transform: translate(-50%, -50%) rotate(-45deg); }
+            100% { transform: translate(-50%, -50%) rotate(315deg); }
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+        
+        @media (max-width: 768px) {
+            .terms-container {
+                padding: 2rem;
+            }
+            
+            .terms-title {
+                font-size: 2rem;
+            }
+            
+            .terms-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .hero-emphasis {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Background Animation -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="page-header">
+        <!-- Animated bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
+        <div class="container header-content">
+            <div class="row align-items-center">
+                <div class="col-lg-10 mx-auto text-center">
+                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown" th:text="#{terms.heading}">Termeni și Condiții</h1>
+                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis" th:text="#{terms.hero.emphasis}">Termenii și condițiile care guvernează utilizarea platformei GreenLink</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Terms Content -->
+    <section class="terms-section">
+        <div class="container">
+            <div class="terms-container fade-in">
+                <h2 class="terms-title" th:text="#{terms.title}">Termeni și Condiții de Utilizare – GreenLink</h2>
+                <p class="terms-date" th:text="#{terms.lastupdate}">Ultima actualizare: 24.07.2025</p>
+
+                <div class="terms-content">
+                    <h3 class="terms-subtitle"><i class="bi bi-info-circle"></i><span th:text="#{terms.subtitle.general}">1. Informații generale</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.general}">Prin accesarea sau utilizarea platformei și serviciilor GreenLink, sunteți de acord să respectați acești Termeni de Serviciu. Dacă nu sunteți de acord cu acești termeni, vă rugăm să nu utilizați serviciile noastre.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-bullseye"></i><span th:text="#{terms.subtitle.purpose}">2. Scopul Platformei</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.purpose}">GreenLink este o platformă digitală dedicată sustenabilității, ce încurajează utilizatorii să adopte un stil de viață eco-responsabil prin lecții educaționale, provocări gamificate, un marketplace eco-friendly, calculul amprentei de carbon și interacțiuni sociale.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-check2-circle"></i><span th:text="#{terms.subtitle.acceptance}">3. Acceptarea Termenilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.acceptance}">Prin crearea unui cont sau utilizarea Platformei, utilizatorul declară că a citit, înțeles și acceptat acești Termeni și Condiții, precum și Politica de Confidențialitate.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-person-check"></i><span th:text="#{terms.subtitle.eligibility}">4. Eligibilitate</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.eligibility}">Platforma este destinată utilizatorilor cu vârsta de minimum 13 ani. Persoanele sub această vârstă pot utiliza Platforma doar cu acordul expres al unui părinte sau tutore legal.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-person-circle"></i><span th:text="#{terms.subtitle.account}">5. Contul de utilizator</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.account.creation}">5.1. Creare cont – Pentru a accesa funcționalitățile principale, este necesară înregistrarea unui cont prin email sau autentificare OAuth (Google, GitHub – în dezvoltare).</p>
+                    <p class="terms-text" th:text="#{terms.text.account.correctdata}">5.2. Date corecte – Utilizatorul se obligă să furnizeze informații reale, exacte și complete.</p>
+                    <p class="terms-text" th:text="#{terms.text.account.security}">5.3. Securitate – Utilizatorul este responsabil pentru păstrarea confidențialității datelor de autentificare. GreenLink nu este răspunzător pentru daune cauzate de utilizarea neautorizată a contului.</p>
+                    <p class="terms-text" th:text="#{terms.text.account.suspension}">5.4. Suspendare cont – GreenLink își rezervă dreptul de a suspenda sau șterge conturi care încalcă prezentul document sau legislația în vigoare.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-shield-check"></i><span th:text="#{terms.subtitle.rights}">6. Drepturi și obligații ale utilizatorilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.rights.legal}">6.1. Utilizatorii se obligă să utilizeze Platforma doar în scopuri legale.</p>
+                    <p class="terms-text" th:text="#{terms.text.rights.prohibited}">6.2. Este interzisă:</p>
+                    <ul class="terms-list">
+                        <li th:text="#{terms.list.rights.prohibited.1}">publicarea de conținut ofensator, ilegal, defăimător, discriminatoriu sau instigator la ură;</li>
+                        <li th:text="#{terms.list.rights.prohibited.2}">utilizarea Platformei în scopuri comerciale fără acordul scris al GreenLink;</li>
+                        <li th:text="#{terms.list.rights.prohibited.3}">încercarea de a accesa datele altor utilizatori sau funcționalități restricționate.</li>
+                    </ul>
+                    <p class="terms-text" th:text="#{terms.text.rights.content}">6.3. Conținutul postat de utilizatori (imagini produse, mesaje, profil public) nu trebuie să încalce drepturile de autor sau de confidențialitate ale altor persoane.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-gear"></i><span th:text="#{terms.subtitle.features}">7. Funcționalități oferite</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.features}">Platforma oferă, fără a se limita la:</p>
+                    <ul class="terms-list">
+                        <li th:text="#{terms.list.features.1}">Participarea la provocări gamificate și cursuri educaționale</li>
+                        <li th:text="#{terms.list.features.2}">Colectarea de puncte și avansare în niveluri</li>
+                        <li th:text="#{terms.list.features.3}">Vizualizarea unui profil public ecologic</li>
+                        <li th:text="#{terms.list.features.4}">Utilizarea unui marketplace pentru produse sustenabile</li>
+                        <li th:text="#{terms.list.features.5}">Calculul amprentei de carbon</li>
+                        <li th:text="#{terms.list.features.6}">Sistem de mesagerie și prietenii</li>
+                        <li th:text="#{terms.list.features.7}">Recompense virtuale (insigne, puncte etc.)</li>
+                    </ul>
+                    <p class="terms-text" th:text="#{terms.text.features.changes}">GreenLink își rezervă dreptul de a modifica, adăuga sau elimina funcționalități fără notificare prealabilă.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-file-earmark-lock"></i><span th:text="#{terms.subtitle.intellectual}">8. Proprietate intelectuală</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.intellectual}">Conținutul Platformei (texte, coduri sursă, grafică, logo-uri, denumiri, structură) este proprietatea exclusivă a GreenLink și este protejat de legislația privind drepturile de autor și proprietatea intelectuală. Este interzisă copierea, distribuirea sau reproducerea fără acord scris.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-cart"></i><span th:text="#{terms.subtitle.marketplace}">9. Marketplace și Plăți</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.publish}">9.1. Utilizatorii pot publica produse sustenabile în marketplace și pot negocia direct.</p>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.transactions}">9.2. GreenLink facilitează tranzacțiile, dar nu garantează calitatea sau livrarea produselor.</p>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.payments}">9.3. Plățile online vor fi procesate prin Stripe (în dezvoltare). GreenLink nu stochează date bancare.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-exclamation-triangle"></i><span th:text="#{terms.subtitle.liability}">10. Răspundere limitată</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.liability}">GreenLink oferă Platforma „ca atare", fără garanții explicite sau implicite. Nu garantăm că Platforma va funcționa fără erori sau întreruperi. GreenLink nu este răspunzător pentru daune indirecte, pierderi de date sau conținut generat de utilizatori.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-lock"></i><span th:text="#{terms.subtitle.security}">11. Securitate</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.security}">Platforma utilizează măsuri avansate de securitate: criptarea parolelor, protecție CSRF/XSS, autentificare OAuth, validare input. Cu toate acestea, utilizatorii își asumă riscurile inerente utilizării aplicațiilor online.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-shield-lock"></i><span th:text="#{terms.subtitle.personal}">12. Date cu caracter personal</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.personal}">Datele personale colectate sunt procesate în conformitate cu legislația GDPR. Mai multe detalii sunt disponibile în Politica de Confidențialitate.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-pencil"></i><span th:text="#{terms.subtitle.modifications}">13. Modificări ale Termenilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.modifications}">GreenLink poate actualiza oricând acest document. Modificările vor fi afișate pe site, iar continuarea utilizării Platformei după publicare presupune acceptarea lor.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-x-circle"></i><span th:text="#{terms.subtitle.termination}">14. Încetarea relației contractuale</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.termination}">Utilizatorul poate oricând închide contul prin solicitare scrisă. GreenLink poate suspenda sau șterge contul în cazul încălcării Termenilor.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-bank"></i><span th:text="#{terms.subtitle.law}">15. Legea aplicabilă și jurisdicție</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.law}">Acești Termeni sunt guvernați de legislația din România. Eventualele litigii vor fi soluționate de instanțele competente din București.</p>
+
+                    <h3 class="terms-subtitle"><i class="bi bi-envelope"></i><span th:text="#{terms.subtitle.contact}">16. Contact</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.contact}">Pentru întrebări, sugestii sau reclamații, ne poți contacta la:</p>
+                    <p class="terms-text" th:text="#{terms.text.contact.email}">Email: greenlink.ro@gmail.com</p>
+                    <p class="terms-text" th:text="#{terms.text.contact.phone}">Telefon: Bâtea Andrei-Daniel +40756010835 / Panait Mihai-Petru +40799234469</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Add fade-in animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            fadeElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html>

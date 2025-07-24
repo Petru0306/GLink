@@ -32,7 +32,7 @@ public class LocaleConfig implements WebMvcConfigurer {
     @Bean
     public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-        source.setBasenames("messages");
+        source.setBasenames("messages", "terms", "privacy");
         source.setDefaultEncoding("UTF-8");
         return source;
     }
