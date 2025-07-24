@@ -419,8 +419,8 @@
         <div class="container header-content">
             <div class="row align-items-center">
                 <div class="col-lg-10 mx-auto text-center">
-                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown">Termeni și Condiții</h1>
-                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis">Termenii și condițiile care guvernează utilizarea platformei GreenLink</p>
+                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown" th:text="#{terms.heading}">Termeni și Condiții</h1>
+                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis" th:text="#{terms.hero.emphasis}">Termenii și condițiile care guvernează utilizarea platformei GreenLink</p>
                 </div>
             </div>
         </div>
@@ -430,81 +430,81 @@
     <section class="terms-section">
         <div class="container">
             <div class="terms-container fade-in">
-                <h2 class="terms-title">Termeni și Condiții de Utilizare – GreenLink</h2>
-                <p class="terms-date">Ultima actualizare: 24.07.2025</p>
+                <h2 class="terms-title" th:text="#{terms.title}">Termeni și Condiții de Utilizare – GreenLink</h2>
+                <p class="terms-date" th:text="#{terms.lastupdate}">Ultima actualizare: 24.07.2025</p>
 
                 <div class="terms-content">
-                    <h3 class="terms-subtitle"><i class="bi bi-info-circle"></i>1. Informații generale</h3>
-                    <p class="terms-text">Prin accesarea sau utilizarea platformei și serviciilor GreenLink, sunteți de acord să respectați acești Termeni de Serviciu. Dacă nu sunteți de acord cu acești termeni, vă rugăm să nu utilizați serviciile noastre.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-info-circle"></i><span th:text="#{terms.subtitle.general}">1. Informații generale</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.general}">Prin accesarea sau utilizarea platformei și serviciilor GreenLink, sunteți de acord să respectați acești Termeni de Serviciu. Dacă nu sunteți de acord cu acești termeni, vă rugăm să nu utilizați serviciile noastre.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-bullseye"></i>2. Scopul Platformei</h3>
-                    <p class="terms-text">GreenLink este o platformă digitală dedicată sustenabilității, ce încurajează utilizatorii să adopte un stil de viață eco-responsabil prin lecții educaționale, provocări gamificate, un marketplace eco-friendly, calculul amprentei de carbon și interacțiuni sociale.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-bullseye"></i><span th:text="#{terms.subtitle.purpose}">2. Scopul Platformei</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.purpose}">GreenLink este o platformă digitală dedicată sustenabilității, ce încurajează utilizatorii să adopte un stil de viață eco-responsabil prin lecții educaționale, provocări gamificate, un marketplace eco-friendly, calculul amprentei de carbon și interacțiuni sociale.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-check2-circle"></i>3. Acceptarea Termenilor</h3>
-                    <p class="terms-text">Prin crearea unui cont sau utilizarea Platformei, utilizatorul declară că a citit, înțeles și acceptat acești Termeni și Condiții, precum și Politica de Confidențialitate.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-check2-circle"></i><span th:text="#{terms.subtitle.acceptance}">3. Acceptarea Termenilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.acceptance}">Prin crearea unui cont sau utilizarea Platformei, utilizatorul declară că a citit, înțeles și acceptat acești Termeni și Condiții, precum și Politica de Confidențialitate.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-person-check"></i>4. Eligibilitate</h3>
-                    <p class="terms-text">Platforma este destinată utilizatorilor cu vârsta de minimum 13 ani. Persoanele sub această vârstă pot utiliza Platforma doar cu acordul expres al unui părinte sau tutore legal.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-person-check"></i><span th:text="#{terms.subtitle.eligibility}">4. Eligibilitate</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.eligibility}">Platforma este destinată utilizatorilor cu vârsta de minimum 13 ani. Persoanele sub această vârstă pot utiliza Platforma doar cu acordul expres al unui părinte sau tutore legal.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-person-circle"></i>5. Contul de utilizator</h3>
-                    <p class="terms-text">5.1. Creare cont – Pentru a accesa funcționalitățile principale, este necesară înregistrarea unui cont prin email sau autentificare OAuth (Google, GitHub – în dezvoltare).</p>
-                    <p class="terms-text">5.2. Date corecte – Utilizatorul se obligă să furnizeze informații reale, exacte și complete.</p>
-                    <p class="terms-text">5.3. Securitate – Utilizatorul este responsabil pentru păstrarea confidențialității datelor de autentificare. GreenLink nu este răspunzător pentru daune cauzate de utilizarea neautorizată a contului.</p>
-                    <p class="terms-text">5.4. Suspendare cont – GreenLink își rezervă dreptul de a suspenda sau șterge conturi care încalcă prezentul document sau legislația în vigoare.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-person-circle"></i><span th:text="#{terms.subtitle.account}">5. Contul de utilizator</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.account.creation}">5.1. Creare cont – Pentru a accesa funcționalitățile principale, este necesară înregistrarea unui cont prin email sau autentificare OAuth (Google, GitHub – în dezvoltare).</p>
+                    <p class="terms-text" th:text="#{terms.text.account.correctdata}">5.2. Date corecte – Utilizatorul se obligă să furnizeze informații reale, exacte și complete.</p>
+                    <p class="terms-text" th:text="#{terms.text.account.security}">5.3. Securitate – Utilizatorul este responsabil pentru păstrarea confidențialității datelor de autentificare. GreenLink nu este răspunzător pentru daune cauzate de utilizarea neautorizată a contului.</p>
+                    <p class="terms-text" th:text="#{terms.text.account.suspension}">5.4. Suspendare cont – GreenLink își rezervă dreptul de a suspenda sau șterge conturi care încalcă prezentul document sau legislația în vigoare.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-shield-check"></i>6. Drepturi și obligații ale utilizatorilor</h3>
-                    <p class="terms-text">6.1. Utilizatorii se obligă să utilizeze Platforma doar în scopuri legale.</p>
-                    <p class="terms-text">6.2. Este interzisă:</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-shield-check"></i><span th:text="#{terms.subtitle.rights}">6. Drepturi și obligații ale utilizatorilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.rights.legal}">6.1. Utilizatorii se obligă să utilizeze Platforma doar în scopuri legale.</p>
+                    <p class="terms-text" th:text="#{terms.text.rights.prohibited}">6.2. Este interzisă:</p>
                     <ul class="terms-list">
-                        <li>publicarea de conținut ofensator, ilegal, defăimător, discriminatoriu sau instigator la ură;</li>
-                        <li>utilizarea Platformei în scopuri comerciale fără acordul scris al GreenLink;</li>
-                        <li>încercarea de a accesa datele altor utilizatori sau funcționalități restricționate.</li>
+                        <li th:text="#{terms.list.rights.prohibited.1}">publicarea de conținut ofensator, ilegal, defăimător, discriminatoriu sau instigator la ură;</li>
+                        <li th:text="#{terms.list.rights.prohibited.2}">utilizarea Platformei în scopuri comerciale fără acordul scris al GreenLink;</li>
+                        <li th:text="#{terms.list.rights.prohibited.3}">încercarea de a accesa datele altor utilizatori sau funcționalități restricționate.</li>
                     </ul>
-                    <p class="terms-text">6.3. Conținutul postat de utilizatori (imagini produse, mesaje, profil public) nu trebuie să încalce drepturile de autor sau de confidențialitate ale altor persoane.</p>
+                    <p class="terms-text" th:text="#{terms.text.rights.content}">6.3. Conținutul postat de utilizatori (imagini produse, mesaje, profil public) nu trebuie să încalce drepturile de autor sau de confidențialitate ale altor persoane.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-gear"></i>7. Funcționalități oferite</h3>
-                    <p class="terms-text">Platforma oferă, fără a se limita la:</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-gear"></i><span th:text="#{terms.subtitle.features}">7. Funcționalități oferite</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.features}">Platforma oferă, fără a se limita la:</p>
                     <ul class="terms-list">
-                        <li>Participarea la provocări gamificate și cursuri educaționale</li>
-                        <li>Colectarea de puncte și avansare în niveluri</li>
-                        <li>Vizualizarea unui profil public ecologic</li>
-                        <li>Utilizarea unui marketplace pentru produse sustenabile</li>
-                        <li>Calculul amprentei de carbon</li>
-                        <li>Sistem de mesagerie și prietenii</li>
-                        <li>Recompense virtuale (insigne, puncte etc.)</li>
+                        <li th:text="#{terms.list.features.1}">Participarea la provocări gamificate și cursuri educaționale</li>
+                        <li th:text="#{terms.list.features.2}">Colectarea de puncte și avansare în niveluri</li>
+                        <li th:text="#{terms.list.features.3}">Vizualizarea unui profil public ecologic</li>
+                        <li th:text="#{terms.list.features.4}">Utilizarea unui marketplace pentru produse sustenabile</li>
+                        <li th:text="#{terms.list.features.5}">Calculul amprentei de carbon</li>
+                        <li th:text="#{terms.list.features.6}">Sistem de mesagerie și prietenii</li>
+                        <li th:text="#{terms.list.features.7}">Recompense virtuale (insigne, puncte etc.)</li>
                     </ul>
-                    <p class="terms-text">GreenLink își rezervă dreptul de a modifica, adăuga sau elimina funcționalități fără notificare prealabilă.</p>
+                    <p class="terms-text" th:text="#{terms.text.features.changes}">GreenLink își rezervă dreptul de a modifica, adăuga sau elimina funcționalități fără notificare prealabilă.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-file-earmark-lock"></i>8. Proprietate intelectuală</h3>
-                    <p class="terms-text">Conținutul Platformei (texte, coduri sursă, grafică, logo-uri, denumiri, structură) este proprietatea exclusivă a GreenLink și este protejat de legislația privind drepturile de autor și proprietatea intelectuală. Este interzisă copierea, distribuirea sau reproducerea fără acord scris.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-file-earmark-lock"></i><span th:text="#{terms.subtitle.intellectual}">8. Proprietate intelectuală</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.intellectual}">Conținutul Platformei (texte, coduri sursă, grafică, logo-uri, denumiri, structură) este proprietatea exclusivă a GreenLink și este protejat de legislația privind drepturile de autor și proprietatea intelectuală. Este interzisă copierea, distribuirea sau reproducerea fără acord scris.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-cart"></i>9. Marketplace și Plăți</h3>
-                    <p class="terms-text">9.1. Utilizatorii pot publica produse sustenabile în marketplace și pot negocia direct.</p>
-                    <p class="terms-text">9.2. GreenLink facilitează tranzacțiile, dar nu garantează calitatea sau livrarea produselor.</p>
-                    <p class="terms-text">9.3. Plățile online vor fi procesate prin Stripe (în dezvoltare). GreenLink nu stochează date bancare.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-cart"></i><span th:text="#{terms.subtitle.marketplace}">9. Marketplace și Plăți</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.publish}">9.1. Utilizatorii pot publica produse sustenabile în marketplace și pot negocia direct.</p>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.transactions}">9.2. GreenLink facilitează tranzacțiile, dar nu garantează calitatea sau livrarea produselor.</p>
+                    <p class="terms-text" th:text="#{terms.text.marketplace.payments}">9.3. Plățile online vor fi procesate prin Stripe (în dezvoltare). GreenLink nu stochează date bancare.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-exclamation-triangle"></i>10. Răspundere limitată</h3>
-                    <p class="terms-text">GreenLink oferă Platforma „ca atare", fără garanții explicite sau implicite. Nu garantăm că Platforma va funcționa fără erori sau întreruperi. GreenLink nu este răspunzător pentru daune indirecte, pierderi de date sau conținut generat de utilizatori.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-exclamation-triangle"></i><span th:text="#{terms.subtitle.liability}">10. Răspundere limitată</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.liability}">GreenLink oferă Platforma „ca atare", fără garanții explicite sau implicite. Nu garantăm că Platforma va funcționa fără erori sau întreruperi. GreenLink nu este răspunzător pentru daune indirecte, pierderi de date sau conținut generat de utilizatori.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-lock"></i>11. Securitate</h3>
-                    <p class="terms-text">Platforma utilizează măsuri avansate de securitate: criptarea parolelor, protecție CSRF/XSS, autentificare OAuth, validare input. Cu toate acestea, utilizatorii își asumă riscurile inerente utilizării aplicațiilor online.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-lock"></i><span th:text="#{terms.subtitle.security}">11. Securitate</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.security}">Platforma utilizează măsuri avansate de securitate: criptarea parolelor, protecție CSRF/XSS, autentificare OAuth, validare input. Cu toate acestea, utilizatorii își asumă riscurile inerente utilizării aplicațiilor online.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-shield-lock"></i>12. Date cu caracter personal</h3>
-                    <p class="terms-text">Datele personale colectate sunt procesate în conformitate cu legislația GDPR. Mai multe detalii sunt disponibile în Politica de Confidențialitate.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-shield-lock"></i><span th:text="#{terms.subtitle.personal}">12. Date cu caracter personal</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.personal}">Datele personale colectate sunt procesate în conformitate cu legislația GDPR. Mai multe detalii sunt disponibile în Politica de Confidențialitate.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-pencil"></i>13. Modificări ale Termenilor</h3>
-                    <p class="terms-text">GreenLink poate actualiza oricând acest document. Modificările vor fi afișate pe site, iar continuarea utilizării Platformei după publicare presupune acceptarea lor.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-pencil"></i><span th:text="#{terms.subtitle.modifications}">13. Modificări ale Termenilor</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.modifications}">GreenLink poate actualiza oricând acest document. Modificările vor fi afișate pe site, iar continuarea utilizării Platformei după publicare presupune acceptarea lor.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-x-circle"></i>14. Încetarea relației contractuale</h3>
-                    <p class="terms-text">Utilizatorul poate oricând închide contul prin solicitare scrisă. GreenLink poate suspenda sau șterge contul în cazul încălcării Termenilor.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-x-circle"></i><span th:text="#{terms.subtitle.termination}">14. Încetarea relației contractuale</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.termination}">Utilizatorul poate oricând închide contul prin solicitare scrisă. GreenLink poate suspenda sau șterge contul în cazul încălcării Termenilor.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-bank"></i>15. Legea aplicabilă și jurisdicție</h3>
-                    <p class="terms-text">Acești Termeni sunt guvernați de legislația din România. Eventualele litigii vor fi soluționate de instanțele competente din București.</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-bank"></i><span th:text="#{terms.subtitle.law}">15. Legea aplicabilă și jurisdicție</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.law}">Acești Termeni sunt guvernați de legislația din România. Eventualele litigii vor fi soluționate de instanțele competente din București.</p>
 
-                    <h3 class="terms-subtitle"><i class="bi bi-envelope"></i>16. Contact</h3>
-                    <p class="terms-text">Pentru întrebări, sugestii sau reclamații, ne poți contacta la:</p>
-                    <p class="terms-text">Email: greenlink.ro@gmail.com</p>
-                    <p class="terms-text">Telefon: Bâtea Andrei-Daniel +40756010835 / Panait Mihai-Petru +40799234469</p>
+                    <h3 class="terms-subtitle"><i class="bi bi-envelope"></i><span th:text="#{terms.subtitle.contact}">16. Contact</span></h3>
+                    <p class="terms-text" th:text="#{terms.text.contact}">Pentru întrebări, sugestii sau reclamații, ne poți contacta la:</p>
+                    <p class="terms-text" th:text="#{terms.text.contact.email}">Email: greenlink.ro@gmail.com</p>
+                    <p class="terms-text" th:text="#{terms.text.contact.phone}">Telefon: Bâtea Andrei-Daniel +40756010835 / Panait Mihai-Petru +40799234469</p>
                 </div>
             </div>
         </div>
