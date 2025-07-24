@@ -642,6 +642,16 @@
                         <small class="text-success fw-bold" th:text="${'RON ' + #numbers.formatDecimal(totalEarnings, 1, 2)}">RON 0.00</small>
                     </div>
                 </a>
+                <a href="/dashboard/buy-history" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-bag-check action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Buy History</h5>
+                        <p class="action-description" th:text="${totalProductsBought ?: '0'} + ' products bought'">0 products bought</p>
+                        <small class="text-success fw-bold" th:text="${'RON ' + #numbers.formatDecimal(totalAmountSpent ?: 0, 1, 2)}">RON 0.00</small>
+                    </div>
+                </a>
                 <a href="/educatie" class="text-decoration-none">
                     <div class="quick-action-card p-4">
                         <div class="action-icon-wrapper">
@@ -667,15 +677,6 @@
                         </div>
                         <h5 class="action-title">Friends</h5>
                         <p class="action-description">Connect with other users</p>
-                    </div>
-                </a>
-                <a href="/reciclare" class="text-decoration-none">
-                    <div class="quick-action-card p-4">
-                        <div class="action-icon-wrapper">
-                            <i class="bi bi-geo-alt action-icon"></i>
-                        </div>
-                        <h5 class="action-title">Recycling Map</h5>
-                        <p class="action-description">Find recycling locations near you</p>
                     </div>
                 </a>
             </div>

@@ -14,105 +14,341 @@
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Product Form Specific Styles */
-        .product-form-hero {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 3rem 0;
-            color: white;
-            position: relative;
+        :root {
+            --primary-green: #10b981;
+            --primary-green-dark: #059669;
+            --primary-green-light: #d1fae5;
+            --secondary-green: #34d399;
+            --accent-green: #6ee7b7;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-light: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
-        
-        .product-form-hero::before {
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #d1fae5 100%);
+            min-height: 100vh;
+        }
+
+        /* Modern Header */
+        .modern-header {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            padding: 3rem 0 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-header::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.2;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
         }
-        
-        .product-form-container {
-            max-width: 900px;
-            margin: -2rem auto 3rem;
+
+        .header-content {
             position: relative;
             z-index: 2;
         }
-        
-        .product-form-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .form-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border: 1px solid rgba(40, 167, 69, 0.1);
-            border-radius: 10px;
-            background: rgba(248, 249, 250, 0.5);
-        }
-        
-        .form-section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #28a745;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid rgba(40, 167, 69, 0.1);
-        }
-        
-        .image-preview {
-            width: 100%;
-            height: 250px;
-            border-radius: 15px;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 2px dashed rgba(40, 167, 69, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .image-preview.has-image {
-            border: none;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-        }
-        
-        .upload-label {
-            display: block;
-            background: rgba(40, 167, 69, 0.05);
+
+        .breadcrumb-modern {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
             border-radius: 50px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #28a745;
-            font-weight: 600;
-            margin-bottom: 1rem;
+            padding: 0.75rem 1.5rem;
+            display: inline-block;
+            margin-bottom: 2rem;
         }
-        
-        .upload-label:hover {
-            background: rgba(40, 167, 69, 0.1);
+
+        .breadcrumb-modern .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-modern .breadcrumb-item a:hover {
+            color: white;
+        }
+
+        .breadcrumb-modern .breadcrumb-item.active {
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .form-container-modern {
+            max-width: 1000px;
+            margin: -3rem auto 3rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Step Navigation */
+        .step-nav {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step-item.active {
+            background: var(--primary-green-light);
+            color: var(--primary-green-dark);
+        }
+
+        .step-item.completed {
+            background: var(--primary-green-light);
+            color: var(--primary-green-dark);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-item.active .step-number {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .step-item.completed .step-number {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .step-item:not(.active):not(.completed) .step-number {
+            background: var(--bg-light);
+            color: var(--text-muted);
+        }
+
+        /* Form Cards */
+        .form-card-modern {
+            background: var(--bg-white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-card-modern:hover {
+            box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
             transform: translateY(-2px);
         }
-        
-        .seller-info {
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+
+        .card-header-modern {
+            background: linear-gradient(135deg, var(--primary-green-light) 0%, var(--accent-green) 100%);
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-light);
         }
-        
-        .seller-avatar {
+
+        .card-header-modern h3 {
+            color: var(--primary-green-dark);
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .card-header-modern .icon {
             width: 48px;
             height: 48px;
+            background: var(--primary-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .card-body-modern {
+            padding: 2.5rem;
+        }
+
+        /* Form Groups */
+        .form-group-modern {
+            margin-bottom: 2rem;
+        }
+
+        .form-label-modern {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label-modern .icon {
+            margin-right: 0.5rem;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .form-control-modern {
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-white);
+        }
+
+        .form-control-modern:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px var(--primary-green-light);
+            outline: none;
+        }
+
+        .form-select-modern {
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--bg-white);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-select-modern:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px var(--primary-green-light);
+            outline: none;
+        }
+
+        /* Image Upload Section */
+        .image-upload-modern {
+            border: 3px dashed var(--border-light);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: var(--bg-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-upload-modern.dragover {
+            border-color: var(--primary-green);
+            background: var(--primary-green-light);
+            transform: scale(1.02);
+        }
+
+        .image-upload-modern.has-image {
+            border: none;
+            background: var(--bg-white);
+            padding: 1rem;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-green);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-hint {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .image-preview-modern {
+            width: 100%;
+            height: 300px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+        }
+
+        .image-preview-modern:hover {
+            transform: scale(1.02);
+        }
+
+        .upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(16, 185, 129, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-upload-modern.dragover .upload-overlay {
+            opacity: 1;
+        }
+
+        /* Seller Info */
+        .seller-info-modern {
+            background: linear-gradient(135deg, var(--primary-green-light) 0%, var(--accent-green) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .seller-avatar-modern {
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: #28a745;
+            background: var(--primary-green);
             color: white;
             display: flex;
             align-items: center;
@@ -120,64 +356,199 @@
             font-size: 1.5rem;
             margin-right: 1rem;
         }
-        
-        .eco-friendly-check {
-            background: rgba(40, 167, 69, 0.05);
-            border-radius: 10px;
+
+        /* Eco-friendly Section */
+        .eco-friendly-modern {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 16px;
             padding: 1.5rem;
+            border: 1px solid #fbbf24;
             transition: all 0.3s ease;
-            margin-bottom: 2rem;
         }
-        
-        .tips-card {
-            background: rgba(13, 110, 253, 0.05);
-            border-radius: 10px;
+
+        .eco-friendly-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .eco-checkbox {
+            transform: scale(1.2);
+            margin-right: 0.75rem;
+        }
+
+        /* Tips Section */
+        .tips-modern {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-radius: 16px;
             padding: 1.5rem;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+            border: 1px solid #60a5fa;
         }
-        
-        .tips-card h5 {
-            color: #0d6efd;
+
+        .tips-modern h5 {
+            color: #1e40af;
+            font-weight: 700;
             margin-bottom: 1rem;
         }
-        
-        .form-actions {
-            background: rgba(248, 249, 250, 0.8);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            border: 1px solid rgba(40, 167, 69, 0.1);
+
+        .tips-modern ul {
+            margin: 0;
+            padding-left: 1.5rem;
         }
-        
-        .btn-submit {
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
+
+        .tips-modern li {
+            margin-bottom: 0.5rem;
+            color: #1e40af;
+        }
+
+        /* Buttons */
+        .btn-modern {
+            padding: 1rem 2rem;
+            border-radius: 12px;
             font-weight: 600;
-            letter-spacing: 0.5px;
+            font-size: 1rem;
             transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
             min-width: 140px;
         }
-        
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            color: white;
         }
-        
+
+        .btn-primary-modern:hover {
+            background: linear-gradient(135deg, var(--primary-green-dark) 0%, var(--primary-green) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .btn-secondary-modern {
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary-modern:hover {
+            background: var(--bg-light);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: var(--text-dark);
+        }
+
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Form Actions */
+        .form-actions-modern {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            margin-top: 2rem;
+        }
+
+        /* Progress Bar */
+        .progress-modern {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-light);
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-modern {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--secondary-green) 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .animate-slide-in-right {
+            animation: slideInRight 0.6s ease-out;
+        }
+
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .product-form-card {
+            .modern-header {
+                padding: 2rem 0 3rem;
+            }
+            
+            .form-container-modern {
+                margin: -2rem 1rem 2rem;
+            }
+            
+            .card-body-modern {
                 padding: 1.5rem;
-                margin: -1rem 1rem 2rem;
             }
             
-            .product-form-hero {
-                padding: 2rem 0;
+            .step-nav {
+                padding: 1rem;
             }
             
-            .btn-submit {
-                min-width: 120px;
-                padding: 0.6rem 1.5rem;
+            .step-item {
+                padding: 0.75rem;
             }
+            
+            .btn-modern {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -185,170 +556,301 @@
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <!-- Hero Section -->
-    <header class="product-form-hero">
-        <div class="container">
+    <!-- Modern Header -->
+    <header class="modern-header">
+        <div class="container header-content">
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/marketplace" class="text-white">Marketplace</a></li>
-                    <li th:if="${isSelling}" class="breadcrumb-item"><a href="/marketplace/my-products" class="text-white">Produsele Mele</a></li>
-                    <li class="breadcrumb-item active text-white" aria-current="page" 
+                <ol class="breadcrumb breadcrumb-modern mb-0">
+                    <li class="breadcrumb-item"><a href="/marketplace">Marketplace</a></li>
+                    <li th:if="${isSelling}" class="breadcrumb-item"><a href="/marketplace/my-products">Produsele Mele</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" 
                         th:text="${isSelling ? 'Listează Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs')}">
                         Adaugă Produs
                     </li>
                 </ol>
             </nav>
-            <h1 class="display-4 fw-bold mt-3" th:text="${isSelling ? 'Listează un Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs')}">
+            <h1 class="display-4 fw-bold text-white mt-3" th:text="${isSelling ? 'Listează un Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs')}">
                 Adaugă Produs
             </h1>
-            <p class="lead" th:if="${isSelling}">Completează detaliile produsului tău pentru a-l lista în marketplace</p>
+            <p class="lead text-white-50" th:if="${isSelling}">Completează detaliile produsului tău pentru a-l lista în marketplace</p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="product-form-container">
-            <div class="product-form-card">
-                <h2 class="section-title" th:text="${isSelling ? 'Detalii Produs' : (product.id != null ? 'Editează Produs' : 'Adaugă Produs Nou')}">
-                    Adaugă Produs Nou
-                </h2>
-
-                <!-- Seller Information (only for selling) -->
-                <div th:if="${isSelling}" class="seller-info d-flex align-items-center">
-                    <div class="seller-avatar">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">Vei lista acest produs ca:</h6>
-                        <p class="mb-0" th:if="${#authentication != null and #authentication.principal != null}" 
-                           th:text="${#authentication.principal.firstName + ' ' + #authentication.principal.lastName}">Nume Utilizator</p>
-                        <p class="mb-0" th:unless="${#authentication != null and #authentication.principal != null}">Utilizator</p>
+    <!-- Main Container -->
+    <div class="container form-container-modern">
+        <!-- Step Navigation -->
+        <div class="step-nav">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="step-item active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div>
+                            <div class="fw-semibold">Imagine Produs</div>
+                            <small class="text-muted">Încarcă o imagine</small>
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="step-item" data-step="2">
+                        <div class="step-number">2</div>
+                        <div>
+                            <div class="fw-semibold">Informații</div>
+                            <small class="text-muted">Detalii produs</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-item" data-step="3">
+                        <div class="step-number">3</div>
+                        <div>
+                            <div class="fw-semibold">Categorie</div>
+                            <small class="text-muted">Alege marketplace</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="step-item" data-step="4">
+                        <div class="step-number">4</div>
+                        <div>
+                            <div class="fw-semibold">Finalizare</div>
+                            <small class="text-muted">Verifică și publică</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : 
-                              (isSelling ? '/marketplace/sell' : '/marketplace/product/add')}}"
-                      method="post"
-                      enctype="multipart/form-data"
-                      th:object="${product}">
+        <!-- Progress Bar -->
+        <div class="progress-modern">
+            <div class="progress-bar-modern" id="progressBar" style="width: 25%"></div>
+        </div>
 
-                    <!-- Hidden referer path field -->
-                    <input type="hidden" name="refererPath" th:if="${refererPath != null}" th:value="${refererPath}" />
+        <form th:action="@{${product.id != null ? '/marketplace/product/update/' + product.id : 
+                      (isSelling ? '/marketplace/sell' : '/marketplace/product/add')}}"
+              method="post"
+              enctype="multipart/form-data"
+              th:object="${product}"
+              id="productForm">
 
-                    <!-- Image Upload Section -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="bi bi-image me-2"></i>Imagine Produs
-                        </h3>
-                        <img th:if="*{imageUrl != null and !imageUrl.isEmpty()}" th:src="*{imageUrl}" 
-                             class="image-preview has-image" id="imagePreview" alt="Product Image">
-                        <img th:unless="*{imageUrl != null and !imageUrl.isEmpty()}" src="/images/placeholder-product.jpg" 
-                             class="image-preview" id="imagePreview" alt="Product Image">
-                        
-                        <label class="upload-label">
+            <!-- Hidden referer path field -->
+            <input type="hidden" name="refererPath" th:if="${refererPath != null}" th:value="${refererPath}" />
+
+            <!-- Step 1: Image Upload -->
+            <div class="form-card-modern animate-fade-in-up" id="step1">
+                <div class="card-header-modern">
+                    <h3>
+                        <div class="icon">
+                            <i class="bi bi-image"></i>
+                        </div>
+                        Imagine Produs
+                    </h3>
+                </div>
+                <div class="card-body-modern">
+                    <div class="image-upload-modern" id="imageUpload">
+                        <div class="upload-overlay">
                             <i class="bi bi-cloud-upload me-2"></i>
-                            Încarcă Imagine Produs
+                            Eliberează pentru a încărca
+                        </div>
+                        
+                        <div th:if="*{imageUrl != null and !imageUrl.isEmpty()}" class="has-image">
+                            <img th:src="*{imageUrl}" class="image-preview-modern" id="imagePreview" alt="Product Image">
+                        </div>
+                        
+                        <div th:unless="*{imageUrl != null and !imageUrl.isEmpty()}" class="upload-content">
+                            <i class="bi bi-cloud-upload upload-icon"></i>
+                            <div class="upload-text">Trage și eliberează imaginea aici</div>
+                            <div class="upload-hint">sau click pentru a selecta din calculator</div>
                             <input type="file" name="imageFile" id="imageFile" 
                                    accept="image/*" style="display: none;"
-                                   onchange="previewImage(this)">
-                        </label>
-                        <div class="form-text">Imaginile de calitate cresc șansele de vânzare. Recomandăm o imagine clară, pe un fundal neutru.</div>
+                                   onchange="handleImageUpload(this)">
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <button type="button" class="btn-modern btn-primary-modern" onclick="nextStep()">
+                            <i class="bi bi-arrow-right btn-icon"></i>
+                            Continuă
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Product Information -->
+            <div class="form-card-modern animate-fade-in-up" id="step2" style="display: none;">
+                <div class="card-header-modern">
+                    <h3>
+                        <div class="icon">
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+                        Informații Produs
+                    </h3>
+                </div>
+                <div class="card-body-modern">
+                    <!-- Seller Information (only for selling) -->
+                    <div th:if="${isSelling}" class="seller-info-modern d-flex align-items-center">
+                        <div class="seller-avatar-modern">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-semibold">Vei lista acest produs ca:</h6>
+                            <p class="mb-0" th:if="${#authentication != null and #authentication.principal != null}" 
+                               th:text="${#authentication.principal.firstName + ' ' + #authentication.principal.lastName}">Nume Utilizator</p>
+                            <p class="mb-0" th:unless="${#authentication != null and #authentication.principal != null}">Utilizator</p>
+                        </div>
                     </div>
 
-                    <!-- Product Details Section -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="bi bi-info-circle me-2"></i>Informații Produs
-                        </h3>
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Nume Produs*</label>
-                                    <input type="text" class="form-control" th:field="*{name}" required
-                                           placeholder="Introduceți numele produsului">
-                                    <div class="form-text">Un nume scurt și descriptiv pentru produsul tău</div>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-tag icon"></i>
+                                    Nume Produs*
+                                </label>
+                                <input type="text" class="form-control-modern" th:field="*{name}" required
+                                       placeholder="Introduceți numele produsului">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-currency-exchange icon"></i>
+                                    Preț (RON)*
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control-modern" th:field="*{price}" 
+                                           step="0.01" min="0" required
+                                           placeholder="0.00">
+                                    <span class="input-group-text" style="border: 2px solid var(--border-light); border-left: none; border-radius: 0 12px 12px 0; background: var(--bg-light);">RON</span>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Preț (RON)*</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" th:field="*{price}" 
-                                               step="0.01" min="0" required
-                                               placeholder="0.00">
-                                        <span class="input-group-text">RON</span>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Categorie*</label>
-                                    <select class="form-select" th:field="*{category}" required>
-                                        <option value="">Selectează categoria</option>
-                                        <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
-                                                th:value="${cat}"
-                                                th:text="${cat.displayName}">
-                                        </option>
-                                    </select>
-                                    <div class="form-text">Alege categoria care se potrivește cel mai bine produsului tău</div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-box icon"></i>
+                                    Stoc Disponibil*
+                                </label>
+                                <input type="number" class="form-control-modern" th:field="*{stock}" 
+                                       min="1" required
+                                       placeholder="Cantitate disponibilă">
                             </div>
+                        </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Stoc Disponibil*</label>
-                                    <input type="number" class="form-control" th:field="*{stock}" 
-                                           min="1" required
-                                           placeholder="Cantitate disponibilă">
-                                    <div class="form-text">Numărul de unități disponibile pentru vânzare</div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-collection icon"></i>
+                                    Categorie*
+                                </label>
+                                <select class="form-select-modern" th:field="*{category}" required>
+                                    <option value="">Selectează categoria</option>
+                                    <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
+                                            th:value="${cat}"
+                                            th:text="${cat.displayName}">
+                                    </option>
+                                </select>
                             </div>
+                        </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Marketplace*</label>
-                                    <select class="form-select" th:field="*{branch}" required>
-                                        <option value="">Selectează marketplace-ul</option>
-                                        <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
-                                                th:value="${branch}"
-                                                th:selected="${branch == product.branch}"
-                                                th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion Market')}">
-                                        </option>
-                                    </select>
-                                    <div class="form-text">Alege secțiunea din marketplace unde va apărea produsul tău</div>
-                                </div>
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-card-text icon"></i>
+                                    Descriere Produs*
+                                </label>
+                                <textarea class="form-control-modern" th:field="*{description}" 
+                                          rows="4" required
+                                          placeholder="Descrieți produsul în detaliu..."></textarea>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn-modern btn-secondary-modern" onclick="prevStep()">
+                            <i class="bi bi-arrow-left btn-icon"></i>
+                            Înapoi
+                        </button>
+                        <button type="button" class="btn-modern btn-primary-modern" onclick="nextStep()">
+                            <i class="bi bi-arrow-right btn-icon"></i>
+                            Continuă
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                            <div class="col-12">
-                                <div class="mb-3">
-                                    <label class="form-label">Descriere Produs*</label>
-                                    <textarea class="form-control" th:field="*{description}" 
-                                              rows="4" required
-                                              placeholder="Descrieți produsul în detaliu..."></textarea>
-                                    <div class="form-text">O descriere detaliată ajută cumpărătorii să înțeleagă mai bine produsul tău</div>
-                                </div>
-                            </div>
+            <!-- Step 3: Marketplace Selection -->
+            <div class="form-card-modern animate-fade-in-up" id="step3" style="display: none;">
+                <div class="card-header-modern">
+                    <h3>
+                        <div class="icon">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        Alege Marketplace
+                    </h3>
+                </div>
+                <div class="card-body-modern">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">
+                            <i class="bi bi-geo-alt icon"></i>
+                            Marketplace*
+                        </label>
+                        <select class="form-select-modern" th:field="*{branch}" required>
+                            <option value="">Selectează marketplace-ul</option>
+                            <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                    th:value="${branch}"
+                                    th:selected="${branch == product.branch}"
+                                    th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'Marketplace Verde' : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'Food Market' : 'Electro & Fashion Market')}">
+                            </option>
+                        </select>
+                        <div class="form-text mt-2">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Alege secțiunea din marketplace unde va apărea produsul tău
                         </div>
                     </div>
 
                     <!-- Eco-Friendly Section -->
-                    <div class="form-section">
-                        <div class="eco-friendly-check">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" th:field="*{ecoFriendly}">
-                                <label class="form-check-label">
-                                    <i class="bi bi-leaf-fill text-success me-2"></i>
-                                    Acest produs este Eco-Friendly
-                                </label>
-                            </div>
-                            <div class="form-text">Produsele eco-friendly sunt mai vizibile în marketplace și contribuie la un mediu mai sănătos</div>
+                    <div class="eco-friendly-modern">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input eco-checkbox" th:field="*{ecoFriendly}">
+                            <label class="form-check-label fw-semibold">
+                                <i class="bi bi-leaf-fill text-success me-2"></i>
+                                Acest produs este Eco-Friendly
+                            </label>
+                        </div>
+                        <div class="form-text mt-2">
+                            <i class="bi bi-lightbulb me-1"></i>
+                            Produsele eco-friendly sunt mai vizibile în marketplace și contribuie la un mediu mai sănătos
                         </div>
                     </div>
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn-modern btn-secondary-modern" onclick="prevStep()">
+                            <i class="bi bi-arrow-left btn-icon"></i>
+                            Înapoi
+                        </button>
+                        <button type="button" class="btn-modern btn-primary-modern" onclick="nextStep()">
+                            <i class="bi bi-arrow-right btn-icon"></i>
+                            Continuă
+                        </button>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Step 4: Final Review -->
+            <div class="form-card-modern animate-fade-in-up" id="step4" style="display: none;">
+                <div class="card-header-modern">
+                    <h3>
+                        <div class="icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        Verifică și Publică
+                    </h3>
+                </div>
+                <div class="card-body-modern">
                     <!-- Tips for Sellers -->
-                    <div th:if="${isSelling}" class="tips-card">
+                    <div th:if="${isSelling}" class="tips-modern">
                         <h5><i class="bi bi-lightbulb me-2"></i>Sfaturi pentru Vânzători</h5>
                         <ul>
                             <li>Folosește imagini clare și de calitate pentru produsul tău</li>
@@ -359,24 +861,32 @@
                         </ul>
                     </div>
 
-                    <!-- Submit Buttons -->
-                    <div class="form-actions">
-                        <div class="d-flex gap-3 justify-content-center">
-                            <button type="submit" class="btn btn-success btn-submit">
-                                <i class="bi bi-check-lg me-2"></i>
+                    <!-- Form Actions -->
+                    <div class="form-actions-modern">
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <button type="submit" class="btn-modern btn-primary-modern" id="submitBtn">
+                                <i class="bi bi-check-lg btn-icon"></i>
                                 <span th:text="${isSelling ? 'Listează Produsul' : (product.id != null ? 'Salvează Modificările' : 'Adaugă Produs')}">
                                     Adaugă Produs
                                 </span>
                             </button>
-                            <a th:href="${isSelling ? (refererPath != null ? refererPath : '/dashboard') : (product.id != null ? '/marketplace/my-products' : '/marketplace')}" class="btn btn-outline-secondary btn-submit">
-                                <i class="bi bi-x-lg me-2"></i>
+                            <a th:href="${isSelling ? (refererPath != null ? refererPath : '/dashboard') : (product.id != null ? '/marketplace/my-products' : '/marketplace')}" 
+                               class="btn-modern btn-secondary-modern">
+                                <i class="bi bi-x-lg btn-icon"></i>
                                 Anulează
                             </a>
                         </div>
                     </div>
-                </form>
+                    
+                    <div class="d-flex justify-content-center mt-3">
+                        <button type="button" class="btn-modern btn-secondary-modern" onclick="prevStep()">
+                            <i class="bi bi-arrow-left btn-icon"></i>
+                            Înapoi
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <!-- Footer -->
@@ -386,44 +896,160 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        function previewImage(input) {
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // Initialize drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            const imageUpload = document.getElementById('imageUpload');
+            const imageFile = document.getElementById('imageFile');
+
+            // Click to upload
+            imageUpload.addEventListener('click', function() {
+                imageFile.click();
+            });
+
+            // Drag and drop
+            imageUpload.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+
+            imageUpload.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+
+            imageUpload.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    imageFile.files = files;
+                    handleImageUpload(imageFile);
+                }
+            });
+        });
+
+        function handleImageUpload(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
+                    const imageUpload = document.getElementById('imageUpload');
+                    const uploadContent = imageUpload.querySelector('.upload-content');
+                    
+                    // Hide upload content
+                    if (uploadContent) {
+                        uploadContent.style.display = 'none';
+                    }
+                    
+                    // Show image preview
+                    let preview = document.getElementById('imagePreview');
+                    if (!preview) {
+                        preview = document.createElement('img');
+                        preview.id = 'imagePreview';
+                        preview.className = 'image-preview-modern';
+                        preview.alt = 'Product Image';
+                        imageUpload.appendChild(preview);
+                    }
+                    
                     preview.src = e.target.result;
-                    preview.classList.add('has-image');
+                    imageUpload.classList.add('has-image');
+                    
+                    // Add animation
+                    preview.style.animation = 'fadeInUp 0.6s ease-out';
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Form validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    // Check required fields
-                    const requiredFields = form.querySelectorAll('[required]');
-                    let isValid = true;
-                    
-                    requiredFields.forEach(field => {
-                        if (!field.value.trim()) {
-                            isValid = false;
-                            field.classList.add('is-invalid');
-                        } else {
-                            field.classList.remove('is-invalid');
-                        }
-                    });
-                    
-                    if (!isValid) {
-                        e.preventDefault();
-                        alert('Vă rugăm să completați toate câmpurile obligatorii.');
-                        return false;
-                    }
-                });
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.getElementById('step' + currentStep).style.display = 'none';
+                currentStep++;
+                document.getElementById('step' + currentStep).style.display = 'block';
+                updateProgress();
+                updateStepNavigation();
+                
+                // Add animation
+                document.getElementById('step' + currentStep).style.animation = 'slideInRight 0.6s ease-out';
             }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                document.getElementById('step' + currentStep).style.display = 'none';
+                currentStep--;
+                document.getElementById('step' + currentStep).style.display = 'block';
+                updateProgress();
+                updateStepNavigation();
+                
+                // Add animation
+                document.getElementById('step' + currentStep).style.animation = 'fadeInUp 0.6s ease-out';
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function updateStepNavigation() {
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                item.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    item.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Form validation
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<div class="spinner"></div>Se procesează...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            
+            // Check required fields
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Vă rugăm să completați toate câmpurile obligatorii.');
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+                return false;
+            }
+        });
+
+        // Add visual feedback for form controls
+        document.querySelectorAll('.form-control-modern, .form-select-modern').forEach(field => {
+            field.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            field.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
         });
     </script>
 </body>

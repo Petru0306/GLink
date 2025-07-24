@@ -5,10 +5,14 @@ import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -26,22 +30,40 @@ public class SalesController {
      * Show sales history page
      */
     @GetMapping
-    public String showSalesHistory(Model model) {
+    public String showSalesHistory(Model model, 
+                                 @RequestParam(defaultValue = "0") int page,
+                                 @RequestParam(defaultValue = "6") int size) {
         try {
             User currentUser = userService.getCurrentUser();
-            List<ProductDto> soldProducts = productService.getSoldProductsBySeller(currentUser.getId());
             
-            // Calculate statistics
-            double totalEarnings = soldProducts.stream()
+            // Get all sold products for statistics calculation
+            List<ProductDto> allSoldProducts = productService.getSoldProductsBySeller(currentUser.getId());
+            
+            // Calculate statistics from all products
+            double totalEarnings = allSoldProducts.stream()
                     .mapToDouble(ProductDto::getPrice)
                     .sum();
             
-            int totalProductsSold = soldProducts.size();
+            int totalProductsSold = allSoldProducts.size();
             
-            model.addAttribute("soldProducts", soldProducts);
+            // Create pageable for pagination
+            Pageable pageable = PageRequest.of(page, size);
+            
+            // Get paginated sold products
+            Page<ProductDto> soldProductsPage = productService.getSoldProductsBySellerPaginated(currentUser.getId(), pageable);
+            
+            model.addAttribute("soldProducts", soldProductsPage.getContent());
             model.addAttribute("totalEarnings", totalEarnings);
             model.addAttribute("totalProductsSold", totalProductsSold);
             model.addAttribute("currentUser", currentUser);
+            
+            // Pagination attributes
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", soldProductsPage.getTotalPages());
+            model.addAttribute("totalElements", soldProductsPage.getTotalElements());
+            model.addAttribute("hasNext", soldProductsPage.hasNext());
+            model.addAttribute("hasPrevious", soldProductsPage.hasPrevious());
+            model.addAttribute("showPagination", totalProductsSold > 6);
             
             return "dashboard/sales-history";
         } catch (Exception e) {

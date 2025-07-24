@@ -3,6 +3,7 @@ package com.greenlink.greenlink.controller;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.PointEvent;
 import com.greenlink.greenlink.dto.ProductDto;
+import com.greenlink.greenlink.dto.PurchaseDto;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.ChallengeService;
@@ -65,6 +66,21 @@ public class DashboardController {
             model.addAttribute("totalProductsSold", 0);
         }
         
+        // Add buy history statistics for Quick Actions
+        try {
+            List<PurchaseDto> boughtProducts = productService.getBoughtProductsByBuyer(user.getId());
+            double totalAmountSpent = boughtProducts.stream()
+                    .mapToDouble(purchase -> purchase.getTotalPrice().doubleValue())
+                    .sum();
+            int totalProductsBought = boughtProducts.size();
+            
+            model.addAttribute("totalAmountSpent", totalAmountSpent);
+            model.addAttribute("totalProductsBought", totalProductsBought);
+        } catch (Exception e) {
+            model.addAttribute("totalAmountSpent", 0.0);
+            model.addAttribute("totalProductsBought", 0);
+        }
+        
         // Add challenge statistics
         try {
             // Get completed challenges count
@@ -90,3 +106,4 @@ public class DashboardController {
         return "dashboard";
     }
 }
+

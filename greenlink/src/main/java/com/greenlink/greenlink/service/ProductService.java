@@ -1,6 +1,7 @@
 package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.dto.ProductDto;
+import com.greenlink.greenlink.dto.PurchaseDto;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.Product.Category;
@@ -415,6 +416,41 @@ public class ProductService {
         
         return products.stream()
                 .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+    
+    public Page<ProductDto> getSoldProductsBySellerPaginated(Long sellerId, Pageable pageable) {
+        // Get all sold products for this seller
+        List<Product> allSoldProducts = productRepository.findSoldProductsBySellerId(sellerId);
+        
+        // Calculate pagination manually since the repository method returns a List
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allSoldProducts.size());
+        
+        if (start > allSoldProducts.size()) {
+            return Page.empty(pageable);
+        }
+        
+        List<Product> pageContent = allSoldProducts.subList(start, end);
+        List<ProductDto> dtoContent = pageContent.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+        
+        return new org.springframework.data.domain.PageImpl<>(
+                dtoContent,
+                pageable,
+                allSoldProducts.size()
+        );
+    }
+    
+    public List<PurchaseDto> getBoughtProductsByBuyer(Long buyerId) {
+        List<Product> products = productRepository.findProductsByBuyerId(buyerId);
+        
+        System.out.println("DEBUG: Found " + products.size() + " products bought by user " + buyerId);
+        
+        return products.stream()
+                .map(PurchaseDto::fromProduct)
+                .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
                 .collect(Collectors.toList());
     }
     
