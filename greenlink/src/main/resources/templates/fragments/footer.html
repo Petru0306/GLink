@@ -4,11 +4,11 @@
 <footer th:fragment="footer" class="bg-dark text-light py-5">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <h5 class="text-success mb-3">GreenLink</h5>
                 <p th:text="#{footer.tagline}">Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.</p>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
                 <h5 class="text-success mb-3" th:text="#{footer.quick.links}">Link-uri Rapide</h5>
                 <ul class="list-unstyled">
                     <li><a href="/educatie" class="text-light text-decoration-none" th:text="#{footer.education}">Educație</a></li>
@@ -17,7 +17,13 @@
                     <li><a href="/calculator" class="text-light text-decoration-none" th:text="#{footer.calculator}">Calculator Carbon</a></li>
                 </ul>
             </div>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-3 mb-4">
+                <h5 class="text-success mb-3"><i class="bi bi-shield-check me-2"></i>Legal</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/termeni" class="text-light text-decoration-none"><i class="bi bi-shield me-2"></i>Termeni și Condiții</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4">
                 <h5 class="text-success mb-3" th:text="#{footer.contact}">Contact</h5>
                 <ul class="list-unstyled">
                     <li><i class="bi bi-envelope me-2"></i>greenlink@gmail.com</li>
