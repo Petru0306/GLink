@@ -86,6 +86,27 @@
                                 <small>Passwords do not match</small>
                             </div>
                         </div>
+
+                        <!-- Terms and Privacy Policy Acceptance -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="acceptTerms" name="acceptTerms" required>
+                                <label class="form-check-label" for="acceptTerms">
+                                    <span th:text="#{register.accept.terms}">I accept the Terms and Conditions</span>
+                                    <a href="/termeni" target="_blank" class="text-success ms-1" th:text="#{register.terms.link}">Terms and Conditions</a>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="acceptPrivacy" name="acceptPrivacy" required>
+                                <label class="form-check-label" for="acceptPrivacy">
+                                    <span th:text="#{register.accept.privacy}">I accept the Privacy Policy</span>
+                                    <a href="/confidentialitate" target="_blank" class="text-success ms-1" th:text="#{register.privacy.link}">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <div class="text-danger" id="acceptanceError" style="display: none;">
+                                <small th:text="#{register.accept.required}">You must accept both Terms and Conditions and Privacy Policy to continue</small>
+                            </div>
+                        </div>
                         
                         <!-- reCAPTCHA widget -->
                         <div th:if="${recaptchaEnabled}" class="mb-3 d-flex justify-content-center">
@@ -180,6 +201,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Terms and Privacy Policy acceptance checkboxes
+    const acceptTerms = document.getElementById('acceptTerms');
+    const acceptPrivacy = document.getElementById('acceptPrivacy');
+    const acceptanceError = document.getElementById('acceptanceError');
+
+    function checkAcceptance() {
+        const termsAccepted = acceptTerms.checked;
+        const privacyAccepted = acceptPrivacy.checked;
+        
+        if (!termsAccepted || !privacyAccepted) {
+            acceptanceError.style.display = 'block';
+            return false;
+        } else {
+            acceptanceError.style.display = 'none';
+            return true;
+        }
+    }
+
+    if (acceptTerms) {
+        acceptTerms.addEventListener('change', function() {
+            checkAcceptance();
+            updateSubmitButton();
+        });
+    }
+
+    if (acceptPrivacy) {
+        acceptPrivacy.addEventListener('change', function() {
+            checkAcceptance();
+            updateSubmitButton();
+        });
+    }
+
     // Password validation
     if (passwordInput) {
         passwordInput.addEventListener('input', function() {
@@ -201,6 +254,12 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.addEventListener('submit', function(e) {
             // Check password requirements
             if (!validatePassword(passwordInput.value) || !checkPasswordMatch()) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Check terms and privacy acceptance
+            if (!checkAcceptance()) {
                 e.preventDefault();
                 return false;
             }
@@ -247,19 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if all requirements are met
         const allValid = Object.values(requirements).every(req => req);
         
-        // Update submit button state
-        const submitButton = document.getElementById('submitBtn');
-        if (submitButton) {
-            submitButton.disabled = !allValid;
-            if (!allValid) {
-                submitButton.classList.add('btn-secondary');
-                submitButton.classList.remove('btn-success');
-            } else {
-                submitButton.classList.remove('btn-secondary');
-                submitButton.classList.add('btn-success');
-            }
-        }
-
         return allValid;
     }
 
@@ -293,10 +339,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSubmitButton() {
         const passwordValid = validatePassword(passwordInput.value);
         const passwordsMatch = checkPasswordMatch();
+        const acceptanceValid = checkAcceptance();
         
         const submitButton = document.getElementById('submitBtn');
         if (submitButton) {
-            if (passwordValid && passwordsMatch) {
+            if (passwordValid && passwordsMatch && acceptanceValid) {
                 submitButton.disabled = false;
                 submitButton.classList.remove('btn-secondary');
                 submitButton.classList.add('btn-success');
