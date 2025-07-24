@@ -48,7 +48,8 @@ public class SecurityConfig {
                     .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/images/**", "/files/**", "/webjars/**", "/error",
                                    "/educatie/**", "/marketplace/**", "/reciclare/**", "/despre/**", "/calculator/**", 
                                    "/provocari/**", "/contact/**", "/profile/**", "/auth-test/generate-password", 
-                                   "/payment/webhook", "/payment/success", "/payment/cancel", "/change-language", "/termeni/**").permitAll()
+                                   "/payment/webhook", "/payment/success", "/payment/cancel", "/change-language", 
+                                   "/termeni/**", "/confidentialitate/**").permitAll()
                     .requestMatchers("/inbox/**", "/dm/**").authenticated()
                     .anyRequest().authenticated();
             })
