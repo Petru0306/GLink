@@ -418,8 +418,8 @@
         <div class="container header-content">
             <div class="row align-items-center">
                 <div class="col-lg-10 mx-auto text-center">
-                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown">Politica de Confidențialitate</h1>
-                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis">Politica noastră de confidențialitate detaliază modul în care colectăm și utilizăm datele cu caracter personal</p>
+                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown" th:text="#{privacy.heading}">Politica de Confidențialitate</h1>
+                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis" th:text="#{privacy.hero.emphasis}">Politica noastră de confidențialitate detaliază modul în care colectăm și utilizăm datele cu caracter personal</p>
                 </div>
             </div>
         </div>
@@ -429,114 +429,114 @@
     <section class="privacy-section">
         <div class="container">
             <div class="privacy-container fade-in">
-                <h2 class="privacy-title">Politica de Confidențialitate – GreenLink</h2>
-                <p class="privacy-date">Ultima actualizare: 24.07.2025</p>
+                <h2 class="privacy-title" th:text="#{privacy.title}">Politica de Confidențialitate – GreenLink</h2>
+                <p class="privacy-date" th:text="#{privacy.lastupdate}">Ultima actualizare: 24.07.2025</p>
 
                 <div class="privacy-content">
-                    <h3 class="privacy-subtitle"><i class="bi bi-person-badge"></i>1. Operatorul de date</h3>
-                    <p class="privacy-text">GreenLink respectă confidențialitatea utilizatorilor săi și se angajează să protejeze datele cu caracter personal colectate în cadrul utilizării platformei. Prezenta Politică de Confidențialitate descrie ce date colectăm, cum le folosim, cui le transmitem și care sunt drepturile tale.</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-person-badge"></i><span th:text="#{privacy.subtitle.data.operator}">1. Operatorul de date</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.data.operator}">GreenLink respectă confidențialitatea utilizatorilor săi și se angajează să protejeze datele cu caracter personal colectate în cadrul utilizării platformei. Prezenta Politică de Confidențialitate descrie ce date colectăm, cum le folosim, cui le transmitem și care sunt drepturile tale.</p>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-database"></i>2. Datele colectate</h3>
-                    <h4 class="privacy-subtitle">a) Date furnizate direct de utilizator:</h4>
+                    <h3 class="privacy-subtitle"><i class="bi bi-database"></i><span th:text="#{privacy.subtitle.data.collected}">2. Datele colectate</span></h3>
+                    <h4 class="privacy-subtitle" th:text="#{privacy.subtitle.data.collected.user}">a) Date furnizate direct de utilizator:</h4>
                     <ul class="privacy-list">
-                        <li>Nume, prenume (opțional la înregistrare)</li>
-                        <li>Adresă de email</li>
-                        <li>Imagine de profil (opțional)</li>
-                        <li>Parolă (criptată – nu este vizibilă nici pentru echipa GreenLink)</li>
-                        <li>Produse listate, mesaje transmise, provocări acceptate, cursuri finalizate, puncte acumulate</li>
-                        <li>Alte informații completate în profilul public (ex: localitate, descriere, preferințe)</li>
+                        <li th:text="#{privacy.list.data.collected.user.1}">Nume, prenume (opțional la înregistrare)</li>
+                        <li th:text="#{privacy.list.data.collected.user.2}">Adresă de email</li>
+                        <li th:text="#{privacy.list.data.collected.user.3}">Imagine de profil (opțional)</li>
+                        <li th:text="#{privacy.list.data.collected.user.4}">Parolă (criptată – nu este vizibilă nici pentru echipa GreenLink)</li>
+                        <li th:text="#{privacy.list.data.collected.user.5}">Produse listate, mesaje transmise, provocări acceptate, cursuri finalizate, puncte acumulate</li>
+                        <li th:text="#{privacy.list.data.collected.user.6}">Alte informații completate în profilul public (ex: localitate, descriere, preferințe)</li>
                     </ul>
-                    <h4 class="privacy-subtitle">b) Date colectate automat:</h4>
+                    <h4 class="privacy-subtitle" th:text="#{privacy.subtitle.data.collected.auto}">b) Date colectate automat:</h4>
                     <ul class="privacy-list">
-                        <li>Adresa IP</li>
-                        <li>Browser și sistem de operare</li>
-                        <li>Paginile accesate și acțiunile efectuate</li>
-                        <li>Timpul petrecut în aplicație</li>
-                        <li>Preferințe de limbă și locație (locale cookie)</li>
+                        <li th:text="#{privacy.list.data.collected.auto.1}">Adresa IP</li>
+                        <li th:text="#{privacy.list.data.collected.auto.2}">Browser și sistem de operare</li>
+                        <li th:text="#{privacy.list.data.collected.auto.3}">Paginile accesate și acțiunile efectuate</li>
+                        <li th:text="#{privacy.list.data.collected.auto.4}">Timpul petrecut în aplicație</li>
+                        <li th:text="#{privacy.list.data.collected.auto.5}">Preferințe de limbă și locație (locale cookie)</li>
                     </ul>
-                    <h4 class="privacy-subtitle">c) Date prin terți (OAuth2):</h4>
+                    <h4 class="privacy-subtitle" th:text="#{privacy.subtitle.data.collected.third}">c) Date prin terți (OAuth2):</h4>
                     <ul class="privacy-list">
-                        <li>Date publice din contul Google/GitHub, cum ar fi: nume, avatar, adresă de email (doar cu consimțământul explicit)</li>
+                        <li th:text="#{privacy.list.data.collected.third.1}">Date publice din contul Google/GitHub, cum ar fi: nume, avatar, adresă de email (doar cu consimțământul explicit)</li>
                     </ul>
-                    <h4 class="privacy-subtitle">d) Date pentru plăți (în dezvoltare):</h4>
+                    <h4 class="privacy-subtitle" th:text="#{privacy.subtitle.data.collected.payments}">d) Date pentru plăți (în dezvoltare):</h4>
                     <ul class="privacy-list">
-                        <li>Tranzacțiile vor fi procesate prin Stripe; GreenLink nu stochează și nu accesează datele cardului bancar.</li>
-                    </ul>
-
-                    <h3 class="privacy-subtitle"><i class="bi bi-shield-lock"></i>3. Scopul prelucrării</h3>
-                    <p class="privacy-text">Datele colectate sunt utilizate în următoarele scopuri:</p>
-                    <ul class="privacy-list">
-                        <li>Crearea și administrarea contului de utilizator</li>
-                        <li>Furnizarea funcționalităților interactive (provocări, mesaje, marketplace etc.)</li>
-                        <li>Atribuirea punctelor și calculul progresului ecologic</li>
-                        <li>Comunicarea notificărilor (ex: badge-uri, mesaje, activități)</li>
-                        <li>Personalizarea experienței (ex: lecții recomandate, produse relevante)</li>
-                        <li>Asigurarea securității platformei</li>
-                        <li>Respectarea obligațiilor legale</li>
-                        <li>Îmbunătățirea serviciilor prin analize statistice anonimizate</li>
+                        <li th:text="#{privacy.list.data.collected.payments.1}">Tranzacțiile vor fi procesate prin Stripe; GreenLink nu stochează și nu accesează datele cardului bancar.</li>
                     </ul>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-journal-check"></i>4. Temeiul legal</h3>
-                    <p class="privacy-text">Datele sunt prelucrate în baza următoarelor temeiuri legale:</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-shield-lock"></i><span th:text="#{privacy.subtitle.processing.purpose}">3. Scopul prelucrării</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.processing.purpose}">Datele colectate sunt utilizate în următoarele scopuri:</p>
                     <ul class="privacy-list">
-                        <li>Executarea unui contract (Termenii și Condițiile)</li>
-                        <li>Consimțământ (în cazul conturilor OAuth sau newslettere – dacă vor exista)</li>
-                        <li>Obligație legală (în cazul cererilor autorităților)</li>
-                        <li>Interes legitim (ex: îmbunătățirea platformei, prevenirea fraudelor)</li>
+                        <li th:text="#{privacy.list.processing.purpose.1}">Crearea și administrarea contului de utilizator</li>
+                        <li th:text="#{privacy.list.processing.purpose.2}">Furnizarea funcționalităților interactive (provocări, mesaje, marketplace etc.)</li>
+                        <li th:text="#{privacy.list.processing.purpose.3}">Atribuirea punctelor și calculul progresului ecologic</li>
+                        <li th:text="#{privacy.list.processing.purpose.4}">Comunicarea notificărilor (ex: badge-uri, mesaje, activități)</li>
+                        <li th:text="#{privacy.list.processing.purpose.5}">Personalizarea experienței (ex: lecții recomandate, produse relevante)</li>
+                        <li th:text="#{privacy.list.processing.purpose.6}">Asigurarea securității platformei</li>
+                        <li th:text="#{privacy.list.processing.purpose.7}">Respectarea obligațiilor legale</li>
+                        <li th:text="#{privacy.list.processing.purpose.8}">Îmbunătățirea serviciilor prin analize statistice anonimizate</li>
                     </ul>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-calendar-check"></i>5. Durata păstrării datelor</h3>
-                    <p class="privacy-text">Datele sunt păstrate pe perioada existenței contului sau până la solicitarea expresă de ștergere. În cazul obligațiilor legale, datele pot fi păstrate pe perioada prevăzută de legislație.</p>
-
-                    <h3 class="privacy-subtitle"><i class="bi bi-people-fill"></i>6. Dezvăluirea datelor către terți</h3>
-                    <p class="privacy-text">GreenLink nu vinde și nu distribuie datele personale către terți, cu excepția:</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-journal-check"></i><span th:text="#{privacy.subtitle.legal.basis}">4. Temeiul legal</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.legal.basis}">Datele sunt prelucrate în baza următoarelor temeiuri legale:</p>
                     <ul class="privacy-list">
-                        <li>Furnizorilor de servicii (ex: Stripe – pentru plăți, Render – pentru hosting)</li>
-                        <li>Autorităților publice, în cazuri legale justificate</li>
-                        <li>Google/GitHub (doar în cazul autentificării OAuth)</li>
-                    </ul>
-                    <p class="privacy-text">Toți furnizorii de servicii sunt obligați prin contract să respecte cerințele GDPR.</p>
-
-                    <h3 class="privacy-subtitle"><i class="bi bi-person-check-fill"></i>7. Drepturile utilizatorilor</h3>
-                    <p class="privacy-text">Conform GDPR, ai următoarele drepturi:</p>
-                    <ul class="privacy-list">
-                        <li>Dreptul de acces – să cunoști ce date deținem despre tine</li>
-                        <li>Dreptul la rectificare – să soliciți corectarea datelor incorecte</li>
-                        <li>Dreptul la ștergere („dreptul de a fi uitat”)</li>
-                        <li>Dreptul la restricționarea prelucrării</li>
-                        <li>Dreptul la portabilitatea datelor</li>
-                        <li>Dreptul de opoziție la prelucrare</li>
+                        <li th:text="#{privacy.list.legal.basis.1}">Executarea unui contract (Termenii și Condițiile)</li>
+                        <li th:text="#{privacy.list.legal.basis.2}">Consimțământ (în cazul conturilor OAuth sau newslettere – dacă vor exista)</li>
+                        <li th:text="#{privacy.list.legal.basis.3}">Obligație legală (în cazul cererilor autorităților)</li>
+                        <li th:text="#{privacy.list.legal.basis.4}">Interes legitim (ex: îmbunătățirea platformei, prevenirea fraudelor)</li>
                     </ul>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-box-seam"></i>8. Cookies și tehnologii similare</h3>
-                    <p class="privacy-text">Platforma utilizează cookies funcționale și de analiză. Acestea:</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-calendar-check"></i><span th:text="#{privacy.subtitle.data.retention}">5. Durata păstrării datelor</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.data.retention}">Datele sunt păstrate pe perioada existenței contului sau până la solicitarea expresă de ștergere. În cazul obligațiilor legale, datele pot fi păstrate pe perioada prevăzută de legislație.</p>
+
+                    <h3 class="privacy-subtitle"><i class="bi bi-people-fill"></i><span th:text="#{privacy.subtitle.data.disclosure}">6. Dezvăluirea datelor către terți</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.data.disclosure}">GreenLink nu vinde și nu distribuie datele personale către terți, cu excepția:</p>
                     <ul class="privacy-list">
-                        <li>Retin preferințele de limbă</li>
-                        <li>Analizează traficul și comportamentul utilizatorilor (anonim)</li>
-                        <li>Nu colectează date sensibile sau bancare</li>
+                        <li th:text="#{privacy.list.data.disclosure.1}">Furnizorilor de servicii (ex: Stripe – pentru plăți, Render – pentru hosting)</li>
+                        <li th:text="#{privacy.list.data.disclosure.2}">Autorităților publice, în cazuri legale justificate</li>
+                        <li th:text="#{privacy.list.data.disclosure.3}">Google/GitHub (doar în cazul autentificării OAuth)</li>
                     </ul>
-                    <p class="privacy-text">Prin continuarea utilizării site-ului, îți exprimi acordul pentru utilizarea cookies. Poți modifica preferințele din setările browserului.</p>
+                    <p class="privacy-text" th:text="#{privacy.text.data.disclosure.gdpr}">Toți furnizorii de servicii sunt obligați prin contract să respecte cerințele GDPR.</p>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-shield-fill-exclamation"></i>9. Securitatea datelor</h3>
-                    <p class="privacy-text">GreenLink implementează măsuri de securitate conforme cu cele mai bune practici din industrie:</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-person-check-fill"></i><span th:text="#{privacy.subtitle.user.rights}">7. Drepturile utilizatorilor</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.user.rights}">Conform GDPR, ai următoarele drepturi:</p>
                     <ul class="privacy-list">
-                        <li>Stocare parole criptate (BCrypt)</li>
-                        <li>Protecție împotriva atacurilor (XSS, SQLi, CSRF)</li>
-                        <li>Securitate WebSocket</li>
-                        <li>Acces restricționat pe roluri</li>
-                        <li>Monitorizare și logare activitate</li>
+                        <li th:text="#{privacy.list.user.rights.1}">Dreptul de acces – să cunoști ce date deținem despre tine</li>
+                        <li th:text="#{privacy.list.user.rights.2}">Dreptul la rectificare – să soliciți corectarea datelor incorecte</li>
+                        <li th:text="#{privacy.list.user.rights.3}">Dreptul la ștergere („dreptul de a fi uitat")</li>
+                        <li th:text="#{privacy.list.user.rights.4}">Dreptul la restricționarea prelucrării</li>
+                        <li th:text="#{privacy.list.user.rights.5}">Dreptul la portabilitatea datelor</li>
+                        <li th:text="#{privacy.list.user.rights.6}">Dreptul de opoziție la prelucrare</li>
                     </ul>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-globe"></i>10. Transfer internațional de date</h3>
-                    <p class="privacy-text">Datele sunt stocate pe servere aflate în UE (Render.com – Frankfurt, Germania). În cazul autentificării cu furnizori din afara UE (ex: Google), asigurăm respectarea clauzelor contractuale standard GDPR.</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-box-seam"></i><span th:text="#{privacy.subtitle.cookies}">8. Cookies și tehnologii similare</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.cookies}">Platforma utilizează cookies funcționale și de analiză. Acestea:</p>
+                    <ul class="privacy-list">
+                        <li th:text="#{privacy.list.cookies.1}">Retin preferințele de limbă</li>
+                        <li th:text="#{privacy.list.cookies.2}">Analizează traficul și comportamentul utilizatorilor (anonim)</li>
+                        <li th:text="#{privacy.list.cookies.3}">Nu colectează date sensibile sau bancare</li>
+                    </ul>
+                    <p class="privacy-text" th:text="#{privacy.text.cookies.agreement}">Prin continuarea utilizării site-ului, îți exprimi acordul pentru utilizarea cookies. Poți modifica preferințele din setările browserului.</p>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-pencil-square"></i>11. Modificări ale politicii</h3>
-                    <p class="privacy-text">Putem modifica această Politică oricând. Versiunea actualizată va fi publicată pe site, iar utilizatorii vor fi notificați la nevoie.</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-shield-fill-exclamation"></i><span th:text="#{privacy.subtitle.data.security}">9. Securitatea datelor</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.data.security}">GreenLink implementează măsuri de securitate conforme cu cele mai bune practici din industrie:</p>
+                    <ul class="privacy-list">
+                        <li th:text="#{privacy.list.data.security.1}">Stocare parole criptate (BCrypt)</li>
+                        <li th:text="#{privacy.list.data.security.2}">Protecție împotriva atacurilor (XSS, SQLi, CSRF)</li>
+                        <li th:text="#{privacy.list.data.security.3}">Securitate WebSocket</li>
+                        <li th:text="#{privacy.list.data.security.4}">Acces restricționat pe roluri</li>
+                        <li th:text="#{privacy.list.data.security.5}">Monitorizare și logare activitate</li>
+                    </ul>
 
-                    <h3 class="privacy-subtitle"><i class="bi bi-envelope"></i>12. Contact</h3>
-                    <p class="privacy-text">Pentru orice întrebări legate de protecția datelor:</p>
-                    <p class="privacy-text">Email: greenlink.ro@gmail.com</p>
-                    <p class="privacy-text">Telefon: Bâtea Andrei-Daniel +40756010835 / Panait Mihai-Petru +40799234469</p>
+                    <h3 class="privacy-subtitle"><i class="bi bi-globe"></i><span th:text="#{privacy.subtitle.international.transfer}">10. Transfer internațional de date</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.international.transfer}">Datele sunt stocate pe servere aflate în UE (Render.com – Frankfurt, Germania). În cazul autentificării cu furnizori din afara UE (ex: Google), asigurăm respectarea clauzelor contractuale standard GDPR.</p>
+
+                    <h3 class="privacy-subtitle"><i class="bi bi-pencil-square"></i><span th:text="#{privacy.subtitle.policy.changes}">11. Modificări ale politicii</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.policy.changes}">Putem modifica această Politică oricând. Versiunea actualizată va fi publicată pe site, iar utilizatorii vor fi notificați la nevoie.</p>
+
+                    <h3 class="privacy-subtitle"><i class="bi bi-envelope"></i><span th:text="#{privacy.subtitle.contact}">12. Contact</span></h3>
+                    <p class="privacy-text" th:text="#{privacy.text.contact}">Pentru orice întrebări legate de protecția datelor:</p>
+                    <p class="privacy-text" th:text="#{privacy.text.contact.email}">Email: greenlink.ro@gmail.com</p>
+                    <p class="privacy-text" th:text="#{privacy.text.contact.phone}">Telefon: Bâtea Andrei-Daniel +40756010835 / Panait Mihai-Petru +40799234469</p>
                 </div>
             </div>
         </div>
