@@ -381,9 +381,466 @@
         .btn-close:hover {
             background-color: #e5e7eb;
         }
+        /* Floating Particles Background Animation (from /termeni) */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bbf7d0, #22c55e);
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+        .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-duration: 25s; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 120px; height: 120px; top: 20%; right: 15%; animation-duration: 30s; animation-delay: 2s; }
+        .particle:nth-child(3) { width: 100px; height: 100px; bottom: 15%; right: 10%; animation-duration: 22s; animation-delay: 4s; }
+        .particle:nth-child(4) { width: 150px; height: 150px; bottom: 25%; left: 5%; animation-duration: 28s; animation-delay: 1s; }
+        .particle:nth-child(5) { width: 70px; height: 70px; top: 45%; left: 20%; animation-duration: 20s; animation-delay: 3s; }
+        .particle:nth-child(6) { width: 90px; height: 90px; top: 50%; right: 25%; animation-duration: 26s; animation-delay: 5s; }
+        .particle:nth-child(7) { width: 110px; height: 110px; bottom: 40%; right: 40%; animation-duration: 24s; animation-delay: 0s; }
+        .particle:nth-child(8) { width: 60px; height: 60px; bottom: 60%; left: 40%; animation-duration: 18s; animation-delay: 6s; }
+        .particle:nth-child(9) { width: 130px; height: 130px; top: 30%; left: 30%; animation-duration: 32s; animation-delay: 7s; }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1) rotate(0); }
+            25% { transform: translateY(-25px) scale(1.05) rotate(2deg); }
+            50% { transform: translateY(-40px) scale(1.1) rotate(0); }
+            75% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+            100% { transform: translateY(0) scale(1) rotate(0); }
+        }
+        
+        /* Challenge Card Styles (exact copy from /provocari) */
+        .challenge-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Category-specific colors */
+        .challenge-card[data-category="DEFAULT_CHALLENGES"]::before {
+            background: #28a745;
+        }
+
+        .challenge-card[data-category="AMBASSADOR"]::before {
+            background: #ffd700;
+        }
+
+        .challenge-card[data-category="MAESTER"]::before {
+            background: #dc3545;
+        }
+
+        .challenge-card[data-category="SHELF_WHISPERER"]::before {
+            background: #6f42c1;
+        }
+
+        .challenge-card[data-category="CART_GOBLIN"]::before {
+            background: #0d6efd;
+        }
+
+        .challenge-card.completed {
+            background: rgba(40, 167, 69, 0.05);
+            border: 2px solid #28a745;
+        }
+
+        .challenge-card.completed::before {
+            background: #28a745;
+        }
+
+        /* Challenge card shimmer hover effect */
+        .challenge-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.8s;
+            pointer-events: none;
+        }
+
+        .challenge-card[data-category="DEFAULT_CHALLENGES"]::after {
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.2), transparent);
+        }
+
+        .challenge-card[data-category="AMBASSADOR"]::after {
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+        }
+
+        .challenge-card[data-category="MAESTER"]::after {
+            background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.2), transparent);
+        }
+
+        .challenge-card[data-category="SHELF_WHISPERER"]::after {
+            background: linear-gradient(90deg, transparent, rgba(111, 66, 193, 0.2), transparent);
+        }
+
+        .challenge-card[data-category="CART_GOBLIN"]::after {
+            background: linear-gradient(90deg, transparent, rgba(13, 110, 253, 0.2), transparent);
+        }
+
+        .challenge-card:hover::after {
+            left: 100%;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+        }
+
+        /* Hover effects for badges based on card category */
+        .challenge-card[data-category="DEFAULT_CHALLENGES"]:hover .badge {
+            opacity: 1;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 50%, #28a745 100%) !important;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.4);
+            transform: scale(1.05);
+            color: white !important;
+        }
+
+        .challenge-card[data-category="AMBASSADOR"]:hover .badge {
+            opacity: 1;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%) !important;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            transform: scale(1.05);
+            color: #212529 !important;
+        }
+
+        .challenge-card[data-category="MAESTER"]:hover .badge {
+            opacity: 1;
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 50%, #dc3545 100%) !important;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.4);
+            transform: scale(1.05);
+            color: white !important;
+        }
+
+        .challenge-card[data-category="SHELF_WHISPERER"]:hover .badge {
+            opacity: 1;
+            background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 50%, #6f42c1 100%) !important;
+            box-shadow: 0 0 20px rgba(111, 66, 193, 0.4);
+            transform: scale(1.05);
+            color: white !important;
+        }
+
+        .challenge-card[data-category="CART_GOBLIN"]:hover .badge {
+            opacity: 1;
+            background: linear-gradient(135deg, #0d6efd 0%, #3498db 50%, #0d6efd 100%) !important;
+            box-shadow: 0 0 20px rgba(13, 110, 253, 0.4);
+            transform: scale(1.05);
+            color: white !important;
+        }
+
+        .points-badge {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .challenge-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+        }
+
+        .challenge-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-type-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .challenge-type-badge .challenge-icon {
+            font-weight: 700;
+        }
+
+        .challenge-type-default_challenges {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745 !important;
+            font-weight: 700 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .challenge-type-default_challenges .challenge-icon {
+            color: #28a745 !important;
+            font-weight: 700 !important;
+        }
+
+        .challenge-type-ambassador {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700 !important;
+            font-weight: 700 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .challenge-type-ambassador .challenge-icon {
+            color: #ffd700 !important;
+            font-weight: 700 !important;
+        }
+
+        .challenge-type-maester {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545 !important;
+            font-weight: 700 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .challenge-type-maester .challenge-icon {
+            color: #dc3545 !important;
+            font-weight: 700 !important;
+        }
+
+        .challenge-type-shelf_whisperer {
+            background: rgba(111, 66, 193, 0.2);
+            color: #6f42c1 !important;
+            font-weight: 700 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .challenge-type-shelf_whisperer .challenge-icon {
+            color: #6f42c1 !important;
+            font-weight: 700 !important;
+        }
+
+        .challenge-type-cart_goblin {
+            background: rgba(13, 110, 253, 0.2);
+            color: #0d6efd !important;
+            font-weight: 700 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        .challenge-type-cart_goblin .challenge-icon {
+            color: #0d6efd !important;
+            font-weight: 700 !important;
+        }
+
+        .challenge-content {
+            padding: 1.5rem;
+        }
+
+        .challenge-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .challenge-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        .challenge-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .completion-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            min-width: 0;
+        }
+
+        .completion-status.completed {
+            color: #28a745;
+        }
+
+        .completion-status.in-progress {
+            color: #ffc107;
+        }
+
+        .completion-status.not-started {
+            color: #6c757d;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            background: rgba(128, 128, 128, 0.2) !important;
+            color: #6c757d !important;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+        }
+
+        /* Enhanced Tab Navigation Styles */
+        .tab-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            border-radius: 12px 12px 0 0;
+            transform: translateY(0);
+            box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+            z-index: 1;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.15), transparent);
+            transition: left 0.8s ease;
+            z-index: -1;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #22c55e, #16a34a, #22c55e);
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            border-radius: 2px;
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.15);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.03) 100%);
+            color: #22c55e !important;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover::after {
+            width: 100%;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.12) 0%, rgba(34, 197, 94, 0.06) 100%);
+            border-bottom: 3px solid #22c55e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.25);
+            color: #22c55e !important;
+            font-weight: 700;
+        }
+
+        .tab-btn.active::after {
+            width: 100%;
+        }
+
+        /* Icon animations */
+        .tab-btn i {
+            transition: all 0.3s ease;
+            transform: scale(1);
+            display: inline-block;
+        }
+
+        .tab-btn:hover i {
+            transform: scale(1.1) rotate(5deg);
+            color: #22c55e;
+        }
+
+        .tab-btn.active i {
+            transform: scale(1.15);
+            color: #22c55e;
+        }
+
+        /* Text animations */
+        .tab-btn span {
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .tab-btn:hover span {
+            transform: translateX(2px);
+        }
+
+        /* Pulse animation for active tab */
+        @keyframes tabPulse {
+            0% { box-shadow: 0 6px 20px rgba(34, 197, 94, 0.25); }
+            50% { box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
+            100% { box-shadow: 0 6px 20px rgba(34, 197, 94, 0.25); }
+        }
+
+        .tab-btn.active {
+            animation: tabPulse 2s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-green-50 to-green-100 min-h-screen">
+    <!-- Floating Particles Background Animation -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
     <!-- Navbar -->
     <div th:replace="fragments/navbar :: navbar"></div>
     
@@ -392,64 +849,95 @@
     <!-- Main Content with proper spacing -->
     <div class="container mx-auto px-4 py-8 max-w-7xl mt-4">
         <!-- Profile Header Card -->
-        <div class="gradient-bg rounded-3xl p-8 mb-8 shadow-2xl animate-fade-in">
-            <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
-                <!-- Profile Avatar -->
-                <div class="avatar-container animate-bounce-in">
-                    <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center text-white text-6xl backdrop-blur-sm">
-                        <i class="bi bi-person-circle"></i>
+        <div class="bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 rounded-3xl p-8 mb-8 shadow-2xl animate-fade-in relative overflow-hidden group">
+            <!-- Animated Background Pattern -->
+            <div class="absolute inset-0 opacity-5">
+                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-48 -translate-y-48 animate-pulse-slow"></div>
+                <div class="absolute bottom-0 right-0 w-80 h-80 bg-white rounded-full translate-x-40 translate-y-40 animate-pulse-slow" style="animation-delay: 2s;"></div>
+                <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-white rounded-full -translate-x-32 -translate-y-32 animate-pulse-slow" style="animation-delay: 4s;"></div>
+            </div>
+            
+            <!-- Shimmer Effect -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-2000"></div>
+            
+            <div class="relative z-10">
+                <div class="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+                    <!-- Enhanced Profile Avatar -->
+                    <div class="avatar-container animate-bounce-in relative group">
+                        <div class="w-36 h-36 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 rounded-full flex items-center justify-center text-white text-7xl backdrop-blur-sm shadow-2xl border-4 border-white/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 relative overflow-hidden">
+                            <i class="bi bi-person-circle group-hover:scale-110 transition-transform duration-300"></i>
+                            <!-- Avatar glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-300/30 to-cyan-400/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                        </div>
+                        <!-- Floating particles around avatar -->
+                        <div class="absolute -top-2 -left-2 w-4 h-4 bg-yellow-400 rounded-full animate-bounce" style="animation-delay: 0s;"></div>
+                        <div class="absolute -top-2 -right-2 w-3 h-3 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                        <div class="absolute -bottom-2 -left-2 w-3 h-3 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 1s;"></div>
+                        <div class="absolute -bottom-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
                     </div>
-                </div>
-                
-                <!-- Profile Info -->
-                <div class="flex-1 text-center lg:text-left">
-                    <h1 class="text-4xl lg:text-5xl font-bold text-white mb-2 animate-slide-up" 
-                        th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">
-                        User Name
-                    </h1>
-                    <p class="text-xl text-white/80 mb-4 animate-slide-up" 
-                       th:text="${profileUser != null ? ('@' + profileUser.email.split('@')[0]) : '@username'}">
-                        @username
-                    </p>
                     
-                    <!-- Points and Level -->
-                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
-                        <div class="flex items-center gap-3 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 animate-slide-up">
-                            <i class="bi bi-trophy-fill text-yellow-300 text-2xl"></i>
-                            <span class="text-white font-bold text-xl" th:text="${profileUser != null ? profileUser.points : 0}">0</span>
-                            <span class="text-white/90">GreenLink Points</span>
+                    <!-- Enhanced Profile Info -->
+                    <div class="flex-1 text-center lg:text-left">
+                        <h1 class="text-5xl lg:text-6xl font-bold text-white mb-3 animate-slide-up bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent group-hover:from-emerald-100 group-hover:to-white transition-all duration-500" 
+                            th:text="${profileUser != null ? (profileUser.firstName + ' ' + profileUser.lastName) : 'User Name'}">
+                            User Name
+                        </h1>
+                        <p class="text-2xl text-emerald-100 mb-8 animate-slide-up font-medium" 
+                           th:text="${profileUser != null ? ('@' + profileUser.email.split('@')[0]) : '@username'}">
+                            @username
+                        </p>
+                        
+                        <!-- Enhanced Stats Cards Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <!-- Points Card -->
+                            <div class="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 text-white rounded-3xl p-6 text-center shadow-xl hover:shadow-2xl animate-slide-up group-hover:scale-105 transition-all duration-500 relative overflow-hidden cursor-pointer">
+                                <!-- Card shimmer -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <div class="relative z-10">
+                                    <div class="text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300" th:text="${profileUser != null ? profileUser.points : 0}">915</div>
+                                    <div class="text-amber-100 text-lg font-semibold">GreenLink Points</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Global Rank Card -->
+                            <div class="bg-gradient-to-br from-violet-400 via-purple-500 to-indigo-600 text-white rounded-3xl p-6 text-center shadow-xl hover:shadow-2xl animate-slide-up group-hover:scale-105 transition-all duration-500 relative overflow-hidden cursor-pointer">
+                                <!-- Card shimmer -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <div class="relative z-10">
+                                    <div class="text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300" th:text="${userRank != null ? '#' + userRank : 'N/A'}">#3</div>
+                                    <div class="text-violet-100 text-lg font-semibold">Global Rank</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Level Card -->
+                            <div class="bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 text-white rounded-3xl p-6 text-center shadow-xl hover:shadow-2xl animate-slide-up group-hover:scale-105 transition-all duration-500 relative overflow-hidden cursor-pointer">
+                                <!-- Card shimmer -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                <div class="relative z-10">
+                                    <div class="text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300" th:text="${profileUser != null ? profileUser.level : 1}">6</div>
+                                    <div class="text-emerald-100 text-lg font-semibold">Level</div>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 animate-slide-up">
-                            <span class="text-white font-bold text-xl">Level</span>
-                            <span class="text-white font-bold text-2xl ml-2" 
-                                  th:text="${profileUser != null ? profileUser.level : 1}">1</span>
+                        <!-- Enhanced Level Name Display -->
+                        <div class="bg-white/15 backdrop-blur-md rounded-3xl p-6 animate-slide-up mb-6 border border-white/20 group-hover:bg-white/20 transition-all duration-500">
+                            <div class="flex items-center justify-center gap-4">
+                                <div class="bg-gradient-to-br from-amber-400 to-orange-500 rounded-full p-3 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="bi bi-crown-fill text-white text-2xl"></i>
+                                </div>
+                                <span class="text-white font-black text-2xl bg-gradient-to-r from-amber-200 to-orange-200 bg-clip-text text-transparent" th:text="#{${profileUser.levelName}}">Paladinul Plasticului</span>
+                            </div>
                         </div>
+                        
+
                     </div>
                     
-                    <!-- Level Name Display -->
-                    <div class="bg-gradient-to-r from-green-400 to-green-600 rounded-full px-6 py-3 animate-slide-up mb-4">
-                        <div class="flex items-center justify-center gap-2">
-                            <i class="bi bi-star-fill text-white text-xl"></i>
-                            <span class="text-white font-bold text-lg" th:text="#{${profileUser.levelName}}">Bottle Beginner</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div class="w-full bg-white/20 rounded-full h-3 mb-4 animate-slide-up">
-                        <div class="progress-bar-animated h-3 rounded-full" 
-                             th:style="'width: ' + ${profileUser != null and profileUser.progressToNextLevel != null ? profileUser.progressToNextLevel : 0} + '%'"></div>
-                    </div>
-                    <p class="text-white/80 text-sm animate-slide-up">
-                        <span th:text="${profileUser != null and profileUser.pointsRemainingForNextLevel != null ? profileUser.pointsRemainingForNextLevel : 0}">0</span> points until Level <span th:text="${profileUser != null and profileUser.level != null ? profileUser.level + 1 : 2}">2</span>
-                    </p>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex flex-col gap-4 animate-slide-up">
+                    <!-- Enhanced Action Buttons -->
+                    <div class="flex flex-col gap-4 animate-slide-up">
                     <!-- DM Button -->
                     <button th:if="${!isPersonalProfile and canSendMessage}" 
-                            class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift"
+                                class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift shadow-lg"
                             onclick="openDMModal(event)"
                             th:data-user-id="${profileUser.id}"
                             th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
@@ -460,10 +948,19 @@
                     <!-- Edit Profile Button -->
                     <a th:if="${isPersonalProfile}" 
                        href="/profile/edit" 
-                       class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift text-center">
+                           class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift text-center shadow-lg">
                         <i class="bi bi-pencil mr-2 group-hover:scale-110 transition-transform"></i>
                         Edit Profile
                     </a>
+                        
+                        <!-- Dashboard Button -->
+                        <a th:if="${isPersonalProfile}" 
+                           href="/dashboard" 
+                           class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift text-center shadow-lg">
+                            <i class="bi bi-speedometer2 mr-2 group-hover:scale-110 transition-transform"></i>
+                            Dashboard
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -471,22 +968,30 @@
         <!-- Navigation Tabs Card -->
         <div class="bg-white rounded-2xl shadow-xl mb-8 overflow-hidden">
             <div class="flex flex-wrap border-b border-gray-200">
-                <button class="tab-btn active flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
-                        data-tab="overview">
-                    <i class="bi bi-house mr-2"></i>Overview
-                </button>
-                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
-                        data-tab="challenges">
-                    <i class="bi bi-trophy mr-2"></i>Challenges
-                </button>
-                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
-                        data-tab="lessons">
-                    <i class="bi bi-book mr-2"></i>Lessons
-                </button>
-                <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 hover:text-green-600 transition-all duration-300 border-b-2 border-transparent hover:border-green-200"
-                        data-tab="activity">
-                    <i class="bi bi-activity mr-2"></i>Activity
-                </button>
+                                        <button class="tab-btn active flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="overview">
+                            <i class="bi bi-house mr-2"></i><span>Overview</span>
+                        </button>
+                        <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="products">
+                            <i class="bi bi-box-seam mr-2"></i><span>Products Listed</span>
+                        </button>
+                        <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="challenges">
+                            <i class="bi bi-trophy mr-2"></i><span>Challenges</span>
+                        </button>
+                        <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="lessons">
+                            <i class="bi bi-book mr-2"></i><span>Lessons</span>
+                        </button>
+                        <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="friends">
+                            <i class="bi bi-people mr-2"></i><span>Friends</span>
+                        </button>
+                        <button class="tab-btn flex-1 px-6 py-4 text-center font-semibold text-gray-600 transition-all duration-300"
+                                data-tab="activity">
+                            <i class="bi bi-activity mr-2"></i><span>Activity</span>
+                        </button>
             </div>
         </div>
 
@@ -509,55 +1014,164 @@
                     </div>
                     
                     <!-- Stats Cards Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
                         <!-- Products Listed Card -->
-                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <i class="bi bi-box-seam text-white text-3xl"></i>
+                        <div class="stat-card bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 overflow-hidden border-2 border-transparent relative group cursor-pointer" onclick="switchToTab('products')">
+                            <!-- Animated border top -->
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 to-green-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                            
+                            <!-- Shimmer effect -->
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-green-100/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            
+                            <!-- Icon container -->
+                            <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg group-hover:shadow-green-500/50">
+                                <i class="bi bi-box-seam text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Products Listed</h3>
-                            <div class="text-5xl font-bold text-green-600 mb-3" th:text="${products != null ? products.size() : 0}">0</div>
-                            <p class="text-gray-500">Total products in marketplace</p>
+                            
+                            <!-- Content -->
+                            <div class="text-center relative z-10">
+                                <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-green-600 transition-colors duration-300">Products Listed</h3>
+                                <div class="text-5xl font-bold bg-gradient-to-r from-green-500 to-green-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300" th:text="${products != null ? products.size() : 0}">0</div>
+                                <p class="text-gray-500 group-hover:text-green-600 transition-colors duration-300">Total products in marketplace</p>
+                            </div>
                         </div>
                         
                         <!-- Challenges Completed Card -->
-                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <i class="bi bi-trophy text-white text-3xl"></i>
+                        <div class="stat-card bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 overflow-hidden border-2 border-transparent relative group cursor-pointer" onclick="switchToTab('challenges')">
+                            <!-- Animated border top -->
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 to-yellow-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                            
+                            <!-- Shimmer effect -->
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-yellow-100/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            
+                            <!-- Icon container -->
+                            <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg group-hover:shadow-yellow-500/50">
+                                <i class="bi bi-trophy text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Challenges Completed</h3>
-                            <div class="text-5xl font-bold text-yellow-600 mb-3" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
-                            <p class="text-gray-500">Environmental challenges</p>
+                            
+                            <!-- Content -->
+                            <div class="text-center relative z-10">
+                                <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-yellow-600 transition-colors duration-300">Challenges Completed</h3>
+                                <div class="text-5xl font-bold bg-gradient-to-r from-yellow-500 to-yellow-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300" th:text="${completedChallenges != null ? completedChallenges.size() : 0}">0</div>
+                                <p class="text-gray-500 group-hover:text-yellow-600 transition-colors duration-300">Environmental challenges</p>
+                            </div>
                         </div>
                         
                         <!-- Lessons Completed Card -->
-                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <i class="bi bi-book text-white text-3xl"></i>
+                        <div class="stat-card bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 overflow-hidden border-2 border-transparent relative group cursor-pointer" onclick="switchToTab('lessons')">
+                            <!-- Animated border top -->
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                            
+                            <!-- Shimmer effect -->
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-blue-100/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            
+                            <!-- Icon container -->
+                            <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg group-hover:shadow-blue-500/50">
+                                <i class="bi bi-book text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Lessons Completed</h3>
-                            <div class="text-5xl font-bold text-blue-600 mb-3" th:text="${completedLessons != null ? completedLessons.size() : 0}">0</div>
-                            <p class="text-gray-500">Educational content</p>
+                            
+                            <!-- Content -->
+                            <div class="text-center relative z-10">
+                                <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors duration-300">Lessons Completed</h3>
+                                <div class="text-5xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300" th:text="${completedLessons != null ? completedLessons.size() : 0}">0</div>
+                                <p class="text-gray-500 group-hover:text-blue-600 transition-colors duration-300">Educational content</p>
+                            </div>
                         </div>
                         
                         <!-- Friends Card -->
-                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <i class="bi bi-people text-white text-3xl"></i>
+                        <div class="stat-card bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 overflow-hidden border-2 border-transparent relative group cursor-pointer" onclick="switchToTab('friends')">
+                            <!-- Animated border top -->
+                            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-400 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                            
+                            <!-- Shimmer effect -->
+                            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-purple-100/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            
+                            <!-- Icon container -->
+                            <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 shadow-lg group-hover:shadow-purple-500/50">
+                                <i class="bi bi-people text-white text-3xl group-hover:scale-110 transition-transform duration-300"></i>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Friends</h3>
-                            <div class="text-5xl font-bold text-purple-600 mb-3" th:text="${friends != null ? friends.size() : 0}">0</div>
-                            <p class="text-gray-500">Community connections</p>
+                            
+                            <!-- Content -->
+                            <div class="text-center relative z-10">
+                                <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-purple-600 transition-colors duration-300">Friends</h3>
+                                <div class="text-5xl font-bold bg-gradient-to-r from-purple-500 to-purple-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform duration-300" th:text="${friends != null ? friends.size() : 0}">0</div>
+                                <p class="text-gray-500 group-hover:text-purple-600 transition-colors duration-300">Community connections</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                         </div>
                         
-                        <!-- Rank Card -->
-                        <div class="stat-card bg-white rounded-2xl p-8 shadow-xl text-center group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                <i class="bi bi-award text-white text-3xl"></i>
+            <!-- Products Listed Tab -->
+            <div id="products" class="tab-content hidden">
+                <div class="animate-fade-in">
+                    <!-- Products Grid -->
+                    <div th:if="${not #lists.isEmpty(products)}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div th:each="product : ${products}" class="group relative">
+                                <!-- Product Card -->
+                                <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100">
+                                    <!-- Product Image -->
+                                    <div class="relative h-48 overflow-hidden">
+                                        <img th:if="${product.imageUrl != null}" th:src="${product.imageUrl}" 
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                             alt="Product Image">
+                                        <img th:unless="${product.imageUrl != null}" src="/images/placeholder-product.jpg" 
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                             alt="Product">
+                                        
+                                        <!-- Branch Badge -->
+                                        <div class="absolute top-4 left-4 bg-green-500 text-white text-xs font-bold rounded-full px-3 py-1 shadow-lg">
+                                            <span th:text="${product.branch}">VERDE</span>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-800 mb-3">Leaderboard Rank</h3>
-                            <div class="text-5xl font-bold text-orange-600 mb-3" th:text="${userRank != null ? userRank : 0}">0</div>
-                            <p class="text-gray-500">Position on leaderboard</p>
+                                        
+                                        <!-- Price Badge -->
+                                        <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm text-green-600 font-bold rounded-full px-3 py-1 shadow-lg">
+                                            <span th:text="${#numbers.formatDecimal(product.price, 1, 2)} + ' RON'">Price</span>
+                        </div>
+                    </div>
+                                    
+                                    <!-- Product Content -->
+                                    <div class="p-6">
+                                        <h3 class="text-xl font-bold text-gray-800 mb-3 leading-tight" th:text="${product.name}">Product Name</h3>
+                                        <p class="text-gray-600 text-sm leading-relaxed mb-4" th:text="${#strings.length(product.description) > 80 ? #strings.substring(product.description, 0, 77) + '...' : product.description}">Product description...</p>
+                                        
+                                        <!-- Product Details -->
+                                        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                            <div class="flex items-center text-gray-500 text-sm">
+                                                <i class="bi bi-box-seam mr-2"></i>
+                                                <span th:text="${product.stock}">10</span> in stock
+                                            </div>
+                                            <div class="bg-green-50 text-green-600 text-xs font-medium rounded-full px-3 py-1">
+                                                <i class="bi bi-check-circle mr-1"></i>Listed
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- View Product Button -->
+                                    <div class="p-6 pt-0">
+                                        <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
+                                           class="block w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-3 px-4 rounded-2xl text-center hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                                            <i class="bi bi-eye mr-2"></i>View Product
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(products)}" class="text-center py-16">
+                        <div class="bg-white rounded-3xl p-12 shadow-xl max-w-md mx-auto">
+                            <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                                <i class="bi bi-box-seam text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">No Products Listed Yet</h3>
+                            <p class="text-gray-600 mb-8">Start selling your eco-friendly products in the marketplace and contribute to sustainability!</p>
+                            <a href="/marketplace" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                                <i class="bi bi-plus-circle mr-3"></i>
+                                List Your First Product
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -566,27 +1180,39 @@
             <!-- Challenges Tab -->
             <div id="challenges" class="tab-content hidden">
                 <div class="animate-fade-in">
-                    <!-- Header Card -->
-                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
-                            <i class="bi bi-trophy text-yellow-500 mr-3 text-4xl"></i>
-                            Completed Challenges
-                        </h2>
-                        <p class="text-gray-600 text-lg">Your environmental achievements and milestones</p>
-                    </div>
-                    
                     <div th:if="${not #lists.isEmpty(completedChallenges)}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div th:each="challenge : ${completedChallenges}" 
-                                 class="bg-white rounded-2xl p-8 shadow-xl hover-lift group">
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <i class="bi bi-trophy text-white text-2xl"></i>
+                        <div class="row g-4 completed-challenges-section">
+                            <div th:each="userChallenge : ${completedChallenges}" class="col-lg-4 col-md-6">
+                                <div class="challenge-card completed" th:attr="data-category=${userChallenge.challenge.type}, data-challenge-id=${userChallenge.challenge.id}, data-challenge-title=${userChallenge.challenge.title}">
+                                    <div class="challenge-content">
+                                        <!-- Challenge Meta -->
+                                        <div class="challenge-meta">
+                                            <span class="challenge-type-badge" th:class="${'challenge-type-' + #strings.toLowerCase(userChallenge.challenge.type)}">
+                                                <i class="bi bi-star-fill challenge-icon" th:attr="data-challenge-type=${userChallenge.challenge.type}"></i>
+                                                <span th:text="${#strings.replace(userChallenge.challenge.type, '_', ' ')}">Default Challenges</span>
+                                            </span>
+                                            <div class="points-badge">
+                                                <i class="bi bi-check-circle-fill me-1"></i>
+                                                <span th:text="${userChallenge.challenge.points}">50</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Challenge Title and Description -->
+                                        <h5 class="challenge-title" th:text="${userChallenge.challenge.title}">Challenge Title</h5>
+                                        <p class="challenge-description" th:text="${userChallenge.challenge.description}">Challenge description</p>
+                                        
+                                        <!-- Challenge Footer -->
+                                        <div class="challenge-footer">
+                                            <div class="completion-status completed">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                <span th:text="'Completed on ' + ${#temporals.format(userChallenge.completedAt, 'dd MMM yyyy')}">Completed on 01 Jan 2024</span>
+                                            </div>
+                                            <div class="badge bg-warning text-dark" th:if="${userChallenge.challenge.badge}" th:text="${userChallenge.challenge.badge}">
+                                                Badge Name
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" th:text="${#temporals.format(challenge.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4" th:text="${challenge.challenge.title}">Challenge Name</h3>
-                                <p class="text-gray-600 leading-relaxed" th:text="${challenge.challenge.description}">Challenge description...</p>
                             </div>
                         </div>
                     </div>
@@ -610,45 +1236,71 @@
             <!-- Lessons Tab -->
             <div id="lessons" class="tab-content hidden">
                 <div class="animate-fade-in">
-                    <!-- Header Card -->
-                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
-                            <i class="bi bi-book text-blue-500 mr-3 text-4xl"></i>
-                            Completed Lessons
-                        </h2>
-                        <p class="text-gray-600 text-lg">Your educational achievements and knowledge gained</p>
+                    <!-- Lessons Grid -->
+                    <div th:if="${not #lists.isEmpty(completedLessons)}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div th:each="lesson, iterStat : ${completedLessons}" 
+                                 class="group relative h-full">
+                                <!-- Lesson Card -->
+                                <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
+                                    <!-- Card Header with Image -->
+                                    <div class="relative h-48 overflow-hidden">
+                                        <img th:if="${lesson.imageUrl != null}" th:src="${lesson.imageUrl}" 
+                                             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                             alt="Course Image"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div th:if="${lesson.imageUrl == null}" class="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                                            <i class="bi bi-book text-white text-4xl"></i>
                     </div>
                     
-                    <div th:if="${not #lists.isEmpty(completedLessons)}">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <div th:each="lesson : ${completedLessons}" 
-                                 class="bg-white rounded-2xl p-8 shadow-xl hover-lift group">
-                                <div class="flex items-start justify-between mb-6">
-                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <i class="bi bi-book text-white text-2xl"></i>
+                                        <!-- Completion Badge -->
+                                        <div class="absolute top-4 right-4 bg-green-500 text-white text-sm font-bold rounded-full px-3 py-1 shadow-lg">
+                                            <i class="bi bi-check-circle-fill mr-1"></i>Completed
                                     </div>
-                                    <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full" th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                        
+                                        <!-- Points Badge -->
+                                        <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm text-green-600 font-bold rounded-full px-3 py-1 shadow-lg">
+                                            <i class="bi bi-star-fill mr-1"></i>
+                                            <span th:text="${lesson.pointsEarned}">10</span> pts
                                 </div>
-                                <h3 class="text-xl font-semibold text-gray-800 mb-4" th:text="${lesson.title}">Lesson Title</h3>
-                                <p class="text-gray-600 leading-relaxed mb-6" th:text="${lesson.description}">Lesson description...</p>
-                                <div class="flex items-center justify-between">
-                                    <span class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 font-medium rounded-full">
-                                        <i class="bi bi-trophy-fill mr-2"></i>
-                                        <span th:text="${lesson.pointsEarned}">10</span> points earned
-                                    </span>
+                                </div>
+                                    
+                                    <!-- Card Content -->
+                                    <div class="p-6 flex-grow flex flex-col">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <h3 class="text-xl font-bold text-gray-800 leading-tight" th:text="${lesson.title}">Lesson Title</h3>
+                                            <div class="bg-green-100 text-green-600 text-xs font-bold rounded-full px-2 py-1">
+                                                <span th:text="${iterStat.index + 1}">1</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow" th:text="${lesson.description}">Lesson description...</p>
+                                        
+                                        <!-- Completion Date -->
+                                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                            <div class="flex items-center text-gray-500 text-sm">
+                                                <i class="bi bi-calendar-check mr-2"></i>
+                                                <span th:text="${#temporals.format(lesson.completedAt, 'dd MMM yyyy')}">01 Jan 2024</span>
+                                            </div>
+                                            <div class="bg-green-50 text-green-600 text-xs font-medium rounded-full px-3 py-1">
+                                                <i class="bi bi-clock mr-1"></i>Completed
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div th:if="${#lists.isEmpty(completedLessons)}" class="empty-state text-center py-16">
-                        <div class="bg-white rounded-2xl p-12 shadow-xl hover-lift">
-                            <div class="empty-state-icon w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
-                                <i class="bi bi-book text-gray-400 text-6xl"></i>
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(completedLessons)}" class="text-center py-16">
+                        <div class="bg-white rounded-3xl p-12 shadow-xl max-w-md mx-auto">
+                            <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                                <i class="bi bi-book text-green-600 text-3xl"></i>
                             </div>
-                            <h3 class="text-3xl font-bold text-gray-800 mb-6">No Completed Lessons Yet</h3>
-                            <p class="text-gray-600 mb-8 max-w-md mx-auto text-lg">Learn about sustainability and earn points by completing educational lessons. Knowledge is power!</p>
-                            <a href="/educatie" class="inline-flex items-center px-8 py-4 bg-green-600 text-white font-semibold rounded-full hover:bg-green-700 transition-all duration-300 hover-lift text-lg">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">No Completed Lessons Yet</h3>
+                            <p class="text-gray-600 mb-8">Start your sustainability journey by completing educational lessons and earn points!</p>
+                            <a href="/educatie" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">
                                 <i class="bi bi-arrow-right mr-3"></i>
                                 Start Learning
                             </a>
@@ -660,15 +1312,6 @@
             <!-- Activity Tab -->
             <div id="activity" class="tab-content hidden">
                 <div class="animate-fade-in">
-                    <!-- Header Card -->
-                    <div class="bg-white rounded-2xl p-8 shadow-xl mb-8 text-center hover-lift">
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">
-                            <i class="bi bi-activity text-purple-500 mr-3 text-4xl"></i>
-                            Recent Activity
-                        </h2>
-                        <p class="text-gray-600 text-lg">Your latest actions and achievements on the platform</p>
-                    </div>
-                    
                     <div th:if="${not #lists.isEmpty(recentActivity)}">
                         <div class="space-y-6">
                             <div th:each="activity : ${recentActivity}" 
@@ -752,21 +1395,33 @@
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const targetTab = this.getAttribute('data-tab');
-                    
-                    // Remove active class from all buttons and contents
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabContents.forEach(c => c.classList.add('hidden'));
-                    
-                    // Add active class to clicked button and show target content
-                    this.classList.add('active');
-                    document.getElementById(targetTab).classList.remove('hidden');
-                    
-                    // Add animation to the active tab button
-                    this.style.borderBottomColor = '#22c55e';
-                    this.style.color = '#22c55e';
+                    switchToTab(targetTab);
                 });
             });
         });
+
+        // Function to switch tabs (used by both tab buttons and stat cards)
+        function switchToTab(targetTab) {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Remove active class from all buttons and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.add('hidden'));
+            
+            // Add active class to clicked button and show target content
+            const targetBtn = document.querySelector(`[data-tab="${targetTab}"]`);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+                targetBtn.style.borderBottomColor = '#22c55e';
+                targetBtn.style.color = '#22c55e';
+            }
+            
+            const targetContent = document.getElementById(targetTab);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+        }
 
         // DM Modal functionality (keeping existing logic)
         let currentDMConversationId = null;
@@ -1147,3 +1802,5 @@
     </script>
 </body>
 </html>
+
+
