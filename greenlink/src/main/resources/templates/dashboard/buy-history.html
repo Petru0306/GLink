@@ -1,199 +1,696 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy History - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    
-    <!-- Animate.css for simple fade-in -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    
-    <!-- Minimal CSS for chart container only -->
+    <!-- Custom CSS for Buy History -->
     <style>
-        .chart-container {
-            height: 300px;
+        /* Modern Buy History Styles */
+        .buy-hero {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 50%, #1abc9c 100%);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
         }
         
-        .chart-container canvas {
-            display: block;
-            width: 100% !important;
-            height: 100% !important;
+        .buy-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Enhanced Stats Cards */
+        .stats-card-modern {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(46, 204, 113, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2ecc71, #27ae60, #1abc9c);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card-modern:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+        
+        .stats-card-modern:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stats-icon-modern {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card-modern:hover .stats-icon-modern {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .stats-value-modern {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2ecc71;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .stats-title-modern {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-subtitle-modern {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        /* Product Cards */
+        .product-card-modern {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(46, 204, 113, 0.1);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .product-card-modern:nth-child(1) { animation-delay: 0.1s; }
+        .product-card-modern:nth-child(2) { animation-delay: 0.2s; }
+        .product-card-modern:nth-child(3) { animation-delay: 0.3s; }
+        .product-card-modern:nth-child(4) { animation-delay: 0.4s; }
+        .product-card-modern:nth-child(5) { animation-delay: 0.5s; }
+        .product-card-modern:nth-child(6) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .product-card-modern:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image-modern {
+            height: 200px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card-modern:hover .product-image-modern {
+            transform: scale(1.05);
+        }
+        
+        .purchased-badge-modern {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .product-info-modern {
+            padding: 1.5rem;
+        }
+        
+        .product-title-modern {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-description-modern {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .product-meta-modern {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .product-price-modern {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        
+        .product-date-modern {
+            color: #95a5a6;
+            font-size: 0.8rem;
+        }
+        
+        .product-details-modern {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        
+        .detail-item-modern {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-item-modern:last-child {
+            margin-bottom: 0;
+        }
+        
+        .detail-label-modern {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        
+        .detail-value-modern {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-view-again {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view-again:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            color: white;
+        }
+        
+        .btn-review {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-review:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+        
+        .reviewed-badge {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Empty State */
+        .empty-state-modern {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            border: 2px dashed rgba(46, 204, 113, 0.3);
+        }
+        
+        .empty-icon-modern {
+            font-size: 4rem;
+            color: #bdc3c7;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .empty-title-modern {
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-description-modern {
+            color: #95a5a6;
+            margin-bottom: 2rem;
+        }
+        
+        .start-shopping-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+        }
+        
+        .start-shopping-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(46, 204, 113, 0.4);
+            color: white;
+        }
+        
+        /* Review Modal */
+        .review-modal {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .review-modal-content {
+            background: white;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .review-modal-header {
+            border-bottom: 1px solid rgba(46, 204, 113, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .review-modal-body {
+            padding: 1.5rem;
+        }
+        
+        .form-control-modern {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control-modern:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .buy-hero {
+                padding: 1.5rem;
+                text-align: center;
+            }
+            
+            .stats-card-modern {
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .stats-value-modern {
+                font-size: 2rem;
+            }
+            
+            .product-card-modern {
+                margin-bottom: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+        
+        /* Modern Pagination Styles */
+        .pagination {
+            gap: 0.5rem;
+        }
+        
+        .page-link {
+            border: none;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: #2c3e50;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .page-link:hover {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .page-item.disabled .page-link {
+            background: #f8f9fa;
+            color: #bdc3c7;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .page-item.disabled .page-link:hover {
+            background: #f8f9fa;
+            color: #bdc3c7;
+            transform: none;
+            box-shadow: none;
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
+<body>
+    <!-- Include navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- Navbar -->
-    <nav th:replace="fragments/navbar :: navbar"></nav>
-
-    <!-- Main content wrapper -->
-    <div class="buy-history-page font-sans bg-gray-100">
-        <!-- Header -->
-        <header class="bg-gradient-to-r from-green-400 to-green-600 text-white py-8 px-6 rounded-b-3xl mb-10">
-            <div class="max-w-5xl mx-auto">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-4xl font-bold">Buy History</h1>
-                        <p class="mt-2 text-lg opacity-90">Track your purchases and spending patterns</p>
-                    </div>
-                    <a href="/dashboard" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full transition duration-300">
-                        ← Back to Dashboard
+    <div class="container mt-5">
+        <!-- Modern Hero Header -->
+        <div class="buy-hero">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="bi bi-cart-check me-3"></i>Buy History
+                    </h1>
+                    <p class="mb-0 opacity-75">Track your purchases and spending patterns</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a href="/dashboard" class="back-btn">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
                     </a>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <main class="max-w-5xl mx-auto px-6 space-y-12 pb-12">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${success}">Success message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${error}">Error message</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
 
-            <!-- Success/Error Messages -->
-            <div th:if="${success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded animate__animated animate__fadeIn">
-                <span th:text="${success}">Success message</span>
+        <!-- Enhanced Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="stats-card-modern">
+                    <div class="stats-icon-modern">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="stats-title-modern">Total Spent</div>
+                    <div class="stats-value-modern counter" data-target="0" th:data-target="${totalAmountSpent != null ? totalAmountSpent : 0}">
+                        RON 0.00
+                    </div>
+                    <div class="stats-subtitle-modern">All time spending</div>
+                </div>
             </div>
-            
-            <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded animate__animated animate__fadeIn">
-                <span th:text="${error}">Error message</span>
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="stats-card-modern">
+                    <div class="stats-icon-modern">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="stats-title-modern">Products Bought</div>
+                    <div class="stats-value-modern counter" data-target="0" th:data-target="${totalProductsBought != null ? totalProductsBought : 0}">0</div>
+                    <div class="stats-subtitle-modern">Total items purchased</div>
+                </div>
             </div>
-
-            <!-- Statistics Cards -->
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Total Spent -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 2a8 8 0 018 8v2a2 2 0 01-2 2h-1v3l-3-3h-4a2 2 0 01-2-2v-2a8 8 0 018-8z"/>
-                        </svg>
-                        <span class="text-xl font-medium">Total Spent</span>
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="stats-card-modern">
+                    <div class="stats-icon-modern">
+                        <i class="bi bi-graph-up-arrow"></i>
                     </div>
-                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${'RON ' + #numbers.formatDecimal(totalAmountSpent ?: 0, 1, 2)}">RON 0.00</p>
-                    <p class="text-gray-500 mt-1">Total amount spent</p>
-                </div>
-
-                <!-- Products Bought -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp animate__delay-1s">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M4 3h16l-3 9H7L4 3zM2 3H0l4 12h12l4-12H6l-4 12H2V3z"/>
-                        </svg>
-                        <span class="text-xl font-medium">Products Bought</span>
+                    <div class="stats-title-modern">Average Price</div>
+                    <div class="stats-value-modern counter" 
+                         data-target="0" 
+                         th:data-target="${totalProductsBought != null && totalProductsBought > 0 && totalAmountSpent != null ? totalAmountSpent / totalProductsBought : 0}">
+                        RON 0.00
                     </div>
-                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${totalProductsBought ?: 0}">0</p>
-                    <p class="text-gray-500 mt-1">Total items purchased</p>
+                    <div class="stats-subtitle-modern">Per product</div>
                 </div>
-
-                <!-- Last Purchase -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M6 2a1 1 0 00-1 1v2h10V3a1 1 0 00-1-1H6zM4 7v8a2 2 0 002 2h8a2 2 0 002-2V7H4z"/>
-                        </svg>
-                        <span class="text-xl font-medium">Last Purchase</span>
+            </div>
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="stats-card-modern">
+                    <div class="stats-icon-modern">
+                        <i class="bi bi-calendar-check"></i>
                     </div>
-                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${lastPurchaseDate != null ? #temporals.format(lastPurchaseDate, 'MMM dd, yyyy') : 'Never'}">Never</p>
-                    <p class="text-gray-500 mt-1">Date of your most recent purchase</p>
+                    <div class="stats-title-modern">Last Purchase</div>
+                    <div class="stats-value-modern" th:text="${lastPurchaseDate != null ? #temporals.format(lastPurchaseDate, 'MMM dd') : 'Never'}">Never</div>
+                    <div class="stats-subtitle-modern" th:text="${lastPurchaseDate != null ? #temporals.format(lastPurchaseDate, 'yyyy') : 'No purchases'}">No purchases</div>
                 </div>
-            </section>
+            </div>
+        </div>
 
-            <!-- Chart Section -->
-            <section class="bg-white rounded-xl shadow-lg p-6 animate__animated animate__fadeInUp">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Monthly Spending</h2>
-                <div class="chart-container">
-                    <canvas id="spendingChart"></canvas>
-                </div>
-            </section>
-
-            <!-- Purchase History Cards -->
-            <section>
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 animate__animated animate__fadeInUp">Purchase History</h2>
-                
-                <!-- Empty State -->
-                <div th:if="${buyHistory == null || #lists.isEmpty(buyHistory)}" class="text-center py-12 bg-white rounded-xl shadow-lg animate__animated animate__fadeInUp">
-                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 3h16l-3 9H7L4 3zM2 3H0l4 12h12l4-12H6l-4 12H2V3z"/>
-                    </svg>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No purchases yet</h3>
-                    <p class="text-gray-500 mb-6">Start shopping in our marketplace to see your purchase history here.</p>
-                    <a href="/marketplace" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full transition duration-300 inline-flex items-center">
-                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
-                        </svg>
-                        Explore Marketplace
-                    </a>
-                </div>
-                
-                <!-- Product Grid -->
-                <div th:if="${buyHistory != null && !#lists.isEmpty(buyHistory)}" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                    
-                    <!-- Product Card -->
-                    <div th:each="purchase, iterStat : ${buyHistory}" 
-                         class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp"
-                         th:classappend="${'animate__delay-' + (iterStat.index % 3 + 1) + 's'}">
+        <!-- Enhanced Purchase History -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-success text-white" style="border-radius: 20px 20px 0 0;">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>Purchase History
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Empty State -->
+                        <div th:if="${#lists.isEmpty(buyHistory)}" class="empty-state-modern">
+                            <div class="empty-icon-modern">
+                                <i class="bi bi-cart"></i>
+                            </div>
+                            <h4 class="empty-title-modern">No purchases yet</h4>
+                            <p class="empty-description-modern">Start shopping in our marketplace to see your purchase history here.</p>
+                            <a href="/marketplace" class="start-shopping-btn">
+                                <i class="bi bi-shop me-2"></i>Explore Marketplace
+                            </a>
+                        </div>
                         
-                        <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
-                             th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
-                             class="w-full h-40 object-cover"/>
-                        
-                        <div class="p-4">
-                            <h3 class="text-lg font-medium text-gray-800" th:text="${purchase.product.name != null ? purchase.product.name : 'Product Name'}">Product Name</h3>
-                            <p class="text-gray-500 text-sm mt-1" th:text="${'Purchased on ' + (purchase.purchaseDate != null ? #temporals.format(purchase.purchaseDate, 'MMM dd, yyyy') : 'Unknown date')}">Purchased on Jan 01, 2024</p>
-                            
-                            <div class="mt-4 flex justify-between items-center">
-                                <span class="text-green-600 font-bold" th:text="${'RON ' + #numbers.formatDecimal(purchase.totalPrice != null ? purchase.totalPrice : 0, 1, 2)}">RON 0.00</span>
-                                
-                                <div class="flex space-x-2">
-                                    <a th:href="@{'/marketplace/product/' + (purchase.product.id != null ? purchase.product.id : 0)}" 
-                                       class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm hover:bg-green-100 transition">
-                                        View Again
-                                    </a>
-                                    
-                                    <button th:if="${purchase.hasReview != null && !purchase.hasReview}"
-                                            th:onclick="'openReviewModal(' + (purchase.id != null ? purchase.id : 0) + ')'"
-                                            class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm hover:bg-green-100 transition">
-                                        Leave Review
-                                    </button>
-                                    
-                                    <span th:if="${purchase.hasReview != null && purchase.hasReview}" 
-                                          class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                                        Reviewed
-                                    </span>
+                        <!-- Product Grid -->
+                        <div th:if="${!#lists.isEmpty(buyHistory)}" class="row">
+                            <div th:each="purchase : ${buyHistory}" class="col-md-6 col-lg-4 mb-4">
+                                <div class="product-card-modern">
+                                    <div class="position-relative">
+                                        <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
+                                             th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
+                                             class="product-image-modern w-100">
+                                        <div class="purchased-badge-modern">
+                                            <i class="bi bi-check-circle me-1"></i>PURCHASED
+                                        </div>
+                                    </div>
+                                    <div class="product-info-modern">
+                                        <h6 class="product-title-modern" th:text="${purchase.product.name != null ? purchase.product.name : 'Product Name'}">Product Name</h6>
+                                        <p class="product-description-modern" th:text="${purchase.product.description != null ? purchase.product.description : 'No description available'}">Description</p>
+                                        <div class="product-meta-modern">
+                                            <span class="product-price-modern" th:text="${'RON ' + #numbers.formatDecimal(purchase.totalPrice != null ? purchase.totalPrice : 0, 1, 2)}">RON 0.00</span>
+                                            <span class="product-date-modern" th:text="${#temporals.format(purchase.purchaseDate != null ? purchase.purchaseDate : #dates.createNow(), 'dd MMM yyyy')}">Date</span>
+                                        </div>
+                                        <div class="product-details-modern">
+                                            <div class="detail-item-modern" th:if="${purchase.quantity != null && purchase.quantity > 1}">
+                                                <span class="detail-label-modern">Quantity</span>
+                                                <span class="detail-value-modern" th:text="${purchase.quantity}">1</span>
+                                            </div>
+                                            <div class="detail-item-modern" th:if="${purchase.seller != null}">
+                                                <span class="detail-label-modern">Seller</span>
+                                                <span class="detail-value-modern" th:text="${purchase.seller.firstName + ' ' + purchase.seller.lastName}">Seller</span>
+                                            </div>
+                                        </div>
+                                        <div class="action-buttons">
+                                            <a th:href="@{'/marketplace/product/' + (purchase.product.id != null ? purchase.product.id : 0)}" 
+                                               class="btn-view-again">
+                                                <i class="bi bi-eye me-1"></i>View Again
+                                            </a>
+                                            
+                                            <button th:if="${purchase.hasReview != null && !purchase.hasReview}"
+                                                    th:onclick="'openReviewModal(' + (purchase.id != null ? purchase.id : 0) + ')'"
+                                                    class="btn-review">
+                                                <i class="bi bi-star me-1"></i>Review
+                                            </button>
+                                            
+                                            <span th:if="${purchase.hasReview != null && purchase.hasReview}" 
+                                                  class="reviewed-badge">
+                                                <i class="bi bi-star-fill me-1"></i>Reviewed
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <!-- Additional product details -->
-                            <div class="mt-3 text-xs text-gray-500 space-y-1">
-                                <div th:if="${purchase.quantity != null && purchase.quantity > 1}" th:text="${'Quantity: ' + purchase.quantity}">Quantity: 1</div>
-                                <div th:if="${purchase.seller != null}" th:text="${'Seller: ' + purchase.seller.firstName + ' ' + purchase.seller.lastName}">Seller: John Doe</div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div th:if="${showPagination}" class="row mt-4">
+                            <div class="col-12">
+                                <nav aria-label="Buy history pagination">
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Previous button -->
+                                        <li class="page-item" th:classappend="${!hasPrevious} ? 'disabled'">
+                                            <a class="page-link" th:href="@{/dashboard/buy-history(page=${currentPage - 1})}" 
+                                               th:if="${hasPrevious}">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </a>
+                                            <span class="page-link" th:if="${!hasPrevious}">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </span>
+                                        </li>
+                                        
+                                        <!-- Page numbers -->
+                                        <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+                                            th:classappend="${pageNum == currentPage} ? 'active'">
+                                            <a class="page-link" th:href="@{/dashboard/buy-history(page=${pageNum})}" 
+                                               th:text="${pageNum + 1}">1</a>
+                                        </li>
+                                        
+                                        <!-- Next button -->
+                                        <li class="page-item" th:classappend="${!hasNext} ? 'disabled'">
+                                            <a class="page-link" th:href="@{/dashboard/buy-history(page=${currentPage + 1})}" 
+                                               th:if="${hasNext}">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                            <span class="page-link" th:if="${!hasNext}">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </nav>
+                                
+                                <!-- Page info -->
+                                <div class="text-center text-muted mt-2">
+                                    <small>
+                                        Showing <span th:text="${currentPage * 6 + 1}">1</span> to 
+                                        <span th:text="${currentPage * 6 + buyHistory.size()}">6</span> of 
+                                        <span th:text="${totalElements}">0</span> purchased products
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </main>
+            </div>
+        </div>
+    </div>
 
-        <!-- Review Modal -->
-        <div id="reviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800">Leave a Review</h3>
-                        <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content review-modal-content">
+                <div class="modal-header review-modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">
+                        <i class="bi bi-star me-2"></i>Leave a Review
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body review-modal-body">
                     <form th:action="@{/dashboard/buy-history/review}" method="post" class="space-y-4">
                         <input type="hidden" id="purchaseId" name="purchaseId">
                         
-                        <div>
-                            <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                            <select id="rating" name="rating" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label fw-semibold">Rating</label>
+                            <select id="rating" name="rating" required class="form-select form-control-modern">
                                 <option value="">Select rating</option>
                                 <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
                                 <option value="4">⭐⭐⭐⭐ Very Good</option>
@@ -203,21 +700,19 @@
                             </select>
                         </div>
                         
-                        <div>
-                            <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Comment</label>
+                        <div class="mb-3">
+                            <label for="comment" class="form-label fw-semibold">Comment</label>
                             <textarea id="comment" name="comment" rows="3" 
                                       placeholder="Share your experience with this product..."
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                                      class="form-control form-control-modern"></textarea>
                         </div>
                         
-                        <div class="flex space-x-3 pt-4">
-                            <button type="button" onclick="closeReviewModal()" 
-                                    class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-300">
+                        <div class="d-flex gap-3 pt-3">
+                            <button type="button" class="btn btn-outline-secondary flex-fill" data-bs-dismiss="modal">
                                 Cancel
                             </button>
-                            <button type="submit" 
-                                    class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-300">
-                                Submit Review
+                            <button type="submit" class="btn btn-success flex-fill">
+                                <i class="bi bi-send me-2"></i>Submit Review
                             </button>
                         </div>
                     </form>
@@ -226,119 +721,72 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer th:replace="fragments/footer :: footer"></footer>
+    <!-- Include footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
-    <!-- Include the login modal script -->
-    <div th:replace="fragments/login-modal :: loginModalScript"></div>
-
-    <script th:inline="javascript">
-        // Thymeleaf data injection
-        /*<![CDATA[*/
-        const monthlyData = /*[[${monthlyData}]]*/ [];
-        /*]]>*/
-        
-        // Validate data is an array of 12 numbers
-        if (!Array.isArray(monthlyData) || monthlyData.length !== 12) {
-            console.warn('Invalid monthly data, using default values');
-            monthlyData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            
+            counters.forEach(counter => {
+                const target = parseFloat(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const step = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    
+                    if (counter.textContent.includes('RON')) {
+                        counter.textContent = 'RON ' + current.toFixed(2);
+                    } else {
+                        counter.textContent = Math.floor(current);
+                    }
+                }, 16);
+            });
         }
         
-        // Ensure all values are numbers
-        const chartData = monthlyData.map(val => {
-            const num = parseFloat(val);
-            return isNaN(num) ? 0 : num;
-        });
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
         
-        console.log('Chart data:', chartData);
-        
-        // Initialize chart when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('spendingChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Spending (RON)',
-                        data: chartData,
-                        borderColor: 'rgba(34,197,94,0.8)',
-                        backgroundColor: 'rgba(134,239,172,0.4)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        borderWidth: 3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#ffffff',
-                            bodyColor: '#ffffff',
-                            borderColor: '#22c55e',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    return 'RON ' + context.parsed.y.toFixed(2);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#6b7280',
-                                callback: function(value) {
-                                    return 'RON ' + value;
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.1)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#6b7280'
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
                 }
+            });
+        }, observerOptions);
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate counters after page load
+            setTimeout(animateCounters, 500);
+            
+            // Observe product cards for animation
+            const productCards = document.querySelectorAll('.product-card-modern');
+            productCards.forEach(card => {
+                observer.observe(card);
             });
         });
         
         // Review Modal Functions
         function openReviewModal(purchaseId) {
             document.getElementById('purchaseId').value = purchaseId;
-            document.getElementById('reviewModal').classList.remove('hidden');
+            const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+            modal.show();
         }
-        
-        function closeReviewModal() {
-            document.getElementById('reviewModal').classList.add('hidden');
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('reviewModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeReviewModal();
-            }
-        });
     </script>
 </body>
 </html> 

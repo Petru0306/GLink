@@ -332,6 +332,71 @@
         .connection-status .btn-close {
             filter: invert(1);
         }
+
+        /* New styles for price update notification */
+        .price-update-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            display: none; /* Hidden by default */
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease-in-out;
+            backdrop-filter: blur(10px);
+        }
+
+        .price-update-notification.show {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .price-update-notification .notification-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .price-update-notification .text-success {
+            color: #ffffff; /* White color for success in green notification */
+        }
+
+        .price-update-notification .text-muted {
+            color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+        }
+
+        .price-update-notification .fw-bold {
+            font-weight: 700;
+        }
+
+        .price-update-animation {
+            transition: all 0.5s ease-in-out;
+            animation: pricePulse 1s ease-in-out;
+        }
+        
+        @keyframes pricePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); background-color: #d4edda; }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -425,7 +490,8 @@
                                 </div>
                                 
                                 <!-- Offer Message Card -->
-                                <div th:if="${message.isOffer}" class="offer-message" th:attr="data-message-id=${message.id}">
+                                <div th:if="${message.isOffer}" class="offer-message" 
+                                     th:attr="data-message-id=${message.id}, data-offer-status=${message.offerStatus}">
                                     <div class="offer-header">
                                         <div class="offer-icon">
                                             <i class="bi bi-tag-fill"></i>
@@ -576,6 +642,34 @@
         let stompClient = null;
         let reconnectCount = 0;
         let processedMessageIds = new Set(); // Track processed messages to prevent duplicates
+        
+        // Global function to force cleanup any stuck modals
+        function forceModalCleanup() {
+            try {
+                // Remove all modal backdrops
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                
+                // Remove modal-open class from body
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = '';
+                document.body.style.paddingRight = '';
+                
+                // Hide all modals
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                    modal.setAttribute('aria-hidden', 'true');
+                    modal.removeAttribute('aria-modal');
+                    modal.removeAttribute('role');
+                });
+                
+                console.log('Forced modal cleanup completed');
+            } catch (error) {
+                console.error('Error during forced modal cleanup:', error);
+            }
+        }
         
         // Set up AJAX CSRF header
         $.ajaxSetup({
@@ -799,6 +893,13 @@
                 }
             }
             
+            // Handle price update notifications
+            if (message.content === 'PRICE_UPDATE' && message.offerStatus === 'PRICE_UPDATED' && message.offerAmount) {
+                console.log("Received price update notification:", message);
+                updateProductPriceDisplay(message.offerAmount);
+                return; // Don't append a new message for price updates
+            }
+            
             // Debug: Log all messages to see what we're receiving
             console.log("Message processing - ID:", message.id, "MessageID:", message.messageId, "Content:", message.content, "OfferStatus:", message.offerStatus, "IsOffer:", message.isOffer, "SenderID:", message.senderId);
             
@@ -990,6 +1091,44 @@
                 return;
             }
             
+            // Function to properly close the offer modal and remove backdrop
+            function closeOfferModal() {
+                try {
+                    const modalElement = document.getElementById('offerModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    } else {
+                        // If no instance exists, manually hide and remove backdrop
+                        modalElement.classList.remove('show');
+                        modalElement.style.display = 'none';
+                        modalElement.setAttribute('aria-hidden', 'true');
+                        modalElement.removeAttribute('aria-modal');
+                        modalElement.removeAttribute('role');
+                        
+                        // Remove backdrop
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                        
+                        // Remove modal-open class from body
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }
+                } catch (error) {
+                    console.error('Error closing offer modal:', error);
+                    // Force cleanup
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+            }
+            
             if (stompClient && stompClient.connected) {
                 // Create a temporary ID to track this offer
                 const tempId = 'temp-offer-' + Date.now();
@@ -1021,7 +1160,7 @@
                 scrollToBottom();
                 
                 // Close modal
-                bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
+                closeOfferModal();
                 
                 // Send after UI updates for better UX
                 stompClient.send("/app/chat.offer", {}, JSON.stringify(chatMessage));
@@ -1035,13 +1174,16 @@
                 },
                 success: function(response) {
                     // Close modal
-                    bootstrap.Modal.getInstance(document.getElementById('offerModal')).hide();
+                    closeOfferModal();
                     
                     // Add message to chat
                     appendMessage(response);
                     scrollToBottom();
                 },
                 error: function(xhr) {
+                    // Close modal even on error
+                    closeOfferModal();
+                    
                     let errorMessage = 'A apărut o eroare la trimiterea ofertei.';
                     try {
                         const response = JSON.parse(xhr.responseText);
@@ -1077,6 +1219,44 @@
                 return;
             }
             
+            // Function to properly close the modal and remove backdrop
+            function closeCounterOfferModal() {
+                try {
+                    const modalElement = document.getElementById('counterOfferModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    } else {
+                        // If no instance exists, manually hide and remove backdrop
+                        modalElement.classList.remove('show');
+                        modalElement.style.display = 'none';
+                        modalElement.setAttribute('aria-hidden', 'true');
+                        modalElement.removeAttribute('aria-modal');
+                        modalElement.removeAttribute('role');
+                        
+                        // Remove backdrop
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                        
+                        // Remove modal-open class from body
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }
+                } catch (error) {
+                    console.error('Error closing modal:', error);
+                    // Force cleanup
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
+                    document.body.style.paddingRight = '';
+                }
+            }
+            
             if (stompClient && stompClient.connected) {
                 // Create a temporary ID to track this counter offer
                 const tempId = 'temp-counter-' + Date.now();
@@ -1094,7 +1274,7 @@
                 processedMessageIds.add(tempId);
                 
                 // Close modal first
-                bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
+                closeCounterOfferModal();
                 
                 // Send via WebSocket
                 stompClient.send("/app/chat.respondOffer", {}, JSON.stringify(chatMessage));
@@ -1109,13 +1289,16 @@
                 },
                 success: function(response) {
                     // Close modal
-                    bootstrap.Modal.getInstance(document.getElementById('counterOfferModal')).hide();
+                    closeCounterOfferModal();
                     
                     // Add message to chat
                     appendMessage(response);
                     scrollToBottom();
                 },
                 error: function(xhr) {
+                    // Close modal even on error
+                    closeCounterOfferModal();
+                    
                     let errorMessage = 'A apărut o eroare la trimiterea contraofertei.';
                     try {
                         const response = JSON.parse(xhr.responseText);
@@ -1270,9 +1453,10 @@
             
             // Find the offer message - try multiple selectors
             let offerMessage = null;
+            let messageDiv = null;
             
             // First, try to find the message div and then the offer within it
-            const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
+            messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
             if (messageDiv) {
                 offerMessage = messageDiv.querySelector('.offer-message');
                 console.log("Found offer message via message div:", !!offerMessage);
@@ -1281,6 +1465,9 @@
             // If not found, try direct offer message lookup
             if (!offerMessage) {
                 offerMessage = document.querySelector(`.offer-message[data-message-id="${messageId}"]`);
+                if (offerMessage) {
+                    messageDiv = offerMessage.closest('.message');
+                }
                 console.log("Found offer message via direct lookup:", !!offerMessage);
             }
             
@@ -1292,72 +1479,203 @@
                     const parentMessage = offerMsg.closest('.message');
                     if (parentMessage && parentMessage.getAttribute('data-message-id') === messageId) {
                         offerMessage = offerMsg;
+                        messageDiv = parentMessage;
                         console.log("Found offer message via parent lookup");
                         break;
                     }
                 }
             }
             
-            if (!offerMessage) {
+            if (!offerMessage || !messageDiv) {
                 console.error("Could not find offer message with messageId:", messageId);
                 console.log("Available message IDs:", Array.from(document.querySelectorAll('.message')).map(m => m.getAttribute('data-message-id')));
                 console.log("Available offer messages:", Array.from(document.querySelectorAll('.offer-message')).map(m => m.getAttribute('data-message-id')));
                 return;
             }
             
-            if (offerMessage) {
-                console.log("Found offer message, updating status to:", status);
-                
-                // Remove processing state
-                offerMessage.classList.remove('offer-processing');
-                
-                // Update status display
-                const statusElement = offerMessage.querySelector('.offer-status');
-                if (statusElement) {
-                    // Remove old status classes
-                    statusElement.classList.remove('pending', 'accepted', 'rejected', 'countered');
-                    // Add new status class
-                    statusElement.classList.add(status.toLowerCase());
-                    // Update text
-                    statusElement.textContent = getOfferStatusText(status);
-                }
-                
-                // Remove action buttons
-                const actionsElement = offerMessage.querySelector('.offer-actions');
-                if (actionsElement) {
-                    actionsElement.remove();
-                }
-                
-                // If accepted, update product price in the card and show success animation
-                if (status === 'ACCEPTED') {
-                    try {
-                        // Add success animation
-                        offerMessage.style.animation = 'pulse 0.6s ease-in-out';
-                        setTimeout(() => {
-                            offerMessage.style.animation = '';
-                        }, 600);
-                        
-                        // Update product price card
-                        const amountElement = offerMessage.querySelector('.offer-amount');
-                        if (amountElement) {
-                            const amount = parseFloat(amountElement.textContent);
-                            updateProductPriceDisplay(amount);
-                        }
-                    } catch (e) {
-                        console.error('Error updating product price:', e);
-                    }
-                }
-                
-                // If rejected, add rejection animation
-                if (status === 'REJECTED') {
-                    offerMessage.style.animation = 'shake 0.6s ease-in-out';
+            console.log("Found offer message, updating status to:", status);
+            
+            // Remove processing state
+            offerMessage.classList.remove('offer-processing');
+            
+            // Get the offer amount from the current offer card
+            const amountElement = offerMessage.querySelector('.offer-amount');
+            const offerAmount = amountElement ? parseFloat(amountElement.textContent) : 0;
+            
+            // Get the original price
+            const originalPrice = /*[[${product.price}]]*/ '0';
+            const productName = /*[[${product.name}]]*/ 'produs';
+            
+            // Determine if current user is the sender for this message
+            const currentUserId = /*[[${#authentication.principal.id}]]*/ '0';
+            const messageSenderId = getMessageSenderId(messageId);
+            const isCurrentUserSender = messageSenderId == currentUserId;
+            
+            console.log('Updating offer status:', {
+                messageId: messageId,
+                status: status,
+                currentUserId: currentUserId,
+                messageSenderId: messageSenderId,
+                isCurrentUserSender: isCurrentUserSender
+            });
+            
+            // Completely rebuild the offer card content to match server-side rendering
+            const newOfferContent = buildOfferCardContent(messageId, offerAmount, status, originalPrice, productName, isCurrentUserSender);
+            
+            // Replace the offer message content completely
+            offerMessage.innerHTML = newOfferContent;
+            
+            // Ensure the data attributes are properly set
+            offerMessage.setAttribute('data-offer-status', status);
+            
+            // Add appropriate animations based on status
+            if (status === 'ACCEPTED') {
+                try {
+                    // Add success animation
+                    offerMessage.style.animation = 'pulse 0.6s ease-in-out';
                     setTimeout(() => {
                         offerMessage.style.animation = '';
                     }, 600);
+                    
+                    // Update product price card
+                    updateProductPriceDisplay(offerAmount);
+                } catch (e) {
+                    console.error('Error updating product price:', e);
                 }
-            } else {
-                console.error("Could not find offer message element");
+            } else if (status === 'REJECTED') {
+                // Add rejection animation
+                offerMessage.style.animation = 'shake 0.6s ease-in-out';
+                setTimeout(() => {
+                    offerMessage.style.animation = '';
+                }, 600);
+            } else if (status === 'COUNTERED') {
+                // Add counter animation
+                offerMessage.style.animation = 'pulse 0.6s ease-in-out';
+                setTimeout(() => {
+                    offerMessage.style.animation = '';
+                }, 600);
             }
+            
+            // Verify consistency after update (debug)
+            setTimeout(() => {
+                verifyOfferCardConsistency();
+            }, 100);
+        }
+        
+        // Build offer card content that matches server-side rendering
+        function buildOfferCardContent(messageId, offerAmount, status, originalPrice, productName, isCurrentUserSender = null) {
+            const statusText = getOfferStatusText(status);
+            const statusClass = status.toLowerCase();
+            const originalPriceFormatted = parseFloat(originalPrice).toFixed(2);
+            const offerAmountFormatted = parseFloat(offerAmount).toFixed(2);
+            
+            // Update the data attribute on the offer message element
+            const offerMessage = document.querySelector(`.offer-message[data-message-id="${messageId}"]`);
+            if (offerMessage) {
+                offerMessage.setAttribute('data-offer-status', status);
+            }
+            
+            let offerContent = `
+                <div class="offer-header">
+                    <div class="offer-icon">
+                        <i class="bi bi-tag-fill"></i>
+                    </div>
+                    <h6 class="offer-title">Ofertă pentru ${productName}</h6>
+                </div>
+                
+                <div class="offer-original-price">Preț original: ${originalPriceFormatted} RON</div>
+                <div class="offer-amount">${offerAmountFormatted} RON</div>
+                
+                <div class="offer-status ${statusClass}">
+                    ${statusText}
+                </div>
+            `;
+            
+            // Determine if current user is the sender
+            let isSender = isCurrentUserSender;
+            if (isSender === null) {
+                // Fallback to DOM-based detection for existing messages
+                const currentUserId = /*[[${#authentication.principal.id}]]*/ '0';
+                const messageSenderId = getMessageSenderId(messageId);
+                isSender = messageSenderId == currentUserId;
+            }
+            
+            // Only add action buttons for pending offers and if current user is NOT the sender
+            console.log('Building offer card:', {
+                messageId: messageId,
+                status: status,
+                isSender: isSender,
+                willShowActions: status === 'PENDING' && !isSender
+            });
+            
+            if (status === 'PENDING' && !isSender) {
+                offerContent += `
+                    <div class="offer-actions">
+                        <button class="btn-accept" onclick="respondToOffer('${messageId}', 'ACCEPT')">
+                            <i class="bi bi-check-lg me-2"></i>Accept
+                        </button>
+                        <button class="btn-reject" onclick="respondToOffer('${messageId}', 'REJECT')">
+                            <i class="bi bi-x-lg me-2"></i>Refuz
+                        </button>
+                        <button class="btn-counter" onclick="showCounterOfferModal(this)" 
+                                data-message-id="${messageId}" data-offer-amount="${offerAmount}">
+                            <i class="bi bi-arrow-left-right me-2"></i>Contraofertă
+                        </button>
+                    </div>
+                `;
+            }
+            
+            return offerContent;
+        }
+        
+        // Helper function to get message sender ID (you may need to store this in data attributes)
+        function getMessageSenderId(messageId) {
+            const messageDiv = document.querySelector(`.message[data-message-id="${messageId}"]`);
+            if (messageDiv) {
+                // First try to use the data attribute for more reliable detection
+                const isCurrentUserSender = messageDiv.getAttribute('data-is-current-user-sender');
+                if (isCurrentUserSender === 'true') {
+                    const currentUserId = /*[[${#authentication.principal.id}]]*/ '0';
+                    console.log('Message is sent by current user (from data attribute), ID:', currentUserId);
+                    return currentUserId;
+                } else if (isCurrentUserSender === 'false') {
+                    console.log('Message is received from other user (from data attribute)');
+                    return 'other';
+                }
+                
+                // Fallback to class-based detection
+                if (messageDiv.classList.contains('message-sent')) {
+                    const currentUserId = /*[[${#authentication.principal.id}]]*/ '0';
+                    console.log('Message is sent by current user (from class), ID:', currentUserId);
+                    return currentUserId;
+                } else {
+                    console.log('Message is received from other user (from class)');
+                    return 'other';
+                }
+            }
+            console.log('Message div not found for ID:', messageId);
+            return 'unknown';
+        }
+        
+        // Debug function to verify offer card consistency
+        function verifyOfferCardConsistency() {
+            const offerMessages = document.querySelectorAll('.offer-message');
+            console.log('Verifying offer card consistency...');
+            
+            offerMessages.forEach(offerMsg => {
+                const messageId = offerMsg.getAttribute('data-message-id');
+                const dataStatus = offerMsg.getAttribute('data-offer-status');
+                const statusElement = offerMsg.querySelector('.offer-status');
+                const displayedStatus = statusElement ? statusElement.textContent.trim() : 'N/A';
+                const statusClass = statusElement ? statusElement.className : 'N/A';
+                
+                console.log(`Message ${messageId}:`, {
+                    dataStatus: dataStatus,
+                    displayedStatus: displayedStatus,
+                    statusClass: statusClass,
+                    hasActions: !!offerMsg.querySelector('.offer-actions')
+                });
+            });
         }
         
         // Update product price in the UI when an offer is accepted
@@ -1365,14 +1683,77 @@
             const priceElement = document.querySelector('.product-price');
             if (!priceElement) return;
             
-            // Get original price
-            const originalPrice = /*[[${product.price}]]*/ '0';
+            // Prevent duplicate updates by checking if the price is already the same
+            const currentNegotiatedPrice = priceElement.querySelector('.text-success');
+            if (currentNegotiatedPrice) {
+                const currentPrice = parseFloat(currentNegotiatedPrice.textContent);
+                if (Math.abs(currentPrice - negotiatedPrice) < 0.01) {
+                    console.log('Price already updated to this value, skipping duplicate update');
+                    return;
+                }
+            }
             
-            // Update price display
+            // Get current price from the DOM to handle cases where there might already be a negotiated price
+            let originalPrice = /*[[${product.price}]]*/ '0';
+            
+            // Check if there's already a strikethrough price (meaning there was already a negotiated price)
+            const existingDel = priceElement.querySelector('del');
+            if (existingDel) {
+                // Extract the original price from the strikethrough text
+                const delText = existingDel.textContent;
+                const priceMatch = delText.match(/(\d+\.?\d*)/);
+                if (priceMatch) {
+                    originalPrice = priceMatch[1];
+                }
+            }
+            
+            // Add animation class for visual feedback
+            priceElement.classList.add('price-update-animation');
+            
+            // Update price display with smooth transition
             priceElement.innerHTML = `
-                <del>${parseFloat(originalPrice).toFixed(2)} RON</del>
-                <span class="ms-2">${parseFloat(negotiatedPrice).toFixed(2)} RON</span>
+                <del class="text-muted">${parseFloat(originalPrice).toFixed(2)} RON</del>
+                <span class="ms-2 text-success fw-bold">${parseFloat(negotiatedPrice).toFixed(2)} RON</span>
             `;
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                priceElement.classList.remove('price-update-animation');
+            }, 1000);
+            
+            // Show success notification
+            showPriceUpdateNotification(negotiatedPrice);
+        }
+        
+        // Show notification when price is updated
+        function showPriceUpdateNotification(negotiatedPrice) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'price-update-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span><strong>Preț actualizat!</strong> ${parseFloat(negotiatedPrice).toFixed(2)} RON</span>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Show notification with smooth animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Remove notification after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
         }
         
         function appendMessage(message) {
@@ -1384,6 +1765,9 @@
             const messageId = message.id || message.messageId;
             if (messageId) {
                 messageDiv.setAttribute('data-message-id', messageId);
+                // Also store sender information for easier access
+                messageDiv.setAttribute('data-sender-id', message.senderId || 'unknown');
+                messageDiv.setAttribute('data-is-current-user-sender', message.currentUserSender ? 'true' : 'false');
             }
             
             let messageContent = '';
@@ -1393,47 +1777,19 @@
             
             if (isOfferMessage) {
                 const originalPrice = /*[[${product.price}]]*/ 0;
-                const offerAmount = parseFloat(message.offerAmount).toFixed(2);
-                const originalPriceFormatted = parseFloat(originalPrice).toFixed(2);
+                const productName = /*[[${product.name}]]*/ 'produs';
                 
-                // Create offer card content
-                let offerCard = `
-                    <div class="offer-message" data-message-id="${messageId}">
-                        <div class="offer-header">
-                            <div class="offer-icon">
-                                <i class="bi bi-tag-fill"></i>
-                            </div>
-                            <h6 class="offer-title">Ofertă pentru ${/*[[${product.name}]]*/ 'produs'}</h6>
-                        </div>
-                        
-                        <div class="offer-original-price">Preț original: ${originalPriceFormatted} RON</div>
-                        <div class="offer-amount">${offerAmount} RON</div>
-                        
-                        <div class="offer-status ${message.offerStatus.toLowerCase()}">
-                            ${getOfferStatusText(message.offerStatus)}
-                        </div>
-                `;
+                // Use the same buildOfferCardContent function for consistency
+                const offerContent = buildOfferCardContent(
+                    messageId, 
+                    message.offerAmount, 
+                    message.offerStatus, 
+                    originalPrice, 
+                    productName,
+                    message.currentUserSender // Pass the sender information
+                );
                 
-                // Add action buttons only for recipient if offer is pending
-                if (!message.currentUserSender && message.offerStatus === 'PENDING') {
-                    offerCard += `
-                        <div class="offer-actions">
-                            <button class="btn-accept" onclick="respondToOffer('${messageId}', 'ACCEPT')">
-                                <i class="bi bi-check-lg me-2"></i>Accept
-                            </button>
-                            <button class="btn-reject" onclick="respondToOffer('${messageId}', 'REJECT')">
-                                <i class="bi bi-x-lg me-2"></i>Refuz
-                            </button>
-                            <button class="btn-counter" onclick="showCounterOfferModal(this)" 
-                                    data-message-id="${messageId}" data-offer-amount="${message.offerAmount}">
-                                <i class="bi bi-arrow-left-right me-2"></i>Contraofertă
-                            </button>
-                        </div>
-                    `;
-                }
-                
-                offerCard += '</div>';
-                messageContent = offerCard;
+                messageContent = `<div class="offer-message" data-message-id="${messageId}">${offerContent}</div>`;
             } else {
                 messageContent = `<div class="message-content">${message.content}</div>`;
             }
@@ -1648,6 +2004,31 @@
                 showToast('error', 'Failed to create checkout session. Please try again.');
             });
         }
+        
+        // Add keyboard shortcut to force modal cleanup (Ctrl+Shift+M)
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'M') {
+                console.log('Force modal cleanup triggered by keyboard shortcut');
+                forceModalCleanup();
+                // Show a brief notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: #28a745;
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    z-index: 10000;
+                    font-size: 14px;
+                `;
+                notification.textContent = 'Modal cleanup completed!';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 2000);
+            }
+        });
     </script>
 </body>
 </html> 

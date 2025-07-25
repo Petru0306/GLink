@@ -446,12 +446,39 @@ public class ProductService {
     public List<PurchaseDto> getBoughtProductsByBuyer(Long buyerId) {
         List<Product> products = productRepository.findProductsByBuyerId(buyerId);
         
-        System.out.println("DEBUG: Found " + products.size() + " products bought by user " + buyerId);
-        
-        return products.stream()
+        List<PurchaseDto> purchaseDtos = products.stream()
                 .map(PurchaseDto::fromProduct)
                 .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
                 .collect(Collectors.toList());
+        
+        return purchaseDtos;
+    }
+    
+    public Page<PurchaseDto> getBoughtProductsByBuyerPaginated(Long buyerId, Pageable pageable) {
+        // Get all bought products for this buyer
+        List<Product> allBoughtProducts = productRepository.findProductsByBuyerId(buyerId);
+        
+        // Convert to DTOs and filter out nulls
+        List<PurchaseDto> allPurchaseDtos = allBoughtProducts.stream()
+                .map(PurchaseDto::fromProduct)
+                .filter(purchaseDto -> purchaseDto != null)
+                .collect(Collectors.toList());
+        
+        // Calculate pagination manually since the repository method returns a List
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allPurchaseDtos.size());
+        
+        if (start > allPurchaseDtos.size()) {
+            return Page.empty(pageable);
+        }
+        
+        List<PurchaseDto> pageContent = allPurchaseDtos.subList(start, end);
+        
+        return new org.springframework.data.domain.PageImpl<>(
+                pageContent,
+                pageable,
+                allPurchaseDtos.size()
+        );
     }
     
     @Transactional
