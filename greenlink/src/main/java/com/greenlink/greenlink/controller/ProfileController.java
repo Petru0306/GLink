@@ -198,7 +198,7 @@ public class ProfileController {
             model.addAttribute("profileUser", targetUser);
             
             // Load public profile data
-            loadPublicProfileData(model, targetUser);
+            loadPublicProfileData(model, targetUser, principal);
             
             // Mark as public profile
             model.addAttribute("isPersonalProfile", false);
@@ -299,7 +299,7 @@ public class ProfileController {
     /**
      * Load data for public profile page.
      */
-    private void loadPublicProfileData(Model model, User targetUser) {
+    private void loadPublicProfileData(Model model, User targetUser, Principal principal) {
         // Note: profileUser is already set in the controller method
 
         // User's products
@@ -362,6 +362,25 @@ public class ProfileController {
             model.addAttribute("userRank", 0);
         }
         
+        // Friend status for current user
+        if (principal != null) {
+            try {
+                User currentUser = userService.getCurrentUser(principal.getName());
+                boolean isFriend = friendService.areFriends(currentUser.getId(), targetUser.getId());
+                boolean friendRequestSent = friendService.hasFriendRequest(currentUser.getId(), targetUser.getId());
+                
+                model.addAttribute("isFriend", isFriend);
+                model.addAttribute("friendRequestSent", friendRequestSent);
+            } catch (Exception e) {
+                logger.warn("Failed to load friend status for user {}: {}", targetUser.getId(), e.getMessage());
+                model.addAttribute("isFriend", false);
+                model.addAttribute("friendRequestSent", false);
+            }
+        } else {
+            model.addAttribute("isFriend", false);
+            model.addAttribute("friendRequestSent", false);
+        }
+        
         // Load completed lessons for the quizzes section
         loadCompletedLessons(model, targetUser);
     }
@@ -399,12 +418,65 @@ public class ProfileController {
     private LessonCompletionData mapToLessonCompletionData(QuizResult quizResult) {
         LessonCompletionData lessonData = new LessonCompletionData();
         
-        if (quizResult.getQuiz() != null) {
-            lessonData.setTitle(quizResult.getQuiz().getTitle());
-            lessonData.setDescription(quizResult.getQuiz().getDescription());
+        // Get the quiz ID to determine which course this is
+        Long quizId = quizResult.getQuiz() != null ? quizResult.getQuiz().getId() : null;
+        
+        if (quizId != null) {
+            // Map course information based on quiz ID
+            switch (quizId.intValue()) {
+                case 1:
+                    lessonData.setTitle("1. Ce este sustenabilitatea?");
+                    lessonData.setDescription("Învață principiile fundamentale ale sustenabilității și cum să aplici aceste concepte în viața de zi cu zi.");
+                    lessonData.setImageUrl("/images/education/Ecologie si Biodiversitate.png");
+                    lessonData.setCourseNumber(1);
+                    break;
+                case 2:
+                    lessonData.setTitle("2. Cum să reciclezi corect");
+                    lessonData.setDescription("Descoperă regulile de bază pentru reciclare și cum să organizezi deșeurile eficient.");
+                    lessonData.setImageUrl("/images/education/Procesul de reciclare.png");
+                    lessonData.setCourseNumber(2);
+                    break;
+                case 3:
+                    lessonData.setTitle("3. Reduce deșeurile cu o singură schimbare");
+                    lessonData.setDescription("Învață schimbări mici care au un impact mare în reducerea deșeurilor din casa ta.");
+                    lessonData.setImageUrl("/images/education/Introducere in reciclare.png");
+                    lessonData.setCourseNumber(3);
+                    break;
+                case 4:
+                    lessonData.setTitle("4. Începe un mini-compost acasă");
+                    lessonData.setDescription("Transformă resturile în viață nouă");
+                    lessonData.setImageUrl("/images/education/Ecosisteme si Biodiversitate.png");
+                    lessonData.setCourseNumber(4);
+                    break;
+                case 5:
+                    lessonData.setTitle("5. Plantează ceva (chiar și într-un ghiveci!)");
+                    lessonData.setDescription("Conectează-te cu natura prin plantat");
+                    lessonData.setImageUrl("/images/education/Energie Verde si Sustenabilitate.png");
+                    lessonData.setCourseNumber(5);
+                    break;
+                case 6:
+                    lessonData.setTitle("6. Adună gunoiul din cartierul tău");
+                    lessonData.setDescription("Fă diferența în comunitatea ta");
+                    lessonData.setImageUrl("/images/education/Energie Regenerabila.png");
+                    lessonData.setCourseNumber(6);
+                    break;
+                default:
+                    // Fallback to quiz data if available
+                    if (quizResult.getQuiz() != null) {
+                        lessonData.setTitle(quizResult.getQuiz().getTitle());
+                        lessonData.setDescription(quizResult.getQuiz().getDescription());
+                        lessonData.setCourseNumber(quizId.intValue());
+                    } else {
+                        lessonData.setTitle("Lecție completată");
+                        lessonData.setDescription("Detaliile lecției nu sunt disponibile");
+                        lessonData.setCourseNumber(0);
+                    }
+                    break;
+            }
         } else {
-            lessonData.setTitle("Unknown Lesson");
-            lessonData.setDescription("Lesson details not available");
+            lessonData.setTitle("Lecție completată");
+            lessonData.setDescription("Detaliile lecției nu sunt disponibile");
+            lessonData.setCourseNumber(0);
         }
         
         lessonData.setPointsEarned(quizResult.getPointsEarned());
@@ -423,6 +495,8 @@ public class ProfileController {
         private String description;
         private int pointsEarned;
         private LocalDateTime completedAt;
+        private String imageUrl;
+        private int courseNumber;
 
         // Getters and Setters
         public String getTitle() {
@@ -455,6 +529,22 @@ public class ProfileController {
 
         public void setCompletedAt(LocalDateTime completedAt) {
             this.completedAt = completedAt;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+
+        public int getCourseNumber() {
+            return courseNumber;
+        }
+
+        public void setCourseNumber(int courseNumber) {
+            this.courseNumber = courseNumber;
         }
     }
 }

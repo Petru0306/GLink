@@ -151,4 +151,23 @@ public class FriendService {
     public boolean hasPendingRequestTo(User sender, User receiver) {
         return friendRequestRepository.existsBySenderAndReceiverAndStatus(sender, receiver, "PENDING");
     }
+    
+    public boolean areFriends(Long userId1, Long userId2) {
+        User user1 = userRepository.findById(userId1)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId1));
+        User user2 = userRepository.findById(userId2)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId2));
+        
+        return friendRepository.existsByUserAndFriendUser(user1, user2) || 
+               friendRepository.existsByUserAndFriendUser(user2, user1);
+    }
+    
+    public boolean hasFriendRequest(Long senderId, Long receiverId) {
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + senderId));
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + receiverId));
+        
+        return hasPendingRequestTo(sender, receiver);
+    }
 }
