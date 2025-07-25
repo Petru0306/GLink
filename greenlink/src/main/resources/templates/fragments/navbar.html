@@ -360,10 +360,10 @@
                 form.style.display = 'none';
                 
                 // Add CSRF token (Thymeleaf way)
-                const csrfToken = /*[[${_csrf.token}]]*/ '';
-                const csrfParameterName = /*[[${_csrf.parameterName}]]*/ '_csrf';
+                const csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
+                const csrfParameterName = /*[[${_csrf != null ? _csrf.parameterName : '_csrf'}]]*/ '_csrf';
                 
-                if (csrfToken) {
+                if (csrfToken && csrfToken !== '') {
                     const csrfInput = document.createElement('input');
                     csrfInput.type = 'hidden';
                     csrfInput.name = csrfParameterName;

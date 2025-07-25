@@ -1,8 +1,6 @@
 package com.greenlink.greenlink.dto;
 
 import com.greenlink.greenlink.model.DirectMessage;
-import com.greenlink.greenlink.model.User;
-
 import java.time.LocalDateTime;
 
 public class DirectMessageDto {

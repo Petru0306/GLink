@@ -2,6 +2,7 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.dto.ChatMessageDto;
 import com.greenlink.greenlink.dto.MessageDto;
+import com.greenlink.greenlink.dto.OfferEvent;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.MessageService;
 import com.greenlink.greenlink.service.UserService;
@@ -71,27 +72,29 @@ public class WebSocketController {
     @MessageMapping("/chat.join")
     public void joinConversation(@Payload Map<String, Object> payload, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         try {
-            Long conversationId = payload.get("conversationId") != null ? 
-                    Long.parseLong(payload.get("conversationId").toString()) : null;
-                    
-            if (conversationId != null) {
-                // Add user to conversation room
-                var sessionAttributes = headerAccessor.getSessionAttributes();
-                if (sessionAttributes != null) {
-                    sessionAttributes.put("conversationId", conversationId);
-                }
-                
-                // Send confirmation to user
-                Map<String, Object> response = new HashMap<>();
-                response.put("type", "JOINED");
-                response.put("conversationId", conversationId);
-                response.put("timestamp", System.currentTimeMillis());
-                
-                messagingTemplate.convertAndSendToUser(principal.getName(), "/queue/chat.joined", response);
-                logger.info("User " + principal.getName() + " joined conversation: " + conversationId);
-            }
+            Long conversationId = Long.parseLong(payload.get("conversationId").toString());
+            
+            // Mark conversation as read for the joining user
+            User currentUser = userService.getUserByEmail(principal.getName());
+            messageService.markConversationAsRead(conversationId, currentUser);
+            
+            // Send join confirmation to user
+            Map<String, Object> joinConfirmation = new HashMap<>();
+            joinConfirmation.put("type", "JOIN_CONFIRMATION");
+            joinConfirmation.put("conversationId", conversationId);
+            joinConfirmation.put("userId", currentUser.getId());
+            joinConfirmation.put("timestamp", System.currentTimeMillis());
+            
+            messagingTemplate.convertAndSendToUser(
+                currentUser.getId().toString(),
+                "/queue/chat.joined",
+                joinConfirmation
+            );
+            
+            logger.info("User " + currentUser.getId() + " joined conversation: " + conversationId);
+            
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error handling join message", e);
+            logger.log(Level.SEVERE, "Error handling join conversation", e);
         }
     }
 
@@ -157,6 +160,7 @@ public class WebSocketController {
             
             // Convert back to ChatMessageDto for broadcasting
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
+            responseMessage.setEventType("OFFER_CREATED");
             
             // If client provided a tempId, include it in response for tracking
             if (chatMessage.getTempId() != null) {
@@ -167,6 +171,12 @@ public class WebSocketController {
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(),
                     responseMessage
+            );
+            
+            // Also send to specific offer topic for real-time updates
+            messagingTemplate.convertAndSend(
+                    "/topic/offer." + savedMessage.getId(),
+                    createOfferEvent(OfferEvent.EventType.OFFER_CREATED, savedMessage, currentUser, null)
             );
             
             logger.info("Offer sent via WebSocket: " + responseMessage.getOfferAmount());
@@ -191,33 +201,52 @@ public class WebSocketController {
                     chatMessage.getOfferAmount()
             );
             
-            // If client provided a tempId, include it in response for tracking
+            // Get the original offer message for status update
+            MessageDto originalMessage = messageService.getMessageById(chatMessage.getMessageId(), currentUser);
+            
+            // Create status update for the original offer
+            ChatMessageDto statusUpdate = new ChatMessageDto();
+            statusUpdate.setMessageId(chatMessage.getMessageId());
+            statusUpdate.setConversationId(chatMessage.getConversationId());
+            statusUpdate.setOfferStatus(chatMessage.getOfferStatus());
+            statusUpdate.setOfferAmount(originalMessage.getOfferAmount());
+            statusUpdate.setOffer(true);
+            statusUpdate.setEventType("OFFER_UPDATED");
+            // Ensure content is null to indicate this is a status update only
+            statusUpdate.setContent(null);
+            
+            // Send status update to conversation topic
+            messagingTemplate.convertAndSend(
+                    "/topic/conversation." + chatMessage.getConversationId(),
+                    statusUpdate
+            );
+            
+            // Send specific offer event
+            OfferEvent.EventType eventType = determineEventType(chatMessage.getOfferStatus());
+            messagingTemplate.convertAndSend(
+                    "/topic/offer." + chatMessage.getMessageId(),
+                    createOfferEvent(eventType, originalMessage, currentUser, chatMessage.getOfferStatus())
+            );
+            
+            // If client provided a tempId, include it in response for tracking (only for counter offers)
             if (chatMessage.getTempId() != null && savedMessage != null) {
                 // Convert back to ChatMessageDto for broadcasting (only for counter offers)
                 ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
                 responseMessage.setTempId(chatMessage.getTempId());
+                responseMessage.setEventType("COUNTER_OFFER_CREATED");
                 
                 // Broadcast the counter offer message
                 messagingTemplate.convertAndSend(
                         "/topic/conversation." + chatMessage.getConversationId(),
                         responseMessage
                 );
+                
+                // Send counter offer event
+                messagingTemplate.convertAndSend(
+                        "/topic/offer." + savedMessage.getId(),
+                        createOfferEvent(OfferEvent.EventType.COUNTER_OFFER_CREATED, savedMessage, currentUser, null)
+                );
             }
-            
-            // Always send a status update for the original offer (for accept/reject/counter)
-            ChatMessageDto statusUpdate = new ChatMessageDto();
-            statusUpdate.setMessageId(chatMessage.getMessageId());
-            statusUpdate.setConversationId(chatMessage.getConversationId());
-            statusUpdate.setOfferStatus(chatMessage.getOfferStatus());
-            statusUpdate.setOffer(true);
-            // Ensure content is null to indicate this is a status update only
-            statusUpdate.setContent(null);
-            
-            // Send status update
-            messagingTemplate.convertAndSend(
-                    "/topic/conversation." + chatMessage.getConversationId(),
-                    statusUpdate
-            );
             
             // If offer was accepted, send a price update notification to all participants
             if ("ACCEPT".equalsIgnoreCase(chatMessage.getOfferStatus()) && chatMessage.getOfferAmount() != null) {
@@ -226,11 +255,18 @@ public class WebSocketController {
                 priceUpdate.setOfferAmount(chatMessage.getOfferAmount());
                 priceUpdate.setContent("PRICE_UPDATE"); // Use content field to indicate this is a price update
                 priceUpdate.setOfferStatus("PRICE_UPDATED"); // Use offerStatus to indicate price update
+                priceUpdate.setEventType("PRICE_UPDATED");
                 
                 // Send price update to all participants
                 messagingTemplate.convertAndSend(
                         "/topic/conversation." + chatMessage.getConversationId(),
                         priceUpdate
+                );
+                
+                // Send price update event
+                messagingTemplate.convertAndSend(
+                        "/topic/offer." + chatMessage.getMessageId(),
+                        createOfferEvent(OfferEvent.EventType.PRICE_UPDATED, originalMessage, currentUser, null)
                 );
                 
                 logger.info("Price update notification sent for conversation " + chatMessage.getConversationId() + 
@@ -241,6 +277,48 @@ public class WebSocketController {
             
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error in WebSocket offer response handling", e);
+        }
+    }
+    
+    /**
+     * Create offer event for real-time updates
+     */
+    private OfferEvent createOfferEvent(OfferEvent.EventType eventType, MessageDto message, User user, String action) {
+        return OfferEvent.builder()
+                .eventType(eventType)
+                .messageId(message.getId())
+                .conversationId(message.getConversationId())
+                .offerStatus(message.getOfferStatus())
+                .offerAmount(message.getOfferAmount())
+                .senderId(message.getSenderId())
+                .senderName(message.getSenderName())
+                .responderId(user.getId())
+                .responderName(user.getFirstName() + " " + user.getLastName())
+                .timestamp(java.time.LocalDateTime.now())
+                .version(message.getVersion())
+                .offerExpiresAt(message.getOfferExpiresAt())
+                .counterOfferMessageId(message.getCounterOfferMessageId())
+                .originalOfferMessageId(message.getOriginalOfferMessageId())
+                .isExpired(message.isExpired())
+                .canBeActedUpon(message.isCanBeActedUpon())
+                .isCounterOffer(message.isCounterOffer())
+                .isOriginalOffer(message.isOriginalOffer())
+                .build();
+    }
+    
+    /**
+     * Determine event type based on action
+     */
+    private OfferEvent.EventType determineEventType(String action) {
+        switch (action.toUpperCase()) {
+            case "ACCEPT":
+                return OfferEvent.EventType.OFFER_ACCEPTED;
+            case "REJECT":
+                return OfferEvent.EventType.OFFER_REJECTED;
+            case "COUNTER":
+                return OfferEvent.EventType.COUNTER_OFFER_CREATED;
+            default:
+                return OfferEvent.EventType.OFFER_UPDATED;
         }
     }
 } 
