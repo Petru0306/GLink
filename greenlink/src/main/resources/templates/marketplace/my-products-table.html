@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Produsele Mele - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 3rem 0;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .product-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-action {
+            min-width: 100px;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .product-price {
+            font-weight: 600;
+            color: #28a745;
+        }
+        
+        .badge-eco {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-2">Produsele Mele</h1>
+            <p class="lead">Gestionează produsele tale listate în marketplace</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Actions Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Produsele tale (<span th:text="${products != null ? products.size() : 0}">0</span>)</h2>
+            <a href="/marketplace/sell" class="btn btn-success">
+                <i class="bi bi-plus-lg me-2"></i>
+                Adaugă Produs Nou
+            </a>
+        </div>
+
+        <!-- Products Table -->
+        <div class="table-responsive" th:if="${products != null && !products.isEmpty()}">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Imagine</th>
+                        <th>Nume Produs</th>
+                        <th>Preț</th>
+                        <th>Stoc</th>
+                        <th>Categorie</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
+                                 class="product-thumbnail" alt="Product Image">
+                            <img th:unless="${product.imageUrl}" src="/images/placeholder-product.jpg" 
+                                 class="product-thumbnail" alt="Product Image">
+                        </td>
+                        <td>
+                            <div class="product-name" th:text="${product.name}">Product Name</div>
+                            <small class="text-muted" th:text="${#strings.abbreviate(product.description, 50)}">Description...</small>
+                            <span th:if="${product.ecoFriendly}" class="badge badge-eco ms-2">
+                                <i class="bi bi-leaf-fill"></i> Eco
+                            </span>
+                        </td>
+                        <td class="product-price" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</td>
+                        <td th:text="${product.stock}">10</td>
+                        <td>
+                            <span class="badge bg-info text-dark" th:text="${product.category.displayName}">Category</span>
+                            <span class="badge" 
+                                  th:classappend="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'bg-success' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'bg-warning text-dark' : 'bg-info text-dark')}"
+                                  th:text="${product.branch.toString()}">Branch</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
+                                   class="btn btn-sm btn-outline-success btn-action">
+                                    <i class="bi bi-eye"></i> Vezi
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-action"
+                                        onclick="openEditModal(this)"
+                                        th:data-product-id="${product.id}"
+                                        th:data-product-name="${product.name}"
+                                        th:data-product-price="${product.price}"
+                                        th:data-product-description="${product.description}"
+                                        th:data-product-stock="${product.stock}"
+                                        th:data-product-category="${product.category}"
+                                        th:data-product-branch="${product.branch}"
+                                        th:data-product-eco-friendly="${product.ecoFriendly}"
+                                        th:data-product-image-url="${product.imageUrl}">
+                                    <i class="bi bi-pencil"></i> Modifică
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-action"
+                                        onclick="confirmDelete(this)"
+                                        th:data-product-id="${product.id}"
+                                        th:data-product-name="${product.name}">
+                                    <i class="bi bi-trash"></i> Șterge
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Empty State -->
+        <div th:if="${products == null || products.isEmpty()}" class="text-center py-5">
+            <i class="bi bi-box text-muted" style="font-size: 4rem;"></i>
+            <h3 class="mt-3">Nu ai niciun produs listat</h3>
+            <p class="text-muted mb-4">Începe să vinzi produse în marketplace-ul nostru</p>
+            <a href="/marketplace/sell" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-lg me-2"></i>
+                Adaugă Primul Produs
+            </a>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmare ștergere</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Ești sigur că vrei să ștergi produsul <strong id="productNameToDelete">Product Name</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <form id="deleteProductForm" method="post">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-danger">Șterge</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editează Produs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                        
+                        <div class="row">
+                            <!-- Image Upload -->
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <img id="modalImagePreview" src="/images/placeholder-product.jpg" 
+                                         class="w-100 rounded" style="height: 200px; object-fit: cover;" alt="Product Image">
+                                    
+                                    <label class="form-label d-block mt-2">Imagine Produs</label>
+                                    <input type="file" name="imageFile" id="modalImageFile" 
+                                           class="form-control" accept="image/*"
+                                           onchange="previewModalImage(this)">
+                                    <div class="form-text">Lasă gol pentru a păstra imaginea actuală</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product Details -->
+                            <div class="col-md-8">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nume Produs*</label>
+                                            <input type="text" class="form-control" name="name" id="modalName" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Preț (RON)*</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" name="price" id="modalPrice" 
+                                                       step="0.01" min="0" required>
+                                                <span class="input-group-text">RON</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Categorie*</label>
+                                            <select class="form-select" name="category" id="modalCategory" required>
+                                                <option value="">Selectează categoria</option>
+                                                <option th:each="cat : ${T(com.greenlink.greenlink.model.Product.Category).values()}"
+                                                        th:value="${cat}"
+                                                        th:text="${cat.displayName}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Stoc Disponibil*</label>
+                                            <input type="number" class="form-control" name="stock" id="modalStock" 
+                                                   min="1" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Marketplace*</label>
+                                            <select class="form-select" name="branch" id="modalBranch" required>
+                                                <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
+                                                        th:value="${branch}"
+                                                        th:text="${branch.toString()}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Eco-Friendly</label>
+                                            <div class="form-check form-switch mt-2">
+                                                <input type="checkbox" class="form-check-input" name="ecoFriendly" id="modalEcoFriendly">
+                                                <label class="form-check-label">
+                                                    <i class="bi bi-leaf-fill text-success"></i> Produs Eco-Friendly
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Descriere Produs*</label>
+                                            <textarea class="form-control" name="description" id="modalDescription" 
+                                                      rows="4" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-success" onclick="submitEditForm()">
+                        <i class="bi bi-check-lg me-1"></i> Salvează Modificările
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to handle delete confirmation
+        function confirmDelete(button) {
+            const productId = button.getAttribute('data-product-id');
+            const productName = button.getAttribute('data-product-name');
+            
+            console.log(`Confirming deletion of product: ${productName} (ID: ${productId})`);
+            
+            // Set product name in modal
+            document.getElementById('productNameToDelete').textContent = productName;
+            
+            // Set form action
+            const form = document.getElementById('deleteProductForm');
+            form.action = `/marketplace/product/delete/${productId}`;
+            
+            // Show modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+            deleteModal.show();
+        }
+        
+        // Function to open edit modal
+        function openEditModal(button) {
+            const productId = button.getAttribute('data-product-id');
+            const name = button.getAttribute('data-product-name');
+            const price = button.getAttribute('data-product-price');
+            const description = button.getAttribute('data-product-description');
+            const stock = button.getAttribute('data-product-stock');
+            const category = button.getAttribute('data-product-category');
+            const branch = button.getAttribute('data-product-branch');
+            const ecoFriendly = button.getAttribute('data-product-eco-friendly') === 'true';
+            const imageUrl = button.getAttribute('data-product-image-url');
+            
+            console.log(`Opening edit modal for product: ${name} (ID: ${productId})`);
+            
+            // Set form action
+            const form = document.getElementById('editProductForm');
+            form.action = `/marketplace/product/update/${productId}`;
+            
+            // Populate form fields
+            document.getElementById('modalName').value = name;
+            document.getElementById('modalPrice').value = price;
+            document.getElementById('modalDescription').value = description;
+            document.getElementById('modalStock').value = stock;
+            document.getElementById('modalCategory').value = category;
+            document.getElementById('modalBranch').value = branch;
+            document.getElementById('modalEcoFriendly').checked = ecoFriendly;
+            
+            // Set image preview if available
+            const imagePreview = document.getElementById('modalImagePreview');
+            if (imageUrl) {
+                imagePreview.src = imageUrl;
+            } else {
+                imagePreview.src = '/images/placeholder-product.jpg';
+            }
+            
+            // Show modal
+            const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+            editModal.show();
+        }
+        
+        // Function to preview image in modal
+        function previewModalImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('modalImagePreview');
+                    preview.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        // Function to submit edit form
+        function submitEditForm() {
+            document.getElementById('editProductForm').submit();
+        }
+        
+        // Log when page is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Products page loaded successfully');
+        });
+    </script>
+</body>
+</html>

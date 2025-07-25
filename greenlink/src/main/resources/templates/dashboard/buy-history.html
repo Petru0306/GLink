@@ -5,308 +5,195 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy History - GreenLink</title>
     
-    <!-- Bootstrap CSS (existing) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Animate.css for simple fade-in -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     
-    <!-- Custom styles for buy history page -->
+    <!-- Minimal CSS for chart container only -->
     <style>
-        .buy-history-header {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 3rem 0;
-            border-radius: 0 0 30px 30px;
-            margin-bottom: 2rem;
-        }
-        
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stats-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #28a745;
-            margin: 0.5rem 0;
-        }
-        
         .chart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
+            height: 300px;
         }
         
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-            transition: transform 0.3s ease;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        
-        .product-info {
-            padding: 1rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-price {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        
-        .btn-review {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-        }
-        
-        .btn-review:hover {
-            background-color: #218838;
-            color: white;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .empty-state i {
-            font-size: 4rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-        
-        /* Ensure proper grid layout */
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-        }
-        
-        .col-lg-4, .col-md-6 {
-            display: flex;
-        }
-        
-        /* Debug styling to see card boundaries */
-        .product-card {
-            border: 1px solid #e9ecef;
+        .chart-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 font-sans antialiased">
 
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
-    <!-- Header -->
-    <div class="buy-history-header">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="display-4 fw-bold mb-2">Buy History</h1>
-                    <p class="lead mb-0">Track your purchases and spending patterns</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <a href="/dashboard" class="btn btn-outline-light rounded-pill">
-                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+    <!-- Main content wrapper -->
+    <div class="buy-history-page font-sans bg-gray-100">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-green-400 to-green-600 text-white py-8 px-6 rounded-b-3xl mb-10">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-4xl font-bold">Buy History</h1>
+                        <p class="mt-2 text-lg opacity-90">Track your purchases and spending patterns</p>
+                    </div>
+                    <a href="/dashboard" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-full transition duration-300">
+                        ← Back to Dashboard
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
+        </header>
 
-    <div class="container">
-        <!-- Success/Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>
-            <span th:text="${success}">Success message</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>
-            <span th:text="${error}">Error message</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+        <main class="max-w-5xl mx-auto px-6 space-y-12 pb-12">
 
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-currency-exchange text-success me-3" style="font-size: 1.5rem;"></i>
-                        <h5 class="mb-0">Total Spent</h5>
-                    </div>
-                    <div class="stats-value" th:text="${'RON ' + #numbers.formatDecimal(totalAmountSpent ?: 0, 1, 2)}">RON 0.00</div>
-                    <p class="text-muted mb-0">Total amount spent</p>
-                </div>
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded animate__animated animate__fadeIn">
+                <span th:text="${success}">Success message</span>
             </div>
             
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-bag-check text-success me-3" style="font-size: 1.5rem;"></i>
-                        <h5 class="mb-0">Products Bought</h5>
-                    </div>
-                    <div class="stats-value" th:text="${totalProductsBought ?: 0}">0</div>
-                    <p class="text-muted mb-0">Total items purchased</p>
-                </div>
+            <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded animate__animated animate__fadeIn">
+                <span th:text="${error}">Error message</span>
             </div>
-            
-            <div class="col-md-4">
-                <div class="stats-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-calendar-check text-success me-3" style="font-size: 1.5rem;"></i>
-                        <h5 class="mb-0">Last Purchase</h5>
-                    </div>
-                    <div class="stats-value" th:text="${lastPurchaseDate != null ? #temporals.format(lastPurchaseDate, 'MMM dd, yyyy') : 'Never'}">Never</div>
-                    <p class="text-muted mb-0">Date of your most recent purchase</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Monthly Spending Chart -->
-        <div class="chart-container">
-            <h3 class="mb-3">Monthly Spending</h3>
-            <div style="height: 300px;">
-                <canvas id="spendingChart"></canvas>
-            </div>
-        </div>
+            <!-- Statistics Cards -->
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Total Spent -->
+                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a8 8 0 018 8v2a2 2 0 01-2 2h-1v3l-3-3h-4a2 2 0 01-2-2v-2a8 8 0 018-8z"/>
+                        </svg>
+                        <span class="text-xl font-medium">Total Spent</span>
+                    </div>
+                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${'RON ' + #numbers.formatDecimal(totalAmountSpent ?: 0, 1, 2)}">RON 0.00</p>
+                    <p class="text-gray-500 mt-1">Total amount spent</p>
+                </div>
 
-        <!-- Purchase History -->
-        <h3 class="mb-3">Purchase History</h3>
-        
-        <!-- Debug Info (remove in production) -->
-        <div class="alert alert-info mb-3">
-            <strong>Debug Info:</strong> 
-            Buy History size: <span th:text="${#lists.size(buyHistory ?: {})}">0</span> items
-            <div th:if="${#lists.isEmpty(buyHistory)}">
-                <p>No purchase history items found. This could be because:</p>
-                <ul>
-                    <li>You haven't bought any products yet</li>
-                    <li>Products you've bought don't have you set as the buyer</li>
-                </ul>
-            </div>
-            <div th:if="${!#lists.isEmpty(buyHistory)}">
-                <p>Found the following purchases:</p>
-                <ul>
-                    <li th:each="purchase, iter : ${buyHistory}" th:if="${iter.index < 3}">
-                        Product: <span th:text="${purchase.product.name}">Product Name</span>,
-                        Date: <span th:text="${#temporals.format(purchase.purchaseDate, 'MMM dd, yyyy')}">Purchase Date</span>
-                    </li>
-                    <li th:if="${#lists.size(buyHistory) > 3}">... and more</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Empty State -->
-        <div th:if="${buyHistory == null || #lists.isEmpty(buyHistory)}" class="empty-state">
-            <i class="bi bi-bag-x"></i>
-            <h4>No purchases yet</h4>
-            <p class="text-muted mb-4">Start shopping in our marketplace to see your purchase history here.</p>
-            <a href="/marketplace" class="btn btn-success btn-lg rounded-pill">
-                <i class="bi bi-shop me-2"></i>Explore Marketplace
-            </a>
-        </div>
-        
-        <!-- Product Grid -->
-        <div th:if="${buyHistory != null && !#lists.isEmpty(buyHistory)}" class="row">
-            <div th:each="purchase : ${buyHistory}" class="col-lg-4 col-md-6 mb-4">
-                <div class="product-card">
-                    <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
-                         th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
-                         class="product-image">
+                <!-- Products Bought -->
+                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 3h16l-3 9H7L4 3zM2 3H0l4 12h12l4-12H6l-4 12H2V3z"/>
+                        </svg>
+                        <span class="text-xl font-medium">Products Bought</span>
+                    </div>
+                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${totalProductsBought ?: 0}">0</p>
+                    <p class="text-gray-500 mt-1">Total items purchased</p>
+                </div>
+
+                <!-- Last Purchase -->
+                <div class="bg-white rounded-xl shadow-lg p-6 transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6 2a1 1 0 00-1 1v2h10V3a1 1 0 00-1-1H6zM4 7v8a2 2 0 002 2h8a2 2 0 002-2V7H4z"/>
+                        </svg>
+                        <span class="text-xl font-medium">Last Purchase</span>
+                    </div>
+                    <p class="mt-4 text-3xl font-bold text-green-600" th:text="${lastPurchaseDate != null ? #temporals.format(lastPurchaseDate, 'MMM dd, yyyy') : 'Never'}">Never</p>
+                    <p class="text-gray-500 mt-1">Date of your most recent purchase</p>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="bg-white rounded-xl shadow-lg p-6 animate__animated animate__fadeInUp">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Monthly Spending</h2>
+                <div class="chart-container">
+                    <canvas id="spendingChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Purchase History Cards -->
+            <section>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 animate__animated animate__fadeInUp">Purchase History</h2>
+                
+                <!-- Empty State -->
+                <div th:if="${buyHistory == null || #lists.isEmpty(buyHistory)}" class="text-center py-12 bg-white rounded-xl shadow-lg animate__animated animate__fadeInUp">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3h16l-3 9H7L4 3zM2 3H0l4 12h12l4-12H6l-4 12H2V3z"/>
+                    </svg>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No purchases yet</h3>
+                    <p class="text-gray-500 mb-6">Start shopping in our marketplace to see your purchase history here.</p>
+                    <a href="/marketplace" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full transition duration-300 inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                        </svg>
+                        Explore Marketplace
+                    </a>
+                </div>
+                
+                <!-- Product Grid -->
+                <div th:if="${buyHistory != null && !#lists.isEmpty(buyHistory)}" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                     
-                    <div class="product-info">
-                        <h5 class="mb-2" th:text="${purchase.product.name != null ? purchase.product.name : 'Product Name'}">Product Name</h5>
-                        <p class="text-muted small mb-2" th:text="${'Purchased on ' + (purchase.purchaseDate != null ? #temporals.format(purchase.purchaseDate, 'MMM dd, yyyy') : 'Unknown date')}">Purchased on Jan 01, 2024</p>
+                    <!-- Product Card -->
+                    <div th:each="purchase, iterStat : ${buyHistory}" 
+                         class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300 animate__animated animate__fadeInUp"
+                         th:classappend="${'animate__delay-' + (iterStat.index % 3 + 1) + 's'}">
                         
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="product-price" th:text="${'RON ' + #numbers.formatDecimal(purchase.totalPrice != null ? purchase.totalPrice : 0, 1, 2)}">RON 0.00</div>
+                        <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
+                             th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
+                             class="w-full h-40 object-cover"/>
+                        
+                        <div class="p-4">
+                            <h3 class="text-lg font-medium text-gray-800" th:text="${purchase.product.name != null ? purchase.product.name : 'Product Name'}">Product Name</h3>
+                            <p class="text-gray-500 text-sm mt-1" th:text="${'Purchased on ' + (purchase.purchaseDate != null ? #temporals.format(purchase.purchaseDate, 'MMM dd, yyyy') : 'Unknown date')}">Purchased on Jan 01, 2024</p>
                             
-                            <div class="d-flex gap-2">
-                                <a th:href="@{'/marketplace/product/' + (purchase.product.id != null ? purchase.product.id : 0)}" 
-                                   class="btn btn-outline-success btn-sm">
-                                    <i class="bi bi-eye me-1"></i>View Again
-                                </a>
+                            <div class="mt-4 flex justify-between items-center">
+                                <span class="text-green-600 font-bold" th:text="${'RON ' + #numbers.formatDecimal(purchase.totalPrice != null ? purchase.totalPrice : 0, 1, 2)}">RON 0.00</span>
                                 
-                                <button th:if="${purchase.hasReview != null && !purchase.hasReview}"
-                                        th:onclick="'openReviewModal(' + (purchase.id != null ? purchase.id : 0) + ')'"
-                                        class="btn btn-review btn-sm">
-                                    <i class="bi bi-star me-1"></i>Leave Review
-                                </button>
-                                
-                                <span th:if="${purchase.hasReview != null && purchase.hasReview}" 
-                                      class="badge bg-success">
-                                    <i class="bi bi-check-circle me-1"></i>Reviewed
-                                </span>
+                                <div class="flex space-x-2">
+                                    <a th:href="@{'/marketplace/product/' + (purchase.product.id != null ? purchase.product.id : 0)}" 
+                                       class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm hover:bg-green-100 transition">
+                                        View Again
+                                    </a>
+                                    
+                                    <button th:if="${purchase.hasReview != null && !purchase.hasReview}"
+                                            th:onclick="'openReviewModal(' + (purchase.id != null ? purchase.id : 0) + ')'"
+                                            class="bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm hover:bg-green-100 transition">
+                                        Leave Review
+                                    </button>
+                                    
+                                    <span th:if="${purchase.hasReview != null && purchase.hasReview}" 
+                                          class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                                        Reviewed
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional product details -->
+                            <div class="mt-3 text-xs text-gray-500 space-y-1">
+                                <div th:if="${purchase.quantity != null && purchase.quantity > 1}" th:text="${'Quantity: ' + purchase.quantity}">Quantity: 1</div>
+                                <div th:if="${purchase.seller != null}" th:text="${'Seller: ' + purchase.seller.firstName + ' ' + purchase.seller.lastName}">Seller: John Doe</div>
                             </div>
                         </div>
-                        
-                        <!-- Additional details -->
-                        <div class="mt-2">
-                            <div th:if="${purchase.quantity != null && purchase.quantity > 1}" class="text-muted small" th:text="${'Quantity: ' + purchase.quantity}">Quantity: 1</div>
-                            <div th:if="${purchase.seller != null}" class="text-muted small" th:text="${'Seller: ' + purchase.seller.firstName + ' ' + purchase.seller.lastName}">Seller: John Doe</div>
-                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </section>
+        </main>
 
-    <!-- Review Modal -->
-    <div class="modal fade" id="reviewModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Leave a Review</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form th:action="@{/dashboard/buy-history/review}" method="post">
-                    <div class="modal-body">
+        <!-- Review Modal -->
+        <div id="reviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Leave a Review</h3>
+                        <button onclick="closeReviewModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form th:action="@{/dashboard/buy-history/review}" method="post" class="space-y-4">
                         <input type="hidden" id="purchaseId" name="purchaseId">
                         
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Rating</label>
-                            <select class="form-select" id="rating" name="rating" required>
+                        <div>
+                            <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                            <select id="rating" name="rating" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
                                 <option value="">Select rating</option>
                                 <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
                                 <option value="4">⭐⭐⭐⭐ Very Good</option>
@@ -316,17 +203,25 @@
                             </select>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="comment" class="form-label">Comment</label>
-                            <textarea class="form-control" id="comment" name="comment" rows="3" 
-                                      placeholder="Share your experience with this product..."></textarea>
+                        <div>
+                            <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Comment</label>
+                            <textarea id="comment" name="comment" rows="3" 
+                                      placeholder="Share your experience with this product..."
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Submit Review</button>
-                    </div>
-                </form>
+                        
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" onclick="closeReviewModal()" 
+                                    class="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-300">
+                                Cancel
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-300">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -334,13 +229,9 @@
     <!-- Footer -->
     <footer th:replace="fragments/footer :: footer"></footer>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Include the login modal script -->
     <div th:replace="fragments/login-modal :: loginModalScript"></div>
-    
-    <!-- Chart.js and Review Modal Scripts -->
+
     <script th:inline="javascript">
         // Thymeleaf data injection
         /*<![CDATA[*/
@@ -363,83 +254,91 @@
         
         // Initialize chart when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('spendingChart');
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Spending (RON)',
-                            data: chartData,
-                            borderColor: '#28a745',
-                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                            fill: true,
-                            tension: 0.3,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            borderWidth: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#ffffff',
-                                bodyColor: '#ffffff',
-                                borderColor: '#28a745',
-                                borderWidth: 1,
-                                callbacks: {
-                                    label: function(context) {
-                                        return 'RON ' + context.parsed.y.toFixed(2);
-                                    }
+            const ctx = document.getElementById('spendingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Spending (RON)',
+                        data: chartData,
+                        borderColor: 'rgba(34,197,94,0.8)',
+                        backgroundColor: 'rgba(134,239,172,0.4)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#22c55e',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'RON ' + context.parsed.y.toFixed(2);
                                 }
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)',
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    color: '#6c757d',
-                                    callback: function(value) {
-                                        return 'RON ' + value;
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)',
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    color: '#6c757d'
-                                }
-                            }
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
                         }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#6b7280',
+                                callback: function(value) {
+                                    return 'RON ' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#6b7280'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
-                });
-            }
+                }
+            });
         });
         
         // Review Modal Functions
         function openReviewModal(purchaseId) {
             document.getElementById('purchaseId').value = purchaseId;
-            const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
-            modal.show();
+            document.getElementById('reviewModal').classList.remove('hidden');
         }
+        
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReviewModal();
+            }
+        });
     </script>
 </body>
 </html> 
