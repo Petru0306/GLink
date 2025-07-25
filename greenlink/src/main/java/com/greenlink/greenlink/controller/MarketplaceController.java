@@ -422,12 +422,73 @@ public class MarketplaceController {
     @GetMapping("/my-products")
     public String showMyProducts(Model model) {
         try {
+            // Get current user
             User currentUser = userService.getCurrentUser();
-            List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
+            if (currentUser == null) {
+                logger.error("Current user is null in showMyProducts");
+                return "redirect:/login";
+            }
+            
+            // Get products for this seller
+            List<ProductDto> userProducts = new ArrayList<>();
+            try {
+                userProducts = productService.getProductsBySeller(currentUser.getId());
+                logger.info("Found {} products for user ID: {}", userProducts.size(), currentUser.getId());
+                
+                // Debug each product
+                for (ProductDto product : userProducts) {
+                    logger.info("Product: id={}, name={}, branch={}, category={}, price={}, imageUrl={}",
+                        product.getId(), product.getName(), product.getBranch(), 
+                        product.getCategory(), product.getPrice(), product.getImageUrl());
+                }
+            } catch (Exception e) {
+                logger.error("Error retrieving products for seller: {}", e.getMessage(), e);
+                // Continue with empty product list instead of failing
+            }
+            
+            // Add all necessary attributes to the model
             model.addAttribute("products", userProducts);
             model.addAttribute("isMyProducts", true);
+            model.addAttribute("categories", Category.values());
+            model.addAttribute("branches", Product.Branch.values());
+            
+            // Return the view
             return "marketplace/my-products";
         } catch (Exception e) {
+            logger.error("Error loading my-products page: {}", e.getMessage(), e);
+            return "redirect:/login";
+        }
+    }
+    
+    @GetMapping("/products-debug")
+    public String showProductsDebug(Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
+            logger.info("Debug: Found {} products for user ID: {}", userProducts.size(), currentUser.getId());
+            model.addAttribute("products", userProducts);
+            return "marketplace/products-debug";
+        } catch (Exception e) {
+            logger.error("Error loading products-debug page: {}", e.getMessage(), e);
+            return "redirect:/login";
+        }
+    }
+    
+    @GetMapping("/grid-test")
+    public String showGridTest() {
+        return "marketplace/grid-test";
+    }
+    
+    @GetMapping("/my-products-simple")
+    public String showMyProductsSimple(Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
+            logger.info("Simple view: Found {} products for user ID: {}", userProducts.size(), currentUser.getId());
+            model.addAttribute("products", userProducts);
+            return "marketplace/my-products-simple";
+        } catch (Exception e) {
+            logger.error("Error loading simple my-products page: {}", e.getMessage(), e);
             return "redirect:/login";
         }
     }

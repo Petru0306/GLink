@@ -1,20 +1,116 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Produsele Mele - GreenLink</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/styles.css">
+    <!-- AOS (Animate on Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <link rel="stylesheet" href="/css/index.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
+        /* Global Styles to match index page */
+        :root {
+            --primary-green: #28a745;
+            --secondary-green: #20c997;
+            --accent-green: #198754;
+            --dark-green: #146c43;
+            --light-green: #d1e7dd;
+            --neon-green: #00ff88;
+            --electric-green: #39ff14;
+            --emerald-green: #50c878;
+            --gradient-primary: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --gradient-secondary: linear-gradient(135deg, #20c997 0%, #0dcaf0 100%);
+            --gradient-neon: linear-gradient(45deg, #00ff88, #39ff14, #50c878);
+            --gradient-rainbow: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            --shadow-light: 0 10px 30px rgba(40, 167, 69, 0.1);
+            --shadow-medium: 0 20px 40px rgba(40, 167, 69, 0.15);
+            --shadow-heavy: 0 30px 60px rgba(40, 167, 69, 0.2);
+            --shadow-neon: 0 0 20px rgba(0, 255, 136, 0.5);
+            --glow-green: 0 0 30px rgba(40, 167, 69, 0.6);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* Global animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: calc(200px + 100%) 0;
+            }
+        }
+
+        /* Enhanced hero section */
         .hero-section {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 4rem 0;
+            background: var(--gradient-primary);
+            padding: 5rem 0;
             color: white;
+            margin-bottom: 3rem;
             position: relative;
             overflow: hidden;
         }
@@ -26,107 +122,399 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.2;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: shimmer 3s ease-in-out infinite;
         }
 
         .hero-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease-out;
         }
 
-        .product-card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 100%;
+        .hero-section h1 {
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
         }
+
+        .hero-section .lead {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        /* Enhanced product cards */
+        .product-card {
+            margin-bottom: 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+            background: white;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+        .product-card:nth-child(6) { animation-delay: 0.6s; }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
         }
 
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Enhanced product images */
         .product-img {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
+            transition: var(--transition);
+            position: relative;
         }
 
-        .eco-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(40, 167, 69, 0.9);
-            color: white;
-            padding: 5px 10px;
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        /* Enhanced card body */
+        .card-body {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--dark-green);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .card-text.text-success {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary-green) !important;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Enhanced badges */
+        .badge {
+            padding: 0.5rem 0.75rem;
             border-radius: 20px;
+            font-weight: 500;
             font-size: 0.8rem;
+            transition: var(--transition);
         }
 
-        .action-buttons {
+        .badge.bg-light {
+            background: var(--light-green) !important;
+            color: var(--dark-green) !important;
+            border: 1px solid #b8dacc;
+        }
+
+        .badge.bg-success {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            box-shadow: var(--shadow-light);
+        }
+
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        /* Enhanced card footer */
+        .card-footer {
+            background: white;
+            border: none;
+            padding: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Enhanced buttons */
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            text-transform: none;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
             position: absolute;
-            bottom: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        .action-button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
+        .btn:hover::before {
+            left: 100%;
         }
 
+        .btn-success {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow-light);
+        }
+
+        .btn-success:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(13, 110, 253, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0b5ed7 0%, #0bb5cc 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #e55a00 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Enhanced actions bar */
+        .actions-bar {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            border: 1px solid #e9ecef;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .actions-bar h2 {
+            color: var(--dark-green);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .actions-bar .badge {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+
+        /* Enhanced empty state */
         .empty-state {
             text-align: center;
-            padding: 3rem 0;
+            padding: 5rem 2rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            border: 2px dashed #dee2e6;
+            animation: fadeInUp 0.8s ease-out;
         }
 
         .empty-icon {
-            font-size: 4rem;
-            color: #6c757d;
+            font-size: 5rem;
+            color: var(--primary-green);
+            margin-bottom: 2rem;
+            opacity: 0.7;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .empty-state h3 {
+            color: var(--dark-green);
+            font-weight: 700;
             margin-bottom: 1rem;
         }
-        
-        /* Toast styles */
-        .toast-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1050;
+
+        .empty-state p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Enhanced modals */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            overflow: hidden;
         }
         
-        .toast {
-            min-width: 250px;
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 1.5rem 2rem;
         }
-        
-        /* Edit modal styles */
-        .modal-xl {
-            max-width: 1140px;
+
+        .modal-title {
+            font-weight: 700;
         }
-        
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            border: none;
+            padding: 1.5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        /* Enhanced form elements */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-green);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Enhanced image preview */
         .image-preview {
             width: 100%;
             height: 200px;
-            border-radius: 15px;
             object-fit: cover;
-            margin-bottom: 1rem;
-            border: 2px dashed rgba(40, 167, 69, 0.2);
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: var(--transition);
         }
-        
-        .image-preview.has-image {
+
+        .image-preview:hover {
+            border-color: var(--primary-green);
+            transform: scale(1.02);
+        }
+
+        /* Enhanced alerts */
+        .alert {
             border: none;
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1e7dd 0%, #c3e6cb 100%);
+            color: var(--dark-green);
+            border-left: 4px solid var(--primary-green);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 3rem 0;
+            }
+            
+            .product-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .actions-bar {
+                padding: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+            }
+        }
+
+        /* Loading animation for buttons */
+        .btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
+<body class="bg-light">
     <!-- Navbar -->
     <nav th:replace="fragments/navbar :: navbar"></nav>
 
@@ -153,74 +541,67 @@
         </div>
         
         <!-- Actions Bar -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0">Produsele tale (<span th:text="${products.size()}">0</span>)</h2>
+        <div class="actions-bar">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Produsele tale <span class="badge ms-2" th:text="${products.size()}">0</span></h2>
             <a href="/marketplace/sell" class="btn btn-success">
                 <i class="bi bi-plus-lg me-2"></i>
                 Adaugă Produs Nou
             </a>
+            </div>
         </div>
 
         <!-- Products Grid -->
-        <div th:if="${!products.isEmpty()}" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            <div th:each="product : ${products}" class="col">
-                <div class="card product-card h-100" 
-                     th:data-product-url="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}"
-                     style="cursor: pointer;">
-                    <div class="position-relative">
-                        <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" 
-                             class="card-img-top product-img" alt="Product Image">
-                        <img th:unless="${product.imageUrl}" src="/images/placeholder-product.jpg" 
-                             class="card-img-top product-img" alt="Product Image">
-                        
-                        <span th:if="${product.ecoFriendly}" class="eco-badge">
-                            <i class="bi bi-leaf-fill me-1"></i> Eco-Friendly
-                        </span>
-                    </div>
+        <div class="row">
+            <!-- Loop through products -->
+            <div th:each="product : ${products}" class="col-md-4">
+                <div class="card product-card">
+                    <!-- Product image -->
+                    <img th:if="${product.imageUrl}" th:src="${product.imageUrl}" class="product-img" alt="Product image">
+                    <img th:unless="${product.imageUrl}" src="/images/placeholder-product.jpg" class="product-img" alt="Product image">
                     
+                    <!-- Product info -->
                     <div class="card-body">
-                        <h5 class="card-title" th:text="${product.name}">Product Name</h5>
-                        <p class="card-text text-success fw-bold" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">0.00 RON</p>
-                        <p class="card-text text-truncate" th:text="${product.description}">Product description...</p>
+                        <h5 class="card-title" th:text="${product.name}">Product name</h5>
+                        <p class="card-text text-success fw-bold" th:text="${#numbers.formatDecimal(product.price, 1, 2) + ' RON'}">99.99 RON</p>
+                        <p class="card-text" th:text="${product.description}">Description</p>
                         
-                        <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex justify-content-between mt-3">
                             <span class="badge bg-light text-dark">
-                                <i class="bi bi-box-seam me-1"></i> 
-                                <span th:text="${product.stock}">0</span> în stoc
+                                <i class="bi bi-box-seam"></i> <span th:text="${product.stock}">10</span> items
                             </span>
-                            <span class="badge" th:classappend="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? 'bg-success' : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? 'bg-warning text-dark' : 'bg-info text-dark')}">
-                                <span th:text="${product.branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde.short} : (product.branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food.short} : #{marketplace.branch.electro.short})}">Branch</span>
+                            <span class="badge bg-success" th:if="${product.ecoFriendly}">
+                                <i class="bi bi-leaf-fill"></i> Eco
                             </span>
                         </div>
                     </div>
                     
-                    <div class="card-footer bg-white border-top-0">
-                        <div class="d-flex justify-content-between">
-                            <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
-                               class="btn btn-outline-success btn-sm">
-                                <i class="bi bi-eye me-1"></i> Vezi Produs
-                            </a>
-                            <div>
-                                <button type="button" class="btn btn-outline-primary btn-sm me-1"
-                                        onclick="openEditModal(this)"
-                                        th:data-product-id="${product.id}"
-                                        th:data-product-name="${product.name}"
-                                        th:data-product-price="${product.price}"
-                                        th:data-product-description="${product.description}"
-                                        th:data-product-stock="${product.stock}"
-                                        th:data-product-category="${product.category}"
-                                        th:data-product-branch="${product.branch}"
-                                        th:data-product-eco-friendly="${product.ecoFriendly}"
-                                        th:data-product-image-url="${product.imageUrl}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-danger btn-sm"
-                                        onclick="confirmDelete(this)"
-                                        th:data-product-id="${product.id}"
-                                        th:data-product-name="${product.name}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
+                    <!-- Actions -->
+                    <div class="card-footer">
+                        <a th:href="@{'/marketplace/' + ${product.branch.toString().toLowerCase()} + '/product/' + ${product.id}}" 
+                           class="btn btn-success btn-sm w-100 mb-2">
+                            <i class="bi bi-eye"></i> Vezi Produs
+                        </a>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary btn-sm flex-grow-1"
+                                    onclick="openEditModal(this)"
+                                    th:data-product-id="${product.id}"
+                                    th:data-product-name="${product.name}"
+                                    th:data-product-price="${product.price}"
+                                    th:data-product-description="${product.description}"
+                                    th:data-product-stock="${product.stock}"
+                                    th:data-product-category="${product.category}"
+                                    th:data-product-branch="${product.branch}"
+                                    th:data-product-eco-friendly="${product.ecoFriendly}"
+                                    th:data-product-image-url="${product.imageUrl}">
+                                <i class="bi bi-pencil me-1"></i> Modifică
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm flex-grow-1"
+                                    onclick="confirmDelete(this)"
+                                    th:data-product-id="${product.id}"
+                                    th:data-product-name="${product.name}">
+                                <i class="bi bi-trash me-1"></i> Șterge
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -228,7 +609,7 @@
         </div>
         
         <!-- Empty State -->
-        <div th:if="${products.isEmpty()}" class="empty-state">
+        <div th:if="${products == null || products.isEmpty()}" class="empty-state">
             <i class="bi bi-box empty-icon"></i>
             <h3>Nu ai niciun produs listat</h3>
             <p class="text-muted mb-4">Începe să vinzi produse în marketplace-ul nostru</p>
@@ -263,7 +644,7 @@
     
     <!-- Edit Product Modal -->
     <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Editează Produs</h5>
@@ -278,9 +659,9 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <img id="modalImagePreview" src="/images/placeholder-product.jpg" 
-                                         class="image-preview" alt="Product Image">
+                                         class="w-100 rounded" style="height: 200px; object-fit: cover;" alt="Product Image">
                                     
-                                    <label class="form-label d-block">Imagine Produs</label>
+                                    <label class="form-label d-block mt-2">Imagine Produs</label>
                                     <input type="file" name="imageFile" id="modalImageFile" 
                                            class="form-control" accept="image/*"
                                            onchange="previewModalImage(this)">
@@ -336,7 +717,7 @@
                                             <select class="form-select" name="branch" id="modalBranch" required>
                                                 <option th:each="branch : ${T(com.greenlink.greenlink.model.Product.Branch).values()}"
                                                         th:value="${branch}"
-                                                        th:text="${branch == T(com.greenlink.greenlink.model.Product.Branch).VERDE ? #{marketplace.branch.verde} : (branch == T(com.greenlink.greenlink.model.Product.Branch).FOOD ? #{marketplace.branch.food} : #{marketplace.branch.electro})}">
+                                                        th:text="${branch.toString()}">
                                                 </option>
                                             </select>
                                         </div>
@@ -348,7 +729,7 @@
                                             <div class="form-check form-switch mt-2">
                                                 <input type="checkbox" class="form-check-input" name="ecoFriendly" id="modalEcoFriendly">
                                                 <label class="form-check-label">
-                                                    <i class="bi bi-leaf-fill text-success"></i> <span th:text="#{marketplace.eco.friendly.product}">Produs Eco-Friendly</span>
+                                                    <i class="bi bi-leaf-fill text-success"></i> Eco-Friendly Product
                                                 </label>
                                             </div>
                                         </div>
@@ -380,10 +761,51 @@
     <footer th:replace="fragments/footer :: footer"></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        function confirmDelete(button) {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded!');
+            console.log('Found ' + document.querySelectorAll('.product-card').length + ' products');
+            
+            // Add intersection observer for scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe all product cards
+            document.querySelectorAll('.product-card').forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Add hover effects for buttons
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+
+function confirmDelete(button) {
             const productId = button.getAttribute('data-product-id');
             const productName = button.getAttribute('data-product-name');
+            
+            // Add loading state to button
+            button.classList.add('loading');
+            button.disabled = true;
             
             // Set product name in modal
             document.getElementById('productNameToDelete').textContent = productName;
@@ -392,12 +814,22 @@
             const form = document.getElementById('deleteProductForm');
             form.action = `/marketplace/product/delete/${productId}`;
             
-            // Show modal
+            // Show modal with animation
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
             deleteModal.show();
+            
+            // Remove loading state
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }, 500);
         }
         
-        function openEditModal(button) {
+function openEditModal(button) {
+            // Add loading state to button
+            button.classList.add('loading');
+            button.disabled = true;
+            
             // Get product data from button attributes
             const productId = button.getAttribute('data-product-id');
             const name = button.getAttribute('data-product-name');
@@ -409,32 +841,76 @@
             const ecoFriendly = button.getAttribute('data-product-eco-friendly') === 'true';
             const imageUrl = button.getAttribute('data-product-image-url');
             
+            console.log('Opening edit modal for product:', {
+                id: productId,
+                name: name,
+                price: price,
+                description: description,
+                stock: stock,
+                category: category,
+                branch: branch,
+                ecoFriendly: ecoFriendly,
+                imageUrl: imageUrl
+            });
+            
             // Set form action
             const form = document.getElementById('editProductForm');
             form.action = `/marketplace/product/update/${productId}`;
             
-            // Populate form fields
-            document.getElementById('modalName').value = name;
-            document.getElementById('modalPrice').value = price;
-            document.getElementById('modalDescription').value = description;
-            document.getElementById('modalStock').value = stock;
-            document.getElementById('modalCategory').value = category;
-            document.getElementById('modalBranch').value = branch;
-            document.getElementById('modalEcoFriendly').checked = ecoFriendly;
+            // Populate form fields with animation
+            const fields = [
+                { id: 'modalName', value: name },
+                { id: 'modalPrice', value: price },
+                { id: 'modalDescription', value: description },
+                { id: 'modalStock', value: stock },
+                { id: 'modalCategory', value: category },
+                { id: 'modalBranch', value: branch }
+            ];
+            
+            fields.forEach((field, index) => {
+                setTimeout(() => {
+                    const element = document.getElementById(field.id);
+                    if (element) {
+                        element.value = field.value;
+                        element.style.transform = 'scale(1.02)';
+                        setTimeout(() => {
+                            element.style.transform = 'scale(1)';
+                        }, 200);
+                    }
+                }, index * 50);
+            });
+            
+            // Set eco-friendly checkbox
+            setTimeout(() => {
+                const ecoFriendlyField = document.getElementById('modalEcoFriendly');
+                if (ecoFriendlyField) {
+                    ecoFriendlyField.checked = ecoFriendly;
+                }
+            }, 300);
             
             // Set image preview if available
             const imagePreview = document.getElementById('modalImagePreview');
+            if (imagePreview) {
             if (imageUrl) {
                 imagePreview.src = imageUrl;
-                imagePreview.classList.add('has-image');
+                    imagePreview.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        imagePreview.style.transform = 'scale(1)';
+                    }, 300);
             } else {
                 imagePreview.src = '/images/placeholder-product.jpg';
-                imagePreview.classList.remove('has-image');
+                }
             }
             
-            // Show modal
+            // Show modal with animation
             const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
             editModal.show();
+            
+            // Remove loading state
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }, 500);
         }
         
         function previewModalImage(input) {
@@ -442,32 +918,87 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.getElementById('modalImagePreview');
+                    if (preview) {
+                        preview.style.transform = 'scale(1.05)';
                     preview.src = e.target.result;
-                    preview.classList.add('has-image');
+                        setTimeout(() => {
+                            preview.style.transform = 'scale(1)';
+                        }, 300);
+                    }
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         }
         
-        function submitEditForm() {
-            document.getElementById('editProductForm').submit();
-        }
-
-        // Make product cards clickable
-        document.addEventListener('DOMContentLoaded', function() {
-            const productCards = document.querySelectorAll('.product-card');
+function submitEditForm() {
+            const form = document.getElementById('editProductForm');
+            const submitBtn = document.querySelector('#editProductModal .btn-success');
             
-            productCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // Don't navigate if clicking on buttons or links
-                    if (e.target.closest('button') || e.target.closest('a') || 
-                        e.target.closest('.card-footer')) {
-                        return;
+            // Add loading state
+            if (submitBtn) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise me-1"></i> Salvează...';
+            }
+            
+            // Submit form
+            form.submit();
+        }
+        
+        // Add smooth scrolling for better UX
+        function smoothScrollTo(element) {
+            element.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal.show');
+                modals.forEach(modal => {
+                    const modalInstance = bootstrap.Modal.getInstance(modal);
+                    if (modalInstance) {
+                        modalInstance.hide();
                     }
+                });
+            }
+        });
+        
+        // Add form validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let isValid = true;
                     
-                    const productUrl = this.getAttribute('data-product-url');
-                    if (productUrl) {
-                        window.location.href = productUrl;
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            isValid = false;
+                            field.style.borderColor = '#dc3545';
+                            field.style.boxShadow = '0 0 0 0.2rem rgba(220, 53, 69, 0.25)';
+                            
+                            setTimeout(() => {
+                                field.style.borderColor = '';
+                                field.style.boxShadow = '';
+                            }, 3000);
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        // Show error message
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'alert alert-danger mt-3';
+                        errorDiv.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i>Vă rugăm să completați toate câmpurile obligatorii.';
+                        form.appendChild(errorDiv);
+                        
+                        setTimeout(() => {
+                            errorDiv.remove();
+                        }, 5000);
                     }
                 });
             });
