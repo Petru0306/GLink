@@ -69,6 +69,7 @@
     <!-- CSRF Token -->
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="current-user-id" th:content="${currentUser != null ? currentUser.id : ''}"/>
     
     <style>
         /* Custom scrollbar */
@@ -935,6 +936,30 @@
                     
                     <!-- Enhanced Action Buttons -->
                     <div class="flex flex-col gap-4 animate-slide-up">
+                    <!-- Add Friend Button -->
+                    <button th:if="${!isPersonalProfile and !isOwnProfile and !isFriend and !friendRequestSent}" 
+                            class="group bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 hover-lift shadow-lg"
+                            onclick="sendFriendRequest(event)"
+                            th:data-user-id="${profileUser.id}"
+                            th:data-user-name="${profileUser.firstName + ' ' + profileUser.lastName}">
+                        <i class="bi bi-person-plus mr-2 group-hover:scale-110 transition-transform"></i>
+                        Add Friend
+                    </button>
+                    
+                    <!-- Friend Request Sent Button -->
+                    <button th:if="${!isPersonalProfile and !isFriend and friendRequestSent}" 
+                            class="group bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg cursor-not-allowed opacity-80">
+                        <i class="bi bi-clock mr-2"></i>
+                        Friend Request Sent
+                    </button>
+                    
+                    <!-- Already Friends Button -->
+                    <button th:if="${!isPersonalProfile and isFriend}" 
+                            class="group bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg cursor-not-allowed opacity-80">
+                        <i class="bi bi-check-circle mr-2"></i>
+                        Already Friends
+                    </button>
+                    
                     <!-- DM Button -->
                     <button th:if="${!isPersonalProfile and canSendMessage}" 
                                 class="group bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 hover-lift shadow-lg"
@@ -1776,6 +1801,121 @@
             
             console.log('DM modal closed, polling stopped');
         });
+
+        // Friend Request functionality
+        function sendFriendRequest(event) {
+            const button = event.target.closest('button');
+            const userId = button.getAttribute('data-user-id');
+            const userName = button.getAttribute('data-user-name');
+            
+            console.log('Sending friend request to user:', userId, userName);
+            
+            if (!userId) {
+                showNotification('Error: Invalid user ID', 'error');
+                return;
+            }
+            
+            // Check if trying to send friend request to yourself
+            const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
+            if (currentUserId && currentUserId === userId) {
+                showNotification('You cannot send a friend request to yourself!', 'error');
+                return;
+            }
+            
+            // Disable button and show loading state
+            button.disabled = true;
+            button.innerHTML = '<i class="bi bi-hourglass-split mr-2 animate-spin"></i>Sending...';
+            
+            $.ajax({
+                url: '/friends/request/' + userId,
+                method: 'POST',
+                success: function(response) {
+                    console.log('Friend request sent successfully:', response);
+                    showNotification('Friend request sent to ' + userName + '!', 'success');
+                    
+                    // Replace button with "Friend Request Sent" state
+                    button.className = 'group bg-gradient-to-r from-yellow-500 to-yellow-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg cursor-not-allowed opacity-80';
+                    button.innerHTML = '<i class="bi bi-clock mr-2"></i>Friend Request Sent';
+                    button.disabled = true;
+                },
+                error: function(xhr, status, error) {
+                    console.error('Friend Request Error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        responseText: xhr.responseText,
+                        error: error
+                    });
+                    
+                    let errorMessage = 'Failed to send friend request';
+                    if (xhr.status === 400) {
+                        errorMessage = 'Friend request already sent or invalid request.';
+                    } else if (xhr.status === 403) {
+                        errorMessage = 'You cannot send friend requests to yourself.';
+                    } else if (xhr.status === 404) {
+                        errorMessage = 'User not found.';
+                    } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                        errorMessage = xhr.responseJSON.error;
+                    } else if (xhr.responseText) {
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            errorMessage = errorResponse.error || errorResponse.message || xhr.statusText;
+                        } catch (e) {
+                            errorMessage = xhr.responseText || xhr.statusText;
+                        }
+                    }
+                    
+                    showNotification(errorMessage, 'error');
+                    
+                    // Re-enable button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="bi bi-person-plus mr-2 group-hover:scale-110 transition-transform"></i>Add Friend';
+                }
+            });
+        }
+
+        // Notification function
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full max-w-sm`;
+            
+            // Set colors based on type
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-500 text-white';
+            } else {
+                notification.className += ' bg-blue-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="bi ${type === 'success' ? 'bi-check-circle' : type === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle'} mr-2"></i>
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200 flex-shrink-0">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            `;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
         
         // Setup when modal is opened
         document.getElementById('dmModal').addEventListener('shown.bs.modal', function() {

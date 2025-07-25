@@ -198,7 +198,7 @@ public class ProfileController {
             model.addAttribute("profileUser", targetUser);
             
             // Load public profile data
-            loadPublicProfileData(model, targetUser);
+            loadPublicProfileData(model, targetUser, principal);
             
             // Mark as public profile
             model.addAttribute("isPersonalProfile", false);
@@ -299,7 +299,7 @@ public class ProfileController {
     /**
      * Load data for public profile page.
      */
-    private void loadPublicProfileData(Model model, User targetUser) {
+    private void loadPublicProfileData(Model model, User targetUser, Principal principal) {
         // Note: profileUser is already set in the controller method
 
         // User's products
@@ -360,6 +360,25 @@ public class ProfileController {
         } catch (Exception e) {
             logger.warn("Failed to load rank for user {}: {}", targetUser.getId(), e.getMessage());
             model.addAttribute("userRank", 0);
+        }
+        
+        // Friend status for current user
+        if (principal != null) {
+            try {
+                User currentUser = userService.getCurrentUser(principal.getName());
+                boolean isFriend = friendService.areFriends(currentUser.getId(), targetUser.getId());
+                boolean friendRequestSent = friendService.hasFriendRequest(currentUser.getId(), targetUser.getId());
+                
+                model.addAttribute("isFriend", isFriend);
+                model.addAttribute("friendRequestSent", friendRequestSent);
+            } catch (Exception e) {
+                logger.warn("Failed to load friend status for user {}: {}", targetUser.getId(), e.getMessage());
+                model.addAttribute("isFriend", false);
+                model.addAttribute("friendRequestSent", false);
+            }
+        } else {
+            model.addAttribute("isFriend", false);
+            model.addAttribute("friendRequestSent", false);
         }
         
         // Load completed lessons for the quizzes section

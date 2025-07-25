@@ -70,6 +70,25 @@ public class FriendController {
             return "redirect:/friends?error=" + e.getMessage();
         }
     }
+    
+    @PostMapping("/request/{userId}")
+    @ResponseBody
+    public java.util.Map<String, Object> sendFriendRequestAjax(@PathVariable Long userId, @AuthenticationPrincipal User currentUser) {
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        
+        try {
+            User receiverUser = userService.getUserById(userId);
+            friendService.sendFriendRequest(currentUser, receiverUser);
+            
+            response.put("success", true);
+            response.put("message", "Friend request sent successfully");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("error", e.getMessage());
+        }
+        
+        return response;
+    }
 
     @PostMapping("/remove")
     public String removeFriend(@RequestParam Long userId, @AuthenticationPrincipal User currentUser) {
