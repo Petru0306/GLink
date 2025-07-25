@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Notification Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Required WebSocket libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    
+    <!-- Include our notification scripts -->
+    <script src="/js/challenge-notification.js"></script>
+    <script src="/js/basic-notification.js"></script>
+    
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #console {
+            height: 300px;
+            overflow-y: auto;
+            background: #212529;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .info {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Challenge Notification Test Page</h1>
+        <p class="lead">This page tests the WebSocket connection and challenge notification functionality.</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>WebSocket Connection</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center">
+                                <span id="connection-status" class="badge bg-secondary me-2">Disconnected</span>
+                                <button id="connect-btn" class="btn btn-primary btn-sm">Connect</button>
+                                <button id="disconnect-btn" class="btn btn-danger btn-sm ms-2" disabled>Disconnect</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p><strong>Status:</strong> <span id="status-text">Not connected</span></p>
+                            <p><strong>Subscriptions:</strong></p>
+                            <ul id="subscriptions">
+                                <li>None active</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Send Test Notification</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="notification-form">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Challenge Title</label>
+                                <input type="text" class="form-control" id="title" value="Test Challenge">
+                            </div>
+                            <div class="mb-3">
+                                <label for="points" class="form-label">Points</label>
+                                <input type="number" class="form-control" id="points" value="25">
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">Show Notification</button>
+                                <button type="button" id="basic-notification-btn" class="btn btn-outline-success">Use Basic Notification</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Call Test Endpoint</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="endpoint-form">
+                            <div class="mb-3">
+                                <label for="endpoint-title" class="form-label">Challenge Title</label>
+                                <input type="text" class="form-control" id="endpoint-title" value="Backend Test Challenge">
+                            </div>
+                            <div class="mb-3">
+                                <label for="endpoint-points" class="form-label">Points</label>
+                                <input type="number" class="form-control" id="endpoint-points" value="50">
+                            </div>
+                            <div class="mb-3">
+                                <label for="endpoint-badge" class="form-label">Badge</label>
+                                <input type="text" class="form-control" id="endpoint-badge" value="Test Badge">
+                            </div>
+                            <button type="submit" class="btn btn-warning">Call Test Endpoint</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Console Log</h5>
+                        <button id="clear-console" class="btn btn-sm btn-outline-secondary">Clear</button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="console"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Received Messages</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="messages" class="list-group">
+                            <li class="list-group-item text-muted">No messages received yet</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Override console.log to show in our custom console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function() {
+            logToConsole('log', Array.from(arguments).join(' '));
+            originalLog.apply(console, arguments);
+        };
+        
+        console.error = function() {
+            logToConsole('error', Array.from(arguments).join(' '));
+            originalError.apply(console, arguments);
+        };
+        
+        console.warn = function() {
+            logToConsole('warn', Array.from(arguments).join(' '));
+            originalWarn.apply(console, arguments);
+        };
+        
+        function logToConsole(type, message) {
+            const consoleElem = document.getElementById('console');
+            const line = document.createElement('div');
+            
+            if (type === 'error') {
+                line.className = 'error';
+            } else if (type === 'warn') {
+                line.className = 'warning';
+            } else if (message.includes('connected') || message.includes('Connected')) {
+                line.className = 'success';
+            } else {
+                line.className = 'info';
+            }
+            
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleElem.appendChild(line);
+            consoleElem.scrollTop = consoleElem.scrollHeight;
+        }
+        
+        // WebSocket test functionality
+        let stompClient = null;
+        let connected = false;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test page loaded and ready');
+            
+            // Button event handlers
+            document.getElementById('connect-btn').addEventListener('click', connect);
+            document.getElementById('disconnect-btn').addEventListener('click', disconnect);
+            document.getElementById('notification-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendTestNotification();
+            });
+            
+            document.getElementById('basic-notification-btn').addEventListener('click', function() {
+                const title = document.getElementById('title').value;
+                const points = parseInt(document.getElementById('points').value);
+                console.log(`Sending basic notification: "${title}" with ${points} points`);
+                if (typeof window.showBasicNotification === 'function') {
+                    window.showBasicNotification(title, points);
+                } else {
+                    console.error('Basic notification function not available!');
+                    alert('Error: Basic notification function not available!');
+                }
+            });
+            document.getElementById('endpoint-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                callTestEndpoint();
+            });
+            document.getElementById('clear-console').addEventListener('click', function() {
+                document.getElementById('console').innerHTML = '';
+            });
+            
+            // Check if we got auto-connected by challenge-notification.js
+            setTimeout(checkAutoConnection, 1000);
+        });
+        
+        function checkAutoConnection() {
+            if (typeof window.showChallengeNotification === 'function') {
+                console.log('Challenge notification script detected and loaded');
+                
+                // Check if the global stompClient was created by checking if a container exists
+                if (document.getElementById('challenge-notification-container')) {
+                    console.log('Notification container detected - script initialized correctly');
+                } else {
+                    console.warn('Notification container not found - script may not have initialized properly');
+                }
+            } else {
+                console.error('Challenge notification function not available!');
+            }
+        }
+        
+        function connect() {
+            if (connected) {
+                console.warn('Already connected!');
+                return;
+            }
+            
+            console.log('Connecting to WebSocket...');
+            
+            try {
+                const socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                
+                // Enable debug for testing
+                stompClient.debug = function(str) {
+                    console.log('STOMP: ' + str);
+                };
+                
+                stompClient.connect({}, function(frame) {
+                    connected = true;
+                    console.log('Connected to WebSocket: ' + frame);
+                    updateConnectionUI(true);
+                    
+                    // Subscribe to challenge topics
+                    const subscriptions = [];
+                    
+                    // Subscribe to challenge completion events
+                    stompClient.subscribe('/user/queue/challenge-completed', function(message) {
+                        console.log('RECEIVED: Challenge completion notification');
+                        handleMessage(message, 'Challenge Completed');
+                    });
+                    subscriptions.push('/user/queue/challenge-completed');
+                    
+                    // Subscribe to other challenge events
+                    stompClient.subscribe('/user/queue/challenge-progress', function(message) {
+                        console.log('RECEIVED: Challenge progress update');
+                        handleMessage(message, 'Progress Update');
+                    });
+                    subscriptions.push('/user/queue/challenge-progress');
+                    
+                    stompClient.subscribe('/user/queue/challenge-activated', function(message) {
+                        console.log('RECEIVED: Challenge activated');
+                        handleMessage(message, 'Challenge Activated');
+                    });
+                    subscriptions.push('/user/queue/challenge-activated');
+                    
+                    // Subscribe to debug topic
+                    stompClient.subscribe('/topic/debug-challenges', function(message) {
+                        console.log('RECEIVED: Debug message');
+                        handleMessage(message, 'Debug Message');
+                    });
+                    subscriptions.push('/topic/debug-challenges');
+                    
+                    updateSubscriptionsList(subscriptions);
+                    
+                }, function(error) {
+                    console.error('WebSocket connection error:', error);
+                    updateConnectionUI(false);
+                    connected = false;
+                });
+            } catch (e) {
+                console.error('Error establishing WebSocket connection:', e);
+                updateConnectionUI(false);
+                connected = false;
+            }
+        }
+        
+        function disconnect() {
+            if (stompClient) {
+                stompClient.disconnect();
+                console.log('Disconnected from WebSocket');
+            }
+            connected = false;
+            updateConnectionUI(false);
+            updateSubscriptionsList([]);
+        }
+        
+        function updateConnectionUI(isConnected) {
+            const statusBadge = document.getElementById('connection-status');
+            const statusText = document.getElementById('status-text');
+            const connectBtn = document.getElementById('connect-btn');
+            const disconnectBtn = document.getElementById('disconnect-btn');
+            
+            if (isConnected) {
+                statusBadge.className = 'badge bg-success me-2';
+                statusBadge.textContent = 'Connected';
+                statusText.textContent = 'Connected to WebSocket server';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+            } else {
+                statusBadge.className = 'badge bg-secondary me-2';
+                statusBadge.textContent = 'Disconnected';
+                statusText.textContent = 'Not connected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+            }
+        }
+        
+        function updateSubscriptionsList(subscriptions) {
+            const list = document.getElementById('subscriptions');
+            list.innerHTML = '';
+            
+            if (subscriptions.length === 0) {
+                const li = document.createElement('li');
+                li.textContent = 'None active';
+                list.appendChild(li);
+                return;
+            }
+            
+            subscriptions.forEach(sub => {
+                const li = document.createElement('li');
+                li.textContent = sub;
+                list.appendChild(li);
+            });
+        }
+        
+        function handleMessage(message, type) {
+            const messagesList = document.getElementById('messages');
+            
+            if (messagesList.querySelector('.text-muted')) {
+                messagesList.innerHTML = '';
+            }
+            
+            const li = document.createElement('li');
+            li.className = 'list-group-item';
+            
+            const typeSpan = document.createElement('span');
+            typeSpan.className = 'badge ' + getTypeClass(type) + ' me-2';
+            typeSpan.textContent = type;
+            li.appendChild(typeSpan);
+            
+            const time = document.createElement('small');
+            time.className = 'text-muted me-2';
+            time.textContent = new Date().toLocaleTimeString();
+            li.appendChild(time);
+            
+            try {
+                const content = JSON.parse(message.body);
+                
+                const pre = document.createElement('pre');
+                pre.className = 'mt-2 mb-0';
+                pre.textContent = JSON.stringify(content, null, 2);
+                li.appendChild(pre);
+                
+                // If it's a challenge notification, add a note if the notification should show
+                if (type === 'Challenge Completed' || type === 'Debug Message') {
+                    const note = document.createElement('div');
+                    note.className = 'mt-2 small';
+                    
+                    if (typeof window.showChallengeNotification === 'function') {
+                        note.innerHTML = '<i class="bi bi-check-circle text-success"></i> Notification should display automatically';
+                    } else {
+                        note.innerHTML = '<i class="bi bi-exclamation-triangle text-warning"></i> Notification function not available!';
+                    }
+                    
+                    li.appendChild(note);
+                }
+                
+            } catch (e) {
+                const content = document.createElement('div');
+                content.textContent = message.body;
+                li.appendChild(content);
+            }
+            
+            messagesList.prepend(li);
+        }
+        
+        function getTypeClass(type) {
+            switch(type) {
+                case 'Challenge Completed':
+                    return 'bg-success';
+                case 'Progress Update':
+                    return 'bg-info';
+                case 'Challenge Activated':
+                    return 'bg-primary';
+                case 'Debug Message':
+                    return 'bg-warning text-dark';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+        
+        function sendTestNotification() {
+            const title = document.getElementById('title').value;
+            const points = parseInt(document.getElementById('points').value);
+            
+            console.log(`Sending test notification: "${title}" with ${points} points`);
+            
+            if (typeof window.showChallengeNotification === 'function') {
+                window.showChallengeNotification(title, points);
+            } else {
+                console.error('Challenge notification function not available!');
+                alert('Error: Challenge notification function not available!');
+            }
+        }
+        
+        function callTestEndpoint() {
+            const title = encodeURIComponent(document.getElementById('endpoint-title').value);
+            const points = document.getElementById('endpoint-points').value;
+            const badge = encodeURIComponent(document.getElementById('endpoint-badge').value);
+            
+            console.log(`Calling test endpoint with: "${title}", ${points} points, badge: "${badge}"`);
+            
+            const url = `/test-challenge-notification?title=${title}&points=${points}&badge=${badge}`;
+            
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Endpoint response:', data);
+                })
+                .catch(error => {
+                    console.error('Error calling test endpoint:', error);
+                });
+        }
+    </script>
+</body>
+</html>

@@ -43,4 +43,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> searchUsers(@Param("query") String query, @Param("currentUserId") Long currentUserId);
     
     Optional<User> findByOauth2ProviderAndOauth2ProviderId(String oauth2Provider, String oauth2ProviderId);
+    
+    long countByPointsGreaterThan(int points);
+    
+    long countByActiveTrue();
 }

@@ -250,4 +250,79 @@ public class UserServiceImpl implements UserService {
     public User updateUser(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    @Transactional
+    public void recalculateUserLevel(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        
+        int newLevel = user.calculateLevel(user.getPoints());
+        user.setLevel(newLevel);
+        userRepository.save(user);
+        
+        logger.info("Recalculated level for user {}: {} points -> level {}", 
+                   userId, user.getPoints(), newLevel);
+    }
+
+    @Override
+    @Transactional
+    public void recalculateAllUserLevels() {
+        List<User> allUsers = userRepository.findAll();
+        int updatedCount = 0;
+        
+        for (User user : allUsers) {
+            int oldLevel = user.getLevel();
+            int newLevel = user.calculateLevel(user.getPoints());
+            
+            if (oldLevel != newLevel) {
+                user.setLevel(newLevel);
+                userRepository.save(user);
+                updatedCount++;
+                
+                logger.info("Updated user {} level: {} -> {} ({} points)", 
+                           user.getId(), oldLevel, newLevel, user.getPoints());
+            }
+        }
+        
+        logger.info("Recalculated levels for {} users", updatedCount);
+    }
+
+    @Override
+    public int getUserRank(Long userId) {
+        User user = getUserById(userId);
+        if (user == null) {
+            return -1; // User not found
+        }
+        
+        // Count users with more points than the current user
+        long usersWithMorePoints = userRepository.countByPointsGreaterThan(user.getPoints());
+        
+        // Add 1 to get the rank (1-based ranking)
+        return (int) (usersWithMorePoints + 1);
+    }
+
+    @Override
+    public long getTotalUserCount() {
+        return userRepository.count();
+    }
+
+    @Override
+    public long getTotalActiveUserCount() {
+        return userRepository.countByActiveTrue();
+    }
+
+    @Override
+    public long getTotalPoints() {
+        return userRepository.findAll().stream()
+                .mapToLong(User::getPoints)
+                .sum();
+    }
+
+    @Override
+    public long getTotalLevels() {
+        return userRepository.findAll().stream()
+                .mapToLong(User::getLevel)
+                .sum();
+    }
 } 

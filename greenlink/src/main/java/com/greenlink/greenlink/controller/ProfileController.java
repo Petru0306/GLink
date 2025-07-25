@@ -283,6 +283,15 @@ public class ProfileController {
         model.addAttribute("averageRating", 0.0);
         model.addAttribute("totalReviews", 0);
         
+        // User's rank
+        try {
+            int userRank = userService.getUserRank(currentUser.getId());
+            model.addAttribute("userRank", userRank);
+        } catch (Exception e) {
+            logger.warn("Failed to load rank for user {}: {}", currentUser.getId(), e.getMessage());
+            model.addAttribute("userRank", 0);
+        }
+        
         // Load completed lessons for the quizzes section
         loadCompletedLessons(model, currentUser);
     }
@@ -343,6 +352,15 @@ public class ProfileController {
         model.addAttribute("reviews", List.of());
         model.addAttribute("averageRating", 0.0);
         model.addAttribute("totalReviews", 0);
+        
+        // User's rank
+        try {
+            int userRank = userService.getUserRank(targetUser.getId());
+            model.addAttribute("userRank", userRank);
+        } catch (Exception e) {
+            logger.warn("Failed to load rank for user {}: {}", targetUser.getId(), e.getMessage());
+            model.addAttribute("userRank", 0);
+        }
         
         // Load completed lessons for the quizzes section
         loadCompletedLessons(model, targetUser);

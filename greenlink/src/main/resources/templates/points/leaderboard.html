@@ -12,28 +12,162 @@
     <style>
         /* Leaderboard Page Specific Styles */
         .leaderboard-hero {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 3rem 0;
-            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 4rem 0;
+            color: white;
             position: relative;
             overflow: hidden;
-            color: white;
+            margin-bottom: 2rem;
         }
 
+        /* Fluid background animation */
         .leaderboard-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating bubbles from educatie */
+        .leaderboard-hero .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        .leaderboard-hero .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+
+        .leaderboard-hero .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+
+        .leaderboard-hero .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+
+        .leaderboard-hero .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+
+        .leaderboard-hero .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+
+        .leaderboard-hero .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 1.5s;
+            animation-duration: 16s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        }
+
+        .leaderboard-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-title::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
-            opacity: 0.3;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+            z-index: -1;
         }
 
-        .leaderboard-hero-content {
-            position: relative;
-            z-index: 1;
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+            animation: subtitleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-45deg) translateX(-100%); }
+            100% { transform: rotate(-45deg) translateX(100%); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+            50% { text-shadow: 0 4px 30px rgba(0, 255, 136, 0.5); }
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .leaderboard-card {
@@ -474,13 +608,21 @@
 
     <!-- Hero Section -->
     <div class="leaderboard-hero">
+        <!-- Floating Bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
         <div class="container">
             <div class="leaderboard-hero-content text-center">
-                <h1 class="display-4 mb-3">
-                    <i class="bi bi-trophy-fill text-warning"></i>
+                <h1 class="hero-title">
+                    <i class="bi bi-trophy-fill text-warning me-3"></i>
                     <span th:text="#{leaderboard.title}">Leaderboard</span>
                 </h1>
-                <p class="lead mb-0" th:text="#{leaderboard.subtitle}">See who's leading the eco-friendly revolution</p>
+                <p class="hero-subtitle" th:text="#{leaderboard.subtitle}">See who's leading the eco-friendly revolution</p>
             </div>
         </div>
     </div>
@@ -505,11 +647,11 @@
             </a>
             <a th:href="@{/points/leaderboard(limit=25)}" 
                th:class="'filter-btn ' + (${limit == 25} ? 'active' : '')">
-                <i class="bi bi-award me-2"></i><span th:text="#{leaderboard.top.50}">Top 25</span>
+                <i class="bi bi-award me-2"></i><span th:text="#{leaderboard.top.25}">Top 25</span>
             </a>
             <a th:href="@{/points/leaderboard(limit=50)}" 
                th:class="'filter-btn ' + (${limit == 50} ? 'active' : '')">
-                <i class="bi bi-star me-2"></i><span th:text="#{leaderboard.top.100}">Top 50</span>
+                <i class="bi bi-star me-2"></i><span th:text="#{leaderboard.top.50}">Top 50</span>
             </a>
         </div>
 
@@ -550,7 +692,7 @@
                                 <span th:text="${user.points}">0</span>
                             </div>
                             <div class="level-badge mt-2 d-inline-block">
-                                <span th:text="#{points.level}">Level</span> <span th:text="${user.level}">1</span>
+                                <span th:text="#{${user.levelName}}">Bottle Beginner</span>
                             </div>
                         </div>
                     </div>

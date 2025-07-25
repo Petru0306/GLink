@@ -3,176 +3,1122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenLink Levels - Level System</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title th:text="#{levels.page.title}">Level Progression - GreenLink</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
+    <style>
+        /* CSS VARIABLES */
+        :root {
+            --dark-bg: #0a0a0a;
+            --card-bg: #1a1a2e;
+            --accent-bg: #16213e;
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--accent-bg) 100%);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* HERO SECTION */
+        .levels-hero {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Fluid background animation */
+        .levels-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating bubbles from educatie */
+        .levels-hero .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        .levels-hero .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+
+        .levels-hero .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+
+        .levels-hero .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+
+        .levels-hero .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+
+        .levels-hero .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+
+        .levels-hero .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 1.5s;
+            animation-duration: 16s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        }
+
+        .levels-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+            animation: subtitleFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-45deg) translateX(-100%); }
+            100% { transform: rotate(-45deg) translateX(100%); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+            50% { text-shadow: 0 4px 30px rgba(0, 255, 136, 0.5); }
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* TROPHY ROAD CONTAINER */
+        .trophy-road {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* LEVEL CARDS - COMPACT VERSION */
+        .level-card {
+            background: linear-gradient(135deg, var(--card-bg), var(--accent-bg));
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateY(0) scale(1);
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .level-card:hover::before {
+            left: 100%;
+        }
+
+        .level-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .level-card:hover::after {
+            opacity: 1;
+        }
+
+        /* ENHANCED HOVER EFFECTS */
+        .level-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: rgba(0, 255, 136, 0.5);
+            box-shadow: 
+                0 20px 40px rgba(0, 255, 136, 0.2),
+                0 0 0 1px rgba(0, 255, 136, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .level-card.achieved {
+            border-color: rgba(0, 255, 136, 0.4);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), var(--card-bg));
+        }
+
+        .level-card.achieved:hover {
+            border-color: rgba(0, 255, 136, 0.7);
+            box-shadow: 
+                0 25px 50px rgba(0, 255, 136, 0.3),
+                0 0 0 2px rgba(0, 255, 136, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .level-card.current {
+            border-color: rgba(0, 212, 255, 0.4);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), var(--card-bg));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .level-card.current:hover {
+            border-color: rgba(0, 212, 255, 0.7);
+            box-shadow: 
+                0 25px 50px rgba(0, 212, 255, 0.3),
+                0 0 0 2px rgba(0, 212, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .level-card.locked {
+            border-color: rgba(108, 117, 125, 0.3);
+            background: linear-gradient(135deg, rgba(108, 117, 125, 0.1), var(--card-bg));
+            opacity: 0.6;
+            filter: grayscale(0.3);
+        }
+
+        .level-card.locked:hover {
+            border-color: rgba(108, 117, 125, 0.5);
+            opacity: 0.8;
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .level-card.locked .level-number {
+            background: linear-gradient(45deg, #6c757d, #495057) !important;
+            color: #adb5bd !important;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3) !important;
+        }
+
+        .level-card.locked .level-name {
+            color: #adb5bd !important;
+        }
+
+        .level-card.locked .level-requirements {
+            color: #6c757d !important;
+        }
+
+        /* COMPACT LEVEL ELEMENTS */
+        .level-number {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            color: var(--dark-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover .level-number {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .level-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover .level-name {
+            color: var(--neon-green);
+            transform: scale(1.05);
+        }
+
+        .level-requirements {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover .level-requirements {
+            color: var(--neon-blue);
+        }
+
+        /* COMPACT PROGRESS BAR */
+        .level-progress {
+            margin-top: auto;
+        }
+
+        .level-progress .progress {
+            height: 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-progress .progress-bar {
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .level-progress .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        .level-progress small {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* ACHIEVEMENT/LOCKED INDICATORS */
+        .level-card .mt-3 {
+            margin-top: 0.5rem !important;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover .mt-3 {
+            transform: scale(1.05);
+        }
+
+        .level-card.achieved .mt-3 {
+            color: var(--neon-green);
+        }
+
+        .level-card.current .mt-3 {
+            color: var(--neon-blue);
+        }
+
+        .level-card.locked .mt-3 {
+            color: #ffffff !important;
+        }
+
+        .level-card.locked .mt-3 i {
+            color: #ffffff !important;
+        }
+
+        .level-card.locked .mt-3 span {
+            color: #ffffff !important;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .trophy-road {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .level-card {
+                padding: 1.2rem;
+                min-height: 180px;
+            }
+
+            .level-name {
+                font-size: 1.1rem;
+            }
+
+            .level-number {
+                font-size: 1rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .trophy-road {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+
+            .level-card {
+                padding: 1rem;
+                min-height: 160px;
+            }
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .user-stats-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .user-level-section,
+            .user-points-section,
+            .user-rank-section {
+                padding: 1.5rem;
+            }
+
+            .current-level-badge {
+                padding: 1rem 2rem;
+                font-size: 1.2rem;
+            }
+
+            .user-level-number {
+                font-size: 2.5rem;
+            }
+
+            .user-points-number {
+                font-size: 3rem;
+            }
+
+            .user-rank-display {
+                padding: 1rem 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes cardPopUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.1); }
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .trophy-road::before {
+                left: 20px;
+            }
+
+            .level-card {
+                margin: 2rem 0 2rem 40px !important;
+                text-align: left !important;
+            }
+
+            .level-card::before {
+                left: -50px !important;
+                right: auto !important;
+            }
+
+            .level-number {
+                font-size: 2rem;
+            }
+
+            .level-name {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* FLOATING PARTICLES */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 10px var(--neon-blue); }
+            100% { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue); }
+        }
+
+        /* USER STATS CARD - REDESIGNED */
+        .user-stats-card {
+            background: linear-gradient(135deg, var(--card-bg), var(--accent-bg));
+            border: 2px solid var(--neon-green);
+            border-radius: 25px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.2);
+            animation: cardPopUp 0.8s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .user-stats-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        /* LEFT SECTION - LEVEL INFO */
+        .user-level-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .user-level-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .user-level-section:hover::before {
+            left: 100%;
+        }
+
+        .current-level-badge {
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            color: var(--dark-bg);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1rem;
+            display: inline-block;
+            margin-bottom: 0;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .user-level-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .user-level-label {
+            font-size: 1.1rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* CENTER SECTION - POINTS INFO */
+        .user-points-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .user-points-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .user-points-section:hover::before {
+            left: 100%;
+        }
+
+        .user-points-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--neon-blue);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .user-points-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--neon-blue);
+        }
+
+        /* RIGHT SECTION - RANK INFO */
+        .user-rank-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .user-rank-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .user-rank-section:hover::before {
+            left: 100%;
+        }
+
+        .user-rank-display {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
+            color: var(--dark-bg);
+            padding: 1.5rem 2rem;
+            border-radius: 25px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        .user-rank-display .rank-icon {
+            font-size: 1.5rem;
+        }
+
+        .user-rank-display .rank-number {
+            font-weight: 900;
+            font-size: 1.6rem;
+        }
+
+        .user-rank-display .rank-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .user-rank-title {
+            font-size: 1.1rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* HOVER EFFECTS */
+        .user-level-section:hover,
+        .user-points-section:hover,
+        .user-rank-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .user-stats-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .user-level-section,
+            .user-points-section,
+            .user-rank-section {
+                padding: 1.5rem;
+            }
+
+            .current-level-badge {
+                padding: 1rem 2rem;
+                font-size: 1.2rem;
+            }
+
+            .user-level-number {
+                font-size: 2.5rem;
+            }
+
+            .user-points-number {
+                font-size: 3rem;
+            }
+
+            .user-rank-display {
+                padding: 1rem 1.5rem;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ANIMATIONS */
+    </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav th:replace="fragments/navbar :: navbar"></nav>
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Hero Section -->
-    <header class="bg-success text-white py-5">
+    <div class="levels-hero">
+        <!-- Floating Bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <h1 class="display-4 fw-bold">GreenLink Level System</h1>
-                    <p class="lead">Progress through 15 unique levels and unlock your eco-warrior potential!</p>
-                </div>
-                <div class="col-lg-4 text-center text-lg-end">
-                    <a href="/profile" class="btn btn-outline-light rounded-pill px-4 py-2">
-                        <i class="bi bi-person-circle me-2"></i>My Profile
-                    </a>
-                </div>
+            <div class="levels-hero-content text-center">
+                <h1 class="hero-title">
+                    <i class="bi bi-trophy-fill text-warning me-3"></i>
+                    <span th:text="#{levels.hero.title}">Trophy Road</span>
+                </h1>
+                <p class="hero-subtitle" th:text="#{levels.hero.subtitle}">Your journey to becoming an eco-warrior</p>
             </div>
         </div>
-    </header>
+                                </div>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-12">
-                <h2 class="h3 mb-4">Level Progression</h2>
-                <div class="row g-4">
-                    <div th:each="level : ${#numbers.sequence(1, 15)}" class="col-md-6 col-lg-4">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <div class="bg-success rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
-                                     style="width: 60px; height: 60px;">
-                                    <i class="bi bi-star-fill text-white" style="font-size: 1.5rem;"></i>
-                                </div>
-                                <h5 class="card-title fw-bold" th:text="${levelNames.get(level)}">Level Name</h5>
-                                <p class="text-muted mb-2">Level <span th:text="${level}">1</span></p>
-                                <div class="badge bg-primary fs-6">
-                                    <span th:text="${xpRequirements.get(level)}">0</span> XP Required
-                                </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">
-                                        <span th:if="${level > 1}">
-                                            +<span th:text="${xpRequirements.get(level) - xpRequirements.get(level - 1)}">0</span> XP from previous level
-                                        </span>
-                                        <span th:if="${level == 1}">Starting level</span>
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
+    <div class="container">
+        <!-- User Stats Card -->
+        <div class="user-stats-card">
+            <div class="user-stats-content">
+                <div class="user-level-section">
+                    <div class="user-level-label" th:text="#{levels.current.level}">Current Level</div>
+                    <div class="user-level-number" th:text="${currentUser.level}">1</div>
+                    <div class="current-level-badge">
+                        <i class="bi bi-star-fill me-2"></i>
+                        <span th:text="#{${currentUser.levelName}}">Bottle Beginner</span>
                     </div>
+                </div>
+                <div class="user-points-section">
+                    <div class="user-points-number" th:text="${currentUser.points}">0</div>
+                    <div class="user-points-label" th:text="#{levels.total.points}">Total Points</div>
+                            </div>
+                <div class="user-rank-section">
+                    <div class="user-rank-display">
+                        <i class="bi bi-trophy-fill rank-icon"></i>
+                        <span class="rank-number" th:text="${userRank}">#1</span>
+                        <span class="rank-label" th:text="#{levels.global.rank}">Global Rank</span>
+                    </div>
+                    <div class="user-rank-title" th:text="#{levels.your.rank}">Your Rank</div>
                 </div>
             </div>
         </div>
 
-        <!-- XP Requirements Table -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <h2 class="h3 mb-4">Detailed XP Requirements</h2>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="table-success">
-                            <tr>
-                                <th>Level</th>
-                                <th>Level Name</th>
-                                <th>Total XP Required</th>
-                                <th>XP from Previous Level</th>
-                                <th>Progress</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="level : ${#numbers.sequence(1, 15)}">
-                                <td class="fw-bold" th:text="${level}">1</td>
-                                <td th:text="${levelNames.get(level)}">Level Name</td>
-                                <td>
-                                    <span class="badge bg-primary" th:text="${xpRequirements.get(level)}">0</span> XP
-                                </td>
-                                <td>
-                                    <span th:if="${level > 1}" th:text="${xpRequirements.get(level) - xpRequirements.get(level - 1)}">0</span>
-                                    <span th:if="${level == 1}">-</span>
-                                </td>
-                                <td>
-                                    <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar bg-success" role="progressbar" 
-                                             th:style="'width: ' + ${(level / 15) * 100} + '%'"
-                                             th:attr="aria-valuenow=${(level / 15) * 100}"
-                                             aria-valuemin="0" aria-valuemax="100">
-                                            <span th:text="${#numbers.formatDecimal((level / 15) * 100, 0, 0)}">0</span>%
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- Trophy Road -->
+        <div class="trophy-road">
+            <div th:each="level : ${allLevels}" 
+                 th:class="'level-card ' + (${currentUser.points >= level.pointsRequired} ? 'achieved' : (${level.level == currentUser.level} ? 'current' : 'locked'))"
+                 th:style="'animation-delay: ' + ${level.level * 0.1} + 's'">
+                
+                <div class="level-number" th:text="${level.level}">1</div>
+                <div class="level-name" th:text="#{${level.name}}">Bottle Beginner</div>
+                <div class="level-requirements">
+                    <i class="bi bi-coin me-2"></i>
+                    <span th:text="${level.pointsRequired}">50</span> <span th:text="#{levels.points.required}">points required</span>
         </div>
 
-        <!-- How to Earn XP -->
-        <div class="row mt-5">
-            <div class="col-12">
-                <h2 class="h3 mb-4">How to Earn XP</h2>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-trophy-fill text-warning mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Complete Challenges</h5>
-                                <p class="card-text">Earn 50 XP for each environmental challenge you complete.</p>
-                            </div>
+                <!-- Progress for current level -->
+                <div class="level-progress" th:if="${level.level == currentUser.level && currentUser.points < level.pointsRequired}">
+                    <div class="d-flex justify-content-between mb-2">
+                        <small th:text="#{levels.progress}">Progress</small>
+                        <small th:with="previousLevelPoints=${level.level > 1 ? allLevels[level.level - 2].pointsRequired : 0}, 
+                                      pointsInCurrentLevel=${currentUser.points}, 
+                                      pointsNeededForLevel=${level.pointsRequired}">
+                            <span th:text="${pointsInCurrentLevel}">0</span>/<span th:text="${pointsNeededForLevel}">50</span>
+                        </small>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" 
+                             th:with="pointsInCurrentLevel=${currentUser.points}, 
+                                      pointsNeededForLevel=${level.pointsRequired},
+                                      progressPercentage=${pointsInCurrentLevel >= pointsNeededForLevel ? 100 : (pointsInCurrentLevel / pointsNeededForLevel * 100)}"
+                             th:style="'width: ' + ${progressPercentage} + '%'">
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-mortarboard-fill text-success mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Finish Lessons</h5>
-                                <p class="card-text">Gain 25 XP for each educational lesson you complete.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-shop text-primary mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Marketplace Activity</h5>
-                                <p class="card-text">Earn points for buying and selling eco-friendly products.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-calculator text-info mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Carbon Calculator</h5>
-                                <p class="card-text">Get 15 XP for using the carbon footprint calculator.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-recycle text-success mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Recycling Map</h5>
-                                <p class="card-text">Earn 10 XP for exploring recycling locations.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-body text-center">
-                                <i class="bi bi-people-fill text-warning mb-3" style="font-size: 2rem;"></i>
-                                <h5 class="card-title">Social Activities</h5>
-                                <p class="card-text">Gain XP for adding friends and sending messages.</p>
-                            </div>
-                        </div>
-                    </div>
+                </div>
+                
+                <!-- Achievement indicator -->
+                <div th:if="${currentUser.points >= level.pointsRequired}" class="mt-3">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                    <span class="text-success" th:text="#{levels.achieved}">Achieved!</span>
+                </div>
+                
+                <!-- Locked indicator -->
+                <div th:if="${currentUser.points < level.pointsRequired && level.level != currentUser.level}" class="mt-3">
+                    <i class="bi bi-lock-fill text-muted me-2"></i>
+                    <span class="text-muted" th:text="#{levels.locked}">Locked</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer th:replace="fragments/footer :: footer"></footer>
+    <!-- Spacing before footer -->
+    <div style="height: 4rem;"></div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intersection Observer for scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            // Observe all level cards
+            document.querySelectorAll('.level-card').forEach(card => {
+                observer.observe(card);
+            });
+
+            // Enhanced hover effects with particle creation
+            document.querySelectorAll('.level-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('locked')) {
+                        // Create floating particles
+                        createFloatingParticles(this);
+                        
+                        // Add ripple effect
+                        createRippleEffect(this, event);
+                        
+                        // Enhanced glow effect
+                        this.style.boxShadow = '0 25px 50px rgba(0, 255, 136, 0.3), 0 0 0 2px rgba(0, 255, 136, 0.4)';
+                    }
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    // Remove particles
+                    document.querySelectorAll('.floating-particle').forEach(particle => {
+                        particle.remove();
+                    });
+                    
+                    // Reset glow effect
+                    this.style.boxShadow = '';
+                });
+            });
+
+            // Progress bar animation with enhanced effects
+            const progressBars = document.querySelectorAll('.progress-bar');
+            const progressObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.transition = 'width 1.5s ease-out';
+                            entry.target.style.width = width;
+                            
+                            // Add glow effect during animation
+                            entry.target.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.5)';
+                            setTimeout(() => {
+                                entry.target.style.boxShadow = '';
+                            }, 1500);
+                        }, 200);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => progressObserver.observe(bar));
+
+            // Function to create floating particles
+            function createFloatingParticles(card) {
+                const colors = ['#00ff88', '#00d4ff', '#8b5cf6', '#ff6b6b'];
+                
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'floating-particle';
+                        particle.style.cssText = `
+                            position: absolute;
+                            width: 4px;
+                            height: 4px;
+                            background: ${colors[Math.floor(Math.random() * colors.length)]};
+                            border-radius: 50%;
+                            pointer-events: none;
+                            z-index: 1000;
+                            animation: float-particle 2s ease-out forwards;
+                        `;
+                        
+                        const rect = card.getBoundingClientRect();
+                        particle.style.left = Math.random() * rect.width + 'px';
+                        particle.style.top = rect.height + 'px';
+                        
+                        card.appendChild(particle);
+                        
+                        setTimeout(() => particle.remove(), 2000);
+                    }, i * 100);
+                }
+            }
+
+            // Function to create ripple effect
+            function createRippleEffect(card, event) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(0, 255, 136, 0.3);
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                    z-index: 1001;
+                `;
+                
+                const rect = card.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
+                
+                card.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            }
+
+            // Add CSS animations dynamically
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float-particle {
+                    0% {
+                        transform: translateY(0) scale(1);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(-100px) scale(0);
+                        opacity: 0;
+                    }
+                }
+                
+                @keyframes ripple {
+                    to {
+                        transform: scale(2);
+                        opacity: 0;
+                    }
+                }
+                
+                .level-card {
+                    animation: cardPopUp 0.8s ease-out forwards;
+                    animation-delay: calc(var(--card-index, 0) * 0.1s);
+                }
+                
+                @keyframes cardPopUp {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(30px) scale(0.9);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Add animation delays to cards
+            document.querySelectorAll('.level-card').forEach((card, index) => {
+                card.style.setProperty('--card-index', index);
+            });
+        });
+    </script>
 </body>
 </html> 

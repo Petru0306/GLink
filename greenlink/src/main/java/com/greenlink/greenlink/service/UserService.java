@@ -24,4 +24,11 @@ public interface UserService extends UserDetailsService {
     void deactivateAccount(Long userId);
     void reactivateAccount(Long userId);
     User updateUser(User user);
+    void recalculateUserLevel(Long userId);
+    void recalculateAllUserLevels();
+    int getUserRank(Long userId);
+    long getTotalUserCount();
+    long getTotalActiveUserCount();
+    long getTotalPoints();
+    long getTotalLevels();
 }

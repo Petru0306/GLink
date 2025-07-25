@@ -2436,42 +2436,36 @@
                     </div>
                     <div class="card-content">
                         <div class="product-preview">
-                            <div class="product-item" data-product="1" onclick="window.location.href='/marketplace'">
+                            <!-- Display real marketplace products -->
+                            <div th:each="product : ${featuredProducts}" 
+                                 th:class="'product-item'" 
+                                 th:attr="data-product=${product.id}" 
+                                 th:onclick="'window.location.href=\'/marketplace/product/\' + ' + ${product.id}">
                                 <div class="product-icon">
-                                    <img src="/images/products/Bamboo Toothbrush.png" alt="Bamboo Toothbrush">
+                                    <img th:src="${product.imageUrl != null ? product.imageUrl : '/images/placeholder-product.jpg'}" 
+                                         th:alt="${product.name}">
                                 </div>
                                 <div class="product-info">
-                                    <h4>Bamboo Toothbrush</h4>
-                                    <p class="product-desc">Eco-friendly alternative</p>
+                                    <h4 th:text="${product.name}">Product Name</h4>
+                                    <p class="product-desc" th:text="${product.description != null ? (product.description.length() > 50 ? product.description.substring(0, 50) + '...' : product.description) : 'No description'}">Product description</p>
                                     <div class="product-price">
-                                        <span class="price">€3.50</span>
-                                        <span class="product-badge">🦷 Eco</span>
+                                        <span class="price" th:text="'€' + ${#numbers.formatDecimal(product.price, 1, 2)}">€0.00</span>
+                                        <span class="product-badge" th:text="${product.ecoFriendly ? '🌱 Eco' : '🛍️ Regular'}">🛍️ Regular</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="product-item" data-product="2" onclick="window.location.href='/marketplace'">
+                            
+                            <!-- Fallback if no products exist -->
+                            <div th:if="${#lists.isEmpty(featuredProducts)}" class="product-item" onclick="window.location.href='/marketplace'">
                                 <div class="product-icon">
-                                    <img src="/images/products/Organic cotton T-shirt.png" alt="Organic T-shirt">
+                                    <img src="/images/placeholder-product.jpg" alt="No products yet">
                                 </div>
                                 <div class="product-info">
-                                    <h4>Organic T-shirt</h4>
-                                    <p class="product-desc">Sustainable fashion</p>
+                                    <h4>No products yet</h4>
+                                    <p class="product-desc">Be the first to list a product!</p>
                                     <div class="product-price">
-                                        <span class="price">€15.00</span>
-                                        <span class="product-badge">👕 Organic</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-item" data-product="3" onclick="window.location.href='/marketplace'">
-                                <div class="product-icon">
-                                    <img src="/images/products/Organic honey.png" alt="Organic Honey">
-                                </div>
-                                <div class="product-info">
-                                    <h4>Organic Honey</h4>
-                                    <p class="product-desc">Pure natural sweetness</p>
-                                    <div class="product-price">
-                                        <span class="price">€8.90</span>
-                                        <span class="product-badge">🍯 Natural</span>
+                                        <span class="price">€0.00</span>
+                                        <span class="product-badge">🆕 New</span>
                                     </div>
                                 </div>
                             </div>
@@ -2768,7 +2762,7 @@
                         </div>
                         <div class="achievement-badge">
                             <i th:class="'bi ' + (${iterStat.index == 0 ? 'bi-gem' : iterStat.index == 1 ? 'bi-star' : iterStat.index == 2 ? 'bi-book' : iterStat.index == 3 ? 'bi-recycle' : 'bi-tree'})"></i>
-                            <span th:text="${iterStat.index == 0 ? 'Maester' : iterStat.index == 1 ? 'Advocate' : iterStat.index == 2 ? 'Scholar' : iterStat.index == 3 ? 'Recycler' : 'Planter'}">Achievement</span>
+                            <span th:text="#{${user.levelName}}">Achievement</span>
                         </div>
                     </div>
                     
@@ -2796,15 +2790,15 @@
                 
                 <div class="leaderboard-stats">
                     <div class="stat-item">
-                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #lists.size(topUsers) : 0}">0</span>
+                        <span class="stat-number" th:text="${totalCompetitors}">0</span>
                         <span class="stat-label">Competitors</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![points]) : 0}">0</span>
+                        <span class="stat-number" th:text="${totalPoints}">0</span>
                         <span class="stat-label">Total Points</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number" th:text="${#lists.size(topUsers) > 0 ? #aggregates.sum(topUsers.![level]) : 0}">0</span>
+                        <span class="stat-number" th:text="${totalLevels}">0</span>
                         <span class="stat-label">Levels Achieved</span>
                     </div>
                 </div>

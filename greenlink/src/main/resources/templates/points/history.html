@@ -10,30 +10,498 @@
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     <style>
-        /* Points Page Specific Styles */
-        .points-hero {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-            color: white;
+        /* CSS Variables */
+        :root {
+            --neon-green: #00ff88;
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --dark-bg: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --accent-bg: #333333;
         }
 
+        /* Points Page Specific Styles */
+        .points-hero {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Fluid background animation */
         .points-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating bubbles from educatie */
+        .points-hero .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+
+        .points-hero .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+
+        .points-hero .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+
+        .points-hero .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+
+        .points-hero .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+
+        .points-hero .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+
+        .points-hero .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 1.5s;
+            animation-duration: 16s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+        }
+
+        .points-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .hero-title::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
-            opacity: 0.3;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+            z-index: -1;
         }
 
-        .points-hero-content {
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            opacity: 0.9;
+            animation: subtitleFloat 4s ease-in-out infinite;
+        }
+
+        /* CRAZY EPIC LEVEL BADGE */
+        .epic-level-badge {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite, float 6s ease-in-out infinite;
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            display: inline-block;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.3),
+                0 0 0 1px rgba(255,255,255,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            font-size: 1.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(5deg);
+        }
+
+        .epic-level-badge::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: sparkle 4s linear infinite;
+        }
+
+        .epic-level-badge::after {
+            content: '🌟';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 2rem;
+            animation: rotate 3s linear infinite;
+        }
+
+        .level-number {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-left: 1rem;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .level-name {
+            font-size: 1.4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* EPIC ANIMATIONS */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-45deg) translateX(-100%); }
+            100% { transform: rotate(-45deg) translateX(100%); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+            50% { text-shadow: 0 4px 30px rgba(0, 255, 136, 0.5); }
+        }
+
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes sparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(0, 255, 136, 0.5); }
+            to { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 30px rgba(0, 255, 136, 0.8); }
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* EPIC POINTS DISPLAY */
+        .epic-points-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 40px rgba(102, 126, 234, 0.3),
+                0 0 0 1px rgba(255,255,255,0.1);
+        }
+
+        .epic-points-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .points-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 20px rgba(255, 215, 0, 0.5); }
+            to { text-shadow: 3px 3px 6px rgba(0,0,0,0.5), 0 0 30px rgba(255, 215, 0, 0.8); }
+        }
+
+        /* EPIC PROGRESS BAR */
+        .epic-progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .epic-progress-bar {
+            height: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .epic-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 200% 100%;
+            animation: progressGlow 3s ease-in-out infinite;
+            border-radius: 15px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .epic-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* EPIC STATS CARDS */
+        .epic-stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .epic-stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .epic-stats-content {
             position: relative;
             z-index: 1;
+        }
+
+        .epic-stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .epic-stat-item:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .epic-stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0.5rem;
+        }
+
+        .epic-stat-label {
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0.9;
+        }
+
+        /* EPIC FLOATING PARTICLES */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 1s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(1); opacity: 0; }
+        }
+
+        /* EPIC HOVER EFFECTS */
+        .epic-level-badge:hover {
+            transform: perspective(1000px) rotateX(10deg) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4),
+                        0 0 0 2px rgba(255,255,255,0.3),
+                        0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+
+
+        .epic-points-display:hover {
+            transform: scale(1.02);
+            box-shadow: 
+                0 25px 50px rgba(102, 126, 234, 0.4),
+                0 0 0 2px rgba(255,255,255,0.2);
+        }
+
+        /* NEW MAIN STATS CARD STYLES */
+        .main-stats-card {
+            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%) !important;
+            color: white;
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.3) !important;
+            position: relative;
+            overflow: hidden;
+            animation: cardFloat 3s ease-in-out infinite;
+        }
+
+        .main-stats-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .level-badge {
@@ -45,6 +513,269 @@
             display: inline-block;
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
             font-size: 1.1rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .level-name-inline {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-left: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .level-progress {
+            height: 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #ffc107, #ff8c00);
+            border-radius: 15px;
+            transition: width 1s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-item-tall {
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stat-trophy {
+            font-size: 2rem;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: trophyGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes trophyGlow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                transform: scale(1);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+                transform: scale(1.1);
+            }
+        }
+
+        .clickable-level {
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clickable-level:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+        }
+
+        .clickable-card {
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .clickable-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .next-level-number {
+            font-size: 3.5rem !important;
+            text-align: center;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .next-level-label {
+            font-size: 1.3rem !important;
+            text-align: center;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .next-level-sublabel {
+            font-size: 1.2rem !important;
+            text-align: center;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: numberCount 2s ease-out;
+        }
+
+        @keyframes numberCount {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .stat-sublabel {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .debug-info {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-stats-card {
+                padding: 1.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .level-badge {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* EPIC CONFETTI EFFECT */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            animation: confetti-fall 3s linear infinite;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* EPIC GLOW EFFECTS */
+        .epic-glow {
+            position: relative;
+        }
+
+        .epic-glow::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite;
+            border-radius: inherit;
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.7;
         }
 
         .stats-card {
@@ -347,6 +1078,67 @@
                 padding: 0.5rem 1rem;
             }
 
+            /* Compact Layout Responsive */
+            .compact-level-display {
+                padding: 1.5rem;
+            }
+            
+            .compact-level-content {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .compact-level-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .rank-display {
+                margin-left: 0;
+                margin-top: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .rank-display .rank-number {
+                font-size: 1.1rem;
+            }
+            
+            .compact-level-badge {
+                min-width: auto;
+                padding: 0.75rem 1rem;
+            }
+            
+            .compact-level-name {
+                font-size: 1.2rem;
+            }
+            
+            .compact-level-number {
+                font-size: 1rem;
+            }
+            
+            .compact-points-number {
+                font-size: 3rem;
+            }
+            
+            .compact-progress-section {
+                max-width: 100%;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .next-level-preview {
+                padding: 1rem;
+            }
+            
+            .next-level-name {
+                font-size: 1.1rem;
+            }
+            
+            .next-level-badge {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+
             .pagination .page-link {
                 min-width: 35px;
                 padding: 0.375rem 0.5rem;
@@ -391,20 +1183,792 @@
                 min-width: 80px;
             }
         }
+
+        /* EPIC NEXT LEVEL PREVIEW */
+        .next-level-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .next-level-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .next-level-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .next-level-badge {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .next-level-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .next-level-requirements {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .next-level-progress {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .next-level-progress-bar {
+            height: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .next-level-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 10px;
+            transition: width 1s ease-in-out;
+            position: relative;
+        }
+
+        .next-level-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        /* COMPACT LEVEL DISPLAY - 2-ROW SYMMETRICAL LAYOUT */
+        .compact-level-display {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.15);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .compact-level-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* FIRST ROW - TOP INFO */
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* LEFT - TOTAL POINTS */
+        .points-section {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .compact-points-number {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: #00ff88;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .compact-points-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #00ff88;
+        }
+
+        /* CENTER - LEVEL INFO */
+        .level-section {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .compact-level-badge {
+            background: linear-gradient(45deg, #00ff88, #00d4ff, #8b5cf6);
+            background-size: 400% 400%;
+            animation: gradientShift 3s ease infinite, float 6s ease-in-out infinite;
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 40px;
+            font-weight: 800;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 
+                0 10px 30px rgba(0, 255, 136, 0.3),
+                0 0 0 1px rgba(0, 255, 136, 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(5deg);
+            min-width: 220px;
+            margin: 0 auto;
+        }
+
+        .compact-level-number {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: rgba(0, 255, 136, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .compact-level-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* RIGHT - RANK */
+        .rank-section {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .rank-display {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: #0a0a0a;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .rank-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        .rank-display .rank-icon {
+            font-size: 1.3rem;
+        }
+
+        .rank-display .rank-number {
+            font-weight: 900;
+            font-size: 1.4rem;
+        }
+
+        .rank-display .rank-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* SECOND ROW - BOTTOM INFO */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            align-items: stretch;
+        }
+
+        /* LEFT - PROGRESS BAR */
+        .progress-section {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .compact-progress-container {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            width: 100%;
+        }
+
+        .compact-progress-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .compact-progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 15px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .compact-progress-fill {
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.5s ease-out;
+            position: relative;
+        }
+
+        .compact-progress-text {
+            font-size: 1rem;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        /* RIGHT - NEXT LEVEL INFO */
+        .next-level-section {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .mysterious-next-level {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .mysterious-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #00ff88;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .mysterious-level-badge {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: #0a0a0a;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .mysterious-level-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .mysterious-requirements {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: #00ff88;
+        }
+
+        /* ENHANCED HOVER EFFECTS */
+        .compact-level-display:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 60px rgba(0, 255, 136, 0.3);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .compact-level-badge:hover {
+            transform: perspective(1000px) rotateX(10deg) scale(1.05);
+            box-shadow: 
+                0 20px 40px rgba(0, 255, 136, 0.4),
+                0 0 0 2px rgba(0, 255, 136, 0.3),
+                inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+
+        .compact-level-badge.clickable {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .compact-level-badge.clickable:hover {
+            transform: perspective(1000px) rotateX(10deg) scale(1.08);
+            box-shadow: 
+                0 25px 50px rgba(0, 255, 136, 0.5),
+                0 0 0 3px rgba(0, 255, 136, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .mysterious-next-level.clickable {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mysterious-next-level.clickable:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+        }
+
+        .compact-points-info:hover {
+            transform: scale(1.05);
+        }
+
+        .compact-points-info:hover .compact-points-number {
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        .compact-progress-container:hover {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: rgba(0, 255, 136, 0.4);
+            transform: scale(1.02);
+        }
+
+        .mysterious-next-level:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #00ff88;
+        }
+
+        .stats-card:hover .section-title {
+            color: #00ff88;
+        }
+
+        .activity-card:hover {
+            transform: translateX(8px) translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-left-width: 6px;
+        }
+
+        .points-badge:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .pagination .page-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* RANK DISPLAY */
+        .rank-display {
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            color: #0a0a0a;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            margin-left: 1rem;
+        }
+
+        .rank-display .rank-icon {
+            font-size: 1.2rem;
+        }
+
+        .rank-display .rank-number {
+            font-weight: 900;
+            font-size: 1.3rem;
+        }
+
+        .rank-display .rank-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .rank-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        /* BEAUTIFUL CARD ANIMATIONS */
+        .stats-card, .activity-card, .compact-level-display, .mysterious-next-level {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: cardPopUp 0.8s ease-out forwards;
+        }
+
+        .stats-card:nth-child(1) { animation-delay: 0.1s; }
+        .stats-card:nth-child(2) { animation-delay: 0.2s; }
+        .stats-card:nth-child(3) { animation-delay: 0.3s; }
+        .stats-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .activity-card:nth-child(1) { animation-delay: 0.1s; }
+        .activity-card:nth-child(2) { animation-delay: 0.15s; }
+        .activity-card:nth-child(3) { animation-delay: 0.2s; }
+        .activity-card:nth-child(4) { animation-delay: 0.25s; }
+        .activity-card:nth-child(5) { animation-delay: 0.3s; }
+        .activity-card:nth-child(6) { animation-delay: 0.35s; }
+
+        .compact-level-display { animation-delay: 0.1s; }
+        .mysterious-next-level { animation-delay: 0.2s; }
+
+        @keyframes cardPopUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ENHANCED CARD HOVER EFFECTS */
+        .stats-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+        }
+
+        .stats-card:hover::before {
+            left: 100%;
+        }
+
+        .activity-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid transparent;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #00ff88, #00d4ff);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.15);
+            border-left-color: #00ff88;
+        }
+
+        .activity-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .compact-level-display {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .compact-level-display:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.25);
+        }
+
+        .mysterious-next-level {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mysterious-next-level:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        /* PAGINATION ANIMATIONS */
+        .pagination .page-link {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pagination .page-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .pagination .page-link:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* POINTS BADGE ANIMATIONS */
+        .points-badge {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .points-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .points-badge:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .points-badge:hover::before {
+            left: 100%;
+        }
+
+        /* SECTION TITLE ANIMATIONS */
+        .section-title {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            transition: width 0.3s ease;
+        }
+
+        .section-title:hover::after {
+            width: 100%;
+        }
+
+        .section-title:hover {
+            transform: translateX(5px);
+            color: #00ff88;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .top-row {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .bottom-row {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .level-section,
+            .progress-section,
+            .next-level-section {
+                padding: 1rem;
+            }
+
+            .compact-level-badge {
+                min-width: auto;
+                padding: 1rem 1.5rem;
+            }
+
+            .compact-level-number {
+                font-size: 1.5rem;
+            }
+
+            .compact-level-name {
+                font-size: 1.1rem;
+            }
+
+            .compact-points-number {
+                font-size: 3.5rem;
+            }
+
+            .compact-points-label {
+                font-size: 1rem;
+            }
+
+            .rank-display {
+                padding: 0.75rem 1.5rem;
+            }
+
+            .rank-display .rank-number {
+                font-size: 1.2rem;
+            }
+
+            .mysterious-next-level {
+                padding: 1rem;
+            }
+
+            .mysterious-title {
+                font-size: 1rem;
+            }
+
+            .mysterious-level-name {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .compact-level-display {
+                padding: 1.5rem;
+            }
+
+            .compact-level-content {
+                gap: 1.5rem;
+            }
+
+            .top-row,
+            .bottom-row {
+                gap: 1rem;
+            }
+
+            .compact-points-number {
+                font-size: 3rem;
+            }
+
+            .compact-level-number {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Floating Particles -->
+    <div class="floating-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <!-- Hero Section -->
     <div class="points-hero">
+        <!-- Floating Bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
         <div class="container">
             <div class="points-hero-content text-center">
-                <h1 class="display-4 mb-3">
+                <h1 class="hero-title mb-3">
                     <i class="bi bi-trophy-fill text-warning"></i>
                     <span th:text="#{points.title}">Points & Level History</span>
                 </h1>
-                <p class="lead mb-0" th:text="#{points.subtitle}">Track your eco-friendly journey and celebrate your achievements</p>
+                <p class="hero-subtitle mb-0" th:text="#{points.subtitle}">Track your eco-friendly journey and celebrate your achievements</p>
             </div>
         </div>
     </div>
@@ -417,10 +1981,11 @@
                     <div class="row align-items-center">
                         <div class="col-lg-6 mb-4 mb-lg-0">
                             <h2 class="mb-3">
-                                <span class="level-badge">
+                                <a href="/levels" class="level-badge clickable-level">
                                     <i class="bi bi-star-fill me-2"></i>
                                     <span th:text="#{points.level}">Level</span> <span th:text="${currentUser.level}">1</span>
-                                </span>
+                                    <span class="level-name-inline" th:text="#{${currentUser.levelName}}">Bottle Beginner</span>
+                                </a>
                             </h2>
                             <h3 class="mb-3">
                                 <i class="bi bi-star-fill text-warning me-2"></i>
@@ -447,16 +2012,21 @@
                         <div class="col-lg-6">
                             <div class="row">
                                 <div class="col-6">
-                                    <div class="stat-item">
-                                        <div class="stat-number" th:text="${totalPointsEarned}">0</div>
-                                        <div class="stat-label" th:text="#{points.points.earned}">Points Earned</div>
-                                    </div>
+                                    <a href="/levels" class="stat-item stat-item-tall clickable-card">
+                                        <div class="stat-number next-level-number" th:text="${currentUser.level + 1}">2</div>
+                                        <div class="stat-label next-level-label">Next Level</div>
+                                        <div class="stat-sublabel next-level-sublabel" th:text="#{${currentUser.nextLevelName}}">Trash Tamer</div>
+                                    </a>
                                 </div>
                                 <div class="col-6">
-                                    <div class="stat-item">
-                                        <div class="stat-number" th:text="${levelUpCount}">0</div>
-                                        <div class="stat-label" th:text="#{points.level.ups}">Level Ups</div>
-                                    </div>
+                                    <a href="/points/leaderboard" class="stat-item stat-item-tall clickable-card">
+                                        <div class="stat-trophy">
+                                            <i class="bi bi-trophy-fill"></i>
+                                        </div>
+                                        <div class="stat-number" th:text="${userRank}">#1</div>
+                                        <div class="stat-label">Global Rank</div>
+                                        <div class="stat-sublabel">Your Position</div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -612,6 +2182,144 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // EPIC CONFETTI EFFECT
+            function createConfetti() {
+                const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+                const confettiCount = 50;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+
+            // EPIC LEVEL BADGE HOVER EFFECT
+            const levelBadge = document.querySelector('.compact-level-badge');
+            if (levelBadge) {
+                levelBadge.addEventListener('mouseenter', function() {
+                    createConfetti();
+                    this.style.transform = 'perspective(1000px) rotateX(10deg) scale(1.05)';
+                });
+                
+                levelBadge.addEventListener('mouseleave', function() {
+                    this.style.transform = 'perspective(1000px) rotateX(5deg) scale(1)';
+                });
+            }
+
+            // EPIC POINTS DISPLAY HOVER EFFECT
+            const pointsDisplay = document.querySelector('.compact-points-info');
+            if (pointsDisplay) {
+                pointsDisplay.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    const pointsNumber = this.querySelector('.compact-points-number');
+                    if (pointsNumber) {
+                        pointsNumber.style.animation = 'glow 1s ease-in-out infinite alternate';
+                    }
+                });
+                
+                pointsDisplay.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    const pointsNumber = this.querySelector('.compact-points-number');
+                    if (pointsNumber) {
+                        pointsNumber.style.animation = 'glow 2s ease-in-out infinite alternate';
+                    }
+                });
+            }
+
+            // EPIC NEXT LEVEL PREVIEW HOVER EFFECT
+            const nextLevelPreview = document.querySelector('.mysterious-next-level');
+            if (nextLevelPreview) {
+                nextLevelPreview.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 20px 40px rgba(0, 255, 136, 0.4)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+                    createConfetti();
+                });
+                
+                nextLevelPreview.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 15px 40px rgba(0, 255, 136, 0.2)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                });
+            }
+
+            // EPIC PROGRESS BAR ANIMATION
+            const progressFill = document.querySelector('.compact-progress-fill');
+            if (progressFill) {
+                // Animate progress bar on page load
+                const width = progressFill.style.width;
+                progressFill.style.width = '0%';
+                
+                setTimeout(() => {
+                    progressFill.style.width = width;
+                }, 500);
+            }
+
+            // EPIC NEXT LEVEL PROGRESS BAR ANIMATION
+            const nextLevelProgressFill = document.querySelector('.next-level-progress-fill');
+            if (nextLevelProgressFill) {
+                // Animate next level progress bar on page load
+                const width = nextLevelProgressFill.style.width;
+                nextLevelProgressFill.style.width = '0%';
+                
+                setTimeout(() => {
+                    nextLevelProgressFill.style.width = width;
+                }, 800);
+            }
+
+            // EPIC STATS ITEMS HOVER EFFECT
+            const statItems = document.querySelectorAll('.epic-stat-item');
+            statItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // EPIC PARTICLE EFFECTS
+            function createFloatingParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 6) + 's';
+                
+                document.querySelector('.floating-particles').appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    particle.remove();
+                }, 10000);
+            }
+
+            // Create particles periodically
+            setInterval(createFloatingParticle, 2000);
+
+            // EPIC SCROLL EFFECTS
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('.epic-level-badge');
+                if (parallax) {
+                    const speed = scrolled * 0.5;
+                    parallax.style.transform = `perspective(1000px) rotateX(5deg) translateY(${speed}px)`;
+                }
+            });
+
             // Use event delegation for pagination clicks
             document.addEventListener('click', function(e) {
                 // Check if clicked element is a pagination action link or its child
@@ -714,7 +2422,303 @@
                     pagination.appendChild(nextLi);
                 }
             };
+
+            // ENHANCED STATS CARDS HOVER EFFECTS
+            const statsCards = document.querySelectorAll('.stats-card');
+            statsCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
+                    this.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.15)';
+                    this.style.borderLeft = '4px solid #00ff88';
+                    
+                    const title = this.querySelector('.section-title');
+                    if (title) {
+                        title.style.color = '#00ff88';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                    this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
+                    this.style.borderLeft = '4px solid #28a745';
+                    
+                    const title = this.querySelector('.section-title');
+                    if (title) {
+                        title.style.color = 'inherit';
+                    }
+                });
+            });
+
+            // ENHANCED ACTIVITY CARDS HOVER EFFECTS
+            const activityCards = document.querySelectorAll('.activity-card');
+            activityCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(8px) translateY(-3px)';
+                    this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.15)';
+                    this.style.borderLeftWidth = '6px';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0) translateY(0)';
+                    this.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.08)';
+                    this.style.borderLeftWidth = '4px';
+                });
+            });
+
+            // ENHANCED POINTS BADGES HOVER EFFECTS
+            const pointsBadges = document.querySelectorAll('.points-badge');
+            pointsBadges.forEach(badge => {
+                badge.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 8px 20px rgba(40, 167, 69, 0.4)';
+                });
+                
+                badge.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 4px 15px rgba(255, 193, 7, 0.3)';
+                });
+            });
+
+            // ENHANCED PAGINATION HOVER EFFECTS
+            const paginationLinks = document.querySelectorAll('.pagination .page-link');
+            paginationLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 5px 15px rgba(0, 255, 136, 0.3)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+
+            // ENHANCED COMPACT LEVEL DISPLAY HOVER EFFECT
+            const compactLevelDisplay = document.querySelector('.compact-level-display');
+            if (compactLevelDisplay) {
+                compactLevelDisplay.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                    this.style.boxShadow = '0 25px 60px rgba(0, 255, 136, 0.3)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.5)';
+                });
+                
+                compactLevelDisplay.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 15px 40px rgba(0, 255, 136, 0.2)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                });
+            }
+
+            // ENHANCED PROGRESS CONTAINER HOVER EFFECT
+            const progressContainer = document.querySelector('.compact-progress-container');
+            if (progressContainer) {
+                progressContainer.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(0, 255, 136, 0.15)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.4)';
+                    this.style.transform = 'scale(1.02)';
+                });
+                
+                progressContainer.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(0, 255, 136, 0.1)';
+                    this.style.borderColor = 'rgba(0, 255, 136, 0.2)';
+                    this.style.transform = 'scale(1)';
+                });
+            }
+
+            // ENHANCED RANK DISPLAY HOVER EFFECT
+            const rankDisplay = document.querySelector('.rank-display');
+            if (rankDisplay) {
+                rankDisplay.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 8px 25px rgba(0, 255, 136, 0.5)';
+                });
+                
+                rankDisplay.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = '0 4px 15px rgba(0, 255, 136, 0.4)';
+                });
+            }
+
+            // INTERSECTION OBSERVER FOR SCROLL-TRIGGERED ANIMATIONS
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards for scroll animations
+            document.querySelectorAll('.stats-card, .activity-card, .compact-level-display, .mysterious-next-level').forEach(card => {
+                observer.observe(card);
+            });
+
+            // ENHANCED CARD INTERACTIONS
+            document.querySelectorAll('.stats-card').forEach((card, index) => {
+                card.addEventListener('mouseenter', function() {
+                    // Add ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.style.position = 'absolute';
+                    ripple.style.width = '20px';
+                    ripple.style.height = '20px';
+                    ripple.style.background = 'rgba(0, 255, 136, 0.3)';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.pointerEvents = 'none';
+                    ripple.style.animation = 'ripple 0.6s ease-out';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+
+                // Add staggered animation delay
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // ENHANCED ACTIVITY CARD EFFECTS
+            document.querySelectorAll('.activity-card').forEach((card, index) => {
+                card.addEventListener('mouseenter', function() {
+                    // Add glow effect
+                    this.style.boxShadow = '0 10px 25px rgba(0, 255, 136, 0.2)';
+                    
+                    // Animate the points badge
+                    const badge = this.querySelector('.points-badge');
+                    if (badge) {
+                        badge.style.animation = 'bounce 0.6s ease-in-out';
+                    }
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = '';
+                    
+                    const badge = this.querySelector('.points-badge');
+                    if (badge) {
+                        badge.style.animation = '';
+                    }
+                });
+
+                // Add staggered animation delay
+                card.style.animationDelay = `${index * 0.05}s`;
+            });
+
+            // ENHANCED PAGINATION EFFECTS
+            document.querySelectorAll('.pagination .page-link').forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.05)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+
+            // ENHANCED SECTION TITLE EFFECTS
+            document.querySelectorAll('.section-title').forEach(title => {
+                title.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(8px)';
+                    this.style.color = '#00ff88';
+                });
+                
+                title.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                    this.style.color = '';
+                });
+            });
+
+            // ADDITIONAL CREATIVE EFFECTS
+            // Floating particles for main level display
+            const levelDisplay = document.querySelector('.compact-level-display');
+            if (levelDisplay) {
+                levelDisplay.addEventListener('mouseenter', function() {
+                    createFloatingParticles(this);
+                });
+            }
+
+            // Progress bar animation on scroll
+            const progressBars = document.querySelectorAll('.compact-progress-fill, .progress-bar');
+            const progressObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.style.width;
+                        entry.target.style.width = '0%';
+                        setTimeout(() => {
+                            entry.target.style.transition = 'width 1.5s ease-out';
+                            entry.target.style.width = width;
+                        }, 200);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            progressBars.forEach(bar => progressObserver.observe(bar));
         });
-    </script>
+
+        // CREATIVE HELPER FUNCTIONS
+        function createFloatingParticles(container) {
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '4px';
+                particle.style.height = '4px';
+                particle.style.background = '#00ff88';
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animation = `float-particle 2s ease-out forwards`;
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        // ADDITIONAL KEYFRAMES
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes ripple {
+                0% {
+                    transform: scale(0);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(20);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {
+                    transform: translateY(0);
+                }
+                40% {
+                    transform: translateY(-10px);
+                }
+                60% {
+                    transform: translateY(-5px);
+                }
+            }
+
+            @keyframes float-particle {
+                0% {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateY(-50px) scale(0);
+                }
+            }
+
+            .animate-in {
+                animation-play-state: running !important;
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+    </script>
 </body>
 </html> 

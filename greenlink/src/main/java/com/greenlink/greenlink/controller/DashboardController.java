@@ -95,6 +95,14 @@ public class DashboardController {
             model.addAttribute("currentStreak", 0);
         }
         
+        // Add user rank
+        try {
+            int userRank = userService.getUserRank(user.getId());
+            model.addAttribute("userRank", userRank);
+        } catch (Exception e) {
+            model.addAttribute("userRank", 0);
+        }
+        
         // Add recent events for Recent Activity section
         try {
             List<PointEvent> recentEvents = pointsService.getRecentEvents(user.getId(), 5); // Last 5 events

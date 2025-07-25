@@ -43,11 +43,7 @@ public class EducationController {
     public String getAllCourses(Model model, @AuthenticationPrincipal User currentUser) {
         List<CourseDto> courses = courseService.getAllCourses();
         model.addAttribute("courses", courses);
-        
-        // Add authentication info to model
         model.addAttribute("isAuthenticated", currentUser != null);
-        
-        // Add completed lessons for authenticated users
         if (currentUser != null) {
             List<Long> completedLessons = new ArrayList<>();
             for (long i = 1; i <= 6; i++) {
@@ -55,7 +51,6 @@ public class EducationController {
                     completedLessons.add(i);
                 }
             }
-            // Convert to JSON string for easier JavaScript parsing
             ObjectMapper mapper = new ObjectMapper();
             try {
                 String completedLessonsJson = mapper.writeValueAsString(completedLessons);
@@ -65,19 +60,17 @@ public class EducationController {
             }
         }
         
-        return "educatie"; // Returnează fișierul education.html
+        return "educatie"; 
     }
 
     @GetMapping("/curs/{courseId}")
     public String getCourseDetails(@PathVariable Long courseId, Model model, @AuthenticationPrincipal User currentUser) {
-        // For lessons 4, 5, 6, create mock course data since they don't exist in database
         CourseDto course;
         if (courseId >= 4 && courseId <= 6) {
-            // Create mock course data for lessons 4, 5, 6
+
             String title = "";
             String description = "";
-            int duration = 15; // Default duration in minutes
-            
+            int duration = 15; 
             switch(courseId.intValue()) {
                 case 4:
                     title = "Începe un mini-compost acasă";
@@ -95,20 +88,16 @@ public class EducationController {
             
             course = new CourseDto(courseId, title, description, duration);
         } else {
-            // For existing courses (1, 2, 3), fetch from database
             course = courseService.getCourseById(courseId);
         }
         
         model.addAttribute("course", course);
         
-        // Check if user has already completed this course quiz
         boolean quizCompleted = false;
         if (currentUser != null) {
             quizCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), courseId);
             model.addAttribute("quizCompleted", quizCompleted);
         }
-        
-        // Return different templates based on courseId
         switch(courseId.intValue()) {
             case 1:
                 return "curs";
@@ -123,13 +112,12 @@ public class EducationController {
             case 6:
                 return "curs6";
             default:
-                return "curs"; // Default to first course if ID not found
+                return "curs"; 
         }
     }
     
     @GetMapping("/curs2")
     public String getCourse2(Model model, @AuthenticationPrincipal User currentUser) {
-        // Check if user has already completed this course quiz
         boolean lessonCompleted = false;
         if (currentUser != null) {
             lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 2L);
@@ -141,7 +129,6 @@ public class EducationController {
     
     @GetMapping("/curs4")
     public String getCourse4(Model model, @AuthenticationPrincipal User currentUser) {
-        // Check if user has already completed this course quiz
         boolean lessonCompleted = false;
         if (currentUser != null) {
             lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 4L);
@@ -153,7 +140,6 @@ public class EducationController {
 
     @GetMapping("/curs5")
     public String getCourse5(Model model, @AuthenticationPrincipal User currentUser) {
-        // Check if user has already completed this course quiz
         boolean lessonCompleted = false;
         if (currentUser != null) {
             lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 5L);
@@ -165,7 +151,6 @@ public class EducationController {
 
     @GetMapping("/curs6")
     public String getCourse6(Model model, @AuthenticationPrincipal User currentUser) {
-        // Check if user has already completed this course quiz
         boolean lessonCompleted = false;
         if (currentUser != null) {
             lessonCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), 6L);
@@ -188,7 +173,6 @@ public class EducationController {
             return ResponseEntity.badRequest().body(response);
         }
         
-        // Check if user has already completed this course quiz
         boolean alreadyCompleted = quizResultRepository.existsByUserIdAndQuizId(currentUser.getId(), courseId);
         if (alreadyCompleted) {
             response.put("success", false);
@@ -197,33 +181,22 @@ public class EducationController {
         }
         
         try {
-            // Calculate score - number of correct answers
             int correctAnswers = Integer.parseInt(answers.get("correctAnswers"));
             int totalQuestions = Integer.parseInt(answers.get("totalQuestions"));
-            
-            // Get reflection text if provided
             String reflectionText = answers.get("reflectionText");
-            
-            // Calculate points: 5 points per correct answer
             int pointsFromQuestions = correctAnswers * 5;
-            
-            // Add points for reflection text ("Scrie")
             int reflectionPoints = 0;
             if (reflectionText != null && !reflectionText.trim().isEmpty()) {
-                reflectionPoints = 5; // "Scrie" worth 5 points
+                reflectionPoints = 5;
             }
-            
-            // Add points for image upload ("Foto")
             int imagePoints = 0;
             String imageUploaded = answers.get("imageUploaded");
             if ("true".equals(imageUploaded)) {
-                imagePoints = 10; // "Foto" worth 10 points
+                imagePoints = 10; 
             }
-            
-            // Total points earned
+        
             int totalPointsEarned = pointsFromQuestions + reflectionPoints + imagePoints;
             
-            // Get course title - handle courses 4, 5, 6 that don't exist in database
             String courseTitle;
             if (courseId >= 4 && courseId <= 6) {
                 switch(courseId.intValue()) {
@@ -243,21 +216,16 @@ public class EducationController {
                 courseTitle = courseService.getCourseById(courseId).getTitle();
             }
             
-            // Award points using PointsService
             pointsService.awardLessonPoints(currentUser.getId(), courseId, courseTitle, totalPointsEarned);
             
-            // Create a quiz result record with reflection text
             courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, totalPointsEarned, reflectionText, null);
-            
-            // Track lesson completion for challenges
+          
             challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
-            
-            // Get updated user to check new level
+          
             User updatedUser = userService.getUserById(currentUser.getId());
             int newLevel = updatedUser.getLevel();
             boolean leveledUp = newLevel > (updatedUser.getPoints() - totalPointsEarned) / 50 + 1;
             
-            // Return success response
             response.put("success", true);
             response.put("correctAnswers", correctAnswers);
             response.put("totalQuestions", totalQuestions);
@@ -265,11 +233,9 @@ public class EducationController {
             response.put("leveledUp", leveledUp);
             response.put("newLevel", newLevel);
             
-            // Build message showing points earned
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("Felicitări! Ai câștigat ").append(totalPointsEarned).append(" puncte!");
             
-            // Add point breakdown
             messageBuilder.append(" (Întrebări: ").append(pointsFromQuestions).append(" puncte");
             if (reflectionPoints > 0) {
                 messageBuilder.append(", Scrie: ").append(reflectionPoints).append(" puncte");

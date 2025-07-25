@@ -59,6 +59,10 @@ public class PointsController {
         model.addAttribute("recentEvents", recentEvents);
         model.addAttribute("levelUpEvents", levelUpEvents);
         model.addAttribute("currentUser", freshUser);
+        
+        // Get user's rank in leaderboard
+        int userRank = userService.getUserRank(freshUser.getId());
+        model.addAttribute("userRank", "#" + userRank);
 
         return "points/history";
     }

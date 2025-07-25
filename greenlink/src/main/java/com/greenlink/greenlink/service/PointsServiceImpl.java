@@ -70,9 +70,13 @@ public class PointsServiceImpl implements PointsService {
         int oldLevel = user.getLevel();
         int oldPoints = user.getPoints();
         
-        // Update user points (this will automatically recalculate level)
+        // Update user points
         user.setPoints(oldPoints + points);
-        int newLevel = user.getLevel();
+        
+        // Calculate and update the new level based on total points
+        int newLevel = user.calculateLevel(user.getPoints());
+        user.setLevel(newLevel);
+        
         boolean leveledUp = newLevel > oldLevel;
         
         // Save user

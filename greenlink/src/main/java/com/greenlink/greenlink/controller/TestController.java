@@ -1,6 +1,7 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.service.ChallengeTrackingService;
+import com.greenlink.greenlink.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,6 +20,9 @@ public class TestController {
 
     @Autowired
     private ChallengeTrackingService challengeTrackingService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/test-offer-challenge")
     public String testOfferChallenge(@RequestParam Long userId) {
@@ -60,5 +65,27 @@ public class TestController {
         logger.info("Product category: {}", product.getCategory());
         
         return "marketplace/product-form";
+    }
+
+    @GetMapping("/recalculate-levels")
+    @ResponseBody
+    public String recalculateAllUserLevels() {
+        try {
+            userService.recalculateAllUserLevels(); 
+            return "Successfully recalculated all user levels";
+        } catch (Exception e) {
+            return "Error recalculating levels: " + e.getMessage();
+        }
+    }
+
+    @GetMapping("/recalculate-user-level")
+    @ResponseBody
+    public String recalculateUserLevel(@RequestParam Long userId) {
+        try {
+            userService.recalculateUserLevel(userId);
+            return "Successfully recalculated level for user: " + userId;
+        } catch (Exception e) {
+            return "Error recalculating level for user " + userId + ": " + e.getMessage();
+        }
     }
 } 

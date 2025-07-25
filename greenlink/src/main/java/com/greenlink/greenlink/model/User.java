@@ -238,47 +238,79 @@ public class User implements UserDetails {
 
     /**
      * Calculate user level based on total points
-     * Level thresholds: 1-50=1, 51-150=2, 151-300=3, 301-500=4, 501-750=5, 751-1050=6, etc.
+     * New 15-level system with specific point thresholds
      */
     public int calculateLevel(int totalPoints) {
         if (totalPoints <= 0) return 1;
         
-        // Progressive level system: each level requires more points
-        // Level 1: 0-50 points
-        // Level 2: 51-150 points (100 more)
-        // Level 3: 151-300 points (150 more)
-        // Level 4: 301-500 points (200 more)
-        // Level 5: 501-750 points (250 more)
-        // Level 6: 751-1050 points (300 more)
-        // etc.
+        // New level thresholds: 50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, 3300, 3900, 4550, 5250, 6000
+        int[] levelThresholds = {50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, 3300, 3900, 4550, 5250, 6000};
         
-        int level = 1;
-        int pointsNeeded = 50;
-        int totalPointsNeeded = 0;
-        
-        while (totalPoints >= totalPointsNeeded + pointsNeeded) {
-            totalPointsNeeded += pointsNeeded;
-            level++;
-            pointsNeeded += 50 * level;
+        for (int i = 0; i < levelThresholds.length; i++) {
+            if (totalPoints < levelThresholds[i]) {
+                return i + 1;
+            }
         }
         
-        return level;
+        return 15; // Max level
+    }
+
+    /**
+     * Get level name based on level number
+     */
+    public String getLevelName() {
+        return getLevelName(this.level);
+    }
+
+    /**
+     * Get level name for a specific level number
+     */
+    public static String getLevelName(int level) {
+        String[] levelKeys = {
+            "level.bottle.beginner",      // Level 1
+            "level.trash.tamer",          // Level 2
+            "level.compost.captain",      // Level 3
+            "level.solar.scout",          // Level 4
+            "level.green.goblin",         // Level 5
+            "level.plastic.paladin",      // Level 6
+            "level.worm.wrangler",        // Level 7
+            "level.recycle.ranger",       // Level 8
+            "level.eco.enchanter",        // Level 9
+            "level.carbon.crusher",       // Level 10
+            "level.led.legend",           // Level 11
+            "level.sustainability.sorcerer", // Level 12
+            "level.reusable.rebel",       // Level 13
+            "level.veggie.viking",        // Level 14
+            "level.planet.protector"      // Level 15
+        };
+        
+        if (level >= 1 && level <= levelKeys.length) {
+            return levelKeys[level - 1];
+        }
+        return "level.bottle.beginner"; // Default to first level
+    }
+
+    /**
+     * Get next level name
+     */
+    public String getNextLevelName() {
+        if (this.level >= 15) {
+            return getLevelName(15); // Max level
+        }
+        return getLevelName(this.level + 1);
     }
 
     /**
      * Get points needed for next level
      */
     public int getPointsForNextLevel() {
-        int currentLevel = this.level;
-        int pointsNeeded = 50;
-        int totalPointsNeeded = 0;
+        int[] levelThresholds = {50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, 3300, 3900, 4550, 5250, 6000};
         
-        for (int i = 1; i <= currentLevel; i++) {
-            totalPointsNeeded += pointsNeeded;
-            pointsNeeded += 50 * i;
+        if (this.level >= levelThresholds.length) {
+            return levelThresholds[levelThresholds.length - 1]; // Max level reached
         }
         
-        return totalPointsNeeded;
+        return levelThresholds[this.level - 1];
     }
 
     /**
@@ -311,16 +343,17 @@ public class User implements UserDetails {
      * Get points needed for current level
      */
     private int getPointsForCurrentLevel() {
-        int currentLevel = this.level;
-        int pointsNeeded = 50;
-        int totalPointsNeeded = 0;
+        int[] levelThresholds = {50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, 3300, 3900, 4550, 5250, 6000};
         
-        for (int i = 1; i < currentLevel; i++) {
-            totalPointsNeeded += pointsNeeded;
-            pointsNeeded += 50 * i;
+        if (this.level <= 1) {
+            return 0;
         }
         
-        return totalPointsNeeded;
+        if (this.level > levelThresholds.length) {
+            return levelThresholds[levelThresholds.length - 1];
+        }
+        
+        return levelThresholds[this.level - 2];
     }
 
     public LocalDateTime getCreatedAt() {
