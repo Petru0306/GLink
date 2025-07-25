@@ -219,6 +219,24 @@ public class WebSocketController {
                     statusUpdate
             );
             
+            // If offer was accepted, send a price update notification to all participants
+            if ("ACCEPT".equalsIgnoreCase(chatMessage.getOfferStatus()) && chatMessage.getOfferAmount() != null) {
+                ChatMessageDto priceUpdate = new ChatMessageDto();
+                priceUpdate.setConversationId(chatMessage.getConversationId());
+                priceUpdate.setOfferAmount(chatMessage.getOfferAmount());
+                priceUpdate.setContent("PRICE_UPDATE"); // Use content field to indicate this is a price update
+                priceUpdate.setOfferStatus("PRICE_UPDATED"); // Use offerStatus to indicate price update
+                
+                // Send price update to all participants
+                messagingTemplate.convertAndSend(
+                        "/topic/conversation." + chatMessage.getConversationId(),
+                        priceUpdate
+                );
+                
+                logger.info("Price update notification sent for conversation " + chatMessage.getConversationId() + 
+                           " with new price: " + chatMessage.getOfferAmount() + " RON");
+            }
+            
             logger.info("Status update sent via WebSocket for message " + chatMessage.getMessageId() + " with status: " + chatMessage.getOfferStatus());
             
         } catch (Exception e) {

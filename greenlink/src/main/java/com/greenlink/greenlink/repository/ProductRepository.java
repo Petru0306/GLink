@@ -70,6 +70,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     List<Product> findAllAvailableProducts();
     
     // Find products by buyer
-    @Query("SELECT p FROM Product p WHERE p.buyer.id = :buyerId ORDER BY p.soldAt DESC")
+    @Query("SELECT p FROM Product p WHERE p.buyer.id = :buyerId AND p.sold = true ORDER BY p.soldAt DESC")
     List<Product> findProductsByBuyerId(@Param("buyerId") Long buyerId);
 }
