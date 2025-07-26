@@ -81,7 +81,8 @@ public class PaymentService {
         
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         
-        // Create delivery conversation - temporarily simplified until migration works
+        // Create delivery conversation - temporarily commented out until migration works
+        /*
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
@@ -92,11 +93,12 @@ public class PaymentService {
         
         // Link conversation to product
         product.setDeliveryConversation(deliveryConversation);
+        */
         
         productRepository.save(product);
         
         System.out.println("Product saved successfully!");
-        System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
+        // System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         System.out.println("=== PAYMENT PROCESSING COMPLETE ===");
     }
     
