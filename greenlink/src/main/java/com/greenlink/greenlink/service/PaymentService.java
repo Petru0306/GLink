@@ -68,6 +68,7 @@ public class PaymentService {
         System.out.println("Product found: " + product.getName() + " (ID: " + product.getId() + ")");
         System.out.println("Buyer found: " + buyer.getEmail() + " (ID: " + buyer.getId() + ")");
         System.out.println("Product currently sold: " + product.isSold());
+        System.out.println("Product current buyer: " + (product.getBuyer() != null ? product.getBuyer().getEmail() : "null"));
         
         // Check if product is still available
         if (product.isSold()) {
@@ -80,6 +81,7 @@ public class PaymentService {
         product.setSoldAt(LocalDateTime.now());
         
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
+        System.out.println("Sold at: " + product.getSoldAt());
         
         // Create delivery conversation - temporarily commented out until migration works
         /*
@@ -95,9 +97,20 @@ public class PaymentService {
         product.setDeliveryConversation(deliveryConversation);
         */
         
-        productRepository.save(product);
+        // Save the product and force flush
+        Product savedProduct = productRepository.save(product);
+        System.out.println("Product saved successfully! ID: " + savedProduct.getId());
+        System.out.println("Saved product sold status: " + savedProduct.isSold());
+        System.out.println("Saved product buyer: " + (savedProduct.getBuyer() != null ? savedProduct.getBuyer().getEmail() : "null"));
         
-        System.out.println("Product saved successfully!");
+        // Verify the save by fetching from database
+        Product verifyProduct = productRepository.findById(productId).orElse(null);
+        if (verifyProduct != null) {
+            System.out.println("VERIFICATION - Product from DB - sold: " + verifyProduct.isSold() + ", buyer: " + (verifyProduct.getBuyer() != null ? verifyProduct.getBuyer().getEmail() : "null"));
+        } else {
+            System.out.println("VERIFICATION - Product not found in DB after save!");
+        }
+        
         // System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         System.out.println("=== PAYMENT PROCESSING COMPLETE ===");
     }
@@ -176,6 +189,12 @@ public class PaymentService {
      */
     @Transactional
     public void processAdminPurchase(Product product, User buyer) {
+        System.out.println("=== PROCESSING ADMIN PURCHASE ===");
+        System.out.println("Product: " + product.getName() + " (ID: " + product.getId() + ")");
+        System.out.println("Buyer: " + buyer.getEmail() + " (ID: " + buyer.getId() + ")");
+        System.out.println("Product currently sold: " + product.isSold());
+        System.out.println("Product current buyer: " + (product.getBuyer() != null ? product.getBuyer().getEmail() : "null"));
+        
         // Check if product is still available
         if (product.isSold()) {
             throw new RuntimeException("Product is already sold");
@@ -191,8 +210,24 @@ public class PaymentService {
         product.setBuyer(buyer);
         product.setSoldAt(LocalDateTime.now());
         
+        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
+        System.out.println("Sold at: " + product.getSoldAt());
+        
         // Save the updated product
-        productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        System.out.println("Product saved successfully! ID: " + savedProduct.getId());
+        System.out.println("Saved product sold status: " + savedProduct.isSold());
+        System.out.println("Saved product buyer: " + (savedProduct.getBuyer() != null ? savedProduct.getBuyer().getEmail() : "null"));
+        
+        // Verify the save by fetching from database
+        Product verifyProduct = productRepository.findById(product.getId()).orElse(null);
+        if (verifyProduct != null) {
+            System.out.println("VERIFICATION - Product from DB - sold: " + verifyProduct.isSold() + ", buyer: " + (verifyProduct.getBuyer() != null ? verifyProduct.getBuyer().getEmail() : "null"));
+        } else {
+            System.out.println("VERIFICATION - Product not found in DB after save!");
+        }
+        
+        System.out.println("=== ADMIN PURCHASE COMPLETE ===");
     }
     
     /**

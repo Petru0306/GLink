@@ -422,11 +422,24 @@ public class ProductService {
     }
     
     public List<ProductDto> getSoldProductsBySeller(Long sellerId) {
+        System.out.println("=== GETTING SOLD PRODUCTS FOR SELLER ===");
+        System.out.println("Seller ID: " + sellerId);
+        
         List<Product> products = productRepository.findSoldProductsBySellerId(sellerId);
         
-        return products.stream()
+        System.out.println("Found " + products.size() + " sold products for seller " + sellerId);
+        for (Product p : products) {
+            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null"));
+        }
+        
+        List<ProductDto> result = products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+        
+        System.out.println("Returning " + result.size() + " ProductDto objects");
+        System.out.println("=== END GETTING SOLD PRODUCTS ===");
+        
+        return result;
     }
     
     public Page<ProductDto> getSoldProductsBySellerPaginated(Long sellerId, Pageable pageable) {
@@ -454,12 +467,23 @@ public class ProductService {
     }
     
     public List<PurchaseDto> getBoughtProductsByBuyer(Long buyerId) {
+        System.out.println("=== GETTING BOUGHT PRODUCTS FOR BUYER ===");
+        System.out.println("Buyer ID: " + buyerId);
+        
         List<Product> products = productRepository.findProductsByBuyerId(buyerId);
+        
+        System.out.println("Found " + products.size() + " bought products for buyer " + buyerId);
+        for (Product p : products) {
+            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null"));
+        }
         
         List<PurchaseDto> purchaseDtos = products.stream()
                 .map(PurchaseDto::fromProduct)
                 .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
                 .collect(Collectors.toList());
+        
+        System.out.println("Returning " + purchaseDtos.size() + " PurchaseDto objects");
+        System.out.println("=== END GETTING BOUGHT PRODUCTS ===");
         
         return purchaseDtos;
     }
