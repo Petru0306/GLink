@@ -82,8 +82,11 @@ public class PaymentService {
             userRepository.save(buyer);
         }
         
+        // Extract domain from success URL for image URL conversion
+        String domain = extractDomainFromUrl(successUrl);
+        
         // Create checkout session
-        Session session = stripeService.createCheckoutSession(product, buyer, successUrl, cancelUrl);
+        Session session = stripeService.createCheckoutSession(product, buyer, successUrl, cancelUrl, domain);
         
         return session.getUrl();
     }
@@ -119,8 +122,11 @@ public class PaymentService {
             throw new RuntimeException("Seller must complete Stripe onboarding before accepting payments");
         }
         
+        // Extract domain from success URL for image URL conversion
+        String domain = extractDomainFromUrl(successUrl);
+        
         // Create checkout session
-        Session session = stripeService.createCheckoutSession(product, currentUser, successUrl, cancelUrl);
+        Session session = stripeService.createCheckoutSession(product, currentUser, successUrl, cancelUrl, domain);
         
         return session.getUrl();
     }
@@ -147,5 +153,21 @@ public class PaymentService {
         
         // Save the updated product
         productRepository.save(product);
+    }
+    
+    /**
+     * Extract domain from URL
+     */
+    private String extractDomainFromUrl(String url) {
+        try {
+            if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
+                java.net.URL urlObj = new java.net.URL(url);
+                return urlObj.getProtocol() + "://" + urlObj.getHost() + 
+                       (urlObj.getPort() != -1 ? ":" + urlObj.getPort() : "");
+            }
+        } catch (Exception e) {
+            // If URL parsing fails, return default domain
+        }
+        return "http://localhost:8080"; // Default fallback
     }
 } 

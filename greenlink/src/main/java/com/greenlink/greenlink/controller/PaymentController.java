@@ -60,8 +60,37 @@ public class PaymentController {
             @RequestParam String cancelUrl) {
         
         try {
+            // Validate URLs
+            if (successUrl == null || successUrl.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Success URL is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            if (cancelUrl == null || cancelUrl.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Cancel URL is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            // Clean and validate URLs
+            String cleanSuccessUrl = successUrl.trim();
+            String cleanCancelUrl = cancelUrl.trim();
+            
+            // Ensure URLs are absolute
+            if (!cleanSuccessUrl.startsWith("http://") && !cleanSuccessUrl.startsWith("https://")) {
+                cleanSuccessUrl = "https://" + cleanSuccessUrl.replaceFirst("^/+", "");
+            }
+            
+            if (!cleanCancelUrl.startsWith("http://") && !cleanCancelUrl.startsWith("https://")) {
+                cleanCancelUrl = "https://" + cleanCancelUrl.replaceFirst("^/+", "");
+            }
+            
+            logger.info("Creating checkout session for product {} with successUrl: {} and cancelUrl: {}", 
+                       productId, cleanSuccessUrl, cleanCancelUrl);
+            
             User currentUser = userService.getCurrentUser();
-            String checkoutUrl = paymentService.createCheckoutSession(productId, currentUser, successUrl, cancelUrl);
+            String checkoutUrl = paymentService.createCheckoutSession(productId, currentUser, cleanSuccessUrl, cleanCancelUrl);
             
             Map<String, String> response = new HashMap<>();
             response.put("checkoutUrl", checkoutUrl);

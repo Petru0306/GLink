@@ -26,6 +26,9 @@ public class StripeService {
     @Value("${stripe.webhook-secret}")
     private String webhookSecret;
     
+    @Value("${app.domain:https://your-domain.com}")
+    private String appDomain;
+    
     /**
      * Create a Stripe Connect Express account for a seller
      */
@@ -92,7 +95,12 @@ public class StripeService {
     /**
      * Create a checkout session for a product purchase
      */
-    public Session createCheckoutSession(Product product, User buyer, String successUrl, String cancelUrl) throws StripeException {
+    public Session createCheckoutSession(Product product, User buyer, String successUrl, String cancelUrl, String domain) throws StripeException {
+        // Log the URLs for debugging
+        System.out.println("Creating checkout session with URLs:");
+        System.out.println("Success URL: " + successUrl);
+        System.out.println("Cancel URL: " + cancelUrl);
+        
         // Calculate platform commission in cents
         long productAmountCents = (long) (product.getPrice() * 100); // Convert to cents
         long commissionAmountCents = (long) (productAmountCents * platformCommissionPercentage / 100.0);
@@ -109,9 +117,31 @@ public class StripeService {
                         .setName(product.getName())
                         .setDescription(product.getDescription());
         
-        // Only add image if it's not null or empty
+        // Only add image if it's not null or empty and is a valid URL
         if (product.getImageUrl() != null && !product.getImageUrl().trim().isEmpty()) {
-            productDataBuilder.addImage(product.getImageUrl());
+            String imageUrl = product.getImageUrl().trim();
+            
+            // Convert relative URLs to absolute URLs for Stripe
+            if (!imageUrl.startsWith("http")) {
+                // Convert relative URL to absolute URL
+                String absoluteImageUrl;
+                if (imageUrl.startsWith("/")) {
+                    // It's a relative path starting with /
+                    absoluteImageUrl = domain + imageUrl;
+                    System.out.println("Converting relative image URL to absolute: " + imageUrl + " -> " + absoluteImageUrl);
+                } else {
+                    // Skip if it's not a valid URL format
+                    System.out.println("Skipping invalid image URL format: " + imageUrl);
+                    absoluteImageUrl = null;
+                }
+                
+                if (absoluteImageUrl != null) {
+                    productDataBuilder.addImage(absoluteImageUrl);
+                }
+            } else {
+                // Already an absolute URL
+                productDataBuilder.addImage(imageUrl);
+            }
         }
         
         paramsBuilder.addLineItem(

@@ -227,11 +227,14 @@ public class MarketplaceController {
     public String showSellForm(Model model, @RequestHeader(value = "Referer", required = false) String referer) {
         try {
             User currentUser = userService.getCurrentUser();
+            logger.info("User {} accessing /sell endpoint. StripeAccountId: {}", 
+                       currentUser.getEmail(), currentUser.getStripeAccountId());
             
             // Check if user has Stripe account for selling
-            if (currentUser.getStripeAccountId() == null) {
-                // Redirect to seller onboarding
-                return "redirect:/marketplace/seller-onboarding-simple.html";
+            if (currentUser.getStripeAccountId() == null || currentUser.getStripeAccountId().trim().isEmpty()) {
+                logger.info("User {} needs Stripe onboarding. Redirecting to onboarding page.", currentUser.getEmail());
+                // Redirect to seller onboarding using Thymeleaf template
+                return "marketplace/seller-onboarding-simple";
             }
             
             ProductDto product = new ProductDto();
@@ -258,7 +261,7 @@ public class MarketplaceController {
             
             return "marketplace/product-form";
         } catch (Exception e) {
-            logger.error("Error showing sell form", e);
+            logger.error("Error showing sell form for user: {}", e.getMessage(), e);
             return "redirect:/login";
         }
     }

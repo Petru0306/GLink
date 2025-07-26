@@ -370,9 +370,16 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script th:inline="javascript">
-                // Get CSRF token from meta tags
-                const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
-                const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+                // Get CSRF token from meta tags with null checks
+                const csrfMeta = document.querySelector("meta[name='_csrf']");
+                const csrfHeaderMeta = document.querySelector("meta[name='_csrf_header']");
+                
+                if (!csrfMeta || !csrfHeaderMeta) {
+                    console.error('CSRF tokens not found in meta tags');
+                }
+                
+                const csrfToken = csrfMeta ? csrfMeta.getAttribute("content") : '';
+                const csrfHeader = csrfHeaderMeta ? csrfHeaderMeta.getAttribute("content") : '';
                 
                 // Initialize Stripe
                 const stripe = Stripe(/*[[${@environment.getProperty('stripe.publishable-key')}]]*/); // Stripe publishable key
@@ -387,6 +394,12 @@
                         button.disabled = true;
                         button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
                         
+                        // Construct URLs with proper encoding
+                        const successUrl = `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`;
+                        const cancelUrl = window.location.href;
+                        
+                        console.log('Creating checkout session with URLs:', { successUrl, cancelUrl });
+                        
                         // Create checkout session
                         const response = await fetch(`/payment/create-checkout/${productId}`, {
                             method: 'POST',
@@ -396,18 +409,28 @@
                                 [csrfHeader]: csrfToken
                             },
                             body: new URLSearchParams({
-                                successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-                                cancelUrl: `${window.location.href}`
+                                successUrl: successUrl,
+                                cancelUrl: cancelUrl
                             })
                         });
                         
-                        const data = await response.json();
+                        console.log('Response status:', response.status);
                         
-                        if (response.ok && data.checkoutUrl) {
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Server error response:', errorText);
+                            throw new Error(`Server error: ${response.status} - ${errorText}`);
+                        }
+                        
+                        const data = await response.json();
+                        console.log('Response data:', data);
+                        
+                        if (data.checkoutUrl) {
                             // Redirect to Stripe Checkout
+                            console.log('Redirecting to checkout URL:', data.checkoutUrl);
                             window.location.href = data.checkoutUrl;
                         } else {
-                            throw new Error(data.error || 'Failed to create checkout session');
+                            throw new Error(data.error || 'No checkout URL received');
                         }
                         
                     } catch (error) {
