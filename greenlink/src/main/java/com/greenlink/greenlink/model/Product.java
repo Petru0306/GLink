@@ -61,10 +61,10 @@ public class Product {
     @Column(name = "sold_at")
     private LocalDateTime soldAt;
     
-    // Link to delivery conversation - temporarily commented out
-    // @ManyToOne
-    // @JoinColumn(name = "conversation_id")
-    // private Conversation deliveryConversation;
+    // Link to delivery conversation
+    @ManyToOne
+    @JoinColumn(name = "conversation_id")
+    private Conversation deliveryConversation;
     
     // Map to store negotiated prices between users and this product
     @ElementCollection
@@ -239,8 +239,6 @@ public class Product {
         this.soldAt = soldAt;
     }
     
-    // Temporarily commented out until migration works
-    /*
     public Conversation getDeliveryConversation() {
         return deliveryConversation;
     }
@@ -248,7 +246,6 @@ public class Product {
     public void setDeliveryConversation(Conversation deliveryConversation) {
         this.deliveryConversation = deliveryConversation;
     }
-    */
     
     public Map<Long, Double> getNegotiatedPrices() {
         return negotiatedPrices;

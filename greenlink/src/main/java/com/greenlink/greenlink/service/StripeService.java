@@ -101,13 +101,17 @@ public class StripeService {
         System.out.println("Success URL: " + successUrl);
         System.out.println("Cancel URL: " + cancelUrl);
         
+        // Add session_id parameter to success URL for fallback processing
+        String successUrlWithSession = successUrl + (successUrl.contains("?") ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
+        System.out.println("Modified Success URL: " + successUrlWithSession);
+        
         // Calculate platform commission in cents
         long productAmountCents = (long) (product.getPrice() * 100); // Convert to cents
         long commissionAmountCents = (long) (productAmountCents * platformCommissionPercentage / 100.0);
         
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(successUrl)
+                .setSuccessUrl(successUrlWithSession)
                 .setCancelUrl(cancelUrl)
                 .setCustomer(buyer.getStripeCustomerId());
         

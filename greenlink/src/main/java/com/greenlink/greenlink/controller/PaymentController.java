@@ -110,25 +110,18 @@ public class PaymentController {
     }
     
     /**
-     * Handle Stripe webhooks
+     * Handle Stripe webhook events
      */
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(HttpServletRequest request) {
-        String payload = "";
+        String payload;
         String signature = request.getHeader("Stripe-Signature");
         
         logger.info("Webhook received - Signature: {}", signature != null ? "Present" : "Missing");
         
         try {
             // Read the request body
-            java.io.BufferedReader reader = request.getReader();
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            payload = sb.toString();
-            
+            payload = request.getReader().lines().collect(java.util.stream.Collectors.joining());
             logger.info("Webhook payload received, length: {}", payload.length());
             
             // Verify webhook signature
@@ -137,12 +130,9 @@ public class PaymentController {
                 return ResponseEntity.badRequest().body("Invalid signature");
             }
             
-            logger.info("Webhook signature verified successfully");
-            
             // Parse the event
-            Event event = com.stripe.net.Webhook.constructEvent(payload, signature, stripeService.getWebhookSecret());
-            
-            logger.info("Webhook event parsed: {}", event.getType());
+            com.stripe.model.Event event = com.stripe.model.Event.GSON.fromJson(payload, com.stripe.model.Event.class);
+            logger.info("Webhook event type: {}", event.getType());
             
             // Handle the event
             switch (event.getType()) {
@@ -158,12 +148,10 @@ public class PaymentController {
                     logger.info("Unhandled event type: {}", event.getType());
             }
             
-            logger.info("Webhook processed successfully");
             return ResponseEntity.ok("Webhook processed successfully");
-            
         } catch (Exception e) {
             logger.error("Error processing webhook", e);
-            return ResponseEntity.badRequest().body("Webhook processing failed: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Webhook processing failed");
         }
     }
     
@@ -277,10 +265,27 @@ public class PaymentController {
     }
     
     /**
-     * Show payment success page
+     * Show payment success page and process payment if needed
      */
     @GetMapping("/success")
-    public String showSuccessPage(Model model) {
+    public String showSuccessPage(@RequestParam(required = false) String session_id, Model model) {
+        logger.info("Payment success page accessed with session_id: {}", session_id);
+        
+        if (session_id != null && !session_id.isEmpty()) {
+            try {
+                logger.info("Attempting to process payment for session: {}", session_id);
+                paymentService.processSuccessfulPayment(session_id);
+                logger.info("Payment processed successfully from success page for session: {}", session_id);
+                model.addAttribute("message", "Payment processed successfully!");
+            } catch (Exception e) {
+                logger.error("Error processing payment from success page for session: {}", session_id, e);
+                model.addAttribute("error", "Payment was successful but there was an issue processing your order. Please contact support.");
+            }
+        } else {
+            logger.warn("Success page accessed without session_id");
+            model.addAttribute("message", "Payment completed successfully!");
+        }
+        
         return "payment/success";
     }
     
