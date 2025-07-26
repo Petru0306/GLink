@@ -83,7 +83,8 @@ public class PaymentService {
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         System.out.println("Sold at: " + product.getSoldAt());
         
-        // Create delivery conversation
+        // Create delivery conversation - temporarily commented out until migration works
+        /*
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
@@ -97,6 +98,7 @@ public class PaymentService {
         
         // Link conversation to product
         product.setDeliveryConversation(deliveryConversation);
+        */
         
         // Save the product and force flush
         Product savedProduct = productRepository.save(product);
@@ -213,7 +215,8 @@ public class PaymentService {
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         System.out.println("Sold at: " + product.getSoldAt());
         
-        // Create delivery conversation
+        // Create delivery conversation - temporarily commented out until migration works
+        /*
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
@@ -227,6 +230,7 @@ public class PaymentService {
         
         // Link conversation to product
         product.setDeliveryConversation(deliveryConversation);
+        */
         
         // Save the updated product
         Product savedProduct = productRepository.save(product);
