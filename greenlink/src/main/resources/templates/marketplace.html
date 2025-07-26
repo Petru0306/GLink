@@ -284,7 +284,7 @@
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
         
-        /* Active/Favorited State */
+        /* Active/Favorited State - only the icon should be red */
         .quick-favorite-btn.active i,
         .quick-favorite-btn[data-is-favorite="true"] i {
             color: #dc3545;
@@ -314,7 +314,7 @@
             }
         }
         
-        /* Hover effect for heart */
+        /* Hover effect for heart - only change icon color, not background */
         .quick-favorite-btn:hover i {
             color: #dc3545;
             transform: scale(1.05);
@@ -325,6 +325,58 @@
         .quick-favorite-btn[data-is-favorite="true"]:hover i {
             color: #dc3545;
             transform: scale(1.15);
+        }
+        
+        /* Ensure button background stays white/transparent - with higher specificity */
+        .quick-favorite-btn.active,
+        .quick-favorite-btn[data-is-favorite="true"],
+        .quick-favorite-btn.active:hover,
+        .quick-favorite-btn[data-is-favorite="true"]:hover,
+        .quick-favorite-btn.active:focus,
+        .quick-favorite-btn[data-is-favorite="true"]:focus {
+            background: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .quick-favorite-btn.active:hover,
+        .quick-favorite-btn[data-is-favorite="true"]:hover {
+            background: rgba(255, 255, 255, 0.95) !important;
+        }
+        
+        /* Override any Bootstrap or other CSS that might be making it red */
+        .quick-favorite-btn.btn-danger,
+        .quick-favorite-btn.btn-danger:hover,
+        .quick-favorite-btn.btn-danger:focus,
+        .quick-favorite-btn.btn-danger:active {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: transparent !important;
+        }
+        
+        /* Override any favorite-btn class that might be causing red background */
+        .favorite-btn,
+        .favorite-btn:hover,
+        .favorite-btn:focus,
+        .favorite-btn:active,
+        .favorite-btn.active,
+        .favorite-btn.active:hover,
+        .favorite-btn.active:focus,
+        .favorite-btn.active:active {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: transparent !important;
+            color: inherit !important;
+        }
+        
+        /* Ensure the button never gets a red background from any source */
+        .quick-favorite-btn.favorite-btn,
+        .quick-favorite-btn.favorite-btn:hover,
+        .quick-favorite-btn.favorite-btn:focus,
+        .quick-favorite-btn.favorite-btn:active,
+        .quick-favorite-btn.favorite-btn.active,
+        .quick-favorite-btn.favorite-btn.active:hover,
+        .quick-favorite-btn.favorite-btn.active:focus,
+        .quick-favorite-btn.favorite-btn.active:active {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-color: transparent !important;
+            color: inherit !important;
         }
 
         @media (max-width: 768px) {
