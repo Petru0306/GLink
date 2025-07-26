@@ -220,7 +220,7 @@ public class StripeService {
                 .setCurrency("ron")
                 .setMethod(com.stripe.param.PayoutCreateParams.Method.INSTANT)
                 .build(),
-            com.stripe.param.RequestOptions.builder()
+            com.stripe.net.RequestOptions.builder()
                 .setStripeAccount(seller.getStripeAccountId())
                 .build()
         );
@@ -257,7 +257,7 @@ public class StripeService {
      */
     public Map<String, Object> getAccountBalance(String accountId) throws StripeException {
         com.stripe.model.Balance balance = com.stripe.model.Balance.retrieve(
-            com.stripe.param.RequestOptions.builder()
+            com.stripe.net.RequestOptions.builder()
                 .setStripeAccount(accountId)
                 .build()
         );
