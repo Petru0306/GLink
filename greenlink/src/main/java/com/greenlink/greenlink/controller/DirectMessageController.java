@@ -5,6 +5,7 @@ import com.greenlink.greenlink.dto.DirectMessageDto;
 import com.greenlink.greenlink.model.DirectMessageConversation;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.DirectMessageService;
+import com.greenlink.greenlink.service.FriendService;
 import com.greenlink.greenlink.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.ui.Model;
+import com.greenlink.greenlink.model.Conversation;
+import com.greenlink.greenlink.repository.ConversationRepository;
+import com.greenlink.greenlink.service.DeliveryConversationService;
+import com.greenlink.greenlink.model.Message;
+import com.greenlink.greenlink.repository.MessageRepository;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/dm")
@@ -30,6 +38,18 @@ public class DirectMessageController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private FriendService friendService;
+    
+    @Autowired
+    private DeliveryConversationService deliveryConversationService;
+    
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
+    @Autowired
+    private MessageRepository messageRepository;
     
     @GetMapping("/conversations")
     @PreAuthorize("isAuthenticated()")
@@ -63,7 +83,6 @@ public class DirectMessageController {
                 return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
             }
             
-            // Check if users are friends
             boolean canSendMessage = directMessageService.canSendMessage(currentUser, targetUser);
             logger.info("Can send message: " + canSendMessage);
             
@@ -179,6 +198,187 @@ public class DirectMessageController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error checking if can send message", e);
             return ResponseEntity.ok(Map.of("canMessage", false));
+        }
+    }
+
+    /**
+     * Show delivery conversations for a user
+     */
+    @GetMapping("/delivery-conversations")
+    @PreAuthorize("isAuthenticated()")
+    public String showDeliveryConversations(Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            
+            // Get active delivery conversations
+            List<Conversation> deliveryConversations = deliveryConversationService.getActiveDeliveryConversationsForUser(currentUser);
+            
+            model.addAttribute("deliveryConversations", deliveryConversations);
+            model.addAttribute("currentUser", currentUser);
+            
+            return "inbox/delivery-conversations";
+        } catch (Exception e) {
+            return "redirect:/login";
+        }
+    }
+    
+    /**
+     * Show a specific delivery conversation
+     */
+    @GetMapping("/delivery-conversation/{conversationId}")
+    @PreAuthorize("isAuthenticated()")
+    public String showDeliveryConversation(@PathVariable Long conversationId, Model model) {
+        try {
+            User currentUser = userService.getCurrentUser();
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Check if user is part of this conversation
+            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
+                !conversation.getSeller().getId().equals(currentUser.getId())) {
+                return "redirect:/inbox";
+            }
+            
+            // Mark messages as read
+            if (conversation.getBuyer().getId().equals(currentUser.getId())) {
+                conversation.setBuyerRead(true);
+            } else {
+                conversation.setSellerRead(true);
+            }
+            conversationRepository.save(conversation);
+            
+            model.addAttribute("conversation", conversation);
+            model.addAttribute("currentUser", currentUser);
+            model.addAttribute("otherUser", conversation.getBuyer().getId().equals(currentUser.getId()) ? 
+                conversation.getSeller() : conversation.getBuyer());
+            
+            return "inbox/delivery-conversation";
+        } catch (Exception e) {
+            return "redirect:/inbox";
+        }
+    }
+
+    /**
+     * Send a message in a delivery conversation
+     */
+    @PostMapping("/send-message")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendMessage(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Long conversationId = Long.parseLong(request.get("conversationId"));
+            String content = request.get("content");
+            
+            User currentUser = userService.getCurrentUser();
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Check if user is part of this conversation
+            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
+                !conversation.getSeller().getId().equals(currentUser.getId())) {
+                response.put("success", false);
+                response.put("message", "You are not part of this conversation");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Create and save message
+            Message message = Message.builder()
+                    .conversation(conversation)
+                    .sender(currentUser)
+                    .content(content)
+                    .build();
+            
+            messageRepository.save(message);
+            
+            // Update conversation timestamps
+            conversation.setUpdatedAt(LocalDateTime.now());
+            conversationRepository.save(conversation);
+            
+            response.put("success", true);
+            response.put("message", "Message sent successfully");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error sending message: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+    
+    /**
+     * Update delivery status
+     */
+    @PostMapping("/update-delivery-status")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateDeliveryStatus(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Long conversationId = Long.parseLong(request.get("conversationId"));
+            String status = request.get("status");
+            
+            User currentUser = userService.getCurrentUser();
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Check if user is the seller
+            if (!conversation.getSeller().getId().equals(currentUser.getId())) {
+                response.put("success", false);
+                response.put("message", "Only the seller can update delivery status");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Update delivery status
+            deliveryConversationService.updateDeliveryStatus(conversationId, status);
+            
+            response.put("success", true);
+            response.put("message", "Delivery status updated successfully");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error updating status: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+    
+    /**
+     * Complete delivery
+     */
+    @PostMapping("/complete-delivery")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> completeDelivery(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Long conversationId = Long.parseLong(request.get("conversationId"));
+            
+            User currentUser = userService.getCurrentUser();
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Check if user is the seller
+            if (!conversation.getSeller().getId().equals(currentUser.getId())) {
+                response.put("success", false);
+                response.put("message", "Only the seller can complete delivery");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Complete delivery
+            deliveryConversationService.completeDeliveryConversation(conversationId);
+            
+            response.put("success", true);
+            response.put("message", "Delivery completed successfully");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Error completing delivery: " + e.getMessage());
+            return ResponseEntity.ok(response);
         }
     }
 } 

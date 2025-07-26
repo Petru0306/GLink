@@ -476,6 +476,20 @@ public class PaymentController {
             
             return ResponseEntity.ok(response);
             
+        } catch (RuntimeException e) {
+            // Handle "Product is already sold" gracefully
+            if (e.getMessage() != null && e.getMessage().contains("already sold")) {
+                logger.info("Product already processed, this is normal: {}", e.getMessage());
+                response.put("success", true);
+                response.put("message", "Payment already processed successfully!");
+                return ResponseEntity.ok(response);
+            }
+            
+            logger.error("Error processing session from success page", e);
+            response.put("success", false);
+            response.put("message", "Error processing payment: " + e.getMessage());
+            return ResponseEntity.ok(response);
+            
         } catch (Exception e) {
             logger.error("Error processing session from success page", e);
             response.put("success", false);

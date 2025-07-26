@@ -27,8 +27,8 @@ public class DeliveryConversationService {
      * Get active delivery conversations for a user
      */
     public List<Conversation> getActiveDeliveryConversationsForUser(User user) {
-        // Temporarily return all conversations until migration works
-        return conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(user, user);
+        return conversationRepository.findByBuyerOrSellerAndStatusOrderByUpdatedAtDesc(
+            user, user, Conversation.ConversationStatus.OPEN);
     }
     
     /**
@@ -39,8 +39,13 @@ public class DeliveryConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
         
-        // Temporarily simplified until migration works
-        return conversationRepository.save(conversation);
+        try {
+            Conversation.DeliveryStatus status = Conversation.DeliveryStatus.valueOf(newStatus.toUpperCase());
+            conversation.setDeliveryStatus(status);
+            return conversationRepository.save(conversation);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid delivery status: " + newStatus);
+        }
     }
     
     /**
@@ -51,7 +56,7 @@ public class DeliveryConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
         
-        // Temporarily simplified until migration works
+        conversation.setStatus(Conversation.ConversationStatus.CLOSED);
         return conversationRepository.save(conversation);
     }
     
@@ -63,7 +68,9 @@ public class DeliveryConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
         
-        // Temporarily simplified until migration works
+        conversation.setStatus(Conversation.ConversationStatus.COMPLETED);
+        conversation.setDeliveryStatus(Conversation.DeliveryStatus.COMPLETED);
+        conversation.setDeliveryCompletedAt(LocalDateTime.now());
         return conversationRepository.save(conversation);
     }
     
