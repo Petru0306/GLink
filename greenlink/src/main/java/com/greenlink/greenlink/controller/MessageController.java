@@ -301,21 +301,7 @@ public class MessageController {
         }
     }
     
-    @GetMapping("/message/{messageId}/status")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<?> getMessageStatus(
-            @PathVariable Long messageId,
-            Principal principal) {
-        try {
-            User currentUser = userService.getUserByEmail(principal.getName());
-            String status = messageService.getMessageStatus(messageId, currentUser);
-            return ResponseEntity.ok(Map.of("status", status));
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error getting message status", e);
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
+
 
     /**
      * Show delivery conversations for a user
@@ -373,7 +359,7 @@ public class MessageController {
             }
             
             // Get messages for this conversation
-            List<Message> messages = messageRepository.findByConversationOrderByCreatedAtAsc(conversation);
+            List<Message> messages = messageRepository.findByConversationOrderBySentAtAsc(conversation);
             
             model.addAttribute("conversation", conversation);
             model.addAttribute("messages", messages);
