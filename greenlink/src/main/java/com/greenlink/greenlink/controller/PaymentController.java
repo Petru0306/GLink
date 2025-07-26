@@ -180,7 +180,7 @@ public class PaymentController {
             logger.info("Payment processed successfully for session: {}", session.getId());
         } catch (Exception e) {
             logger.error("Error processing successful payment", e);
-            throw e; // Re-throw to ensure webhook fails
+            // Don't re-throw - just log the error to prevent webhook failures
         }
     }
     
