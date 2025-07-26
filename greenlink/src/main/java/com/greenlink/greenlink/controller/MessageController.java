@@ -12,6 +12,10 @@ import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.greenlink.greenlink.service.SystemMessageService;
 import com.greenlink.greenlink.service.PointsService;
 import com.greenlink.greenlink.model.SystemMessage;
+import com.greenlink.greenlink.service.DeliveryConversationService;
+import com.greenlink.greenlink.repository.ConversationRepository;
+import com.greenlink.greenlink.model.Message;
+import com.greenlink.greenlink.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/inbox")
@@ -49,6 +55,15 @@ public class MessageController {
     
     @Autowired
     private SystemMessageService systemMessageService;
+    
+    @Autowired
+    private DeliveryConversationService deliveryConversationService;
+    
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
+    @Autowired
+    private MessageRepository messageRepository;
     
     @GetMapping
     @PreAuthorize("isAuthenticated()")
@@ -292,29 +307,187 @@ public class MessageController {
     public ResponseEntity<?> getMessageStatus(
             @PathVariable Long messageId,
             Principal principal) {
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            String status = messageService.getMessageStatus(messageId, currentUser);
+            return ResponseEntity.ok(Map.of("status", status));
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting message status", e);
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Show delivery conversations for a user
+     */
+    @GetMapping("/delivery-conversations")
+    @PreAuthorize("isAuthenticated()")
+    public String showDeliveryConversations(Model model, Principal principal) {
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            System.out.println("=== LOOKING FOR DELIVERY CONVERSATIONS ===");
+            System.out.println("Current user: " + currentUser.getEmail() + " (ID: " + currentUser.getId() + ")");
+            
+            // Get all conversations for the user (these will be delivery conversations)
+            List<Conversation> allConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
+            System.out.println("Found " + allConversations.size() + " total conversations for user");
+            
+            // Filter to only show conversations with products (delivery conversations)
+            List<Conversation> deliveryConversations = allConversations.stream()
+                    .filter(conv -> conv.getProduct() != null)
+                    .collect(Collectors.toList());
+            
+            System.out.println("Found " + deliveryConversations.size() + " delivery conversations");
+            for (Conversation conv : deliveryConversations) {
+                System.out.println("  - Conversation ID: " + conv.getId() + ", Product: " + conv.getProduct().getName());
+            }
+            System.out.println("=== END DELIVERY CONVERSATIONS SEARCH ===");
+            
+            model.addAttribute("deliveryConversations", deliveryConversations);
+            model.addAttribute("currentUser", currentUser);
+            
+            return "inbox/delivery-conversations";
+        } catch (Exception e) {
+            System.out.println("ERROR in showDeliveryConversations: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/login";
+        }
+    }
+
+    /**
+     * Show a specific delivery conversation
+     */
+    @GetMapping("/delivery-conversation/{conversationId}")
+    @PreAuthorize("isAuthenticated()")
+    public String showDeliveryConversation(@PathVariable Long conversationId, Model model, Principal principal) {
+        try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Security check - user must be buyer or seller
+            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
+                !conversation.getSeller().getId().equals(currentUser.getId())) {
+                return "redirect:/inbox/delivery-conversations?error=unauthorized";
+            }
+            
+            // Get messages for this conversation
+            List<Message> messages = messageRepository.findByConversationOrderByCreatedAtAsc(conversation);
+            
+            model.addAttribute("conversation", conversation);
+            model.addAttribute("messages", messages);
+            model.addAttribute("currentUser", currentUser);
+            
+            return "inbox/delivery-conversation";
+        } catch (Exception e) {
+            System.out.println("ERROR in showDeliveryConversation: " + e.getMessage());
+            e.printStackTrace();
+            return "redirect:/inbox/delivery-conversations?error=not-found";
+        }
+    }
+
+    /**
+     * Send a message in a delivery conversation
+     */
+    @PostMapping("/send-message")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> sendMessage(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String conversationIdStr = request.get("conversationId");
+            String content = request.get("content");
+            
+            if (conversationIdStr == null || content == null || content.trim().isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Missing conversation ID or message content");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Long conversationId = Long.parseLong(conversationIdStr);
+            User currentUser = userService.getCurrentUser();
+            
+            Conversation conversation = conversationRepository.findById(conversationId)
+                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
+            
+            // Security check
+            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
+                !conversation.getSeller().getId().equals(currentUser.getId())) {
+                response.put("success", false);
+                response.put("message", "Unauthorized");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Message message = Message.builder()
+                    .conversation(conversation)
+                    .sender(currentUser)
+                    .content(content.trim())
+                    .build();
+            
+            messageRepository.save(message);
+            
+            response.put("success", true);
+            response.put("message", "Message sent successfully");
+            response.put("messageId", message.getId());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            System.out.println("ERROR sending message: " + e.getMessage());
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "Error sending message: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * Debug endpoint to check conversations
+     */
+    @GetMapping("/debug-conversations")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> debugConversations(Principal principal) {
+        Map<String, Object> response = new HashMap<>();
         
         try {
             User currentUser = userService.getUserByEmail(principal.getName());
             
-            // Get the message and check if user has access to it
-            MessageDto message = messageService.getMessageById(messageId, currentUser);
+            // Get all conversations
+            List<Conversation> allConversations = conversationRepository.findAll();
             
-            if (message == null) {
-                return ResponseEntity.notFound().build();
+            // Get user's conversations
+            List<Conversation> userConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
+            
+            // Get delivery conversations (with products)
+            List<Conversation> deliveryConversations = userConversations.stream()
+                    .filter(conv -> conv.getProduct() != null)
+                    .collect(Collectors.toList());
+            
+            response.put("totalConversations", allConversations.size());
+            response.put("userConversations", userConversations.size());
+            response.put("deliveryConversations", deliveryConversations.size());
+            response.put("currentUser", currentUser.getEmail());
+            
+            List<Map<String, Object>> convDetails = new ArrayList<>();
+            for (Conversation conv : deliveryConversations) {
+                Map<String, Object> convInfo = new HashMap<>();
+                convInfo.put("id", conv.getId());
+                convInfo.put("productName", conv.getProduct().getName());
+                convInfo.put("seller", conv.getSeller().getEmail());
+                convInfo.put("buyer", conv.getBuyer().getEmail());
+                convInfo.put("createdAt", conv.getCreatedAt());
+                convDetails.add(convInfo);
             }
-            
-            // Return the offer status
-            Map<String, Object> response = new HashMap<>();
-            response.put("messageId", messageId);
-            response.put("offerStatus", message.getOfferStatus());
-            response.put("offerAmount", message.getOfferAmount());
+            response.put("conversations", convDetails);
             
             return ResponseEntity.ok(response);
+            
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Error getting message status", e);
-            Map<String, String> response = new HashMap<>();
             response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.ok(response);
         }
     }
 } 

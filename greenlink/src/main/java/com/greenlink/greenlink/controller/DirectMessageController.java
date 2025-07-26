@@ -19,15 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.ui.Model;
-import com.greenlink.greenlink.model.Conversation;
-import com.greenlink.greenlink.repository.ConversationRepository;
-import com.greenlink.greenlink.service.DeliveryConversationService;
-import com.greenlink.greenlink.model.Message;
-import com.greenlink.greenlink.repository.MessageRepository;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/dm")
@@ -44,14 +35,7 @@ public class DirectMessageController {
     @Autowired
     private FriendService friendService;
     
-    @Autowired
-    private DeliveryConversationService deliveryConversationService;
-    
-    @Autowired
-    private ConversationRepository conversationRepository;
-    
-    @Autowired
-    private MessageRepository messageRepository;
+
     
     @GetMapping("/conversations")
     @PreAuthorize("isAuthenticated()")
@@ -203,173 +187,5 @@ public class DirectMessageController {
         }
     }
 
-    /**
-     * Show delivery conversations for a user
-     */
-    @GetMapping("/delivery-conversations")
-    @PreAuthorize("isAuthenticated()")
-    public String showDeliveryConversations(Model model) {
-        try {
-            User currentUser = userService.getCurrentUser();
-            System.out.println("=== LOOKING FOR DELIVERY CONVERSATIONS ===");
-            System.out.println("Current user: " + currentUser.getEmail() + " (ID: " + currentUser.getId() + ")");
-            
-            // Get all conversations for the user (these will be delivery conversations)
-            List<Conversation> allConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
-            System.out.println("Found " + allConversations.size() + " total conversations for user");
-            
-            // Filter to only show conversations with products (delivery conversations)
-            List<Conversation> deliveryConversations = allConversations.stream()
-                    .filter(conv -> conv.getProduct() != null)
-                    .collect(Collectors.toList());
-            
-            System.out.println("Found " + deliveryConversations.size() + " delivery conversations");
-            for (Conversation conv : deliveryConversations) {
-                System.out.println("  - Conversation ID: " + conv.getId() + ", Product: " + conv.getProduct().getName());
-            }
-            System.out.println("=== END DELIVERY CONVERSATIONS SEARCH ===");
-            
-            model.addAttribute("deliveryConversations", deliveryConversations);
-            model.addAttribute("currentUser", currentUser);
-            
-            return "inbox/delivery-conversations";
-        } catch (Exception e) {
-            System.out.println("ERROR in showDeliveryConversations: " + e.getMessage());
-            e.printStackTrace();
-            return "redirect:/login";
-        }
-    }
-    
-    /**
-     * Show a specific delivery conversation
-     */
-    @GetMapping("/delivery-conversation/{conversationId}")
-    @PreAuthorize("isAuthenticated()")
-    public String showDeliveryConversation(@PathVariable Long conversationId, Model model) {
-        try {
-            User currentUser = userService.getCurrentUser();
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
-            
-            // Check if user is part of this conversation
-            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
-                !conversation.getSeller().getId().equals(currentUser.getId())) {
-                return "redirect:/inbox";
-            }
-            
-            // Mark messages as read
-            if (conversation.getBuyer().getId().equals(currentUser.getId())) {
-                conversation.setBuyerRead(true);
-            } else {
-                conversation.setSellerRead(true);
-            }
-            conversationRepository.save(conversation);
-            
-            model.addAttribute("conversation", conversation);
-            model.addAttribute("currentUser", currentUser);
-            model.addAttribute("otherUser", conversation.getBuyer().getId().equals(currentUser.getId()) ? 
-                conversation.getSeller() : conversation.getBuyer());
-            
-            return "inbox/delivery-conversation";
-        } catch (Exception e) {
-            return "redirect:/inbox";
-        }
-    }
 
-    /**
-     * Send a message in a delivery conversation
-     */
-    @PostMapping("/send-message")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> sendMessage(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Long conversationId = Long.parseLong(request.get("conversationId"));
-            String content = request.get("content");
-            
-            User currentUser = userService.getCurrentUser();
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
-            
-            // Check if user is part of this conversation
-            if (!conversation.getBuyer().getId().equals(currentUser.getId()) && 
-                !conversation.getSeller().getId().equals(currentUser.getId())) {
-                response.put("success", false);
-                response.put("message", "You are not part of this conversation");
-                return ResponseEntity.ok(response);
-            }
-            
-            // Create and save message
-            Message message = Message.builder()
-                    .conversation(conversation)
-                    .sender(currentUser)
-                    .content(content)
-                    .build();
-            
-            messageRepository.save(message);
-            
-            // Update conversation timestamps
-            conversation.setUpdatedAt(LocalDateTime.now());
-            conversationRepository.save(conversation);
-            
-            response.put("success", true);
-            response.put("message", "Message sent successfully");
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Error sending message: " + e.getMessage());
-            return ResponseEntity.ok(response);
-        }
-    }
-
-    /**
-     * Debug endpoint to check conversations
-     */
-    @GetMapping("/debug-conversations")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> debugConversations() {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            User currentUser = userService.getCurrentUser();
-            
-            // Get all conversations
-            List<Conversation> allConversations = conversationRepository.findAll();
-            
-            // Get user's conversations
-            List<Conversation> userConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
-            
-            // Get delivery conversations (with products)
-            List<Conversation> deliveryConversations = userConversations.stream()
-                    .filter(conv -> conv.getProduct() != null)
-                    .collect(Collectors.toList());
-            
-            response.put("totalConversations", allConversations.size());
-            response.put("userConversations", userConversations.size());
-            response.put("deliveryConversations", deliveryConversations.size());
-            response.put("currentUser", currentUser.getEmail());
-            
-            List<Map<String, Object>> convDetails = new ArrayList<>();
-            for (Conversation conv : deliveryConversations) {
-                Map<String, Object> convInfo = new HashMap<>();
-                convInfo.put("id", conv.getId());
-                convInfo.put("productName", conv.getProduct().getName());
-                convInfo.put("seller", conv.getSeller().getEmail());
-                convInfo.put("buyer", conv.getBuyer().getEmail());
-                convInfo.put("createdAt", conv.getCreatedAt());
-                convDetails.add(convInfo);
-            }
-            response.put("conversations", convDetails);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            response.put("error", e.getMessage());
-            return ResponseEntity.ok(response);
-        }
-    }
 } 
