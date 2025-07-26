@@ -698,24 +698,6 @@
         <div class="col-lg-8 mb-4 mb-lg-0">
             <h2 class="section-title">Quick Actions</h2>
             <div class="quick-action-grid">
-                <a href="/provocari" class="text-decoration-none">
-                    <div class="quick-action-card p-4">
-                        <div class="action-icon-wrapper">
-                            <i class="bi bi-trophy action-icon"></i>
-                        </div>
-                        <h5 class="action-title">Challenges</h5>
-                        <p class="action-description">Complete challenges to earn points</p>
-                    </div>
-                </a>
-                <a href="/marketplace" class="text-decoration-none">
-                    <div class="quick-action-card p-4">
-                        <div class="action-icon-wrapper">
-                            <i class="bi bi-shop action-icon"></i>
-                        </div>
-                        <h5 class="action-title">Marketplace</h5>
-                        <p class="action-description">Shop eco-friendly products</p>
-                    </div>
-                </a>
                 <a href="/marketplace/sell" class="text-decoration-none">
                     <div class="quick-action-card p-4">
                         <div class="action-icon-wrapper">
@@ -754,22 +736,13 @@
                         <small class="text-success fw-bold" th:text="${'RON ' + #numbers.formatDecimal(totalAmountSpent ?: 0, 1, 2)}">RON 0.00</small>
                     </div>
                 </a>
-                <a href="/educatie" class="text-decoration-none">
+                <a href="/marketplace" class="text-decoration-none">
                     <div class="quick-action-card p-4">
                         <div class="action-icon-wrapper">
-                            <i class="bi bi-book action-icon"></i>
+                            <i class="bi bi-shop action-icon"></i>
                         </div>
-                        <h5 class="action-title">Learn</h5>
-                        <p class="action-description">Explore educational resources</p>
-                    </div>
-                </a>
-                <a href="/calculator" class="text-decoration-none">
-                    <div class="quick-action-card p-4">
-                        <div class="action-icon-wrapper">
-                            <i class="bi bi-calculator action-icon"></i>
-                        </div>
-                        <h5 class="action-title">Calculator</h5>
-                        <p class="action-description">Calculate your footprint</p>
+                        <h5 class="action-title">Marketplace</h5>
+                        <p class="action-description">Shop eco-friendly products</p>
                     </div>
                 </a>
                 <a href="/friends" class="text-decoration-none">
@@ -779,6 +752,33 @@
                         </div>
                         <h5 class="action-title">Friends</h5>
                         <p class="action-description">Connect with other users</p>
+                    </div>
+                </a>
+                <a href="/educatie" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-book action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Learn</h5>
+                        <p class="action-description">Explore educational resources</p>
+                    </div>
+                </a>
+                <a href="/provocari" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-trophy action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Challenges</h5>
+                        <p class="action-description">Complete challenges to earn points</p>
+                    </div>
+                </a>
+                <a href="/calculator" class="text-decoration-none">
+                    <div class="quick-action-card p-4">
+                        <div class="action-icon-wrapper">
+                            <i class="bi bi-calculator action-icon"></i>
+                        </div>
+                        <h5 class="action-title">Calculator</h5>
+                        <p class="action-description">Calculate your footprint</p>
                     </div>
                 </a>
             </div>
