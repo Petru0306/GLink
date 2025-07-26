@@ -27,6 +27,7 @@ import com.greenlink.greenlink.model.Message;
 import com.greenlink.greenlink.repository.MessageRepository;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/dm")
@@ -210,20 +211,31 @@ public class DirectMessageController {
     public String showDeliveryConversations(Model model) {
         try {
             User currentUser = userService.getCurrentUser();
+            System.out.println("=== LOOKING FOR DELIVERY CONVERSATIONS ===");
+            System.out.println("Current user: " + currentUser.getEmail() + " (ID: " + currentUser.getId() + ")");
             
             // Get all conversations for the user (these will be delivery conversations)
             List<Conversation> allConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
+            System.out.println("Found " + allConversations.size() + " total conversations for user");
             
             // Filter to only show conversations with products (delivery conversations)
             List<Conversation> deliveryConversations = allConversations.stream()
                     .filter(conv -> conv.getProduct() != null)
                     .collect(Collectors.toList());
             
+            System.out.println("Found " + deliveryConversations.size() + " delivery conversations");
+            for (Conversation conv : deliveryConversations) {
+                System.out.println("  - Conversation ID: " + conv.getId() + ", Product: " + conv.getProduct().getName());
+            }
+            System.out.println("=== END DELIVERY CONVERSATIONS SEARCH ===");
+            
             model.addAttribute("deliveryConversations", deliveryConversations);
             model.addAttribute("currentUser", currentUser);
             
             return "inbox/delivery-conversations";
         } catch (Exception e) {
+            System.out.println("ERROR in showDeliveryConversations: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/login";
         }
     }
@@ -309,6 +321,54 @@ public class DirectMessageController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Error sending message: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * Debug endpoint to check conversations
+     */
+    @GetMapping("/debug-conversations")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> debugConversations() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            User currentUser = userService.getCurrentUser();
+            
+            // Get all conversations
+            List<Conversation> allConversations = conversationRepository.findAll();
+            
+            // Get user's conversations
+            List<Conversation> userConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
+            
+            // Get delivery conversations (with products)
+            List<Conversation> deliveryConversations = userConversations.stream()
+                    .filter(conv -> conv.getProduct() != null)
+                    .collect(Collectors.toList());
+            
+            response.put("totalConversations", allConversations.size());
+            response.put("userConversations", userConversations.size());
+            response.put("deliveryConversations", deliveryConversations.size());
+            response.put("currentUser", currentUser.getEmail());
+            
+            List<Map<String, Object>> convDetails = new ArrayList<>();
+            for (Conversation conv : deliveryConversations) {
+                Map<String, Object> convInfo = new HashMap<>();
+                convInfo.put("id", conv.getId());
+                convInfo.put("productName", conv.getProduct().getName());
+                convInfo.put("seller", conv.getSeller().getEmail());
+                convInfo.put("buyer", conv.getBuyer().getEmail());
+                convInfo.put("createdAt", conv.getCreatedAt());
+                convDetails.add(convInfo);
+            }
+            response.put("conversations", convDetails);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
             return ResponseEntity.ok(response);
         }
     }

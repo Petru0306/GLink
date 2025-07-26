@@ -96,7 +96,12 @@ public class PaymentService {
                 .build();
         
         deliveryConversation = conversationRepository.save(deliveryConversation);
-        System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
+        System.out.println("=== DELIVERY CONVERSATION CREATED ===");
+        System.out.println("Conversation ID: " + deliveryConversation.getId());
+        System.out.println("Product: " + deliveryConversation.getProduct().getName());
+        System.out.println("Seller: " + deliveryConversation.getSeller().getEmail());
+        System.out.println("Buyer: " + deliveryConversation.getBuyer().getEmail());
+        System.out.println("Created at: " + deliveryConversation.getCreatedAt());
         
         // Add a welcome message about delivery
         Message welcomeMessage = Message.builder()
@@ -107,6 +112,8 @@ public class PaymentService {
         
         messageRepository.save(welcomeMessage);
         System.out.println("Welcome message added to delivery conversation");
+        System.out.println("Message ID: " + welcomeMessage.getId());
+        System.out.println("=== DELIVERY CONVERSATION SETUP COMPLETE ===");
         
         // Save the product and force flush
         Product savedProduct = productRepository.save(product);

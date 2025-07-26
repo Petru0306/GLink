@@ -298,18 +298,6 @@ public class PaymentController {
     }
     
     /**
-     * Test endpoint to verify payment controller is working
-     */
-    @GetMapping("/test")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> testEndpoint() {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "Payment controller is working");
-        response.put("timestamp", java.time.LocalDateTime.now().toString());
-        return ResponseEntity.ok(response);
-    }
-    
-    /**
      * Handle return from Stripe onboarding
      */
     @GetMapping("/onboarding-return")
@@ -344,53 +332,6 @@ public class PaymentController {
             logger.error("Error handling onboarding return", e);
             model.addAttribute("error", "An error occurred while processing your onboarding return.");
             return "marketplace/seller-onboarding";
-        }
-    }
-    
-    /**
-     * Test endpoint to manually process a payment (for debugging)
-     */
-    @PostMapping("/test-process-payment")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> testProcessPayment(@RequestParam Long productId, @RequestParam String password) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            // Check admin password
-            String adminPassword = "admin123";
-            
-            if (!adminPassword.equals(password)) {
-                response.put("success", false);
-                response.put("message", "Incorrect password");
-                return ResponseEntity.ok(response);
-            }
-            
-            // Get current user and product
-            User buyer = userService.getCurrentUser();
-            Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new RuntimeException("Product not found"));
-            
-            if (product.getSeller().getId().equals(buyer.getId())) {
-                response.put("success", false);
-                response.put("message", "Cannot purchase your own product");
-                return ResponseEntity.ok(response);
-            }
-            
-            // Process the purchase manually
-            paymentService.processAdminPurchase(product, buyer);
-            
-            response.put("success", true);
-            response.put("message", "Product purchased successfully!");
-            response.put("productId", productId);
-            response.put("buyerId", buyer.getId());
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("Error processing test purchase", e);
-            response.put("success", false);
-            response.put("message", "Error: " + e.getMessage());
-            return ResponseEntity.ok(response);
         }
     }
 
