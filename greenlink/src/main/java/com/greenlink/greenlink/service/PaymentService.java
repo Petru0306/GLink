@@ -114,14 +114,10 @@ public class PaymentService {
             userRepository.save(currentUser);
         }
         
-        // TEMPORARILY DISABLED: Skip seller Stripe account check
-        // TODO: Re-enable this check after Stripe Connect is properly configured
-        /*
         // Ensure seller has a Stripe account
         if (product.getSeller().getStripeAccountId() == null) {
             throw new RuntimeException("Seller must complete Stripe onboarding before accepting payments");
         }
-        */
         
         // Create checkout session
         Session session = stripeService.createCheckoutSession(product, currentUser, successUrl, cancelUrl);

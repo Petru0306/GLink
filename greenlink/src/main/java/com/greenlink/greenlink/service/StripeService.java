@@ -93,10 +93,11 @@ public class StripeService {
      * Create a checkout session for a product purchase
      */
     public Session createCheckoutSession(Product product, User buyer, String successUrl, String cancelUrl) throws StripeException {
-        // Calculate platform commission
-        long commissionAmount = (long) (product.getPrice() * platformCommissionPercentage / 100.0 * 100); // Convert to cents
+        // Calculate platform commission in cents
+        long productAmountCents = (long) (product.getPrice() * 100); // Convert to cents
+        long commissionAmountCents = (long) (productAmountCents * platformCommissionPercentage / 100.0);
         
-        SessionCreateParams params = SessionCreateParams.builder()
+        SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
@@ -113,7 +114,7 @@ public class StripeService {
                                                                 .addImage(product.getImageUrl())
                                                                 .build()
                                                 )
-                                                .setUnitAmount((long) (product.getPrice() * 100)) // Convert to cents
+                                                .setUnitAmount(productAmountCents)
                                                 .build()
                                 )
                                 .setQuantity(1L)
@@ -122,10 +123,24 @@ public class StripeService {
                 .putMetadata("product_id", product.getId().toString())
                 .putMetadata("buyer_id", buyer.getId().toString())
                 .putMetadata("seller_id", product.getSeller().getId().toString())
-                .putMetadata("commission_amount", String.valueOf(commissionAmount))
-                .build();
+                .putMetadata("commission_amount", String.valueOf(commissionAmountCents));
         
-        return Session.create(params);
+        // Add Stripe Connect transfer to seller if seller has onboarded
+        if (product.getSeller().getStripeAccountId() != null) {
+            paramsBuilder
+                .setPaymentIntentData(
+                    SessionCreateParams.PaymentIntentData.builder()
+                        .setApplicationFeeAmount(commissionAmountCents)
+                        .setTransferData(
+                            SessionCreateParams.PaymentIntentData.TransferData.builder()
+                                .setDestination(product.getSeller().getStripeAccountId())
+                                .build()
+                        )
+                        .build()
+                );
+        }
+        
+        return Session.create(paramsBuilder.build());
     }
     
     /**

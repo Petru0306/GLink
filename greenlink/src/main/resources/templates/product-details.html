@@ -337,8 +337,9 @@
                 
                 <!-- Buy Button - Show only if user is authenticated and not the seller -->
                 <button th:if="${#authorization.expression('isAuthenticated()') && !isCurrentUserSeller}"
-                        th:onclick="'buyProduct(' + ${product.id} + ')'"
-                        class="btn btn-success btn-action">
+                        th:onclick="'buyWithStripe(' + ${product.id} + ')'"
+                        class="btn btn-success btn-action"
+                        id="stripe-buy-btn">
                     <i class="bi bi-cart-check me-2"></i>
                     Buy Now
                 </button>
@@ -366,11 +367,58 @@
             <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 
             <!-- Scripts -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script th:inline="javascript">
                 // Get CSRF token from meta tags
                 const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
                 const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+                
+                // Initialize Stripe
+                const stripe = Stripe(/*[[${@environment.getProperty('stripe.publishable-key')}]]*/); // Stripe publishable key
+                
+                // Function to handle Stripe payment
+                async function buyWithStripe(productId) {
+                    const button = document.getElementById('stripe-buy-btn');
+                    const originalText = button.innerHTML;
+                    
+                    try {
+                        // Show loading state
+                        button.disabled = true;
+                        button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing...';
+                        
+                        // Create checkout session
+                        const response = await fetch(`/payment/create-checkout/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                [csrfHeader]: csrfToken
+                            },
+                            body: new URLSearchParams({
+                                successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+                                cancelUrl: `${window.location.href}`
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok && data.checkoutUrl) {
+                            // Redirect to Stripe Checkout
+                            window.location.href = data.checkoutUrl;
+                        } else {
+                            throw new Error(data.error || 'Failed to create checkout session');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Payment error:', error);
+                        showToast('error', error.message || 'Payment failed. Please try again.');
+                        
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                    }
+                }
                 
                 // Function to handle favorite toggle
                 function toggleFavorite(button) {
