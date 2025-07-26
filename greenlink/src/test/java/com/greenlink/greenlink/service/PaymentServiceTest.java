@@ -70,7 +70,7 @@ class PaymentServiceTest {
         Session mockSession = mock(Session.class);
         when(mockSession.getUrl()).thenReturn("https://checkout.stripe.com/test");
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(stripeService.createCheckoutSession(any(), any(), any(), any()))
+        when(stripeService.createCheckoutSession(any(), any(), any(), any(), any()))
                 .thenReturn(mockSession);
 
         // Act
@@ -80,7 +80,7 @@ class PaymentServiceTest {
         assertNotNull(result);
         assertEquals("https://checkout.stripe.com/test", result);
         verify(productRepository).findById(1L);
-        verify(stripeService).createCheckoutSession(eq(product), eq(buyer), eq("success"), eq("cancel"));
+        verify(stripeService).createCheckoutSession(eq(product), eq(buyer), eq("success"), eq("cancel"), any());
     }
 
     @Test
@@ -119,7 +119,7 @@ class PaymentServiceTest {
             return "cus_new123";
         });
         when(userRepository.save(buyer)).thenReturn(buyer);
-        when(stripeService.createCheckoutSession(any(), any(), any(), any()))
+        when(stripeService.createCheckoutSession(any(), any(), any(), any(), any()))
                 .thenReturn(mockSession);
 
         // Act

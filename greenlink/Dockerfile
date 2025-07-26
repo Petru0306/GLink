@@ -5,7 +5,7 @@ COPY mvnw .
 COPY .mvn .mvn
 RUN mvn dependency:go-offline -B
 COPY src src
-RUN mvn package -DskipTests
+RUN mvn package -Dmaven.test.skip=true
 
 FROM openjdk:17-slim
 WORKDIR /app
