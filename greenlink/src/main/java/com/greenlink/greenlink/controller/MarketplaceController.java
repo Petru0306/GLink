@@ -226,18 +226,13 @@ public class MarketplaceController {
     @GetMapping("/sell")
     public String showSellForm(Model model, @RequestHeader(value = "Referer", required = false) String referer) {
         try {
+            User currentUser = userService.getCurrentUser();
             
             // Check if user has Stripe account for selling
-            // TEMPORARILY DISABLED: Allow users to list items without Stripe Connect
-            // TODO: Re-enable this check after Stripe Connect is properly configured
-            /*
             if (currentUser.getStripeAccountId() == null) {
                 // Redirect to seller onboarding
-                model.addAttribute("needsOnboarding", true);
-                model.addAttribute("currentUser", currentUser);
-                return "marketplace/seller-onboarding";
+                return "redirect:/marketplace/seller-onboarding-simple.html";
             }
-            */
             
             ProductDto product = new ProductDto();
             logger.info("Created new ProductDto with branch: {}", product.getBranch());

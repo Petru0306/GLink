@@ -101,25 +101,31 @@ public class StripeService {
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
-                .setCustomer(buyer.getStripeCustomerId())
-                .addLineItem(
-                        SessionCreateParams.LineItem.builder()
-                                .setPriceData(
-                                        SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("ron")
-                                                .setProductData(
-                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                .setName(product.getName())
-                                                                .setDescription(product.getDescription())
-                                                                .addImage(product.getImageUrl())
-                                                                .build()
-                                                )
-                                                .setUnitAmount(productAmountCents)
-                                                .build()
-                                )
-                                .setQuantity(1L)
-                                .build()
-                )
+                .setCustomer(buyer.getStripeCustomerId());
+        
+        // Build product data for line items
+        SessionCreateParams.LineItem.PriceData.ProductData.Builder productDataBuilder = 
+                SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                        .setName(product.getName())
+                        .setDescription(product.getDescription());
+        
+        // Only add image if it's not null or empty
+        if (product.getImageUrl() != null && !product.getImageUrl().trim().isEmpty()) {
+            productDataBuilder.addImage(product.getImageUrl());
+        }
+        
+        paramsBuilder.addLineItem(
+                SessionCreateParams.LineItem.builder()
+                        .setPriceData(
+                                SessionCreateParams.LineItem.PriceData.builder()
+                                        .setCurrency("ron")
+                                        .setProductData(productDataBuilder.build())
+                                        .setUnitAmount(productAmountCents)
+                                        .build()
+                        )
+                        .setQuantity(1L)
+                        .build()
+        )
                 .putMetadata("product_id", product.getId().toString())
                 .putMetadata("buyer_id", buyer.getId().toString())
                 .putMetadata("seller_id", product.getSeller().getId().toString())
