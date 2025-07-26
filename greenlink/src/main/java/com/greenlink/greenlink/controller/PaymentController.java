@@ -131,7 +131,7 @@ public class PaymentController {
             }
             
             // Parse the event
-            com.stripe.model.Event event = com.stripe.model.Event.GSON.fromJson(payload, com.stripe.model.Event.class);
+            com.stripe.model.Event event = com.stripe.net.Webhook.constructEvent(payload, signature, stripeService.getWebhookSecret());
             logger.info("Webhook event type: {}", event.getType());
             
             // Handle the event
