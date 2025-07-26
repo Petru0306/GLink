@@ -795,12 +795,63 @@
             letter-spacing: 1px;
         }
 
-        /* HOVER EFFECTS */
+        /* ENHANCED HOVER EFFECTS - Similar to completed challenges */
         .user-level-section:hover,
         .user-points-section:hover,
         .user-rank-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 255, 136, 0.3), 0 0 0 2px rgba(0, 255, 136, 0.4);
+        }
+        
+        /* Add shimmer effect */
+        .user-level-section::after,
+        .user-points-section::after,
+        .user-rank-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transition: left 0.8s;
+            pointer-events: none;
+        }
+        
+        .user-level-section:hover::after {
+            left: 100%;
+        }
+        
+        .user-points-section::after {
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+        }
+        
+        .user-points-section:hover::after {
+            left: 100%;
+        }
+        
+        .user-rank-section::after {
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
+        }
+        
+        .user-rank-section:hover::after {
+            left: 100%;
+        }
+        
+        /* Enhanced badge animations on hover */
+        .user-level-section:hover .current-level-badge {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+        }
+        
+        .user-points-section:hover .user-points-number {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+        }
+        
+        .user-rank-section:hover .user-rank-display {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
         }
 
         /* RESPONSIVE DESIGN */
