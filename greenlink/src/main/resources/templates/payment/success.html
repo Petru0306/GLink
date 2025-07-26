@@ -119,11 +119,9 @@
                         cardBody.insertBefore(resultDiv, cardBody.firstChild);
                     }
                     
-                    // If successful, redirect to delivery conversations after 3 seconds
+                    // If successful, just show success message (no redirect)
                     if (data.success) {
-                        setTimeout(() => {
-                            window.location.href = '/inbox/delivery-conversations';
-                        }, 3000);
+                        console.log('Payment processed successfully - user can stay on this page');
                     }
                 })
                 .catch(error => {
