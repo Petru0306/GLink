@@ -633,57 +633,55 @@
                                     <strong>Product Grid Debug:</strong> Found <span th:text="${#lists.size(buyHistory)}">0</span> products to display
                                 </div>
                             </div>
+                            
+                            <!-- Simple Product Cards -->
                             <div th:each="purchase : ${buyHistory}" class="col-sm-6 col-md-4 col-lg-3 mb-3">
-                                <div class="product-card-modern">
-                                    <!-- Debug info for this product -->
-                                    <div class="alert alert-warning" style="font-size: 0.7rem; margin: 0.5rem;">
-                                        <strong>Product Debug:</strong><br>
-                                        Name: <span th:text="${purchase.product.name}">Name</span><br>
-                                        Price: <span th:text="${purchase.totalPrice}">Price</span><br>
-                                        Date: <span th:text="${purchase.purchaseDate}">Date</span>
-                                    </div>
-                                    
+                                <div class="card h-100 shadow-sm">
                                     <div class="position-relative">
                                         <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
-                                             th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
-                                             class="product-image-modern w-100">
-                                        <div class="purchased-badge-modern">
-                                            <i class="bi bi-check-circle me-1"></i>PURCHASED
+                                             th:alt="${purchase.product.name}" 
+                                             class="card-img-top" style="height: 150px; object-fit: cover;">
+                                        <div class="position-absolute top-0 end-0 m-2">
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle me-1"></i>PURCHASED
+                                            </span>
                                         </div>
                                     </div>
-                                    <div class="product-info-modern">
-                                        <h6 class="product-title-modern" th:text="${purchase.product.name != null ? purchase.product.name : 'Product Name'}">Product Name</h6>
-                                        <p class="product-description-modern" th:text="${purchase.product.description != null ? purchase.product.description : 'No description available'}">Description</p>
-                                        <div class="product-meta-modern">
-                                            <span class="product-price-modern" th:text="${'RON ' + #numbers.formatDecimal(purchase.totalPrice != null ? purchase.totalPrice : 0, 1, 2)}">RON 0.00</span>
-                                            <span class="product-date-modern" th:text="${#temporals.format(purchase.purchaseDate != null ? purchase.purchaseDate : #dates.createNow(), 'dd MMM yyyy')}">Date</span>
-                                        </div>
-                                        <div class="product-details-modern">
-                                            <div class="detail-item-modern" th:if="${purchase.quantity != null && purchase.quantity > 1}">
-                                                <span class="detail-label-modern">Quantity</span>
-                                                <span class="detail-value-modern" th:text="${purchase.quantity}">1</span>
+                                    
+                                    <div class="card-body d-flex flex-column">
+                                        <h6 class="card-title" th:text="${purchase.product.name}">Product Name</h6>
+                                        <p class="card-text text-muted small" th:text="${purchase.product.description}">Description</p>
+                                        
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="fw-bold text-success" th:text="${'RON ' + purchase.totalPrice}">RON 0.00</span>
+                                                <small class="text-muted" th:text="${#temporals.format(purchase.purchaseDate, 'dd MMM yyyy')}">Date</small>
                                             </div>
-                                            <div class="detail-item-modern" th:if="${purchase.seller != null}">
-                                                <span class="detail-label-modern">Seller</span>
-                                                <span class="detail-value-modern" th:text="${purchase.seller.firstName + ' ' + purchase.seller.lastName}">Seller</span>
+                                            
+                                            <div class="bg-light p-2 rounded mb-2">
+                                                <small class="text-muted">
+                                                    <strong>Seller:</strong> 
+                                                    <span th:text="${purchase.seller != null ? purchase.seller.firstName + ' ' + purchase.seller.lastName : 'Unknown'}">Seller</span>
+                                                </small>
                                             </div>
-                                        </div>
-                                        <div class="action-buttons">
-                                            <a th:href="@{'/marketplace/product/' + (purchase.product.id != null ? purchase.product.id : 0)}" 
-                                               class="btn-view-again">
-                                                <i class="bi bi-eye me-1"></i>View
-                                            </a>
                                             
-                                            <button th:if="${purchase.hasReview != null && !purchase.hasReview}"
-                                                    th:onclick="'openReviewModal(' + (purchase.id != null ? purchase.id : 0) + ')'"
-                                                    class="btn-review">
-                                                <i class="bi bi-star me-1"></i>Rate
-                                            </button>
-                                            
-                                            <span th:if="${purchase.hasReview != null && purchase.hasReview}" 
-                                                  class="reviewed-badge">
-                                                <i class="bi bi-star-fill me-1"></i>Rated
-                                            </span>
+                                            <div class="d-flex gap-1">
+                                                <a th:href="@{'/marketplace/product/' + purchase.product.id}" 
+                                                   class="btn btn-success btn-sm flex-fill">
+                                                    <i class="bi bi-eye me-1"></i>View
+                                                </a>
+                                                
+                                                <button th:if="${!purchase.hasReview}"
+                                                        th:onclick="'openReviewModal(' + purchase.id + ')'"
+                                                        class="btn btn-primary btn-sm flex-fill">
+                                                    <i class="bi bi-star me-1"></i>Rate
+                                                </button>
+                                                
+                                                <span th:if="${purchase.hasReview}" 
+                                                      class="btn btn-secondary btn-sm flex-fill disabled">
+                                                    <i class="bi bi-star-fill me-1"></i>Rated
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
