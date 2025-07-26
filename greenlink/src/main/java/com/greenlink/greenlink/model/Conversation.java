@@ -52,7 +52,8 @@ public class Conversation {
     @Builder.Default
     private List<Message> messages = new ArrayList<>();
     
-    // Delivery conversation fields
+    // Delivery conversation fields - temporarily commented out until migration works
+    /*
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
@@ -75,6 +76,7 @@ public class Conversation {
     public enum DeliveryStatus {
         PENDING, IN_PROGRESS, COMPLETED
     }
+    */
     
     @PrePersist
     protected void onCreate() {

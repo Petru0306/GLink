@@ -1,9 +1,11 @@
 package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.model.Conversation;
+import com.greenlink.greenlink.model.Message;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.ConversationRepository;
+import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
 import com.stripe.exception.StripeException;
@@ -28,6 +30,9 @@ public class PaymentService {
     
     @Autowired
     private ConversationRepository conversationRepository;
+    
+    @Autowired
+    private MessageRepository messageRepository;
     
     /**
      * Process a successful payment and update product state
@@ -83,20 +88,25 @@ public class PaymentService {
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         System.out.println("Sold at: " + product.getSoldAt());
         
-        // Create delivery conversation
+        // Create delivery conversation using existing conversation system
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
                 .buyer(buyer)
-                .status(Conversation.ConversationStatus.OPEN)
-                .deliveryStatus(Conversation.DeliveryStatus.PENDING)
                 .build();
         
         deliveryConversation = conversationRepository.save(deliveryConversation);
         System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         
-        // Link conversation to product
-        product.setDeliveryConversation(deliveryConversation);
+        // Add a welcome message about delivery
+        Message welcomeMessage = Message.builder()
+                .conversation(deliveryConversation)
+                .sender(product.getSeller())
+                .content("Hi! Your order for '" + product.getName() + "' has been confirmed. Let's coordinate the delivery details.")
+                .build();
+        
+        messageRepository.save(welcomeMessage);
+        System.out.println("Welcome message added to delivery conversation");
         
         // Save the product and force flush
         Product savedProduct = productRepository.save(product);
@@ -213,20 +223,25 @@ public class PaymentService {
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         System.out.println("Sold at: " + product.getSoldAt());
         
-        // Create delivery conversation
+        // Create delivery conversation using existing conversation system
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
                 .buyer(buyer)
-                .status(Conversation.ConversationStatus.OPEN)
-                .deliveryStatus(Conversation.DeliveryStatus.PENDING)
                 .build();
         
         deliveryConversation = conversationRepository.save(deliveryConversation);
         System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         
-        // Link conversation to product
-        product.setDeliveryConversation(deliveryConversation);
+        // Add a welcome message about delivery
+        Message welcomeMessage = Message.builder()
+                .conversation(deliveryConversation)
+                .sender(product.getSeller())
+                .content("Hi! Your order for '" + product.getName() + "' has been confirmed. Let's coordinate the delivery details.")
+                .build();
+        
+        messageRepository.save(welcomeMessage);
+        System.out.println("Welcome message added to delivery conversation");
         
         // Save the updated product
         Product savedProduct = productRepository.save(product);

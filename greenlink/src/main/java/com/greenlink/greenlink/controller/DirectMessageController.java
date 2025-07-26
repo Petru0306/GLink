@@ -26,6 +26,7 @@ import com.greenlink.greenlink.service.DeliveryConversationService;
 import com.greenlink.greenlink.model.Message;
 import com.greenlink.greenlink.repository.MessageRepository;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/dm")
@@ -210,8 +211,13 @@ public class DirectMessageController {
         try {
             User currentUser = userService.getCurrentUser();
             
-            // Get active delivery conversations
-            List<Conversation> deliveryConversations = deliveryConversationService.getActiveDeliveryConversationsForUser(currentUser);
+            // Get all conversations for the user (these will be delivery conversations)
+            List<Conversation> allConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
+            
+            // Filter to only show conversations with products (delivery conversations)
+            List<Conversation> deliveryConversations = allConversations.stream()
+                    .filter(conv -> conv.getProduct() != null)
+                    .collect(Collectors.toList());
             
             model.addAttribute("deliveryConversations", deliveryConversations);
             model.addAttribute("currentUser", currentUser);
@@ -303,81 +309,6 @@ public class DirectMessageController {
         } catch (Exception e) {
             response.put("success", false);
             response.put("message", "Error sending message: " + e.getMessage());
-            return ResponseEntity.ok(response);
-        }
-    }
-    
-    /**
-     * Update delivery status
-     */
-    @PostMapping("/update-delivery-status")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> updateDeliveryStatus(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Long conversationId = Long.parseLong(request.get("conversationId"));
-            String status = request.get("status");
-            
-            User currentUser = userService.getCurrentUser();
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
-            
-            // Check if user is the seller
-            if (!conversation.getSeller().getId().equals(currentUser.getId())) {
-                response.put("success", false);
-                response.put("message", "Only the seller can update delivery status");
-                return ResponseEntity.ok(response);
-            }
-            
-            // Update delivery status
-            deliveryConversationService.updateDeliveryStatus(conversationId, status);
-            
-            response.put("success", true);
-            response.put("message", "Delivery status updated successfully");
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Error updating status: " + e.getMessage());
-            return ResponseEntity.ok(response);
-        }
-    }
-    
-    /**
-     * Complete delivery
-     */
-    @PostMapping("/complete-delivery")
-    @PreAuthorize("isAuthenticated()")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> completeDelivery(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Long conversationId = Long.parseLong(request.get("conversationId"));
-            
-            User currentUser = userService.getCurrentUser();
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new RuntimeException("Conversation not found"));
-            
-            // Check if user is the seller
-            if (!conversation.getSeller().getId().equals(currentUser.getId())) {
-                response.put("success", false);
-                response.put("message", "Only the seller can complete delivery");
-                return ResponseEntity.ok(response);
-            }
-            
-            // Complete delivery
-            deliveryConversationService.completeDeliveryConversation(conversationId);
-            
-            response.put("success", true);
-            response.put("message", "Delivery completed successfully");
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Error completing delivery: " + e.getMessage());
             return ResponseEntity.ok(response);
         }
     }

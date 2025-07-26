@@ -32,8 +32,9 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query("SELECT c FROM Conversation c WHERE (c.seller = ?1 OR c.buyer = ?2) ORDER BY c.updatedAt DESC")
     List<Conversation> findByBuyerOrSellerOrderByUpdatedAtDesc(User buyer, User seller);
     
-    @Query("SELECT c FROM Conversation c WHERE (c.seller = ?1 OR c.buyer = ?2) AND c.status = ?3 ORDER BY c.updatedAt DESC")
-    List<Conversation> findByBuyerOrSellerAndStatusOrderByUpdatedAtDesc(User buyer, User seller, Conversation.ConversationStatus status);
+    // Temporarily commented out until migration works
+    // @Query("SELECT c FROM Conversation c WHERE (c.seller = ?1 OR c.buyer = ?2) AND c.status = ?3 ORDER BY c.updatedAt DESC")
+    // List<Conversation> findByBuyerOrSellerAndStatusOrderByUpdatedAtDesc(User buyer, User seller, Conversation.ConversationStatus status);
     
     Optional<Conversation> findByProductId(Long productId);
 } 

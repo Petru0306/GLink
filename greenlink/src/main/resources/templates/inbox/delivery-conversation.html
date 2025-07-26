@@ -30,12 +30,6 @@
                         <a href="/inbox/delivery-conversations" class="btn btn-outline-success">
                             <i class="bi bi-arrow-left me-2"></i>Back to Delivery Conversations
                         </a>
-                        <button class="btn btn-success" onclick="updateDeliveryStatus('IN_PROGRESS')">
-                            <i class="bi bi-truck me-2"></i>Mark as In Progress
-                        </button>
-                        <button class="btn btn-success" onclick="completeDelivery()">
-                            <i class="bi bi-check-circle me-2"></i>Complete Delivery
-                        </button>
                     </div>
                 </div>
                 
@@ -48,7 +42,7 @@
                                 <p class="mb-1"><strong>Product:</strong> <span th:text="${conversation.product.name}">Product Name</span></p>
                                 <p class="mb-1"><strong>Price:</strong> <span th:text="${conversation.product.price}">Price</span> RON</p>
                                 <p class="mb-1"><strong>Status:</strong> 
-                                    <span class="badge bg-success" th:text="${conversation.deliveryStatus}">PENDING</span>
+                                    <span class="badge bg-success">DELIVERY</span>
                                 </p>
                             </div>
                             <div class="col-md-4 text-end">
@@ -154,59 +148,6 @@
                 console.error('Error:', error);
                 alert('Error sending message');
             });
-        }
-        
-        function updateDeliveryStatus(status) {
-            fetch('/inbox/update-delivery-status', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    conversationId: conversationId,
-                    status: status
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error updating status: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating status');
-            });
-        }
-        
-        function completeDelivery() {
-            if (confirm('Are you sure you want to mark this delivery as completed?')) {
-                fetch('/inbox/complete-delivery', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        conversationId: conversationId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert('Error completing delivery: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error completing delivery');
-                });
-            }
         }
     </script>
 </body>
