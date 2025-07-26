@@ -604,7 +604,14 @@
                             Total Amount Spent: <span th:text="${totalAmountSpent}">0</span> RON<br>
                             Last Purchase Date: <span th:text="${lastPurchaseDate}">Never</span><br>
                             Buy History Size: <span th:text="${#lists.size(buyHistory)}">0</span><br>
-                            Buy History Empty: <span th:text="${#lists.isEmpty(buyHistory)}">true</span>
+                            Buy History Empty: <span th:text="${#lists.isEmpty(buyHistory)}">true</span><br>
+                            <br>
+                            <strong>Products in buyHistory:</strong><br>
+                            <div th:each="purchase, iterStat : ${buyHistory}">
+                                <span th:text="${iterStat.index + 1}">1</span>. 
+                                <span th:text="${purchase != null ? purchase.product.name : 'NULL PURCHASE'}">Product Name</span> - 
+                                <span th:text="${purchase != null ? purchase.totalPrice : 'NULL PRICE'}">Price</span> RON<br>
+                            </div>
                         </div>
                         
                         <!-- Empty State -->
@@ -621,8 +628,21 @@
                         
                         <!-- Product Grid -->
                         <div th:if="${!#lists.isEmpty(buyHistory)}" class="row">
+                            <div class="col-12 mb-3">
+                                <div class="alert alert-success">
+                                    <strong>Product Grid Debug:</strong> Found <span th:text="${#lists.size(buyHistory)}">0</span> products to display
+                                </div>
+                            </div>
                             <div th:each="purchase : ${buyHistory}" class="col-sm-6 col-md-4 col-lg-3 mb-3">
                                 <div class="product-card-modern">
+                                    <!-- Debug info for this product -->
+                                    <div class="alert alert-warning" style="font-size: 0.7rem; margin: 0.5rem;">
+                                        <strong>Product Debug:</strong><br>
+                                        Name: <span th:text="${purchase.product.name}">Name</span><br>
+                                        Price: <span th:text="${purchase.totalPrice}">Price</span><br>
+                                        Date: <span th:text="${purchase.purchaseDate}">Date</span>
+                                    </div>
+                                    
                                     <div class="position-relative">
                                         <img th:src="${purchase.product.imageUrl != null ? purchase.product.imageUrl : '/images/placeholder-product.jpg'}" 
                                              th:alt="${purchase.product.name != null ? purchase.product.name : 'Product'}" 
