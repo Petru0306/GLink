@@ -1,7 +1,9 @@
 package com.greenlink.greenlink.service;
 
+import com.greenlink.greenlink.model.Conversation;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
 import com.stripe.exception.StripeException;
