@@ -74,13 +74,20 @@ public class PurchaseDto {
         buyerDto.setLastName(product.getBuyer().getLastName());
         buyerDto.setEmail(product.getBuyer().getEmail());
         
+        // Get the price to use (negotiated price if available, otherwise original price)
+        double priceToUse = product.getPrice();
+        Double negotiatedPrice = product.getNegotiatedPriceForUser(product.getBuyer().getId());
+        if (negotiatedPrice != null) {
+            priceToUse = negotiatedPrice;
+        }
+        
         return new PurchaseDto(
             product.getId(),
             productDto,
             sellerDto,
             buyerDto,
             1, // Default quantity is 1 for now
-            BigDecimal.valueOf(product.getPrice()),
+            BigDecimal.valueOf(priceToUse),
             product.getSoldAt(),
             false // TODO: Implement review checking logic
         );

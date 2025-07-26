@@ -46,21 +46,39 @@ public class BuyHistoryController {
             int totalProductsBought = 0;
             LocalDateTime lastPurchaseDate = null;
 
+            System.out.println("=== CALCULATING BUY HISTORY STATISTICS ===");
+            System.out.println("Total bought products found: " + (allBoughtProducts != null ? allBoughtProducts.size() : 0));
+
             if (allBoughtProducts != null && !allBoughtProducts.isEmpty()) {
                 totalProductsBought = allBoughtProducts.size();
 
                 for (PurchaseDto purchase : allBoughtProducts) {
+                    System.out.println("Processing purchase: " + (purchase != null ? purchase.getProduct().getName() : "null"));
+                    
                     if (purchase != null && purchase.getTotalPrice() != null) {
+                        System.out.println("  - Price: " + purchase.getTotalPrice() + " RON");
                         totalAmountSpent = totalAmountSpent.add(purchase.getTotalPrice());
+                    } else {
+                        System.out.println("  - Price: null or purchase is null");
                     }
 
                     if (purchase != null && purchase.getPurchaseDate() != null) {
+                        System.out.println("  - Purchase date: " + purchase.getPurchaseDate());
                         if (lastPurchaseDate == null || purchase.getPurchaseDate().isAfter(lastPurchaseDate)) {
                             lastPurchaseDate = purchase.getPurchaseDate();
+                            System.out.println("  - New latest purchase date: " + lastPurchaseDate);
                         }
+                    } else {
+                        System.out.println("  - Purchase date: null");
                     }
                 }
             }
+
+            System.out.println("Final statistics:");
+            System.out.println("  - Total products bought: " + totalProductsBought);
+            System.out.println("  - Total amount spent: " + totalAmountSpent + " RON");
+            System.out.println("  - Last purchase date: " + lastPurchaseDate);
+            System.out.println("=== END STATISTICS CALCULATION ===");
 
             // Create pageable for pagination
             Pageable pageable = PageRequest.of(page, size);
