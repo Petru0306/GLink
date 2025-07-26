@@ -24,6 +24,9 @@ public class PaymentService {
     @Autowired
     private UserRepository userRepository;
     
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
     /**
      * Process a successful payment and update product state
      */
@@ -76,9 +79,24 @@ public class PaymentService {
         
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         
+        // Create delivery conversation
+        Conversation deliveryConversation = Conversation.builder()
+                .product(product)
+                .seller(product.getSeller())
+                .buyer(buyer)
+                .status(Conversation.ConversationStatus.OPEN)
+                .deliveryStatus(Conversation.DeliveryStatus.PENDING)
+                .build();
+        
+        deliveryConversation = conversationRepository.save(deliveryConversation);
+        
+        // Link conversation to product
+        product.setDeliveryConversation(deliveryConversation);
+        
         productRepository.save(product);
         
         System.out.println("Product saved successfully!");
+        System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         System.out.println("=== PAYMENT PROCESSING COMPLETE ===");
     }
     

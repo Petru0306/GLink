@@ -300,6 +300,7 @@ public class ProductService {
 
             // Always filter out sold products
             predicates.add(cb.equal(root.get("sold"), false));
+            logger.info("Filtering out sold products - only showing available products");
 
             if (branch != null) {
                 predicates.add(cb.equal(root.get("branch"), branch));
@@ -326,7 +327,16 @@ public class ProductService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        return productRepository.findAll(spec, pageable).map(this::convertToDto);
+        Page<Product> products = productRepository.findAll(spec, pageable);
+        logger.info("Found {} products in marketplace (filtered out sold products)", products.getTotalElements());
+        
+        // Log each product to debug
+        for (Product product : products.getContent()) {
+            logger.info("Product in marketplace: ID={}, Name={}, Sold={}", 
+                       product.getId(), product.getName(), product.isSold());
+        }
+        
+        return products.map(this::convertToDto);
     }
 
     public Page<ProductDto> getFilteredProducts(
