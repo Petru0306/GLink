@@ -447,4 +447,40 @@ public class PaymentController {
             return ResponseEntity.ok(response);
         }
     }
+
+    /**
+     * Process payment session from success page
+     */
+    @PostMapping("/process-session")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> processSession(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String sessionId = request.get("session_id");
+            logger.info("Processing session from success page: {}", sessionId);
+            
+            if (sessionId == null || sessionId.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "No session ID provided");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // Process the payment
+            paymentService.processSuccessfulPayment(sessionId);
+            
+            response.put("success", true);
+            response.put("message", "Payment processed successfully!");
+            logger.info("Session processed successfully: {}", sessionId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing session from success page", e);
+            response.put("success", false);
+            response.put("message", "Error processing payment: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
 } 
