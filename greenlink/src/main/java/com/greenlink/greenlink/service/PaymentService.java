@@ -29,11 +29,19 @@ public class PaymentService {
      */
     @Transactional
     public void processSuccessfulPayment(String sessionId) throws StripeException {
+        System.out.println("=== PROCESSING SUCCESSFUL PAYMENT ===");
+        System.out.println("Session ID: " + sessionId);
+        
         Session session = stripeService.retrieveSession(sessionId);
+        System.out.println("Session retrieved: " + session.getId());
+        System.out.println("Session metadata: " + session.getMetadata());
         
         // Extract metadata
         String productIdStr = session.getMetadata().get("product_id");
         String buyerIdStr = session.getMetadata().get("buyer_id");
+        
+        System.out.println("Product ID from metadata: " + productIdStr);
+        System.out.println("Buyer ID from metadata: " + buyerIdStr);
         
         if (productIdStr == null || buyerIdStr == null) {
             throw new RuntimeException("Missing required metadata in session");
@@ -42,12 +50,19 @@ public class PaymentService {
         Long productId = Long.parseLong(productIdStr);
         Long buyerId = Long.parseLong(buyerIdStr);
         
+        System.out.println("Parsed Product ID: " + productId);
+        System.out.println("Parsed Buyer ID: " + buyerId);
+        
         // Get product and buyer
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         
         User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new RuntimeException("Buyer not found"));
+        
+        System.out.println("Product found: " + product.getName() + " (ID: " + product.getId() + ")");
+        System.out.println("Buyer found: " + buyer.getEmail() + " (ID: " + buyer.getId() + ")");
+        System.out.println("Product currently sold: " + product.isSold());
         
         // Check if product is still available
         if (product.isSold()) {
@@ -59,7 +74,12 @@ public class PaymentService {
         product.setBuyer(buyer);
         product.setSoldAt(LocalDateTime.now());
         
+        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
+        
         productRepository.save(product);
+        
+        System.out.println("Product saved successfully!");
+        System.out.println("=== PAYMENT PROCESSING COMPLETE ===");
     }
     
     /**

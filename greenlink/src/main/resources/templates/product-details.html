@@ -344,6 +344,15 @@
                     Buy Now
                 </button>
                 
+                <!-- Test Purchase Button (for debugging) -->
+                <button th:if="${#authorization.expression('isAuthenticated()') && !isCurrentUserSeller}"
+                        th:onclick="'testPurchase(' + ${product.id} + ')'"
+                        class="btn btn-warning btn-action"
+                        style="font-size: 0.8rem;">
+                    <i class="bi bi-bug me-2"></i>
+                    Test Purchase (Debug)
+                </button>
+                
                 <!-- Make an Offer Button - Show only if user is authenticated and not the seller -->
                 <a th:if="${#authorization.expression('isAuthenticated()') && !isCurrentUserSeller}"
                    th:href="@{'/inbox/start/' + ${product.id}}"
@@ -437,6 +446,52 @@
                         console.error('Payment error:', error);
                         showToast('error', error.message || 'Payment failed. Please try again.');
                         
+                        // Restore button state
+                        button.disabled = false;
+                        button.innerHTML = originalText;
+                    }
+                }
+                
+                // Function to test purchase (for debugging)
+                async function testPurchase(productId) {
+                    const button = document.querySelector(`button[onclick="testPurchase(${productId})"]`);
+                    const originalText = button.innerHTML;
+                    
+                    try {
+                        // Show loading state
+                        button.disabled = true;
+                        button.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Testing...';
+                        
+                        // Test purchase with admin password
+                        const response = await fetch('/payment/test-process-payment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-Requested-With': 'XMLHttpRequest',
+                                [csrfHeader]: csrfToken
+                            },
+                            body: new URLSearchParams({
+                                productId: productId,
+                                password: 'admin123'
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showToast('success', 'Test purchase successful! Product should be removed from marketplace.');
+                            // Reload page after 2 seconds to see the change
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            showToast('error', data.message || 'Test purchase failed');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Test purchase error:', error);
+                        showToast('error', 'Test purchase failed: ' + error.message);
+                    } finally {
                         // Restore button state
                         button.disabled = false;
                         button.innerHTML = originalText;

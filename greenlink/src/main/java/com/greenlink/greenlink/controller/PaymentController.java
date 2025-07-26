@@ -117,6 +117,8 @@ public class PaymentController {
         String payload = "";
         String signature = request.getHeader("Stripe-Signature");
         
+        logger.info("Webhook received - Signature: {}", signature != null ? "Present" : "Missing");
+        
         try {
             // Read the request body
             java.io.BufferedReader reader = request.getReader();
@@ -127,32 +129,41 @@ public class PaymentController {
             }
             payload = sb.toString();
             
+            logger.info("Webhook payload received, length: {}", payload.length());
+            
             // Verify webhook signature
             if (!stripeService.verifyWebhookSignature(payload, signature)) {
                 logger.error("Invalid webhook signature");
                 return ResponseEntity.badRequest().body("Invalid signature");
             }
             
+            logger.info("Webhook signature verified successfully");
+            
             // Parse the event
             Event event = com.stripe.net.Webhook.constructEvent(payload, signature, stripeService.getWebhookSecret());
+            
+            logger.info("Webhook event parsed: {}", event.getType());
             
             // Handle the event
             switch (event.getType()) {
                 case "checkout.session.completed":
+                    logger.info("Processing checkout.session.completed event");
                     handleCheckoutSessionCompleted(event);
                     break;
                 case "account.updated":
+                    logger.info("Processing account.updated event");
                     handleAccountUpdated(event);
                     break;
                 default:
                     logger.info("Unhandled event type: {}", event.getType());
             }
             
+            logger.info("Webhook processed successfully");
             return ResponseEntity.ok("Webhook processed successfully");
             
         } catch (Exception e) {
             logger.error("Error processing webhook", e);
-            return ResponseEntity.badRequest().body("Webhook processing failed");
+            return ResponseEntity.badRequest().body("Webhook processing failed: " + e.getMessage());
         }
     }
     
@@ -162,10 +173,14 @@ public class PaymentController {
     private void handleCheckoutSessionCompleted(Event event) {
         try {
             com.stripe.model.checkout.Session session = (com.stripe.model.checkout.Session) event.getData().getObject();
+            logger.info("Processing successful payment for session: {}", session.getId());
+            logger.info("Session metadata: {}", session.getMetadata());
+            
             paymentService.processSuccessfulPayment(session.getId());
             logger.info("Payment processed successfully for session: {}", session.getId());
         } catch (Exception e) {
             logger.error("Error processing successful payment", e);
+            throw e; // Re-throw to ensure webhook fails
         }
     }
     
@@ -327,6 +342,53 @@ public class PaymentController {
         }
     }
     
+    /**
+     * Test endpoint to manually process a payment (for debugging)
+     */
+    @PostMapping("/test-process-payment")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> testProcessPayment(@RequestParam Long productId, @RequestParam String password) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Check admin password
+            String adminPassword = "admin123";
+            
+            if (!adminPassword.equals(password)) {
+                response.put("success", false);
+                response.put("message", "Incorrect password");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Get current user and product
+            User buyer = userService.getCurrentUser();
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            
+            if (product.getSeller().getId().equals(buyer.getId())) {
+                response.put("success", false);
+                response.put("message", "Cannot purchase your own product");
+                return ResponseEntity.ok(response);
+            }
+            
+            // Process the purchase manually
+            paymentService.processAdminPurchase(product, buyer);
+            
+            response.put("success", true);
+            response.put("message", "Product purchased successfully!");
+            response.put("productId", productId);
+            response.put("buyerId", buyer.getId());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing test purchase", e);
+            response.put("success", false);
+            response.put("message", "Error: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
     /**
      * Admin purchase endpoint - allows purchase with admin password
      */
