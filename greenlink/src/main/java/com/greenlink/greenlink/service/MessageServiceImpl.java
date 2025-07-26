@@ -196,7 +196,7 @@ public class MessageServiceImpl implements MessageService {
             
             // Set offer-specific fields
             message.setOfferAmount(offerAmount);
-            message.setOfferStatus(Message.OfferStatus.PENDING);
+            message.setOfferStatus(Message.OfferStatus.ACTION_REQUIRED); // Changed from PENDING for better UX
             
             // Create content for the offer message
             String offerText = String.format("Offered %.2f RON for this product", offerAmount);
@@ -247,6 +247,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public MessageDto respondToOffer(Long messageId, User responder, String action, Double counterOfferAmount) {
         try {
+            // Use optimistic locking to prevent race conditions
             Message offerMessage = messageRepository.findById(messageId)
                     .orElseThrow(() -> new EntityNotFoundException("Offer message not found"));
             
@@ -264,12 +265,16 @@ public class MessageServiceImpl implements MessageService {
                 throw new IllegalStateException("You cannot respond to your own offer");
             }
             
-            // Check if offer is still pending
-            if (offerMessage.getOfferStatus() != Message.OfferStatus.PENDING) {
-                throw new IllegalStateException("This offer has already been " + offerMessage.getOfferStatus().toString().toLowerCase());
+            // Check if offer can still be acted upon
+            if (!offerMessage.canBeActedUpon()) {
+                if (offerMessage.isExpired()) {
+                    throw new IllegalStateException("This offer has expired");
+                } else {
+                    throw new IllegalStateException("This offer has already been " + offerMessage.getOfferStatus().toString().toLowerCase());
+                }
             }
             
-            // Update the original offer status
+            // Update the original offer status with optimistic locking
             switch (action.toUpperCase()) {
                 case "ACCEPT":
                     offerMessage.setOfferStatus(Message.OfferStatus.ACCEPTED);
@@ -295,7 +300,8 @@ public class MessageServiceImpl implements MessageService {
                     throw new IllegalArgumentException("Invalid action: " + action);
             }
             
-            messageRepository.save(offerMessage);
+            // Save with optimistic locking - will throw exception if version mismatch
+            offerMessage = messageRepository.save(offerMessage);
             
             // Only create a response message for COUNTER offers
             Message responseMessage = null;
@@ -305,9 +311,17 @@ public class MessageServiceImpl implements MessageService {
                 responseMessage.setConversation(conversation);
                 responseMessage.setSender(responder);
                 responseMessage.setOfferAmount(counterOfferAmount);
-                responseMessage.setOfferStatus(Message.OfferStatus.PENDING);
+                responseMessage.setOfferStatus(Message.OfferStatus.ACTION_REQUIRED);
                 responseMessage.setContent(String.format("Countered with %.2f RON", counterOfferAmount));
+                
+                // Link counter-offer to original offer
+                responseMessage.setOriginalOfferMessage(offerMessage);
+                
                 responseMessage = messageRepository.save(responseMessage);
+                
+                // Update original offer to reference counter-offer
+                offerMessage.setCounterOfferMessage(responseMessage);
+                messageRepository.save(offerMessage);
             }
             
             // Update conversation read status
@@ -322,13 +336,16 @@ public class MessageServiceImpl implements MessageService {
             conversationRepository.save(conversation);
             
             // Return the response message only if it was created (for counter offers)
-            // For accept/reject, return null or a simple status update
+            // For accept/reject, return the updated offer message
             if (responseMessage != null) {
                 return MessageDto.fromEntity(responseMessage, responder.getId());
             } else {
-                // For accept/reject, return a simple status update without creating a new message
-                return null;
+                // For accept/reject, return the updated offer message
+                return MessageDto.fromEntity(offerMessage, responder.getId());
             }
+        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+            logger.log(Level.WARNING, "Optimistic locking failure for offer response: " + messageId, e);
+            throw new IllegalStateException("This offer was modified by another user. Please refresh and try again.");
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error responding to offer", e);
             throw e;

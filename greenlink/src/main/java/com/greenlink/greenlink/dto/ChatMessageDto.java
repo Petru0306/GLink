@@ -24,6 +24,20 @@ public class ChatMessageDto {
     private Long messageId;
     private String tempId; // Temporary ID for client-side tracking
     
+    // Enhanced offer fields
+    private Long version; // For optimistic locking
+    private LocalDateTime offerExpiresAt;
+    private Long counterOfferMessageId;
+    private Long originalOfferMessageId;
+    private boolean isExpired;
+    private boolean canBeActedUpon;
+    private boolean isCounterOffer;
+    private boolean isOriginalOffer;
+    
+    // Event tracking
+    private String eventType; // CREATED, UPDATED, COUNTERED, etc.
+    private Long timestamp;
+    
     public static ChatMessageDto fromMessageDto(MessageDto messageDto) {
         return ChatMessageDto.builder()
                 .messageId(messageDto.getId())
@@ -36,6 +50,15 @@ public class ChatMessageDto {
                 .isOffer(messageDto.isOffer())
                 .offerAmount(messageDto.getOfferAmount())
                 .offerStatus(messageDto.getOfferStatus())
+                .version(messageDto.getVersion())
+                .offerExpiresAt(messageDto.getOfferExpiresAt())
+                .counterOfferMessageId(messageDto.getCounterOfferMessageId())
+                .originalOfferMessageId(messageDto.getOriginalOfferMessageId())
+                .isExpired(messageDto.isExpired())
+                .canBeActedUpon(messageDto.isCanBeActedUpon())
+                .isCounterOffer(messageDto.isCounterOffer())
+                .isOriginalOffer(messageDto.isOriginalOffer())
+                .timestamp(System.currentTimeMillis())
                 .build();
     }
 } 

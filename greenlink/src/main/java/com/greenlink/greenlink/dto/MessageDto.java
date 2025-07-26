@@ -25,6 +25,16 @@ public class MessageDto {
     private Double offerAmount;
     private String offerStatus;
     
+    // Enhanced offer fields
+    private Long version;
+    private LocalDateTime offerExpiresAt;
+    private Long counterOfferMessageId;
+    private Long originalOfferMessageId;
+    private boolean isExpired;
+    private boolean canBeActedUpon;
+    private boolean isCounterOffer;
+    private boolean isOriginalOffer;
+    
     public static MessageDto fromEntity(Message message, Long currentUserId) {
         boolean isCurrentUserSender = message.getSender().getId().equals(currentUserId);
         
@@ -40,6 +50,14 @@ public class MessageDto {
                 .isOffer(message.isOffer())
                 .offerAmount(message.getOfferAmount())
                 .offerStatus(message.getOfferStatus() != null ? message.getOfferStatus().name() : null)
+                .version(message.getVersion())
+                .offerExpiresAt(message.getOfferExpiresAt())
+                .counterOfferMessageId(message.getCounterOfferMessage() != null ? message.getCounterOfferMessage().getId() : null)
+                .originalOfferMessageId(message.getOriginalOfferMessage() != null ? message.getOriginalOfferMessage().getId() : null)
+                .isExpired(message.isExpired())
+                .canBeActedUpon(message.canBeActedUpon())
+                .isCounterOffer(message.isCounterOffer())
+                .isOriginalOffer(message.isOriginalOffer())
                 .build();
     }
 } 

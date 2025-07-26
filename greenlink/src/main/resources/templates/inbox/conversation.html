@@ -13,6 +13,7 @@
     <!-- SockJS and STOMP WebSocket libraries - using specific versions -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+    <script src="/js/offer-state-manager.js"></script>
     <style>
         .hero-section {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
@@ -504,14 +505,15 @@
                                     
                                     <div th:class="'offer-status ' + ${#strings.toLowerCase(message.offerStatus)}"
                                          th:text="${message.offerStatus == 'PENDING' ? 'În așteptare' : 
+                                                   message.offerStatus == 'ACTION_REQUIRED' ? 'În așteptare' : 
                                                    message.offerStatus == 'ACCEPTED' ? 'Acceptată' : 
                                                    message.offerStatus == 'REJECTED' ? 'Refuzată' : 
                                                    message.offerStatus == 'COUNTERED' ? 'Contraoferită' : message.offerStatus}">
                                         PENDING
                                     </div>
                                     
-                                    <!-- Offer Actions (only show for recipient if offer is pending) -->
-                                    <div th:if="${!message.isCurrentUserSender && message.offerStatus == 'PENDING'}" 
+                                    <!-- Offer Actions (only show for recipient if offer is pending or action required) -->
+                                    <div th:if="${!message.isCurrentUserSender && (message.offerStatus == 'PENDING' || message.offerStatus == 'ACTION_REQUIRED')}" 
                                          class="offer-actions">
                                         <button class="btn-accept" 
                                                 th:attr="data-message-id=${message.id}, data-action='ACCEPT'">
@@ -671,12 +673,41 @@
             }
         }
         
+        // Helper function to clean up modal backdrop and body state
+        function cleanupModalBackdrop() {
+            // Remove all modal backdrops
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+            
+            // Remove modal-open class from body
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            
+            // Additional cleanup for any stuck modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (!modal.classList.contains('show')) {
+                    modal.style.display = 'none';
+                    modal.setAttribute('aria-hidden', 'true');
+                }
+            });
+        }
+        
         // Set up AJAX CSRF header
         $.ajaxSetup({
             beforeSend: function(xhr) {
                 xhr.setRequestHeader(header, token);
             }
         });
+        
+        // Initialize offer state manager
+        function initializeOfferStateManager() {
+            if (window.offerStateManager) {
+                window.offerStateManager.initializeFromDOM();
+                console.log('Offer state manager initialized');
+            }
+        }
         
         // Connect to WebSocket
         function connect() {
@@ -720,9 +751,21 @@
             // Subscribe to user-specific queue for join confirmations
             stompClient.subscribe('/user/queue/chat.joined', onJoinConfirmation);
             
+            // Subscribe to offer-specific topics for real-time updates
+            const offerMessages = document.querySelectorAll('.offer-message');
+            offerMessages.forEach(offerElement => {
+                const messageId = offerElement.getAttribute('data-message-id');
+                if (messageId) {
+                    stompClient.subscribe('/topic/offer.' + messageId, onOfferEventReceived);
+                }
+            });
+            
             console.log('Connected to WebSocket for conversation:', conversationId);
             console.log('Current user ID:', currentUserId);
             showConnectionStatus('connected');
+            
+            // Initialize offer state manager
+            initializeOfferStateManager();
             
             // Join the conversation
             stompClient.send("/app/chat.join", {}, JSON.stringify({conversationId: conversationId}));
@@ -928,6 +971,35 @@
             }
         }
         
+        // Handle offer-specific events
+        function onOfferEventReceived(payload) {
+            try {
+                const event = JSON.parse(payload.body);
+                console.log("Received offer event:", event);
+                
+                if (window.offerStateManager) {
+                    window.offerStateManager.handleServerResponse(event.messageId, event);
+                }
+                
+                // Update UI based on event type
+                switch (event.eventType) {
+                    case 'OFFER_CREATED':
+                    case 'OFFER_UPDATED':
+                    case 'OFFER_ACCEPTED':
+                    case 'OFFER_REJECTED':
+                    case 'COUNTER_OFFER_CREATED':
+                        updateOfferStatus(event.messageId, event.offerStatus);
+                        break;
+                    case 'PRICE_UPDATED':
+                        updateProductPriceDisplay(event.offerAmount);
+                        break;
+                }
+                
+            } catch (error) {
+                console.error("Error processing offer event:", error);
+            }
+        }
+        
         function playNotificationSound() {
             // Create audio element for message notification
             const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAADIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
@@ -976,6 +1048,30 @@
                         startAjaxPolling();
                     }
                 }
+            });
+            
+            // Add modal cleanup event listeners
+            $(document).on('hidden.bs.modal', function (e) {
+                // Clean up backdrop when any modal is hidden
+                setTimeout(cleanupModalBackdrop, 100);
+            });
+            
+            // Additional cleanup for modal close buttons
+            $(document).on('click', '[data-bs-dismiss="modal"]', function() {
+                setTimeout(cleanupModalBackdrop, 100);
+            });
+            
+            // Specific cleanup for counter offer modal
+            $(document).on('click', '#counterOfferModal .btn-close, #counterOfferModal [data-bs-dismiss="modal"]', function() {
+                setTimeout(() => {
+                    cleanupModalBackdrop();
+                    // Double-check cleanup after a longer delay
+                    setTimeout(() => {
+                        if (document.body.classList.contains('modal-open')) {
+                            forceModalCleanup();
+                        }
+                    }, 300);
+                }, 100);
             });
         });
         
@@ -1106,26 +1202,25 @@
                         modalElement.setAttribute('aria-hidden', 'true');
                         modalElement.removeAttribute('aria-modal');
                         modalElement.removeAttribute('role');
-                        
-                        // Remove backdrop
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) {
-                            backdrop.remove();
-                        }
-                        
-                        // Remove modal-open class from body
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
                     }
+                    
+                    // Always clean up backdrop and body state
+                    cleanupModalBackdrop();
+                    
+                    // Additional timeout cleanup to ensure everything is cleaned up
+                    setTimeout(() => {
+                        cleanupModalBackdrop();
+                        // Force cleanup if still stuck
+                        if (document.body.classList.contains('modal-open')) {
+                            forceModalCleanup();
+                        }
+                    }, 200);
+                    
                 } catch (error) {
                     console.error('Error closing offer modal:', error);
                     // Force cleanup
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) backdrop.remove();
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
+                    cleanupModalBackdrop();
+                    setTimeout(forceModalCleanup, 100);
                 }
             }
             
@@ -1234,26 +1329,25 @@
                         modalElement.setAttribute('aria-hidden', 'true');
                         modalElement.removeAttribute('aria-modal');
                         modalElement.removeAttribute('role');
-                        
-                        // Remove backdrop
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) {
-                            backdrop.remove();
-                        }
-                        
-                        // Remove modal-open class from body
-                        document.body.classList.remove('modal-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
                     }
+                    
+                    // Always clean up backdrop and body state
+                    cleanupModalBackdrop();
+                    
+                    // Additional timeout cleanup to ensure everything is cleaned up
+                    setTimeout(() => {
+                        cleanupModalBackdrop();
+                        // Force cleanup if still stuck
+                        if (document.body.classList.contains('modal-open')) {
+                            forceModalCleanup();
+                        }
+                    }, 200);
+                    
                 } catch (error) {
-                    console.error('Error closing modal:', error);
+                    console.error('Error closing counter offer modal:', error);
                     // Force cleanup
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) backdrop.remove();
-                    document.body.classList.remove('modal-open');
-                    document.body.style.overflow = '';
-                    document.body.style.paddingRight = '';
+                    cleanupModalBackdrop();
+                    setTimeout(forceModalCleanup, 100);
                 }
             }
             
@@ -1315,6 +1409,25 @@
         
                 function respondToOffer(messageId, action) {
             console.log('respondToOffer called with:', messageId, action);
+            
+            // Use state manager to prevent race conditions
+            if (window.offerStateManager && window.offerStateManager.isProcessing(messageId)) {
+                console.log('Offer is already being processed, ignoring action');
+                return;
+            }
+            
+            // Debounce action to prevent rapid clicks
+            if (window.offerStateManager) {
+                window.offerStateManager.debounceAction(messageId, () => {
+                    performOfferAction(messageId, action);
+                }, 300);
+            } else {
+                performOfferAction(messageId, action);
+            }
+        }
+        
+        function performOfferAction(messageId, action) {
+            console.log('performOfferAction called with:', messageId, action);
             
             // Show a temporary processing state
             let offerMessage = null;
@@ -1600,15 +1713,15 @@
                 isSender = messageSenderId == currentUserId;
             }
             
-            // Only add action buttons for pending offers and if current user is NOT the sender
+            // Only add action buttons for pending/action-required offers and if current user is NOT the sender
             console.log('Building offer card:', {
                 messageId: messageId,
                 status: status,
                 isSender: isSender,
-                willShowActions: status === 'PENDING' && !isSender
+                willShowActions: (status === 'PENDING' || status === 'ACTION_REQUIRED') && !isSender
             });
             
-            if (status === 'PENDING' && !isSender) {
+            if ((status === 'PENDING' || status === 'ACTION_REQUIRED') && !isSender) {
                 offerContent += `
                     <div class="offer-actions">
                         <button class="btn-accept" onclick="respondToOffer('${messageId}', 'ACCEPT')">
@@ -1812,6 +1925,7 @@
         function getOfferStatusText(status) {
             switch(status) {
                 case 'PENDING': return 'În așteptare';
+                case 'ACTION_REQUIRED': return 'În așteptare';
                 case 'ACCEPTED': return 'Acceptată';
                 case 'REJECTED': return 'Refuzată';
                 case 'COUNTERED': return 'Contraoferită';
