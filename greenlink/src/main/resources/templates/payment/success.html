@@ -32,10 +32,7 @@
                                 <span th:text="${message}">Payment processed successfully!</span>
                             </div>
                             
-                            <div th:if="${error}" class="alert alert-warning" role="alert">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                                <span th:text="${error}">Payment was successful but there was an issue processing your order. Please contact support.</span>
-                            </div>
+
                             
                             <p class="text-muted mb-4">Your purchase has been completed successfully! A delivery conversation has been created where you can coordinate with the seller.</p>
                             
@@ -43,14 +40,14 @@
                             <div class="alert alert-info" role="alert">
                                 <i class="bi bi-chat-dots me-2"></i>
                                 <strong>Next Step:</strong> 
-                                <a href="/inbox/delivery-conversations" class="alert-link">View your delivery conversations</a> 
+                                <a href="/inbox" class="alert-link">View your inbox</a> 
                                 to coordinate with the seller.
                             </div>
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
-                            <a href="/inbox/delivery-conversations" class="btn btn-primary btn-lg px-4">
-                                <i class="bi bi-chat-dots me-2"></i>View Delivery Conversations
+                            <a href="/inbox" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-chat-dots me-2"></i>View Inbox
                             </a>
                             <a href="/dashboard" class="btn btn-success btn-lg px-4">
                                 <i class="bi bi-house me-2"></i>Go to Dashboard

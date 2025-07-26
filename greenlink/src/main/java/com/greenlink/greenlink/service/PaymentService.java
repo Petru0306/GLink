@@ -49,9 +49,13 @@ public class PaymentService {
         // Extract metadata
         String productIdStr = session.getMetadata().get("product_id");
         String buyerIdStr = session.getMetadata().get("buyer_id");
+        String priceUsedStr = session.getMetadata().get("price_used");
+        String isNegotiatedStr = session.getMetadata().get("is_negotiated_price");
         
         System.out.println("Product ID from metadata: " + productIdStr);
         System.out.println("Buyer ID from metadata: " + buyerIdStr);
+        System.out.println("Price used: " + priceUsedStr + " RON");
+        System.out.println("Was negotiated price: " + isNegotiatedStr);
         
         if (productIdStr == null || buyerIdStr == null) {
             throw new RuntimeException("Missing required metadata in session");
@@ -104,10 +108,19 @@ public class PaymentService {
         System.out.println("Created at: " + deliveryConversation.getCreatedAt());
         
         // Add a welcome message about delivery
+        String welcomeMessageContent;
+        if (priceUsedStr != null && isNegotiatedStr != null && "true".equals(isNegotiatedStr)) {
+            welcomeMessageContent = String.format("Hi! Your order for '%s' has been confirmed at the negotiated price of %s RON. Let's coordinate the delivery details.", 
+                product.getName(), priceUsedStr);
+        } else {
+            welcomeMessageContent = String.format("Hi! Your order for '%s' has been confirmed at %s RON. Let's coordinate the delivery details.", 
+                product.getName(), priceUsedStr != null ? priceUsedStr : String.valueOf(product.getPrice()));
+        }
+        
         Message welcomeMessage = Message.builder()
                 .conversation(deliveryConversation)
                 .sender(product.getSeller())
-                .content("Hi! Your order for '" + product.getName() + "' has been confirmed. Let's coordinate the delivery details.")
+                .content(welcomeMessageContent)
                 .build();
         
         messageRepository.save(welcomeMessage);
@@ -241,10 +254,20 @@ public class PaymentService {
         System.out.println("Delivery conversation created with ID: " + deliveryConversation.getId());
         
         // Add a welcome message about delivery
+        Double negotiatedPrice = product.getNegotiatedPriceForUser(buyer.getId());
+        String welcomeMessageContent;
+        if (negotiatedPrice != null) {
+            welcomeMessageContent = String.format("Hi! Your order for '%s' has been confirmed at the negotiated price of %.2f RON. Let's coordinate the delivery details.", 
+                product.getName(), negotiatedPrice);
+        } else {
+            welcomeMessageContent = String.format("Hi! Your order for '%s' has been confirmed at %.2f RON. Let's coordinate the delivery details.", 
+                product.getName(), product.getPrice());
+        }
+        
         Message welcomeMessage = Message.builder()
                 .conversation(deliveryConversation)
                 .sender(product.getSeller())
-                .content("Hi! Your order for '" + product.getName() + "' has been confirmed. Let's coordinate the delivery details.")
+                .content(welcomeMessageContent)
                 .build();
         
         messageRepository.save(welcomeMessage);

@@ -105,8 +105,18 @@ public class StripeService {
         String successUrlWithSession = successUrl + (successUrl.contains("?") ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
         System.out.println("Modified Success URL: " + successUrlWithSession);
         
+        // Get the price to use (negotiated price if available, otherwise original price)
+        double priceToUse = product.getPrice();
+        Double negotiatedPrice = product.getNegotiatedPriceForUser(buyer.getId());
+        if (negotiatedPrice != null) {
+            priceToUse = negotiatedPrice;
+            System.out.println("Using negotiated price: " + negotiatedPrice + " RON (original: " + product.getPrice() + " RON)");
+        } else {
+            System.out.println("Using original price: " + product.getPrice() + " RON");
+        }
+        
         // Calculate platform commission in cents
-        long productAmountCents = (long) (product.getPrice() * 100); // Convert to cents
+        long productAmountCents = (long) (priceToUse * 100); // Convert to cents
         long commissionAmountCents = (long) (productAmountCents * platformCommissionPercentage / 100.0);
         
         SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
@@ -163,7 +173,9 @@ public class StripeService {
                 .putMetadata("product_id", product.getId().toString())
                 .putMetadata("buyer_id", buyer.getId().toString())
                 .putMetadata("seller_id", product.getSeller().getId().toString())
-                .putMetadata("commission_amount", String.valueOf(commissionAmountCents));
+                .putMetadata("commission_amount", String.valueOf(commissionAmountCents))
+                .putMetadata("price_used", String.valueOf(priceToUse))
+                .putMetadata("is_negotiated_price", String.valueOf(negotiatedPrice != null));
         
         // Add Stripe Connect transfer to seller if seller has onboarded
         if (product.getSeller().getStripeAccountId() != null) {
