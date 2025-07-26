@@ -81,13 +81,11 @@ public class PaymentService {
         
         System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
         
-        // Create delivery conversation
+        // Create delivery conversation - temporarily simplified until migration works
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)
                 .seller(product.getSeller())
                 .buyer(buyer)
-                .status(Conversation.ConversationStatus.OPEN)
-                .deliveryStatus(Conversation.DeliveryStatus.PENDING)
                 .build();
         
         deliveryConversation = conversationRepository.save(deliveryConversation);
