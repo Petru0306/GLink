@@ -166,4 +166,107 @@ public class StripeService {
     public Session retrieveSession(String sessionId) throws StripeException {
         return Session.retrieve(sessionId);
     }
+
+    /**
+     * Create a direct transfer between users (peer-to-peer)
+     */
+    public String createDirectTransfer(User fromUser, User toUser, long amount, String description) throws StripeException {
+        // Ensure both users have Stripe accounts
+        if (fromUser.getStripeAccountId() == null || toUser.getStripeAccountId() == null) {
+            throw new RuntimeException("Both users must have Stripe accounts for direct transfers");
+        }
+        
+        // Create transfer from platform to seller
+        com.stripe.model.Transfer transfer = com.stripe.model.Transfer.create(
+            com.stripe.param.TransferCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setDestination(toUser.getStripeAccountId())
+                .setDescription(description)
+                .putMetadata("from_user_id", fromUser.getId().toString())
+                .putMetadata("to_user_id", toUser.getId().toString())
+                .build()
+        );
+        
+        return transfer.getId();
+    }
+    
+    /**
+     * Create instant payout for seller
+     */
+    public String createInstantPayout(User seller, long amount) throws StripeException {
+        if (seller.getStripeAccountId() == null) {
+            throw new RuntimeException("Seller must have a Stripe account");
+        }
+        
+        com.stripe.model.Payout payout = com.stripe.model.Payout.create(
+            com.stripe.param.PayoutCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setMethod(com.stripe.param.PayoutCreateParams.Method.INSTANT)
+                .build(),
+            com.stripe.param.RequestOptions.builder()
+                .setStripeAccount(seller.getStripeAccountId())
+                .build()
+        );
+        
+        return payout.getId();
+    }
+    
+    /**
+     * Create a payment intent for direct charges
+     */
+    public String createPaymentIntent(User buyer, User seller, long amount, String description) throws StripeException {
+        com.stripe.model.PaymentIntent paymentIntent = com.stripe.model.PaymentIntent.create(
+            com.stripe.param.PaymentIntentCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setCustomer(buyer.getStripeCustomerId())
+                .setApplicationFeeAmount((long) (amount * platformCommissionPercentage / 100.0))
+                .setTransferData(
+                    com.stripe.param.PaymentIntentCreateParams.TransferData.builder()
+                        .setDestination(seller.getStripeAccountId())
+                        .build()
+                )
+                .setDescription(description)
+                .putMetadata("buyer_id", buyer.getId().toString())
+                .putMetadata("seller_id", seller.getId().toString())
+                .build()
+        );
+        
+        return paymentIntent.getId();
+    }
+    
+    /**
+     * Get account balance for a seller
+     */
+    public Map<String, Object> getAccountBalance(String accountId) throws StripeException {
+        com.stripe.model.Balance balance = com.stripe.model.Balance.retrieve(
+            com.stripe.param.RequestOptions.builder()
+                .setStripeAccount(accountId)
+                .build()
+        );
+        
+        Map<String, Object> balanceInfo = new HashMap<>();
+        balanceInfo.put("available", balance.getAvailable());
+        balanceInfo.put("pending", balance.getPending());
+        balanceInfo.put("instant_available", balance.getInstantAvailable());
+        
+        return balanceInfo;
+    }
+    
+    /**
+     * Create a refund for a payment
+     */
+    public String createRefund(String paymentIntentId, long amount, String reason) throws StripeException {
+        com.stripe.model.Refund refund = com.stripe.model.Refund.create(
+            com.stripe.param.RefundCreateParams.builder()
+                .setPaymentIntent(paymentIntentId)
+                .setAmount(amount)
+                .setReason(com.stripe.param.RefundCreateParams.Reason.valueOf(reason.toUpperCase()))
+                .build()
+        );
+        
+        return refund.getId();
+    }
 } 
