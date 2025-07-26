@@ -597,6 +597,16 @@
                         </h5>
                     </div>
                     <div class="card-body p-4">
+                        <!-- Debug Information -->
+                        <div class="alert alert-info">
+                            <strong>Debug Info:</strong><br>
+                            Total Products Bought: <span th:text="${totalProductsBought}">0</span><br>
+                            Total Amount Spent: <span th:text="${totalAmountSpent}">0</span> RON<br>
+                            Last Purchase Date: <span th:text="${lastPurchaseDate}">Never</span><br>
+                            Buy History Size: <span th:text="${#lists.size(buyHistory)}">0</span><br>
+                            Buy History Empty: <span th:text="${#lists.isEmpty(buyHistory)}">true</span>
+                        </div>
+                        
                         <!-- Empty State -->
                         <div th:if="${#lists.isEmpty(buyHistory)}" class="empty-state-modern">
                             <div class="empty-icon-modern">

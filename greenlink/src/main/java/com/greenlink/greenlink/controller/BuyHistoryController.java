@@ -37,9 +37,12 @@ public class BuyHistoryController {
                                  @RequestParam(defaultValue = "6") int size) {
         try {
             User currentUser = userService.getCurrentUser();
+            System.out.println("=== BUY HISTORY CONTROLLER START ===");
+            System.out.println("Current user: " + currentUser.getEmail() + " (ID: " + currentUser.getId() + ")");
             
             // Get all bought products for statistics calculation
             List<PurchaseDto> allBoughtProducts = productService.getBoughtProductsByBuyer(currentUser.getId());
+            System.out.println("Raw bought products from service: " + (allBoughtProducts != null ? allBoughtProducts.size() : 0));
 
             // Calculate statistics from all products
             BigDecimal totalAmountSpent = BigDecimal.ZERO;
@@ -85,6 +88,7 @@ public class BuyHistoryController {
 
             // Get paginated bought products
             Page<PurchaseDto> boughtProductsPage = productService.getBoughtProductsByBuyerPaginated(currentUser.getId(), pageable);
+            System.out.println("Paginated products: " + boughtProductsPage.getContent().size() + " out of " + boughtProductsPage.getTotalElements());
 
             model.addAttribute("buyHistory", boughtProductsPage.getContent());
             model.addAttribute("totalAmountSpent", totalAmountSpent);
@@ -99,6 +103,13 @@ public class BuyHistoryController {
             model.addAttribute("hasNext", boughtProductsPage.hasNext());
             model.addAttribute("hasPrevious", boughtProductsPage.hasPrevious());
             model.addAttribute("showPagination", totalProductsBought > 6);
+
+            System.out.println("=== MODEL ATTRIBUTES SET ===");
+            System.out.println("buyHistory size: " + boughtProductsPage.getContent().size());
+            System.out.println("totalAmountSpent: " + totalAmountSpent);
+            System.out.println("totalProductsBought: " + totalProductsBought);
+            System.out.println("lastPurchaseDate: " + lastPurchaseDate);
+            System.out.println("=== BUY HISTORY CONTROLLER END ===");
 
             return "dashboard/buy-history";
         } catch (Exception e) {

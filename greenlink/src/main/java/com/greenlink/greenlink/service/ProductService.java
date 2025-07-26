@@ -472,9 +472,9 @@ public class ProductService {
         
         List<Product> products = productRepository.findProductsByBuyerId(buyerId);
         
-        System.out.println("Found " + products.size() + " bought products for buyer " + buyerId);
+        System.out.println("Raw products from repository: " + products.size());
         for (Product p : products) {
-            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null"));
+            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null") + ", soldAt: " + p.getSoldAt());
         }
         
         List<PurchaseDto> purchaseDtos = products.stream()
@@ -482,7 +482,12 @@ public class ProductService {
                 .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
                 .collect(Collectors.toList());
         
-        System.out.println("Returning " + purchaseDtos.size() + " PurchaseDto objects");
+        System.out.println("PurchaseDtos after conversion: " + purchaseDtos.size());
+        for (PurchaseDto dto : purchaseDtos) {
+            if (dto != null) {
+                System.out.println("  - DTO: " + dto.getProduct().getName() + " - Price: " + dto.getTotalPrice() + " - Date: " + dto.getPurchaseDate());
+            }
+        }
         System.out.println("=== END GETTING BOUGHT PRODUCTS ===");
         
         return purchaseDtos;
