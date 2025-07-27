@@ -304,6 +304,10 @@ public class WebSocketController {
     
         
     private OfferEvent.EventType determineEventType(String action) {
+        if (action == null) {
+            return OfferEvent.EventType.OFFER_UPDATED;
+        }
+        
         switch (action.toUpperCase()) {
             case "ACCEPT":
                 return OfferEvent.EventType.OFFER_ACCEPTED;

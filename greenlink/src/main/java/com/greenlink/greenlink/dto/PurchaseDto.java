@@ -1,9 +1,7 @@
 package com.greenlink.greenlink.dto;
 
 import com.greenlink.greenlink.model.Product;
-import com.greenlink.greenlink.model.User;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class PurchaseDto {
@@ -89,7 +87,7 @@ public class PurchaseDto {
             1, // Default quantity is 1 for now
             BigDecimal.valueOf(priceToUse),
             product.getSoldAt(),
-            false // TODO: Implement review checking logic
+            false 
         );
     }
     

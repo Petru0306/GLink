@@ -3,7 +3,6 @@ package com.greenlink.greenlink.service;
 import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
-import com.greenlink.greenlink.model.UserChallenge;
 import com.greenlink.greenlink.repository.ChallengeRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserChallengeRepository;
@@ -44,14 +43,14 @@ public class ChallengeBuyTest {
         // Create test users
         User seller = new User();
         seller.setEmail("seller@example.com");
-        seller.setPassword("password123");
+        seller.setPassword("Password123!");
         seller.setFirstName("Seller");
         seller.setLastName("User");
         seller = userRepository.save(seller);
 
         User buyer = new User();
         buyer.setEmail("buyer@example.com");
-        buyer.setPassword("password123");
+        buyer.setPassword("Password123!");
         buyer.setFirstName("Buyer");
         buyer.setLastName("User");
         buyer = userRepository.save(buyer);
@@ -105,14 +104,14 @@ public class ChallengeBuyTest {
         // Create test users
         User seller = new User();
         seller.setEmail("seller2@example.com");
-        seller.setPassword("password123");
+        seller.setPassword("Password123!");
         seller.setFirstName("Seller");
         seller.setLastName("User");
         seller = userRepository.save(seller);
 
         User buyer = new User();
         buyer.setEmail("buyer2@example.com");
-        buyer.setPassword("password123");
+        buyer.setPassword("Password123!");
         buyer.setFirstName("Buyer");
         buyer.setLastName("User");
         buyer = userRepository.save(buyer);

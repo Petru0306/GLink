@@ -2,6 +2,8 @@ package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.User;
+import com.greenlink.greenlink.repository.ConversationRepository;
+import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
 import com.stripe.exception.StripeException;
@@ -31,6 +33,15 @@ class PaymentServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ConversationRepository conversationRepository;
+
+    @Mock
+    private MessageRepository messageRepository;
+
+    @Mock
+    private ChallengeTrackingService challengeTrackingService;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -146,14 +157,27 @@ class PaymentServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(buyer));
         when(productRepository.save(any())).thenReturn(product);
 
+        // Mock Conversation and Message creation
+        com.greenlink.greenlink.model.Conversation mockConversation = mock(com.greenlink.greenlink.model.Conversation.class);
+        when(mockConversation.getId()).thenReturn(1L);
+        when(mockConversation.getProduct()).thenReturn(product);
+        when(mockConversation.getSeller()).thenReturn(seller);
+        when(mockConversation.getBuyer()).thenReturn(buyer);
+        when(conversationRepository.save(any())).thenReturn(mockConversation);
+
+        com.greenlink.greenlink.model.Message mockMessage = mock(com.greenlink.greenlink.model.Message.class);
+        when(messageRepository.save(any())).thenReturn(mockMessage);
+
         // Act
         paymentService.processSuccessfulPayment("session_123");
 
         // Assert
         verify(stripeService).retrieveSession("session_123");
-        verify(productRepository).findById(1L);
+        verify(productRepository, times(2)).findById(1L); // Called twice: once for initial retrieval, once for verification
         verify(userRepository).findById(1L);
         verify(productRepository).save(any());
+        verify(conversationRepository).save(any());
+        verify(messageRepository).save(any());
         
         assertTrue(product.isSold());
         assertEquals(buyer, product.getBuyer());

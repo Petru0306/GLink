@@ -72,6 +72,5 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT p FROM Product p WHERE p.buyer.id = :buyerId AND p.sold = true ORDER BY p.soldAt DESC")
     List<Product> findProductsByBuyerId(@Param("buyerId") Long buyerId);
     
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.buyer.id = ?1 AND p.sold = true")
     long countByBuyerId(Long buyerId);
 }

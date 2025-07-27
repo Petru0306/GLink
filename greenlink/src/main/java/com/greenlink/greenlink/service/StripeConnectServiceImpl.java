@@ -1,10 +1,8 @@
 package com.greenlink.greenlink.service;
 
-import com.greenlink.greenlink.config.StripeConfig;
 import com.greenlink.greenlink.dto.StripeConnectAccountDto;
 import com.greenlink.greenlink.dto.StripeProductDto;
 import com.greenlink.greenlink.dto.StripeCheckoutDto;
-import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Account;
 import com.stripe.model.AccountLink;
@@ -20,7 +18,6 @@ import com.stripe.param.ProductListParams;
 import com.stripe.param.PriceListParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 import com.stripe.net.RequestOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,9 +30,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class StripeConnectServiceImpl implements StripeConnectService {
-    
-    @Autowired
-    private StripeConfig stripeConfig;
     
     @Override
     public StripeConnectAccountDto createConnectedAccount(StripeConnectAccountDto accountDto) throws Exception {

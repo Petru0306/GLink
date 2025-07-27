@@ -3,7 +3,6 @@ package com.greenlink.greenlink.service;
 import com.greenlink.greenlink.dto.CourseDto;
 import com.greenlink.greenlink.model.Course;
 import com.greenlink.greenlink.model.Quiz;
-import com.greenlink.greenlink.model.QuizAnswer;
 import com.greenlink.greenlink.model.QuizResult;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.repository.CourseRepository;
@@ -158,22 +157,10 @@ public class CourseService {
         if (answersData != null && !answersData.isEmpty()) {
             try {
                 for (Map.Entry<String, Object> entry : answersData.entrySet()) {
-                    String questionIdStr = entry.getKey();
                     Object answerValue = entry.getValue();
                     
                     if (answerValue != null) {
-                        int questionNumber = Integer.parseInt(questionIdStr);
-                        String questionText = "Question " + questionNumber;
-                        String userAnswer = answerValue.toString();
-                        
-                        QuizAnswer quizAnswer = new QuizAnswer(
-                            savedResult, 
-                            questionNumber, 
-                            questionText, 
-                            userAnswer, 
-                            true // Assume correct for now
-                        );
-                        // Note: You'll need to inject QuizAnswerRepository to save this
+                        // Note: You'll need to inject QuizAnswerRepository to save individual answers
                         // For now, we'll skip saving individual answers
                     }
                 }

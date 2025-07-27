@@ -48,10 +48,11 @@ public class ReCaptchaService {
                 requestMap.add("remoteip", remoteIp);
             }
 
-            ResponseEntity<Map> response = restTemplate.postForEntity(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 GOOGLE_RECAPTCHA_VERIFY_URL, 
-                requestMap, 
-                Map.class
+                org.springframework.http.HttpMethod.POST,
+                new org.springframework.http.HttpEntity<>(requestMap),
+                new org.springframework.core.ParameterizedTypeReference<Map<String, Object>>() {}
             );
 
             Map<String, Object> body = response.getBody();

@@ -9,19 +9,12 @@ import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
-import com.greenlink.greenlink.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
