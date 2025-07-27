@@ -41,6 +41,9 @@
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 400px;
+            width: 60%;
+            object-fit: cover;
         }
 
         .product-image:hover {
@@ -275,13 +278,13 @@
 
 <div class="container py-5">
     <div class="row g-5">
-        <div class="col-lg-6">
+        <div class="col-lg-7">
             <img th:if="${product.imageUrl}" th:src="${product.imageUrl}"
                  class="img-fluid product-image w-100" alt="Product Image">
-            <img th:unless="${product.imageUrl}" src="/api/placeholder/600/400"
+            <img th:unless="${product.imageUrl}" src="/api/placeholder/800/600"
                  class="img-fluid product-image w-100" alt="Product">
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-5">
             <div class="mb-4">
                 <span th:if="${product.ecoFriendly}" class="badge bg-success me-2">
                     <i class="bi bi-leaf-fill me-2"></i>Eco-Friendly
