@@ -7,12 +7,14 @@ import com.greenlink.greenlink.service.CourseService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.greenlink.greenlink.service.PointsService;
+import com.greenlink.greenlink.service.R2StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -38,6 +40,9 @@ public class EducationController {
 
     @Autowired
     private PointsService pointsService;
+
+    @Autowired
+    private R2StorageService r2StorageService;
 
     @GetMapping
     public String getAllCourses(Model model, @AuthenticationPrincipal User currentUser) {
@@ -163,7 +168,11 @@ public class EducationController {
     @PostMapping("/quiz/{courseId}/submit")
     @ResponseBody
     public ResponseEntity<?> submitQuiz(@PathVariable Long courseId, 
-                                     @RequestBody Map<String, String> answers,
+                                     @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                                     @RequestParam("correctAnswers") String correctAnswersStr,
+                                     @RequestParam("totalQuestions") String totalQuestionsStr,
+                                     @RequestParam("reflectionText") String reflectionText,
+                                     @RequestParam("imageUploaded") String imageUploaded,
                                      @AuthenticationPrincipal User currentUser) {
         Map<String, Object> response = new HashMap<>();
         
@@ -181,18 +190,21 @@ public class EducationController {
         }
         
         try {
-            int correctAnswers = Integer.parseInt(answers.get("correctAnswers"));
-            int totalQuestions = Integer.parseInt(answers.get("totalQuestions"));
-            String reflectionText = answers.get("reflectionText");
+            int correctAnswers = Integer.parseInt(correctAnswersStr);
+            int totalQuestions = Integer.parseInt(totalQuestionsStr);
             int pointsFromQuestions = correctAnswers * 5;
             int reflectionPoints = 0;
             if (reflectionText != null && !reflectionText.trim().isEmpty()) {
                 reflectionPoints = 5;
             }
             int imagePoints = 0;
-            String imageUploaded = answers.get("imageUploaded");
-            if ("true".equals(imageUploaded)) {
-                imagePoints = 10; 
+            String userImageUrl = null;
+            
+            if ("true".equals(imageUploaded) && imageFile != null && !imageFile.isEmpty()) {
+                imagePoints = 10;
+                // Store the image using R2StorageService
+                String fileName = r2StorageService.storeFile(imageFile);
+                userImageUrl = r2StorageService.getFileUrl(fileName);
             }
         
             int totalPointsEarned = pointsFromQuestions + reflectionPoints + imagePoints;
@@ -218,7 +230,8 @@ public class EducationController {
             
             pointsService.awardLessonPoints(currentUser.getId(), courseId, courseTitle, totalPointsEarned);
             
-            courseService.saveQuizResult(currentUser.getId(), courseId, correctAnswers, totalQuestions, totalPointsEarned, reflectionText, null);
+            // Save quiz result with user image URL
+            courseService.saveQuizResultWithImage(currentUser.getId(), courseId, correctAnswers, totalQuestions, totalPointsEarned, reflectionText, userImageUrl);
           
             challengeTrackingService.trackUserAction(currentUser.getId(), "LESSON_COMPLETED", courseId);
           
@@ -232,6 +245,7 @@ public class EducationController {
             response.put("pointsEarned", totalPointsEarned);
             response.put("leveledUp", leveledUp);
             response.put("newLevel", newLevel);
+            response.put("userImageUrl", userImageUrl);
             
             StringBuilder messageBuilder = new StringBuilder();
             messageBuilder.append("Felicitări! Ai câștigat ").append(totalPointsEarned).append(" puncte!");

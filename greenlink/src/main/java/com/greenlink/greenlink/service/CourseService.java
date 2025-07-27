@@ -76,13 +76,20 @@ public class CourseService {
     
     // Salvează rezultatul unui quiz
     @Transactional
-    public QuizResult saveQuizResult(Long userId, Long courseId, int correctAnswers, int totalQuestions, int pointsEarned) {
-        return saveQuizResult(userId, courseId, correctAnswers, totalQuestions, pointsEarned, null, null);
+    public QuizResult saveQuizResult(Long userId, Long courseId, int correctAnswers, int totalQuestions, 
+                                    int pointsEarned, String reflectionText, Map<String, Object> answersData) {
+        return saveQuizResultWithImage(userId, courseId, correctAnswers, totalQuestions, pointsEarned, reflectionText, null, answersData);
     }
     
     @Transactional
-    public QuizResult saveQuizResult(Long userId, Long courseId, int correctAnswers, int totalQuestions, 
-                                    int pointsEarned, String reflectionText, Map<String, Object> answersData) {
+    public QuizResult saveQuizResultWithImage(Long userId, Long courseId, int correctAnswers, int totalQuestions, 
+                                             int pointsEarned, String reflectionText, String userImageUrl, Map<String, Object> answersData) {
+        return saveQuizResultWithImage(userId, courseId, correctAnswers, totalQuestions, pointsEarned, reflectionText, userImageUrl);
+    }
+    
+    @Transactional
+    public QuizResult saveQuizResultWithImage(Long userId, Long courseId, int correctAnswers, int totalQuestions, 
+                                             int pointsEarned, String reflectionText, String userImageUrl) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Utilizatorul nu a fost găsit"));
         
@@ -150,24 +157,13 @@ public class CourseService {
             quizResult.setReflectionText(reflectionText);
         }
         
+        // Save user image URL if provided
+        if (userImageUrl != null && !userImageUrl.trim().isEmpty()) {
+            quizResult.setUserImageUrl(userImageUrl);
+        }
+        
         // Save the quiz result
         QuizResult savedResult = quizResultRepository.save(quizResult);
-        
-        // Save individual answers if provided
-        if (answersData != null && !answersData.isEmpty()) {
-            try {
-                for (Map.Entry<String, Object> entry : answersData.entrySet()) {
-                    Object answerValue = entry.getValue();
-                    
-                    if (answerValue != null) {
-                        // Note: You'll need to inject QuizAnswerRepository to save individual answers
-                        // For now, we'll skip saving individual answers
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Error saving quiz answers: " + e.getMessage());
-            }
-        }
         
         return savedResult;
     }
