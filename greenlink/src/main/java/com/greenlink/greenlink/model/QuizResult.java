@@ -33,6 +33,10 @@ public class QuizResult {
     @Column(name = "reflection_text", length = 1000)
     private String reflectionText;
     
+    // User's uploaded final task image URL
+    @Column(name = "user_image_url", length = 500)
+    private String userImageUrl;
+    
     // Reference to answers
     @OneToMany(mappedBy = "quizResult", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizAnswer> answers = new ArrayList<>();
@@ -103,6 +107,14 @@ public class QuizResult {
     
     public void setReflectionText(String reflectionText) {
         this.reflectionText = reflectionText;
+    }
+    
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+    
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
     
     public List<QuizAnswer> getAnswers() {

@@ -499,6 +499,11 @@ public class ProfileController {
         lessonData.setPointsEarned(quizResult.getPointsEarned());
         lessonData.setCompletedAt(quizResult.getCompletedAt());
         
+        // Use user's uploaded image if available, otherwise use default lesson image
+        if (quizResult.getUserImageUrl() != null && !quizResult.getUserImageUrl().trim().isEmpty()) {
+            lessonData.setImageUrl(quizResult.getUserImageUrl());
+        }
+        
         return lessonData;
     }
 

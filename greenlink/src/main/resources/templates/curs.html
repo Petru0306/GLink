@@ -845,7 +845,8 @@
         // Complete lesson
         document.getElementById('complete-lesson').addEventListener('click', function() {
             const reflectionText = document.getElementById('reflection-text').value.trim();
-            const imageUploaded = document.getElementById('image-upload').files.length > 0;
+            const imageFile = document.getElementById('image-upload').files[0];
+            const imageUploaded = imageFile != null;
             
             if (attemptedQuestions === totalQuestions && reflectionText.length > 0) {
                 // Check if user is authenticated
@@ -861,26 +862,28 @@
                 if (reflectionText.length > 0) finalScore += 5; // Scrie points
                 if (imageUploaded) finalScore += 10; // Foto points
                 
-                // User is authenticated, submit lesson completion to server
-                const submissionData = {
-                    correctAnswers: totalScore / 5, // Convert score to correct answers
-                    totalQuestions: totalQuestions,
-                    reflectionText: reflectionText,
-                    imageUploaded: imageUploaded
-                };
-                
                 // Get CSRF token
                 const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
                 const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+                
+                // Create FormData for multipart/form-data submission
+                const formData = new FormData();
+                formData.append('correctAnswers', (totalScore / 5).toString());
+                formData.append('totalQuestions', totalQuestions.toString());
+                formData.append('reflectionText', reflectionText);
+                formData.append('imageUploaded', imageUploaded.toString());
+                
+                if (imageFile) {
+                    formData.append('imageFile', imageFile);
+                }
                 
                 // Submit to server
                 fetch('/educatie/quiz/1/submit', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         [csrfHeader]: csrfToken
                     },
-                    body: JSON.stringify(submissionData)
+                    body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
