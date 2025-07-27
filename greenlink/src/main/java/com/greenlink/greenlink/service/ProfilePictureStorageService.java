@@ -14,11 +14,11 @@ import java.util.UUID;
 import java.util.Objects;
 
 @Service
-public class FileStorageService {
+public class ProfilePictureStorageService {
 
     private final Path fileStorageLocation;
 
-    public FileStorageService(@Value("${file.upload-dir:uploads/products}") String uploadDir) {
+    public ProfilePictureStorageService(@Value("${file.upload-dir:uploads}/profiles") String uploadDir) {
         this.fileStorageLocation = Paths.get(uploadDir)
                 .toAbsolutePath()
                 .normalize();
@@ -26,41 +26,42 @@ public class FileStorageService {
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (IOException ex) {
-            throw new RuntimeException("Nu s-a putut crea directorul pentru upload-uri.", ex);
+            throw new RuntimeException("Could not create the directory for profile pictures.", ex);
         }
     }
 
     public String storeFile(MultipartFile file) {
         try {
-            
+            // Validate file is not empty
             if (file.isEmpty()) {
-                throw new RuntimeException("Nu se poate salva un fișier gol");
+                throw new RuntimeException("Cannot store empty file");
             }
 
-            
+            // Validate file type
             String fileType = file.getContentType();
             if (fileType != null && !fileType.startsWith("image/")) {
-                throw new RuntimeException("Doar imaginile sunt permise!");
+                throw new RuntimeException("Only image files are allowed!");
             }
             
+            // Generate unique filename
             String originalFileName = StringUtils.cleanPath(
-                    Objects.requireNonNull(file.getOriginalFilename(), "Numele fișierului nu poate fi null"));
+                    Objects.requireNonNull(file.getOriginalFilename(), "Filename cannot be null"));
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
             String newFileName = UUID.randomUUID().toString() + fileExtension;
 
-            
+            // Validate filename
             if (newFileName.contains("..")) {
-                throw new RuntimeException("Numele fișierului conține caractere invalide " + newFileName);
+                throw new RuntimeException("Filename contains invalid characters " + newFileName);
             }
 
-                
+            // Store file
             Path targetLocation = this.fileStorageLocation.resolve(newFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return newFileName;
 
         } catch (IOException ex) {
-            throw new RuntimeException("Nu s-a putut salva fișierul.", ex);
+            throw new RuntimeException("Could not store file.", ex);
         }
     }
 
@@ -69,11 +70,11 @@ public class FileStorageService {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Files.deleteIfExists(filePath);
         } catch (IOException ex) {
-            throw new RuntimeException("Nu s-a putut șterge fișierul.", ex);
+            throw new RuntimeException("Could not delete file.", ex);
         }
     }
 
     public Path getFileLocation(String fileName) {
         return this.fileStorageLocation.resolve(fileName).normalize();
     }
-}
+} 

@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
                 throw new UsernameNotFoundException("User account is not active");
             }
 
-            // Log authorities
+            
             Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
             logger.info("User authorities: {}", authorities);
             
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Email already registered");
         }
 
-        // Log password encoding
+        
         String rawPassword = user.getPassword();
         String encodedPassword = passwordEncoder.encode(rawPassword);
         logger.info("Password encoding - Raw Length: {}, Encoded Length: {}", 
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.setActive(true);
         user.setPoints(0);
-        user.setProfilePicture("/images/default-avatar.png");
+        user.setProfilePicture("/images/logo.svg");
         User savedUser = userRepository.save(user);
         logger.info("User registered successfully: {}", user.getEmail());
         return savedUser;
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.setActive(true);
         user.setPoints(0);
-        user.setProfilePicture("/images/default-avatar.png");
+        user.setProfilePicture("/images/logo.svg");
         user.setCreatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         logger.info("User created successfully: {}", user.getEmail());
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void addPoints(Long userId, int points) {
-        // Use PointsService for better tracking and level calculation
+        
         pointsService.addPoints(userId, points, "MANUAL", "Points added manually");
     }
 
@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
         if (user.getPoints() < points) {
             throw new RuntimeException("Insufficient points");
         }
-        // Use PointsService for better tracking
+        
         pointsService.addPoints(userId, -points, "MANUAL_DEDUCTION", "Points deducted manually");
     }
 
@@ -292,13 +292,13 @@ public class UserServiceImpl implements UserService {
     public int getUserRank(Long userId) {
         User user = getUserById(userId);
         if (user == null) {
-            return -1; // User not found
+            return -1; 
         }
         
-        // Count users with more points than the current user
+        
         long usersWithMorePoints = userRepository.countByPointsGreaterThan(user.getPoints());
         
-        // Add 1 to get the rank (1-based ranking)
+                
         return (int) (usersWithMorePoints + 1);
     }
 

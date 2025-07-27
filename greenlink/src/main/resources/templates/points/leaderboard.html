@@ -677,8 +677,8 @@
                         </div>
                         <div class="col-lg-8 col-md-7 col-6">
                             <div class="d-flex align-items-center">
-                                <div class="user-avatar">
-                                    <i class="bi bi-person"></i>
+                                <div class="user-avatar" th:style="${user.profilePicture != null ? 'background-image: url(' + user.profilePicture + '); background-size: cover; background-position: center;' : ''}">
+                                    <i class="bi bi-person" th:if="${user.profilePicture == null}"></i>
                                 </div>
                                 <div class="user-info">
                                     <h5 th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>

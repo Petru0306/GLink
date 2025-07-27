@@ -80,19 +80,36 @@ public class PaymentService {
         System.out.println("Buyer found: " + buyer.getEmail() + " (ID: " + buyer.getId() + ")");
         System.out.println("Product currently sold: " + product.isSold());
         System.out.println("Product current buyer: " + (product.getBuyer() != null ? product.getBuyer().getEmail() : "null"));
+        System.out.println("Product current stock: " + product.getStock());
         
         
         if (product.isSold()) {
             throw new RuntimeException("Product is already sold");
         }
         
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
         
-        product.setSold(true);
-        product.setBuyer(buyer);
-        product.setSoldAt(LocalDateTime.now());
         
-        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
-        System.out.println("Sold at: " + product.getSoldAt());
+        // Handle stock-based purchase logic
+        int currentStock = product.getStock();
+        System.out.println("Processing purchase - current stock: " + currentStock);
+        
+        if (currentStock > 1) {
+            // Reduce stock by 1, keep product in marketplace
+            product.setStock(currentStock - 1);
+            System.out.println("Reduced stock to: " + product.getStock() + " - product remains in marketplace");
+        } else {
+            // Last item sold, mark as sold and remove from marketplace
+            product.setSold(true);
+            product.setBuyer(buyer);
+            product.setSoldAt(LocalDateTime.now());
+            System.out.println("Last item sold - product marked as sold and removed from marketplace");
+        }
+        
+        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + (product.getBuyer() != null ? product.getBuyer().getEmail() : "null"));
+        System.out.println("Updated stock: " + product.getStock());
         
         
         Conversation deliveryConversation = Conversation.builder()
@@ -156,6 +173,10 @@ public class PaymentService {
             throw new RuntimeException("Product is already sold");
         }
         
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
+        
 
         User buyer = getCurrentUser();
         
@@ -182,6 +203,10 @@ public class PaymentService {
         
         if (product.isSold()) {
             throw new RuntimeException("Product is already sold");
+        }
+        
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("Product is out of stock");
         }
         
         if (currentUser.getStripeCustomerId() == null) {
@@ -212,16 +237,32 @@ public class PaymentService {
             throw new RuntimeException("Product is already sold");
         }
         
+        if (product.getStock() <= 0) {
+            throw new RuntimeException("Product is out of stock");
+        }
+        
         if (product.getSeller().getId().equals(buyer.getId())) {
             throw new RuntimeException("Cannot purchase your own product");
         }
         
-        product.setSold(true);
-        product.setBuyer(buyer);
-        product.setSoldAt(LocalDateTime.now());
+        // Handle stock-based purchase logic
+        int currentStock = product.getStock();
+        System.out.println("Processing admin purchase - current stock: " + currentStock);
         
-        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + product.getBuyer().getEmail());
-        System.out.println("Sold at: " + product.getSoldAt());
+        if (currentStock > 1) {
+            // Reduce stock by 1, keep product in marketplace
+            product.setStock(currentStock - 1);
+            System.out.println("Reduced stock to: " + product.getStock() + " - product remains in marketplace");
+        } else {
+            // Last item sold, mark as sold and remove from marketplace
+            product.setSold(true);
+            product.setBuyer(buyer);
+            product.setSoldAt(LocalDateTime.now());
+            System.out.println("Last item sold - product marked as sold and removed from marketplace");
+        }
+        
+        System.out.println("Updating product - sold: " + product.isSold() + ", buyer: " + (product.getBuyer() != null ? product.getBuyer().getEmail() : "null"));
+        System.out.println("Updated stock: " + product.getStock());
 
         Conversation deliveryConversation = Conversation.builder()
                 .product(product)

@@ -26,9 +26,7 @@ public class SalesController {
     @Autowired
     private UserService userService;
     
-    /**
-     * Show sales history page
-     */
+    
     @GetMapping
     public String showSalesHistory(Model model, 
                                  @RequestParam(defaultValue = "0") int page,
@@ -36,20 +34,20 @@ public class SalesController {
         try {
             User currentUser = userService.getCurrentUser();
             
-            // Get all sold products for statistics calculation
+            
             List<ProductDto> allSoldProducts = productService.getSoldProductsBySeller(currentUser.getId());
             
-            // Calculate statistics from all products
+            
             double totalEarnings = allSoldProducts.stream()
                     .mapToDouble(ProductDto::getPrice)
                     .sum();
             
             int totalProductsSold = allSoldProducts.size();
             
-            // Create pageable for pagination
+            
             Pageable pageable = PageRequest.of(page, size);
             
-            // Get paginated sold products
+            
             Page<ProductDto> soldProductsPage = productService.getSoldProductsBySellerPaginated(currentUser.getId(), pageable);
             
             model.addAttribute("soldProducts", soldProductsPage.getContent());
@@ -57,7 +55,7 @@ public class SalesController {
             model.addAttribute("totalProductsSold", totalProductsSold);
             model.addAttribute("currentUser", currentUser);
             
-            // Pagination attributes
+                
             model.addAttribute("currentPage", page);
             model.addAttribute("totalPages", soldProductsPage.getTotalPages());
             model.addAttribute("totalElements", soldProductsPage.getTotalElements());

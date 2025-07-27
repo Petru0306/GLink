@@ -51,7 +51,7 @@ public class FileController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
-                // If the file doesn't exist in uploads, try serving a placeholder image
+                
                 logger.warn("File not found: {}, serving placeholder", fileName);
                 Resource placeholderResource = new ClassPathResource("static/images/placeholder-product.jpg");
                 if (placeholderResource.exists()) {
@@ -88,6 +88,43 @@ public class FileController {
         } else {
             logger.warn("Static image not found: {}", fileName);
             return ResponseEntity.notFound().build();
+        }
+    }
+    
+    @GetMapping("/profiles/{fileName:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveProfileImage(@PathVariable String fileName) {
+        try {
+            logger.info("Request to serve profile image: {}", fileName);
+            Path filePath = this.fileStorageLocation.resolve("profiles").resolve(fileName);
+            logger.info("Looking for profile file at: {}", filePath.toAbsolutePath());
+            Resource resource = new UrlResource(filePath.toUri());
+            
+            if (resource.exists()) {
+                logger.info("Profile file exists, serving: {}", fileName);
+                String contentType = determineContentType(fileName);
+                
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                logger.warn("Profile file not found: {}, serving default avatar", fileName);
+                Resource defaultAvatarResource = new ClassPathResource("static/images/logo.svg");
+                if (defaultAvatarResource.exists()) {
+                    logger.info("Serving default avatar instead");
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType("image/svg+xml"))
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"logo.svg\"")
+                            .body(defaultAvatarResource);
+                } else {
+                    logger.error("Default avatar not found either!");
+                    return ResponseEntity.notFound().build();
+                }
+            }
+        } catch (MalformedURLException e) {
+            logger.error("Error serving profile file {}: {}", fileName, e.getMessage(), e);
+            return ResponseEntity.badRequest().build();
         }
     }
     

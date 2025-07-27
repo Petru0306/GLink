@@ -66,8 +66,8 @@
                 <div class="col-md-6 col-lg-4" th:each="request : ${friendRequests}">
                     <div class="user-card p-4 friend-request-card clickable-card" th:data-user-id="${request.sender.id}">
                         <div class="d-flex align-items-center">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
+                            <div class="user-avatar" th:style="${request.sender.profilePicture != null ? 'background-image: url(' + request.sender.profilePicture + '); background-size: cover; background-position: center;' : ''}">
+                                <i class="bi bi-person" th:if="${request.sender.profilePicture == null}"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="mb-1 fw-bold" th:text="${request.sender.firstName + ' ' + request.sender.lastName}">User Name</h5>
@@ -103,8 +103,8 @@
                 <div class="col-md-6 col-lg-4" th:each="friend : ${friends}">
                     <div class="user-card p-4 friends-card clickable-card" th:data-user-id="${friend.id}">
                         <div class="d-flex align-items-center">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
+                            <div class="user-avatar" th:style="${friend.profilePicture != null ? 'background-image: url(' + friend.profilePicture + '); background-size: cover; background-position: center;' : ''}">
+                                <i class="bi bi-person" th:if="${friend.profilePicture == null}"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="mb-1 fw-bold" th:text="${friend.firstName + ' ' + friend.lastName}">Friend Name</h5>
@@ -136,8 +136,8 @@
                 <div class="col-md-6 col-lg-4" th:each="user : ${searchResults}">
                     <div class="user-card p-4 search-results-card clickable-card" th:data-user-id="${user.id}">
                         <div class="d-flex align-items-center">
-                            <div class="user-avatar">
-                                <i class="bi bi-person"></i>
+                            <div class="user-avatar" th:style="${user.profilePicture != null ? 'background-image: url(' + user.profilePicture + '); background-size: cover; background-position: center;' : ''}">
+                                <i class="bi bi-person" th:if="${user.profilePicture == null}"></i>
                             </div>
                             <div class="flex-grow-1">
                                 <h5 class="mb-1 fw-bold" th:text="${user.firstName + ' ' + user.lastName}">User Name</h5>

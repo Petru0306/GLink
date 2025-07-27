@@ -26,11 +26,9 @@ import com.greenlink.greenlink.repository.PointEventRepository;
 import com.greenlink.greenlink.model.PointEvent;
 import com.greenlink.greenlink.service.ChallengeService;
 import com.greenlink.greenlink.service.DirectMessageService;
+import com.greenlink.greenlink.service.ProfilePictureStorageService;
 
-/**
- * Controller for handling user profile-related operations.
- * Manages both personal profiles and public profile views.
- */
+
 @Controller
 @RequestMapping("/profile")
 public class ProfileController {
@@ -45,6 +43,7 @@ public class ProfileController {
     private final PointEventRepository pointEventRepository;
     private final ChallengeService challengeService;
     private final DirectMessageService directMessageService;
+    private final ProfilePictureStorageService profilePictureStorageService;
 
     @Autowired
     public ProfileController(UserService userService,
@@ -54,7 +53,8 @@ public class ProfileController {
                            FriendService friendService,
                            PointEventRepository pointEventRepository,
                            ChallengeService challengeService,
-                           DirectMessageService directMessageService) {
+                           DirectMessageService directMessageService,
+                           ProfilePictureStorageService profilePictureStorageService) {
         this.userService = userService;
         this.challengeTrackingService = challengeTrackingService;
         this.productService = productService;
@@ -63,12 +63,10 @@ public class ProfileController {
         this.pointEventRepository = pointEventRepository;
         this.challengeService = challengeService;
         this.directMessageService = directMessageService;
+        this.profilePictureStorageService = profilePictureStorageService;
     }
 
-    /**
-     * Display the current user's personal profile page.
-     * Shows user's own data and quick actions.
-     */
+    
     @GetMapping
     public String showPersonalProfile(Model model, Principal principal) {
         try {
@@ -84,10 +82,10 @@ public class ProfileController {
                 return "error";
             }
 
-            // Load personal profile data
+            
             loadPersonalProfileData(model, currentUser);
             
-            // Mark as personal profile
+            
             model.addAttribute("isPersonalProfile", true);
             model.addAttribute("currentUser", currentUser);
             
@@ -101,9 +99,7 @@ public class ProfileController {
         }
     }
 
-    /**
-     * Display the edit profile page for the current user.
-     */
+    
     @GetMapping("/edit")
     public String showEditProfile(Model model, Principal principal) {
         try {
@@ -127,9 +123,7 @@ public class ProfileController {
         }
     }
 
-    /**
-     * Handle profile update form submission.
-     */
+    
     @PostMapping("/edit")
     public String updateProfile(@ModelAttribute User userUpdate,
                               @RequestParam(required = false) MultipartFile profilePicture,
@@ -142,7 +136,7 @@ public class ProfileController {
 
             User updatedUser = userService.updateProfile(principal.getName(), userUpdate, profilePicture);
             
-            // Track profile photo upload for challenges if applicable
+            
             if (profilePicture != null && !profilePicture.isEmpty()) {
                 challengeTrackingService.trackUserAction(updatedUser.getId(), "PROFILE_PHOTO_UPLOADED", null);
                 logger.info("Profile photo uploaded for user: {}", updatedUser.getUsername());
@@ -158,22 +152,55 @@ public class ProfileController {
         
         return "redirect:/profile";
     }
+    
+    @PostMapping("/upload-profile-picture")
+    public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile profilePicture,
+                                     Principal principal,
+                                     RedirectAttributes redirectAttributes) {
+        try {
+            if (principal == null) {
+                return "redirect:/login";
+            }
 
-    /**
-     * Display a public profile page for any user by ID.
-     * Shows user's public information and products.
-     */
+            User currentUser = userService.getCurrentUser(principal.getName());
+            if (currentUser == null) {
+                redirectAttributes.addFlashAttribute("error", "User session expired. Please login again.");
+                return "redirect:/profile";
+            }
+
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                String fileName = profilePictureStorageService.storeFile(profilePicture);
+                currentUser.setProfilePicture("/uploads/profiles/" + fileName);
+                userService.updateProfile(currentUser);
+                
+                // Track the action for points
+                challengeTrackingService.trackUserAction(currentUser.getId(), "PROFILE_PHOTO_UPLOADED", null);
+                
+                redirectAttributes.addFlashAttribute("success", "Profile picture updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Please select a valid image file.");
+            }
+
+        } catch (Exception e) {
+            logger.error("Error uploading profile picture: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("error", "Failed to upload profile picture: " + e.getMessage());
+        }
+        
+        return "redirect:/profile";
+    }
+
+    
     @GetMapping("/user/{userId}")
     public String viewPublicProfile(@PathVariable Long userId, Model model, Principal principal) {
         try {
-            // Validate input
+            
             if (userId == null || userId <= 0) {
                 logger.warn("Invalid user ID provided: {}", userId);
                 model.addAttribute("error", "Invalid user ID provided.");
                 return "error";
             }
 
-            // Get the target user
+            
             User targetUser = userService.getUserById(userId);
             if (targetUser == null) {
                 logger.warn("User with ID {} not found", userId);
@@ -181,7 +208,7 @@ public class ProfileController {
                 return "error";
             }
 
-            // Check if user is viewing their own profile
+            
             User currentUser = null;
             boolean isOwnProfile = false;
             if (principal != null) {
@@ -190,22 +217,22 @@ public class ProfileController {
                     isOwnProfile = currentUser != null && currentUser.getId().equals(targetUser.getId());
                 } catch (Exception e) {
                     logger.warn("Could not get current user: {}", e.getMessage());
-                    // Continue without current user
+                    
                 }
             }
 
-            // Set the profile user first
+
             model.addAttribute("profileUser", targetUser);
             
-            // Load public profile data
+            
             loadPublicProfileData(model, targetUser, principal);
             
-            // Mark as public profile
+            
             model.addAttribute("isPersonalProfile", false);
             model.addAttribute("currentUser", currentUser);
             model.addAttribute("isOwnProfile", isOwnProfile);
             
-            // Check if current user can send DM to target user (friends only)
+            
             if (currentUser != null && !isOwnProfile) {
                 boolean canSendMessage = directMessageService.canSendMessage(currentUser, targetUser);
                 model.addAttribute("canSendMessage", canSendMessage);
@@ -223,16 +250,12 @@ public class ProfileController {
         }
     }
 
-    // ==================== PRIVATE HELPER METHODS ====================
-
-    /**
-     * Load data for personal profile page.
-     */
+    
     private void loadPersonalProfileData(Model model, User currentUser) {
-        // Basic user data
+    
         model.addAttribute("profileUser", currentUser);
 
-        // User's products
+        
         try {
             List<ProductDto> userProducts = productService.getProductsBySeller(currentUser.getId());
             model.addAttribute("products", userProducts != null ? userProducts : List.of());
@@ -241,12 +264,12 @@ public class ProfileController {
             model.addAttribute("products", List.of());
         }
         
-        // User's completed challenges and badges
+        
         try {
             List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(currentUser.getId());
             model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
             
-            // Extract unique badges from completed challenges
+            
             List<String> earnedBadges = (completedChallenges != null ? completedChallenges.stream()
                 .map(uc -> uc.getChallenge().getBadge())
                 .filter(badge -> badge != null && !badge.trim().isEmpty())
@@ -260,7 +283,7 @@ public class ProfileController {
             model.addAttribute("earnedBadges", List.of());
         }
         
-        // User's friends
+        
         try {
             List<User> friends = friendService.getFriendsList(currentUser);
             model.addAttribute("friends", friends != null ? friends : List.of());
@@ -269,7 +292,7 @@ public class ProfileController {
             model.addAttribute("friends", List.of());
         }
         
-        // Recent activity (last 5 point events)
+        
         try {
             List<PointEvent> recentActivity = pointEventRepository.findTop5ByUserIdOrderByCreatedAtDesc(currentUser.getId());
             model.addAttribute("recentActivity", recentActivity != null ? recentActivity : List.of());
@@ -278,12 +301,12 @@ public class ProfileController {
             model.addAttribute("recentActivity", List.of());
         }
         
-        // Reviews (placeholder for now - would need a review system)
+        
         model.addAttribute("reviews", List.of());
         model.addAttribute("averageRating", 0.0);
         model.addAttribute("totalReviews", 0);
         
-        // User's rank
+        
         try {
             int userRank = userService.getUserRank(currentUser.getId());
             model.addAttribute("userRank", userRank);
@@ -292,17 +315,15 @@ public class ProfileController {
             model.addAttribute("userRank", 0);
         }
         
-        // Load completed lessons for the quizzes section
+        
         loadCompletedLessons(model, currentUser);
     }
 
-    /**
-     * Load data for public profile page.
-     */
+    
     private void loadPublicProfileData(Model model, User targetUser, Principal principal) {
-        // Note: profileUser is already set in the controller method
+        
 
-        // User's products
+        
         try {
             List<ProductDto> userProducts = productService.getProductsBySeller(targetUser.getId());
             model.addAttribute("products", userProducts != null ? userProducts : List.of());
@@ -311,12 +332,12 @@ public class ProfileController {
             model.addAttribute("products", List.of());
         }
         
-        // User's completed challenges and badges
+        
         try {
             List<UserChallenge> completedChallenges = challengeService.getUserCompletedChallenges(targetUser.getId());
             model.addAttribute("completedChallenges", completedChallenges != null ? completedChallenges : List.of());
             
-            // Extract unique badges from completed challenges
+            
             List<String> earnedBadges = (completedChallenges != null ? completedChallenges.stream()
                 .map(uc -> uc.getChallenge().getBadge())
                 .filter(badge -> badge != null && !badge.trim().isEmpty())
@@ -330,7 +351,7 @@ public class ProfileController {
             model.addAttribute("earnedBadges", List.of());
         }
         
-        // User's friends
+
         try {
             List<User> friends = friendService.getFriendsList(targetUser);
             model.addAttribute("friends", friends != null ? friends : List.of());
@@ -339,7 +360,7 @@ public class ProfileController {
             model.addAttribute("friends", List.of());
         }
         
-        // Recent activity (last 5 point events)
+        
         try {
             List<PointEvent> recentActivity = pointEventRepository.findTop5ByUserIdOrderByCreatedAtDesc(targetUser.getId());
             model.addAttribute("recentActivity", recentActivity != null ? recentActivity : List.of());
@@ -348,12 +369,12 @@ public class ProfileController {
             model.addAttribute("recentActivity", List.of());
         }
         
-        // Reviews (placeholder for now - would need a review system)
+        
         model.addAttribute("reviews", List.of());
         model.addAttribute("averageRating", 0.0);
         model.addAttribute("totalReviews", 0);
         
-        // User's rank
+        
         try {
             int userRank = userService.getUserRank(targetUser.getId());
             model.addAttribute("userRank", userRank);
@@ -362,7 +383,7 @@ public class ProfileController {
             model.addAttribute("userRank", 0);
         }
         
-        // Friend status for current user
+        
         if (principal != null) {
             try {
                 User currentUser = userService.getCurrentUser(principal.getName());
@@ -381,26 +402,24 @@ public class ProfileController {
             model.addAttribute("friendRequestSent", false);
         }
         
-        // Load completed lessons for the quizzes section
+        
         loadCompletedLessons(model, targetUser);
     }
     
-    /**
-     * Load completed lessons data for the user profile.
-     */
+    
     private void loadCompletedLessons(Model model, User user) {
         try {
-            // Get all completed lessons (quiz results) for the user
+            
             List<QuizResult> completedLessons = quizResultRepository.findByUserId(user.getId());
             
-            // Create a list of lesson completion data with enhanced information
+            
             List<LessonCompletionData> lessonCompletions = completedLessons.stream()
                 .map(this::mapToLessonCompletionData)
                 .collect(Collectors.toList());
             
             model.addAttribute("completedLessons", lessonCompletions);
             
-            // Legacy support - keep existing quiz results for backward compatibility
+            
             model.addAttribute("quizResults", completedLessons);
             
             logger.info("Loaded {} completed lessons for user: {}", completedLessons.size(), user.getUsername());
@@ -412,17 +431,15 @@ public class ProfileController {
         }
     }
     
-    /**
-     * Map QuizResult to LessonCompletionData with enhanced information.
-     */
+    
     private LessonCompletionData mapToLessonCompletionData(QuizResult quizResult) {
         LessonCompletionData lessonData = new LessonCompletionData();
         
-        // Get the quiz ID to determine which course this is
+        
         Long quizId = quizResult.getQuiz() != null ? quizResult.getQuiz().getId() : null;
         
         if (quizId != null) {
-            // Map course information based on quiz ID
+
             switch (quizId.intValue()) {
                 case 1:
                     lessonData.setTitle("1. Ce este sustenabilitatea?");
@@ -461,7 +478,7 @@ public class ProfileController {
                     lessonData.setCourseNumber(6);
                     break;
                 default:
-                    // Fallback to quiz data if available
+                    
                     if (quizResult.getQuiz() != null) {
                         lessonData.setTitle(quizResult.getQuiz().getTitle());
                         lessonData.setDescription(quizResult.getQuiz().getDescription());
@@ -485,11 +502,7 @@ public class ProfileController {
         return lessonData;
     }
 
-    // ==================== DTO CLASSES ====================
-
-    /**
-     * Data transfer object for lesson completion information.
-     */
+    
     public static class LessonCompletionData {
         private String title;
         private String description;
@@ -498,7 +511,7 @@ public class ProfileController {
         private String imageUrl;
         private int courseNumber;
 
-        // Getters and Setters
+
         public String getTitle() {
             return title;
         }

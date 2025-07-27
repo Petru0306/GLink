@@ -33,7 +33,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private R2StorageService r2StorageService;
+    private FileStorageService fileStorageService;
     
     @Autowired
     private UserRepository userRepository;
@@ -68,7 +68,6 @@ public class ProductService {
                 product.getBranch() != null ? product.getBranch() : Product.Branch.VERDE
         );
         
-        // Set sale-related fields
         dto.setSold(product.isSold());
         dto.setBuyerId(buyerId);
         dto.setBuyerName(buyerName);
@@ -87,7 +86,6 @@ public class ProductService {
                 product.getBuyer().getFirstName() + " " + product.getBuyer().getLastName() : null;
         Long buyerId = product.getBuyer() != null ? product.getBuyer().getId() : null;
         
-        // Get negotiated price for the current user if available
         Double negotiatedPrice = null;
         if (currentUser != null) {
             negotiatedPrice = product.getNegotiatedPriceForUser(currentUser.getId());
@@ -111,7 +109,6 @@ public class ProductService {
                 negotiatedPrice
         );
         
-        // Set sale-related fields
         dto.setSold(product.isSold());
         dto.setBuyerId(buyerId);
         dto.setBuyerName(buyerName);
@@ -135,13 +132,11 @@ public class ProductService {
             product.setBranch(dto.getBranch());
         }
 
-        // Set seller if sellerId is provided
         if (dto.getSellerId() != null) {
             userRepository.findById(dto.getSellerId())
                     .ifPresent(product::setSeller);
         }
 
-        // Setăm timestamp-urile doar pentru produse noi
         if (dto.getId() == null) {
             product.setCreatedAt(LocalDateTime.now());
             product.setUpdatedAt(LocalDateTime.now());
@@ -190,7 +185,6 @@ public class ProductService {
     public ProductDto addProduct(ProductDto productDto) {
         Product product = convertToEntity(productDto);
         
-        // Set current user as seller if not specified
         if (product.getSeller() == null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof User) {
@@ -201,14 +195,12 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
         ProductDto savedProductDto = convertToDto(savedProduct);
         
-        // Track marketplace item listing for challenges
         if (savedProduct.getSeller() != null) {
             try {
                 logger.info("Tracking marketplace item listing for user: {}", savedProduct.getSeller().getId());
                 challengeTrackingService.trackUserAction(savedProduct.getSeller().getId(), "MARKETPLACE_ITEM_LISTED", savedProductDto);
             } catch (Exception e) {
                 logger.error("Error tracking marketplace item listing: {}", e.getMessage(), e);
-                // Don't throw the exception - challenge tracking failure shouldn't break product creation
             }
         }
         
@@ -219,7 +211,6 @@ public class ProductService {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
 
-        // Actualizăm câmpurile
         existingProduct.setName(productDto.getName());
         existingProduct.setDescription(productDto.getDescription());
         existingProduct.setPrice(productDto.getPrice());
@@ -231,14 +222,12 @@ public class ProductService {
             existingProduct.setBranch(productDto.getBranch());
         }
 
-        // Actualizăm imaginea doar dacă e furnizată una nouă
         if (productDto.getImageUrl() != null && !productDto.getImageUrl().equals(existingProduct.getImageUrl())) {
-            // Ștergem imaginea veche dacă există
             if (existingProduct.getImageUrl() != null) {
-                String oldFileName = r2StorageService.extractFileNameFromUrl(existingProduct.getImageUrl());
-                if (oldFileName != null) {
-                    r2StorageService.deleteFile(oldFileName);
-                }
+                String oldFileName = existingProduct.getImageUrl().substring(
+                        existingProduct.getImageUrl().lastIndexOf("/") + 1
+                );
+                fileStorageService.deleteFile(oldFileName);
             }
             existingProduct.setImageUrl(productDto.getImageUrl());
         }
@@ -252,19 +241,17 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
 
-        // Remove product from all users' favorites before deleting
         List<User> usersWithFavorite = userRepository.findByFavoriteProductsContains(product);
         for (User user : usersWithFavorite) {
             user.getFavoriteProducts().remove(product);
             userRepository.save(user);
         }
 
-        // Ștergem imaginea asociată dacă există
         if (product.getImageUrl() != null) {
-            String fileName = r2StorageService.extractFileNameFromUrl(product.getImageUrl());
-            if (fileName != null) {
-                r2StorageService.deleteFile(fileName);
-            }
+            String fileName = product.getImageUrl().substring(
+                    product.getImageUrl().lastIndexOf("/") + 1
+            );
+            fileStorageService.deleteFile(fileName);
         }
 
         productRepository.deleteById(id);
@@ -298,7 +285,6 @@ public class ProductService {
         Specification<Product> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Always filter out sold products
             predicates.add(cb.equal(root.get("sold"), false));
             logger.info("Filtering out sold products - only showing available products");
 
@@ -330,7 +316,6 @@ public class ProductService {
         Page<Product> products = productRepository.findAll(spec, pageable);
         logger.info("Found {} products in marketplace (filtered out sold products)", products.getTotalElements());
         
-        // Log each product to debug
         for (Product product : products.getContent()) {
             logger.info("Product in marketplace: ID={}, Name={}, Sold={}", 
                        product.getId(), product.getName(), product.isSold());
@@ -350,11 +335,9 @@ public class ProductService {
     }
 
     public List<ProductDto> filterProducts(Category category, Double minPrice, Double maxPrice, Boolean ecoFriendly) {
-        // Note: findByFilters method in repository doesn't filter by sold status
-        // This method should be updated to use Specification like getFilteredProducts
         return productRepository.findByFilters(category, minPrice, maxPrice, ecoFriendly)
                 .stream()
-                .filter(product -> !product.isSold()) // Filter out sold products
+                .filter(product -> !product.isSold()) 
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -363,7 +346,6 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
 
-        // Get products from the same category and branch, excluding the current product
         List<Product> similarProducts = productRepository.findByCategoryAndBranchAndIdNot(
                 product.getCategory(),
                 product.getBranch(),
@@ -371,7 +353,6 @@ public class ProductService {
                 PageRequest.of(0, limit)
             );
             
-        // If no products found in the same category and branch, get products just from the same branch
         if (similarProducts.isEmpty()) {
             similarProducts = productRepository.findByBranchAndIdNot(
                 product.getBranch(),
@@ -381,7 +362,7 @@ public class ProductService {
         }
         
         return similarProducts.stream()
-                .filter(p -> !p.isSold()) // Filter out sold products
+                .filter(p -> !p.isSold()) 
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
@@ -390,7 +371,6 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Produsul nu a fost găsit"));
 
-        // Get products from the same category and branch, excluding the current product
         List<Product> similarProducts = productRepository.findByCategoryAndBranchAndIdNot(
                 product.getCategory(),
                 product.getBranch(),
@@ -398,7 +378,6 @@ public class ProductService {
                 PageRequest.of(0, limit)
             );
             
-        // If no products found in the same category and branch, get products just from the same branch
         if (similarProducts.isEmpty()) {
             similarProducts = productRepository.findByBranchAndIdNot(
                 product.getBranch(),
@@ -408,7 +387,7 @@ public class ProductService {
         }
         
         return similarProducts.stream()
-                .filter(p -> !p.isSold()) // Filter out sold products
+                .filter(p -> !p.isSold()) 
                 .map(p -> convertToDto(p, currentUser))
                 .collect(Collectors.toList());
     }
@@ -443,10 +422,8 @@ public class ProductService {
     }
     
     public Page<ProductDto> getSoldProductsBySellerPaginated(Long sellerId, Pageable pageable) {
-        // Get all sold products for this seller
         List<Product> allSoldProducts = productRepository.findSoldProductsBySellerId(sellerId);
         
-        // Calculate pagination manually since the repository method returns a List
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allSoldProducts.size());
         
@@ -479,7 +456,7 @@ public class ProductService {
         
         List<PurchaseDto> purchaseDtos = products.stream()
                 .map(PurchaseDto::fromProduct)
-                .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
+                .filter(purchaseDto -> purchaseDto != null) 
                 .collect(Collectors.toList());
         
         System.out.println("PurchaseDtos after conversion: " + purchaseDtos.size());
@@ -494,16 +471,13 @@ public class ProductService {
     }
     
     public Page<PurchaseDto> getBoughtProductsByBuyerPaginated(Long buyerId, Pageable pageable) {
-        // Get all bought products for this buyer
         List<Product> allBoughtProducts = productRepository.findProductsByBuyerId(buyerId);
         
-        // Convert to DTOs and filter out nulls
         List<PurchaseDto> allPurchaseDtos = allBoughtProducts.stream()
                 .map(PurchaseDto::fromProduct)
                 .filter(purchaseDto -> purchaseDto != null)
                 .collect(Collectors.toList());
         
-        // Calculate pagination manually since the repository method returns a List
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allPurchaseDtos.size());
         

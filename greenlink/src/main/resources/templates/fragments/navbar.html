@@ -1,7 +1,6 @@
 <!-- Navbar Fragment -->
 <th:block th:fragment="navbar">
     <style>
-        /* Enhanced Nav Links with Lifting Animation */
         .navbar-nav .nav-link {
             position: relative;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -35,7 +34,6 @@
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
         }
 
-        /* Enhanced Dropdown Toggle Buttons */
         .navbar-nav .dropdown-toggle {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateY(0);
@@ -47,7 +45,6 @@
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
         }
 
-        /* Dropdown animation */
         .dropdown-menu-animate {
             animation: slideIn 0.2s ease-out;
             transform-origin: top;
@@ -64,7 +61,6 @@
             }
         }
 
-        /* Favorite button animations */
         .favorite-btn {
             transition: all 0.3s ease;
             position: relative;
@@ -102,7 +98,6 @@
             100% { transform: scale(1); }
         }
 
-        /* Quick favorite button position */
         .quick-favorite-btn {
             position: absolute;
             top: 1rem;
@@ -154,13 +149,11 @@
                             <li><a class="dropdown-item" href="/marketplace">
                                 <i class="bi bi-shop me-2"></i><span th:text="#{nav.all.markets}">All Markets</span>
                             </a></li>
-                            <!-- Favorites for authenticated users -->
                             <li sec:authorize="isAuthenticated()">
                                 <a class="dropdown-item" href="/marketplace/favorites">
                                     <i class="bi bi-heart me-2"></i><span th:text="#{nav.favorites}">Favorites</span>
                                 </a>
                             </li>
-                            <!-- Favorites triggers login for guests -->
                             <li sec:authorize="!isAuthenticated()">
                                 <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
                                     <i class="bi bi-heart me-2"></i><span th:text="#{nav.favorites}">Favorites</span>
@@ -201,7 +194,6 @@
                     </li>
                 </ul>
                 
-                <!-- Language Toggle -->
                 <div class="dropdown me-2">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <span th:if="${#locale.language == 'en'}">🇬🇧</span>
@@ -234,31 +226,24 @@
         </div>
     </nav>
 
-    <!-- Include the login modal -->
     <div th:replace="fragments/login-modal :: loginModal"></div>
     
-    <!-- Include the login modal script -->
     <div th:replace="fragments/login-modal :: loginModalScript"></div>
 
-    <!-- Include Custom Cursor Effects Script -->
     <script src="/js/cursor-effects.js"></script>
 
-    <!-- Dropdown hover script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Marketplace dropdown hover
+        document.addEventListener('DOMContentLoaded', function() {  
             const marketplaceDropdownToggle = document.querySelector('#marketplaceDropdown');
             const marketplaceDropdownMenu = marketplaceDropdownToggle.nextElementSibling;
             let marketplaceTimeoutId;
 
-            // Show marketplace dropdown on hover
             marketplaceDropdownToggle.parentElement.addEventListener('mouseenter', function() {
                 clearTimeout(marketplaceTimeoutId);
                 marketplaceDropdownToggle.classList.add('show');
                 marketplaceDropdownMenu.classList.add('show');
             });
 
-            // Hide marketplace dropdown when mouse leaves
             marketplaceDropdownToggle.parentElement.addEventListener('mouseleave', function() {
                 marketplaceTimeoutId = setTimeout(() => {
                     marketplaceDropdownToggle.classList.remove('show');
@@ -266,24 +251,20 @@
                 }, 200);
             });
 
-            // Keep marketplace dropdown visible when hovering the menu
             marketplaceDropdownMenu.addEventListener('mouseenter', function() {
                 clearTimeout(marketplaceTimeoutId);
             });
 
-            // Points dropdown hover
             const pointsDropdownToggle = document.querySelector('#pointsDropdown');
             const pointsDropdownMenu = pointsDropdownToggle.nextElementSibling;
             let pointsTimeoutId;
 
-            // Show points dropdown on hover
             pointsDropdownToggle.parentElement.addEventListener('mouseenter', function() {
                 clearTimeout(pointsTimeoutId);
                 pointsDropdownToggle.classList.add('show');
                 pointsDropdownMenu.classList.add('show');
             });
 
-            // Hide points dropdown when mouse leaves
             pointsDropdownToggle.parentElement.addEventListener('mouseleave', function() {
                 pointsTimeoutId = setTimeout(() => {
                     pointsDropdownToggle.classList.remove('show');
@@ -291,7 +272,6 @@
                 }, 200);
             });
 
-            // Keep points dropdown visible when hovering the menu
             pointsDropdownMenu.addEventListener('mouseenter', function() {
                 clearTimeout(pointsTimeoutId);
             });
@@ -303,32 +283,26 @@
         });
     </script>
     
-    <!-- Global WebSocket for Notifications -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Only connect if user is logged in (badge exists)
         var inboxBtn = document.querySelector('a[href="/inbox"]');
         var badge = inboxBtn ? inboxBtn.querySelector('.unread-message-count') : null;
         var stompClient = null;
         
         function connectNotificationWebSocket() {
-            // Only connect if inbox button exists (user is logged in)
             if (!inboxBtn) return;
             var socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
             stompClient.debug = null;
             stompClient.connect({}, function(frame) {
-                // Subscribe to notifications
                 stompClient.subscribe('/user/queue/notifications', function(message) {
-                    // Show the badge (red dot) if not already visible
                     if (badge) {
                         badge.style.display = '';
                         badge.classList.add('bg-danger');
                         badge.textContent = '';
                     } else {
-                        // If badge doesn't exist, create a red dot
                         var dot = document.createElement('span');
                         dot.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger unread-message-count';
                         dot.style.width = '10px';
@@ -339,27 +313,23 @@
                     }
                 });
             }, function(error) {
-                // Retry after 5 seconds if connection fails
                 setTimeout(connectNotificationWebSocket, 5000);
             });
         }
         connectNotificationWebSocket();
     });
     </script>
-    
-    <!-- Logout Button Functionality -->
+
     <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function() {
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function() {
-                // Create a form element
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '/logout';
                 form.style.display = 'none';
                 
-                // Add CSRF token (Thymeleaf way)
                 const csrfToken = /*[[${_csrf != null ? _csrf.token : ''}]]*/ '';
                 const csrfParameterName = /*[[${_csrf != null ? _csrf.parameterName : '_csrf'}]]*/ '_csrf';
                 
@@ -371,10 +341,8 @@
                     form.appendChild(csrfInput);
                 }
                 
-                // Append form to body
                 document.body.appendChild(form);
                 
-                // Submit the form - Spring Security will handle the logout and redirect
                 form.submit();
             });
         }

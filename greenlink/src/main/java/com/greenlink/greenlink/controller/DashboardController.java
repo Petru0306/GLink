@@ -8,11 +8,14 @@ import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.service.ChallengeService;
 import com.greenlink.greenlink.service.PointsService;
+import com.greenlink.greenlink.service.ProfilePictureStorageService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -32,6 +35,12 @@ public class DashboardController {
     
     @Autowired
     private PointsService pointsService;
+    
+    @Autowired
+    private ProfilePictureStorageService profilePictureStorageService;
+    
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
 
     public DashboardController(UserService userService) { 
         this.userService = userService;
@@ -43,7 +52,7 @@ public class DashboardController {
             return "redirect:/login";
         }
         
-        // Load fresh user data from database to get updated points
+        
         User user = userService.getCurrentUser(principal.getName());
         if (user == null) {
             return "redirect:/login";
@@ -51,7 +60,7 @@ public class DashboardController {
         
         model.addAttribute("user", user);
         
-        // Add sales statistics for Quick Actions
+        
         try {
             List<ProductDto> soldProducts = productService.getSoldProductsBySeller(user.getId());
             double totalEarnings = soldProducts.stream()
@@ -66,7 +75,7 @@ public class DashboardController {
             model.addAttribute("totalProductsSold", 0);
         }
         
-        // Add buy history statistics for Quick Actions
+        
         try {
             List<PurchaseDto> boughtProducts = productService.getBoughtProductsByBuyer(user.getId());
             double totalAmountSpent = boughtProducts.stream()
@@ -81,13 +90,13 @@ public class DashboardController {
             model.addAttribute("totalProductsBought", 0);
         }
         
-        // Add challenge statistics
+        
         try {
-            // Get completed challenges count
+            
             long completedChallengesCount = challengeService.getCompletedChallengesCount(user.getId());
             model.addAttribute("completedChallengesCount", completedChallengesCount);
             
-            // Get current streak
+            
             long currentStreak = challengeService.getCurrentStreak(user.getId());
             model.addAttribute("currentStreak", currentStreak);
         } catch (Exception e) {
@@ -95,7 +104,7 @@ public class DashboardController {
             model.addAttribute("currentStreak", 0);
         }
         
-        // Add user rank
+        
         try {
             int userRank = userService.getUserRank(user.getId());
             model.addAttribute("userRank", userRank);
@@ -103,15 +112,50 @@ public class DashboardController {
             model.addAttribute("userRank", 0);
         }
         
-        // Add recent events for Recent Activity section
+            
         try {
-            List<PointEvent> recentEvents = pointsService.getRecentEvents(user.getId(), 5); // Last 5 events
+            List<PointEvent> recentEvents = pointsService.getRecentEvents(user.getId(), 5); 
             model.addAttribute("recentEvents", recentEvents);
         } catch (Exception e) {
             model.addAttribute("recentEvents", new ArrayList<>());
         }
         
         return "dashboard";
+    }
+    
+    @PostMapping("/upload-profile-picture")
+    public String uploadProfilePicture(@RequestParam("profilePicture") MultipartFile profilePicture,
+                                     Principal principal,
+                                     RedirectAttributes redirectAttributes) {
+        try {
+            if (principal == null) {
+                return "redirect:/login";
+            }
+
+            User currentUser = userService.getCurrentUser(principal.getName());
+            if (currentUser == null) {
+                redirectAttributes.addFlashAttribute("error", "User session expired. Please login again.");
+                return "redirect:/dashboard";
+            }
+
+            if (profilePicture != null && !profilePicture.isEmpty()) {
+                String fileName = profilePictureStorageService.storeFile(profilePicture);
+                currentUser.setProfilePicture("/uploads/profiles/" + fileName);
+                userService.updateProfile(currentUser);
+                
+                // Track the action for points
+                challengeTrackingService.trackUserAction(currentUser.getId(), "PROFILE_PHOTO_UPLOADED", null);
+                
+                redirectAttributes.addFlashAttribute("success", "Profile picture updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Please select a valid image file.");
+            }
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload profile picture: " + e.getMessage());
+        }
+        
+        return "redirect:/dashboard";
     }
 }
 
