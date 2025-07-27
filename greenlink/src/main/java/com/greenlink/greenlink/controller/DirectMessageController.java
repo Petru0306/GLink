@@ -5,7 +5,9 @@ import com.greenlink.greenlink.dto.DirectMessageDto;
 import com.greenlink.greenlink.model.DirectMessageConversation;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.DirectMessageService;
+import com.greenlink.greenlink.service.FriendService;
 import com.greenlink.greenlink.service.UserService;
+import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +32,14 @@ public class DirectMessageController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private FriendService friendService;
+    
+    @Autowired
+    private ChallengeTrackingService challengeTrackingService;
+    
+
     
     @GetMapping("/conversations")
     @PreAuthorize("isAuthenticated()")
@@ -63,7 +73,6 @@ public class DirectMessageController {
                 return ResponseEntity.badRequest().body(Map.of("error", "User not found"));
             }
             
-            // Check if users are friends
             boolean canSendMessage = directMessageService.canSendMessage(currentUser, targetUser);
             logger.info("Can send message: " + canSendMessage);
             
@@ -117,6 +126,9 @@ public class DirectMessageController {
             User currentUser = userService.getUserByEmail(principal.getName());
             
             DirectMessageDto message = directMessageService.sendMessage(conversationId, currentUser, content);
+            
+            // Track challenge progress for sending first message
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
             
             return ResponseEntity.ok(message);
         } catch (Exception e) {
@@ -181,4 +193,6 @@ public class DirectMessageController {
             return ResponseEntity.ok(Map.of("canMessage", false));
         }
     }
+
+
 } 

@@ -26,6 +26,9 @@ public class StripeService {
     @Value("${stripe.webhook-secret}")
     private String webhookSecret;
     
+    @Value("${app.domain:https://your-domain.com}")
+    private String appDomain;
+    
     /**
      * Create a Stripe Connect Express account for a seller
      */
@@ -92,40 +95,104 @@ public class StripeService {
     /**
      * Create a checkout session for a product purchase
      */
-    public Session createCheckoutSession(Product product, User buyer, String successUrl, String cancelUrl) throws StripeException {
-        // Calculate platform commission
-        long commissionAmount = (long) (product.getPrice() * platformCommissionPercentage / 100.0 * 100); // Convert to cents
+    public Session createCheckoutSession(Product product, User buyer, String successUrl, String cancelUrl, String domain) throws StripeException {
+        // Log the URLs for debugging
+        System.out.println("Creating checkout session with URLs:");
+        System.out.println("Success URL: " + successUrl);
+        System.out.println("Cancel URL: " + cancelUrl);
         
-        SessionCreateParams params = SessionCreateParams.builder()
+        // Add session_id parameter to success URL for fallback processing
+        String successUrlWithSession = successUrl + (successUrl.contains("?") ? "&" : "?") + "session_id={CHECKOUT_SESSION_ID}";
+        System.out.println("Modified Success URL: " + successUrlWithSession);
+        
+        // Get the price to use (negotiated price if available, otherwise original price)
+        double priceToUse = product.getPrice();
+        Double negotiatedPrice = product.getNegotiatedPriceForUser(buyer.getId());
+        if (negotiatedPrice != null) {
+            priceToUse = negotiatedPrice;
+            System.out.println("Using negotiated price: " + negotiatedPrice + " RON (original: " + product.getPrice() + " RON)");
+        } else {
+            System.out.println("Using original price: " + product.getPrice() + " RON");
+        }
+        
+        // Calculate platform commission in cents
+        long productAmountCents = (long) (priceToUse * 100); // Convert to cents
+        long commissionAmountCents = (long) (productAmountCents * platformCommissionPercentage / 100.0);
+        
+        SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(successUrl)
+                .setSuccessUrl(successUrlWithSession)
                 .setCancelUrl(cancelUrl)
-                .setCustomer(buyer.getStripeCustomerId())
-                .addLineItem(
-                        SessionCreateParams.LineItem.builder()
-                                .setPriceData(
-                                        SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency("ron")
-                                                .setProductData(
-                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                .setName(product.getName())
-                                                                .setDescription(product.getDescription())
-                                                                .addImage(product.getImageUrl())
-                                                                .build()
-                                                )
-                                                .setUnitAmount((long) (product.getPrice() * 100)) // Convert to cents
-                                                .build()
-                                )
-                                .setQuantity(1L)
-                                .build()
-                )
+                .setCustomer(buyer.getStripeCustomerId());
+        
+        // Build product data for line items
+        SessionCreateParams.LineItem.PriceData.ProductData.Builder productDataBuilder = 
+                SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                        .setName(product.getName())
+                        .setDescription(product.getDescription());
+        
+        // Only add image if it's not null or empty and is a valid URL
+        if (product.getImageUrl() != null && !product.getImageUrl().trim().isEmpty()) {
+            String imageUrl = product.getImageUrl().trim();
+            
+            // Convert relative URLs to absolute URLs for Stripe
+            if (!imageUrl.startsWith("http")) {
+                // Convert relative URL to absolute URL
+                String absoluteImageUrl;
+                if (imageUrl.startsWith("/")) {
+                    // It's a relative path starting with /
+                    absoluteImageUrl = domain + imageUrl;
+                    System.out.println("Converting relative image URL to absolute: " + imageUrl + " -> " + absoluteImageUrl);
+                } else {
+                    // Skip if it's not a valid URL format
+                    System.out.println("Skipping invalid image URL format: " + imageUrl);
+                    absoluteImageUrl = null;
+                }
+                
+                if (absoluteImageUrl != null) {
+                    productDataBuilder.addImage(absoluteImageUrl);
+                }
+            } else {
+                // Already an absolute URL
+                productDataBuilder.addImage(imageUrl);
+            }
+        }
+        
+        paramsBuilder.addLineItem(
+                SessionCreateParams.LineItem.builder()
+                        .setPriceData(
+                                SessionCreateParams.LineItem.PriceData.builder()
+                                        .setCurrency("ron")
+                                        .setProductData(productDataBuilder.build())
+                                        .setUnitAmount(productAmountCents)
+                                        .build()
+                        )
+                        .setQuantity(1L)
+                        .build()
+        )
                 .putMetadata("product_id", product.getId().toString())
                 .putMetadata("buyer_id", buyer.getId().toString())
                 .putMetadata("seller_id", product.getSeller().getId().toString())
-                .putMetadata("commission_amount", String.valueOf(commissionAmount))
-                .build();
+                .putMetadata("commission_amount", String.valueOf(commissionAmountCents))
+                .putMetadata("price_used", String.valueOf(priceToUse))
+                .putMetadata("is_negotiated_price", String.valueOf(negotiatedPrice != null));
         
-        return Session.create(params);
+        // Add Stripe Connect transfer to seller if seller has onboarded
+        if (product.getSeller().getStripeAccountId() != null) {
+            paramsBuilder
+                .setPaymentIntentData(
+                    SessionCreateParams.PaymentIntentData.builder()
+                        .setApplicationFeeAmount(commissionAmountCents)
+                        .setTransferData(
+                            SessionCreateParams.PaymentIntentData.TransferData.builder()
+                                .setDestination(product.getSeller().getStripeAccountId())
+                                .build()
+                        )
+                        .build()
+                );
+        }
+        
+        return Session.create(paramsBuilder.build());
     }
     
     /**
@@ -165,5 +232,108 @@ public class StripeService {
      */
     public Session retrieveSession(String sessionId) throws StripeException {
         return Session.retrieve(sessionId);
+    }
+
+    /**
+     * Create a direct transfer between users (peer-to-peer)
+     */
+    public String createDirectTransfer(User fromUser, User toUser, long amount, String description) throws StripeException {
+        // Ensure both users have Stripe accounts
+        if (fromUser.getStripeAccountId() == null || toUser.getStripeAccountId() == null) {
+            throw new RuntimeException("Both users must have Stripe accounts for direct transfers");
+        }
+        
+        // Create transfer from platform to seller
+        com.stripe.model.Transfer transfer = com.stripe.model.Transfer.create(
+            com.stripe.param.TransferCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setDestination(toUser.getStripeAccountId())
+                .setDescription(description)
+                .putMetadata("from_user_id", fromUser.getId().toString())
+                .putMetadata("to_user_id", toUser.getId().toString())
+                .build()
+        );
+        
+        return transfer.getId();
+    }
+    
+    /**
+     * Create instant payout for seller
+     */
+    public String createInstantPayout(User seller, long amount) throws StripeException {
+        if (seller.getStripeAccountId() == null) {
+            throw new RuntimeException("Seller must have a Stripe account");
+        }
+        
+        com.stripe.model.Payout payout = com.stripe.model.Payout.create(
+            com.stripe.param.PayoutCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setMethod(com.stripe.param.PayoutCreateParams.Method.INSTANT)
+                .build(),
+            com.stripe.net.RequestOptions.builder()
+                .setStripeAccount(seller.getStripeAccountId())
+                .build()
+        );
+        
+        return payout.getId();
+    }
+    
+    /**
+     * Create a payment intent for direct charges
+     */
+    public String createPaymentIntent(User buyer, User seller, long amount, String description) throws StripeException {
+        com.stripe.model.PaymentIntent paymentIntent = com.stripe.model.PaymentIntent.create(
+            com.stripe.param.PaymentIntentCreateParams.builder()
+                .setAmount(amount)
+                .setCurrency("ron")
+                .setCustomer(buyer.getStripeCustomerId())
+                .setApplicationFeeAmount((long) (amount * platformCommissionPercentage / 100.0))
+                .setTransferData(
+                    com.stripe.param.PaymentIntentCreateParams.TransferData.builder()
+                        .setDestination(seller.getStripeAccountId())
+                        .build()
+                )
+                .setDescription(description)
+                .putMetadata("buyer_id", buyer.getId().toString())
+                .putMetadata("seller_id", seller.getId().toString())
+                .build()
+        );
+        
+        return paymentIntent.getId();
+    }
+    
+    /**
+     * Get account balance for a seller
+     */
+    public Map<String, Object> getAccountBalance(String accountId) throws StripeException {
+        com.stripe.model.Balance balance = com.stripe.model.Balance.retrieve(
+            com.stripe.net.RequestOptions.builder()
+                .setStripeAccount(accountId)
+                .build()
+        );
+        
+        Map<String, Object> balanceInfo = new HashMap<>();
+        balanceInfo.put("available", balance.getAvailable());
+        balanceInfo.put("pending", balance.getPending());
+        balanceInfo.put("instant_available", balance.getInstantAvailable());
+        
+        return balanceInfo;
+    }
+    
+    /**
+     * Create a refund for a payment
+     */
+    public String createRefund(String paymentIntentId, long amount, String reason) throws StripeException {
+        com.stripe.model.Refund refund = com.stripe.model.Refund.create(
+            com.stripe.param.RefundCreateParams.builder()
+                .setPaymentIntent(paymentIntentId)
+                .setAmount(amount)
+                .setReason(com.stripe.param.RefundCreateParams.Reason.valueOf(reason.toUpperCase()))
+                .build()
+        );
+        
+        return refund.getId();
     }
 } 

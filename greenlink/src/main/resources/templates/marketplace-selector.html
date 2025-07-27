@@ -327,8 +327,8 @@
         }
         
         .selector-section {
-            margin-top: -4rem;
-            margin-bottom: 4rem;
+            margin-top: -2rem;
+            margin-bottom: 3rem;
             position: relative;
             z-index: 10;
         }
@@ -383,7 +383,255 @@
             }
             
             .selector-section {
-                margin-top: -2rem;
+                margin-top: -1rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Marketplace Actions Section Styles */
+        .marketplace-actions-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .marketplace-actions-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%2328a745" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%2320c997" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23198754" opacity="0.1"/><circle cx="10" cy="90" r="0.5" fill="%2320c997" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .actions-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .actions-title {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 8px rgba(40, 167, 69, 0.1);
+        }
+
+        .actions-subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .action-item {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .action-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .action-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #28a745;
+            box-shadow: 0 20px 40px rgba(40, 167, 69, 0.15);
+        }
+
+        .action-item:hover::before {
+            opacity: 0.05;
+        }
+
+        .action-item:hover .action-icon {
+            transform: scale(1.1) rotate(5deg);
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .action-item:hover .action-arrow {
+            transform: translateX(8px);
+            color: #28a745;
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #6c757d;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            flex-shrink: 0;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-content h4 {
+            color: #212529;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .action-content p {
+            color: #6c757d;
+            margin-bottom: 0;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .action-item:hover .action-content h4 {
+            color: #28a745;
+        }
+
+        .action-item:hover .action-content p {
+            color: #495057;
+        }
+
+        .action-arrow {
+            font-size: 1.25rem;
+            color: #dee2e6;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .action-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(40, 167, 69, 0.3);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Floating particles animation */
+        .action-item::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #28a745;
+            border-radius: 50%;
+            top: 20%;
+            right: 20%;
+            opacity: 0;
+            animation: float 3s ease-in-out infinite;
+            animation-delay: calc(var(--delay, 0) * 0.5s);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 0.6;
+            }
+        }
+
+        /* Responsive design for actions */
+        @media (max-width: 768px) {
+            .actions-card {
+                padding: 2rem;
+                border-radius: 20px;
+            }
+
+            .actions-title {
+                font-size: 2rem;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .action-item {
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+
+            .action-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+
+            .action-content h4 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .actions-card {
+                padding: 1.5rem;
+            }
+
+            .actions-title {
+                font-size: 1.75rem;
+            }
+
+            .action-item {
+                padding: 1.25rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .action-arrow {
+                display: none;
             }
         }
     </style>
@@ -462,9 +710,121 @@
         </div>
     </div>
 
+    <!-- Marketplace Actions Section -->
+    <section class="marketplace-actions-section py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="actions-card">
+                        <div class="actions-header text-center mb-5">
+                            <h2 class="actions-title">
+                                <i class="bi bi-lightning-charge-fill me-3"></i>
+                                Marketplace Actions
+                            </h2>
+                            <p class="actions-subtitle">Quick access to all marketplace features</p>
+                        </div>
+                        
+                        <div class="actions-grid">
+                            <!-- Favorites -->
+                            <div class="action-item" data-href="/marketplace/favorites">
+                                <div class="action-icon">
+                                    <i class="bi bi-heart-fill"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Favorites</h4>
+                                    <p>Your saved products</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+
+                            <!-- Sell Items -->
+                            <div class="action-item" data-href="/marketplace/sell">
+                                <div class="action-icon">
+                                    <i class="bi bi-plus-circle-fill"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Sell Items</h4>
+                                    <p>List your products</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+
+                            <!-- My Items -->
+                            <div class="action-item" data-href="/marketplace/my-products">
+                                <div class="action-icon">
+                                    <i class="bi bi-box-seam-fill"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>My Items</h4>
+                                    <p>Manage your listings</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+
+                            <!-- Sales History -->
+                            <div class="action-item" data-href="/dashboard/sales">
+                                <div class="action-icon">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Sales History</h4>
+                                    <p>Track your sales</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+
+                            <!-- Buy History -->
+                            <div class="action-item" data-href="/dashboard/buy-history">
+                                <div class="action-icon">
+                                    <i class="bi bi-cart-check-fill"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Buy History</h4>
+                                    <p>Your purchases</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+
+                            <!-- Marketplace Overview -->
+                            <div class="action-item" data-href="/marketplace">
+                                <div class="action-icon">
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                                </div>
+                                <div class="action-content">
+                                    <h4>Browse All</h4>
+                                    <p>Explore marketplace</p>
+                                </div>
+                                <div class="action-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+                                <div class="action-ripple"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer th:replace="fragments/footer :: footer"></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -536,6 +896,68 @@
                 }
             });
         }
+
+        // Marketplace Actions Section Functionality
+        $('.action-item').on('click', function(e) {
+            const href = $(this).data('href');
+            if (href) {
+                // Create ripple effect
+                const ripple = $('<div class="action-ripple"></div>');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.css({
+                    width: size + 'px',
+                    height: size + 'px',
+                    left: x + 'px',
+                    top: y + 'px'
+                });
+                
+                $(this).append(ripple);
+                
+                // Remove ripple after animation
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // Navigate after a short delay for visual feedback
+                setTimeout(() => {
+                    window.location.href = href;
+                }, 200);
+            }
+        });
+
+        // Add hover sound effect (optional)
+        $('.action-item').on('mouseenter', function() {
+            // Add subtle scale animation
+            $(this).css('transform', 'translateY(-8px) scale(1.02)');
+        }).on('mouseleave', function() {
+            $(this).css('transform', 'translateY(0) scale(1)');
+        });
+
+        // Add staggered animation delay to action items
+        $('.action-item').each(function(index) {
+            $(this).css('--delay', index);
+            $(this).css('animation-delay', (index * 0.1) + 's');
+        });
+
+        // Add entrance animation
+        $('.action-item').each(function(index) {
+            $(this).css({
+                'opacity': '0',
+                'transform': 'translateY(30px)'
+            });
+            
+            setTimeout(() => {
+                $(this).css({
+                    'opacity': '1',
+                    'transform': 'translateY(0)',
+                    'transition': 'all 0.6s cubic-bezier(0.25, 1, 0.5, 1)'
+                });
+            }, index * 100);
+        });
     });
     </script>
 </body>

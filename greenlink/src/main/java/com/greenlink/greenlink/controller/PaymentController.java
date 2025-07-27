@@ -60,8 +60,37 @@ public class PaymentController {
             @RequestParam String cancelUrl) {
         
         try {
+            // Validate URLs
+            if (successUrl == null || successUrl.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Success URL is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            if (cancelUrl == null || cancelUrl.trim().isEmpty()) {
+                Map<String, String> error = new HashMap<>();
+                error.put("error", "Cancel URL is required");
+                return ResponseEntity.badRequest().body(error);
+            }
+            
+            // Clean and validate URLs
+            String cleanSuccessUrl = successUrl.trim();
+            String cleanCancelUrl = cancelUrl.trim();
+            
+            // Ensure URLs are absolute
+            if (!cleanSuccessUrl.startsWith("http://") && !cleanSuccessUrl.startsWith("https://")) {
+                cleanSuccessUrl = "https://" + cleanSuccessUrl.replaceFirst("^/+", "");
+            }
+            
+            if (!cleanCancelUrl.startsWith("http://") && !cleanCancelUrl.startsWith("https://")) {
+                cleanCancelUrl = "https://" + cleanCancelUrl.replaceFirst("^/+", "");
+            }
+            
+            logger.info("Creating checkout session for product {} with successUrl: {} and cancelUrl: {}", 
+                       productId, cleanSuccessUrl, cleanCancelUrl);
+            
             User currentUser = userService.getCurrentUser();
-            String checkoutUrl = paymentService.createCheckoutSession(productId, currentUser, successUrl, cancelUrl);
+            String checkoutUrl = paymentService.createCheckoutSession(productId, currentUser, cleanSuccessUrl, cleanCancelUrl);
             
             Map<String, String> response = new HashMap<>();
             response.put("checkoutUrl", checkoutUrl);
@@ -81,22 +110,19 @@ public class PaymentController {
     }
     
     /**
-     * Handle Stripe webhooks
+     * Handle Stripe webhook events
      */
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(HttpServletRequest request) {
-        String payload = "";
+        String payload;
         String signature = request.getHeader("Stripe-Signature");
+        
+        logger.info("Webhook received - Signature: {}", signature != null ? "Present" : "Missing");
         
         try {
             // Read the request body
-            java.io.BufferedReader reader = request.getReader();
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            payload = sb.toString();
+            payload = request.getReader().lines().collect(java.util.stream.Collectors.joining());
+            logger.info("Webhook payload received, length: {}", payload.length());
             
             // Verify webhook signature
             if (!stripeService.verifyWebhookSignature(payload, signature)) {
@@ -105,14 +131,17 @@ public class PaymentController {
             }
             
             // Parse the event
-            Event event = com.stripe.net.Webhook.constructEvent(payload, signature, stripeService.getWebhookSecret());
+            com.stripe.model.Event event = com.stripe.net.Webhook.constructEvent(payload, signature, stripeService.getWebhookSecret());
+            logger.info("Webhook event type: {}", event.getType());
             
             // Handle the event
             switch (event.getType()) {
                 case "checkout.session.completed":
+                    logger.info("Processing checkout.session.completed event");
                     handleCheckoutSessionCompleted(event);
                     break;
                 case "account.updated":
+                    logger.info("Processing account.updated event");
                     handleAccountUpdated(event);
                     break;
                 default:
@@ -120,7 +149,6 @@ public class PaymentController {
             }
             
             return ResponseEntity.ok("Webhook processed successfully");
-            
         } catch (Exception e) {
             logger.error("Error processing webhook", e);
             return ResponseEntity.badRequest().body("Webhook processing failed");
@@ -133,10 +161,14 @@ public class PaymentController {
     private void handleCheckoutSessionCompleted(Event event) {
         try {
             com.stripe.model.checkout.Session session = (com.stripe.model.checkout.Session) event.getData().getObject();
+            logger.info("Processing successful payment for session: {}", session.getId());
+            logger.info("Session metadata: {}", session.getMetadata());
+            
             paymentService.processSuccessfulPayment(session.getId());
             logger.info("Payment processed successfully for session: {}", session.getId());
         } catch (Exception e) {
             logger.error("Error processing successful payment", e);
+            // Don't re-throw - just log the error to prevent webhook failures
         }
     }
     
@@ -233,10 +265,27 @@ public class PaymentController {
     }
     
     /**
-     * Show payment success page
+     * Show payment success page and process payment if needed
      */
     @GetMapping("/success")
-    public String showSuccessPage(Model model) {
+    public String showSuccessPage(@RequestParam(required = false) String session_id, Model model) {
+        logger.info("Payment success page accessed with session_id: {}", session_id);
+        
+        if (session_id != null && !session_id.isEmpty()) {
+            try {
+                logger.info("Attempting to process payment for session: {}", session_id);
+                paymentService.processSuccessfulPayment(session_id);
+                logger.info("Payment processed successfully from success page for session: {}", session_id);
+                model.addAttribute("message", "Payment processed successfully!");
+            } catch (Exception e) {
+                logger.error("Error processing payment from success page for session: {}", session_id, e);
+                model.addAttribute("error", "Payment was successful but there was an issue processing your order. Please contact support.");
+            }
+        } else {
+            logger.warn("Success page accessed without session_id");
+            model.addAttribute("message", "Payment completed successfully!");
+        }
+        
         return "payment/success";
     }
     
@@ -246,18 +295,6 @@ public class PaymentController {
     @GetMapping("/cancel")
     public String showCancelPage(Model model) {
         return "payment/cancel";
-    }
-    
-    /**
-     * Test endpoint to verify payment controller is working
-     */
-    @GetMapping("/test")
-    @ResponseBody
-    public ResponseEntity<Map<String, String>> testEndpoint() {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "Payment controller is working");
-        response.put("timestamp", java.time.LocalDateTime.now().toString());
-        return ResponseEntity.ok(response);
     }
     
     /**
@@ -297,7 +334,7 @@ public class PaymentController {
             return "marketplace/seller-onboarding";
         }
     }
-    
+
     /**
      * Admin purchase endpoint - allows purchase with admin password
      */
@@ -348,6 +385,56 @@ public class PaymentController {
             logger.error("Error processing admin purchase", e);
             response.put("success", false);
             response.put("message", "Eroare la procesarea achiziției: " + e.getMessage());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * Process payment session from success page
+     */
+    @PostMapping("/process-session")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> processSession(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String sessionId = request.get("session_id");
+            logger.info("Processing session from success page: {}", sessionId);
+            
+            if (sessionId == null || sessionId.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "No session ID provided");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // Process the payment
+            paymentService.processSuccessfulPayment(sessionId);
+            
+            response.put("success", true);
+            response.put("message", "Payment processed successfully!");
+            logger.info("Session processed successfully: {}", sessionId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (RuntimeException e) {
+            // Handle "Product is already sold" gracefully
+            if (e.getMessage() != null && e.getMessage().contains("already sold")) {
+                logger.info("Product already processed, this is normal: {}", e.getMessage());
+                response.put("success", true);
+                response.put("message", "Payment already processed successfully!");
+                return ResponseEntity.ok(response);
+            }
+            
+            logger.error("Error processing session from success page", e);
+            response.put("success", false);
+            response.put("message", "Error processing payment: " + e.getMessage());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("Error processing session from success page", e);
+            response.put("success", false);
+            response.put("message", "Error processing payment: " + e.getMessage());
             return ResponseEntity.ok(response);
         }
     }

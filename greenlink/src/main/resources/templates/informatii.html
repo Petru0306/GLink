@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informații - GreenLink</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    
+    <style>
+        /* General styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            background-size: 200% 200%;
+            animation: backgroundShift 10s ease infinite;
+            padding: 5rem 0; 
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-45deg);
+            animation: wave 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .page-header .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            animation: float 8s ease-in-out infinite;
+            z-index: 1;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+        }
+        
+        .page-header .bubble:nth-child(1) {
+            width: 180px;
+            height: 180px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+            animation-duration: 12s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+        }
+        
+        .page-header .bubble:nth-child(2) {
+            width: 140px;
+            height: 140px;
+            top: 65%;
+            left: 15%;
+            animation-delay: 2s;
+            animation-duration: 10s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+        }
+        
+        .page-header .bubble:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+            animation-duration: 15s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        }
+        
+        .page-header .bubble:nth-child(4) {
+            width: 160px;
+            height: 160px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 3s;
+            animation-duration: 14s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03));
+        }
+        
+        .page-header .bubble:nth-child(5) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 40%;
+            animation-delay: 2.5s;
+            animation-duration: 13s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+        }
+        
+        .page-header .bubble:nth-child(6) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 30%;
+            animation-delay: 0.5s;
+            animation-duration: 18s;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.01));
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 3;
+        }
+        
+        .display-4 {
+            letter-spacing: -0.5px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .lead {
+            font-weight: 500;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1.3rem;
+        }
+        
+        .hero-emphasis {
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .info-section {
+            padding: 5rem 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .info-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+        }
+        
+        .info-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .info-subtitle {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-subtitle i {
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .info-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-list {
+            list-style-type: none;
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+        
+        .info-list li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(40, 167, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .demo-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .demo-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Page background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            opacity: 0.3;
+            animation: float 15s infinite linear;
+        }
+        
+        .particle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-duration: 25s;
+            animation-delay: 0s;
+        }
+        
+        .particle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: 2s;
+        }
+        
+        .particle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 15%;
+            right: 10%;
+            animation-duration: 22s;
+            animation-delay: 4s;
+        }
+        
+        .particle:nth-child(4) {
+            width: 150px;
+            height: 150px;
+            bottom: 25%;
+            left: 5%;
+            animation-duration: 28s;
+            animation-delay: 1s;
+        }
+        
+        .particle:nth-child(5) {
+            width: 70px;
+            height: 70px;
+            top: 45%;
+            left: 20%;
+            animation-duration: 20s;
+            animation-delay: 3s;
+        }
+        
+        .particle:nth-child(6) {
+            width: 90px;
+            height: 90px;
+            top: 50%;
+            right: 25%;
+            animation-duration: 26s;
+            animation-delay: 5s;
+        }
+        
+        .particle:nth-child(7) {
+            width: 110px;
+            height: 110px;
+            bottom: 40%;
+            right: 40%;
+            animation-duration: 24s;
+            animation-delay: 0s;
+        }
+        
+        .particle:nth-child(8) {
+            width: 60px;
+            height: 60px;
+            bottom: 60%;
+            left: 40%;
+            animation-duration: 18s;
+            animation-delay: 6s;
+        }
+        
+        .particle:nth-child(9) {
+            width: 130px;
+            height: 130px;
+            top: 30%;
+            left: 30%;
+            animation-duration: 32s;
+            animation-delay: 7s;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0) scale(1) rotate(0); }
+            25% { transform: translateY(-25px) scale(1.05) rotate(2deg); }
+            50% { transform: translateY(-40px) scale(1.1) rotate(0); }
+            75% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+            100% { transform: translateY(0) scale(1) rotate(0); }
+        }
+        
+        @keyframes wave {
+            0% { transform: translate(-50%, -50%) rotate(-45deg); }
+            100% { transform: translate(-50%, -50%) rotate(315deg); }
+        }
+        
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+        
+        @media (max-width: 768px) {
+            .info-container {
+                padding: 2rem;
+            }
+            
+            .info-title {
+                font-size: 2rem;
+            }
+            
+            .info-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .hero-emphasis {
+                font-size: 1.2rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Particles Background Animation -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <!-- Navbar -->
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <!-- Hero Section -->
+    <header class="page-header">
+        <!-- Animated bubbles -->
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        
+        <div class="container header-content">
+            <div class="row align-items-center">
+                <div class="col-lg-10 mx-auto text-center">
+                    <h1 class="display-4 mb-4 animate__animated animate__fadeInDown">🌱 GreenLink</h1>
+                    <p class="lead mb-0 animate__animated animate__fadeInUp animate__delay-1s hero-emphasis">Platforma socială pentru un viitor sustenabil</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Info Content -->
+    <section class="info-section">
+        <div class="container">
+            <div class="info-container fade-in">
+                <h2 class="info-title">Despre GreenLink</h2>
+                
+                <div class="info-content">
+                    <p class="info-text">
+                        GreenLink este prima platformă care combină sustenabilitatea cu dinamica și gamificarea rețelelor sociale. Utilizatorii sunt motivați să adopte un stil de viață verde printr-o experiență interactivă, educativă și personalizabilă.
+                    </p>
+
+                    <h3 class="info-subtitle"><i class="bi bi-search"></i>Pe GreenLink poți:</h3>
+                    <ul class="info-list">
+                        <li>📚 Parcurge lecții ecologice interactive</li>
+                        <li>🏆 Finaliza provocări verzi și câștiga insigne</li>
+                        <li>🛍️ Tranzacționa produse eco în marketplace-ul sustenabil</li>
+                        <li>📍 Explora harta reciclării (Code for Romania – open-source)</li>
+                        <li>♻️ Calcula amprenta personală de carbon</li>
+                        <li>👤 Construi un profil digital bazat pe impactul tău ecologic</li>
+                    </ul>
+
+                    <p class="info-text">
+                        GreenLink oferă o experiență unică, diferențiindu-se clar de orice altă platformă – un ecosistem digital cu sens, care inspiră schimbarea reală.
+                    </p>
+
+                    <h3 class="info-subtitle"><i class="bi bi-cpu"></i>I. Inginerie Web și Programare</h3>
+                    <ul class="info-list">
+                        <li>Algoritmi proprii: scoruri gamificate, ranking, matching, calcul CO₂</li>
+                        <li>Bază de date PostgreSQL complexă (relații: User, Challenge, Product etc.)</li>
+                        <li>Structurare modulară MVC + servicii separate pe funcționalități</li>
+                        <li>Design Patterns: Singleton, Factory, Observer, Strategy</li>
+                        <li>Framework-uri: Spring Boot, WebSocket, Stripe, OAuth2</li>
+                        <li>Git version control cu branching logic și CI/CD ready</li>
+                        <li>Testare: JUnit 5 (unit & integration), TDD pentru componente critice</li>
+                        <li>Performanță: caching, lazy loading, indexare DB, Flyway migrations</li>
+                    </ul>
+
+                    <h3 class="info-subtitle"><i class="bi bi-gear"></i>II. Funcționalitate și Utilitate</h3>
+                    <ul class="info-list">
+                        <li>Lecții ecologice + quiz-uri cu trophy road gamificat</li>
+                        <li>Provocări verzi pe categorii (Ambassador, Maester, Shelf Whisperer, Cart Goblin)</li>
+                        <li>Marketplace cu plăți prin Stripe, oferte, negociere & acceptare/respingere</li>
+                        <li>Harta reciclării (open-source, Code for Romania)</li>
+                        <li>Calculator CO₂ personalizat + recomandări de reducere a impactului</li>
+                        <li>Profil ecologic cu puncte, insigne și niveluri tematice</li>
+                        <li>Sistem de prietenii complet (cereri, acceptare, notificări)</li>
+                        <li>Chat între prieteni în timp real (WebSocket + notificări live)</li>
+                        <li>Leaderboard dinamic, filtrabil (Top 10 / 25 / 50)</li>
+                        <li>Istoric detaliat de activitate pentru fiecare utilizator</li>
+                    </ul>
+
+                    <h3 class="info-subtitle"><i class="bi bi-palette"></i>III. Interacțiune & Design</h3>
+                    <ul class="info-list">
+                        <li>Design responsive, mobile-first, coerent vizual</li>
+                        <li>UX adaptat utilizatorilor preocupați de mediu</li>
+                        <li>Navigare intuitivă, feedback instant, hărți interactive</li>
+                        <li>Accesibilitate: zoom, contrast, localizare RO/EN</li>
+                        <li>Compatibil cu toate browserele moderne</li>
+                        <li>PWA-ready, suport tactil și desktop</li>
+                    </ul>
+
+                    <h3 class="info-subtitle"><i class="bi bi-lightbulb"></i>IV. Originalitate</h3>
+                    <ul class="info-list">
+                        <li>Primul proiect care combină social media + gamificare + sustenabilitate</li>
+                        <li>Sistem propriu de niveluri, insigne și ranking ecologic</li>
+                        <li>Identitate digitală construită pe impactul ecologic real</li>
+                        <li>Diferențiere clară față de orice altă platformă națională sau internațională</li>
+                    </ul>
+
+                    <h3 class="info-subtitle"><i class="bi bi-shield-check"></i>V. Securitate</h3>
+                    <ul class="info-list">
+                        <li>Protecție completă: CSRF, XSS, SQLi, DoS, rate limiting</li>
+                        <li>Autentificare sigură: OAuth2 (Google, GitHub) + email cu validare</li>
+                        <li>reCAPTCHA pentru formulare critice</li>
+                        <li>Politici: Termeni și Condiții + Politică de Confidențialitate</li>
+                    </ul>
+
+                    <div class="demo-section">
+                        <h4 class="mb-3">🌐 Demo Live</h4>
+                        <p class="mb-3">Explorează platforma GreenLink în acțiune!</p>
+                        <a href="https://glink-idie.onrender.com" target="_blank" class="demo-link">
+                            <i class="bi bi-play-circle me-2"></i>Accesează Demo-ul
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <h4 class="info-subtitle"><i class="bi bi-quote"></i>GreenLink – Ideea e unică. Execuția e scalabilă. Impactul e real.</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Add fade-in animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            fadeElements.forEach(element => {
+                element.style.opacity = 0;
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(element);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -16,6 +16,9 @@ class OfferStateManager {
     initializeFromDOM() {
         const offerMessages = document.querySelectorAll('.offer-message');
         offerMessages.forEach(offerElement => {
+            // Add null check to prevent getAttribute error
+            if (!offerElement) return;
+            
             const messageId = offerElement.getAttribute('data-message-id');
             const status = offerElement.getAttribute('data-offer-status');
             const amount = this.extractOfferAmount(offerElement);
@@ -36,6 +39,9 @@ class OfferStateManager {
      * Extract offer amount from DOM element
      */
     extractOfferAmount(offerElement) {
+        // Add null check to prevent errors
+        if (!offerElement) return 0;
+        
         const amountElement = offerElement.querySelector('.offer-amount');
         if (amountElement) {
             const text = amountElement.textContent;

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body>
     <!-- Include navbar -->
@@ -23,10 +25,30 @@
                                 <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
                             </div>
                             <h2 class="fw-bold text-success mb-3">Payment Successful!</h2>
-                            <p class="text-muted mb-4">Your purchase has been completed successfully. You will receive a confirmation email shortly.</p>
+                            
+                            <!-- Display processing status -->
+                            <div th:if="${message}" class="alert alert-success" role="alert">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span th:text="${message}">Payment processed successfully!</span>
+                            </div>
+                            
+
+                            
+                            <p class="text-muted mb-4">Your purchase has been completed successfully! A delivery conversation has been created where you can coordinate with the seller.</p>
+                            
+                            <!-- Delivery conversation link -->
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-chat-dots me-2"></i>
+                                <strong>Next Step:</strong> 
+                                <a href="/inbox" class="alert-link">View your inbox</a> 
+                                to coordinate with the seller.
+                            </div>
                         </div>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                            <a href="/inbox" class="btn btn-primary btn-lg px-4">
+                                <i class="bi bi-chat-dots me-2"></i>View Inbox
+                            </a>
                             <a href="/dashboard" class="btn btn-success btn-lg px-4">
                                 <i class="bi bi-house me-2"></i>Go to Dashboard
                             </a>
@@ -44,5 +66,68 @@
     <div th:replace="~{fragments/footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-process payment if session_id is present
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            if (sessionId) {
+                console.log('Session ID found:', sessionId);
+                
+                // Show processing message
+                const processingDiv = document.createElement('div');
+                processingDiv.className = 'alert alert-info';
+                processingDiv.innerHTML = '<i class="bi bi-arrow-clockwise me-2"></i>Processing your payment...';
+                
+                const cardBody = document.querySelector('.card-body');
+                const existingAlert = cardBody.querySelector('.alert');
+                if (existingAlert) {
+                    existingAlert.parentNode.insertBefore(processingDiv, existingAlert);
+                } else {
+                    cardBody.insertBefore(processingDiv, cardBody.firstChild);
+                }
+                
+                // Process the payment
+                fetch('/payment/process-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify({ session_id: sessionId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Payment processing result:', data);
+                    
+                    // Remove processing message
+                    processingDiv.remove();
+                    
+                    // Show result
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = data.success ? 'alert alert-success' : 'alert alert-warning';
+                    resultDiv.innerHTML = `<i class="bi ${data.success ? 'bi-check-circle' : 'bi-exclamation-triangle'} me-2"></i>${data.message}`;
+                    
+                    if (existingAlert) {
+                        existingAlert.parentNode.insertBefore(resultDiv, existingAlert);
+                    } else {
+                        cardBody.insertBefore(resultDiv, cardBody.firstChild);
+                    }
+                    
+                    // If successful, just show success message (no redirect)
+                    if (data.success) {
+                        console.log('Payment processed successfully - user can stay on this page');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error processing payment:', error);
+                    processingDiv.className = 'alert alert-danger';
+                    processingDiv.innerHTML = '<i class="bi bi-x-circle me-2"></i>Error processing payment. Please contact support.';
+                });
+            }
+        });
+    </script>
 </body>
 </html> 

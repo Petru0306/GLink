@@ -416,42 +416,7 @@
             opacity: 0.9;
         }
 
-        /* EPIC FLOATING PARTICLES */
-        .floating-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
 
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
-        .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
-        .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
-        .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
-        .particle:nth-child(6) { left: 60%; animation-delay: 5s; }
-        .particle:nth-child(7) { left: 70%; animation-delay: 0s; }
-        .particle:nth-child(8) { left: 80%; animation-delay: 1s; }
-        .particle:nth-child(9) { left: 90%; animation-delay: 2s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100px) scale(1); opacity: 0; }
-        }
 
         /* EPIC HOVER EFFECTS */
         .epic-level-badge:hover {
@@ -470,48 +435,106 @@
                 0 0 0 2px rgba(255,255,255,0.2);
         }
 
-        /* NEW MAIN STATS CARD STYLES */
+        /* NEW MAIN STATS CARD STYLES - MATCH RECENT ACTIVITY CARDS */
         .main-stats-card {
-            background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%) !important;
-            color: white;
-            border-radius: 25px;
-            padding: 2.5rem;
+            background: white !important;
+            color: #333 !important;
+            border-radius: 20px;
+            padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 15px 40px rgba(0, 255, 136, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+            border: 2px solid #28a745;
             position: relative;
             overflow: hidden;
-            animation: cardFloat 3s ease-in-out infinite;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .main-stats-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(40, 167, 69, 0.1), transparent);
+            transition: left 0.6s ease;
         }
 
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .main-stats-card h2,
+        .main-stats-card h3,
+        .main-stats-card .text-light,
+        .main-stats-card small {
+            color: #333 !important;
+            transition: color 0.3s ease;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+        .main-stats-card .text-light {
+            color: #666 !important;
+        }
+
+        .main-stats-card .stat-number,
+        .main-stats-card .stat-label,
+        .main-stats-card .stat-sublabel {
+            color: #333 !important;
+            transition: all 0.3s ease;
+        }
+
+        .main-stats-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(40, 167, 69, 0.25);
+            border-color: #28a745;
+        }
+
+        .main-stats-card:hover::before {
+            left: 100%;
+        }
+
+        /* Enhanced hover effects for main stats elements */
+        .main-stats-card:hover h2,
+        .main-stats-card:hover h3 {
+            color: #28a745 !important;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-stats-card:hover .level-badge {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .main-stats-card:hover .progress-bar {
+            /* Removed hover animation - progress bar stays static */
+        }
+
+        .main-stats-card:hover .stat-item {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.2);
+        }
+
+        .main-stats-card:hover .stat-number {
+            color: #28a745 !important;
+            text-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+            animation: numberGlow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes numberGlow {
+            from {
+                text-shadow: 0 0 15px rgba(40, 167, 69, 0.5);
+                transform: scale(1);
+            }
+            to {
+                text-shadow: 0 0 25px rgba(40, 167, 69, 0.8);
+                transform: scale(1.05);
+            }
         }
 
         .level-badge {
-            background: linear-gradient(45deg, #ffc107, #ff8c00);
+            background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
             padding: 0.75rem 1.5rem;
             border-radius: 25px;
             font-weight: 700;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
             font-size: 1.1rem;
             animation: pulse 2s ease-in-out infinite;
         }
@@ -519,15 +542,15 @@
         .level-name-inline {
             font-size: 1rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            color: #333;
             margin-left: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            text-shadow: none;
+            background: rgba(40, 167, 69, 0.1);
             padding: 0.25rem 0.75rem;
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.2);
         }
 
         @keyframes pulse {
@@ -555,7 +578,7 @@
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, #ffc107, #ff8c00);
+            background: linear-gradient(90deg, #28a745, #20c997) !important;
             border-radius: 15px;
             transition: width 1s ease;
             height: 100%;
@@ -603,18 +626,6 @@
             color: #ffd700;
             margin-bottom: 0.5rem;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            animation: trophyGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes trophyGlow {
-            from {
-                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-                transform: scale(1);
-            }
-            to {
-                text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-                transform: scale(1.1);
-            }
         }
 
         .clickable-level {
@@ -625,7 +636,7 @@
 
         .clickable-level:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .clickable-card {
@@ -837,7 +848,7 @@
         }
 
         .progress-bar {
-            background: linear-gradient(90deg, #ffc107, #ff8c00);
+            background: linear-gradient(90deg, #28a745, #20c997) !important;
             border-radius: 15px;
             transition: width 1s ease;
             height: 100%;
@@ -929,6 +940,31 @@
         }
 
         .recent-activity-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Level Up History Scrollable Container */
+        .level-up-history-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .level-up-history-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .level-up-history-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .level-up-history-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .level-up-history-container::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
 
@@ -1591,9 +1627,7 @@
         }
 
         .compact-progress-container:hover {
-            background: rgba(0, 255, 136, 0.15);
-            border-color: rgba(0, 255, 136, 0.4);
-            transform: scale(1.02);
+            /* Removed hover animation - progress container stays static */
         }
 
         .mysterious-next-level:hover {
@@ -1934,21 +1968,73 @@
                 font-size: 1.3rem;
             }
         }
+
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+
+
+
+        /* Enhanced Hover Effects for Next Level and Global Rank Cards */
+        .stat-item.clickable-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .stat-item.clickable-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+
+        .stat-item.clickable-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.3), transparent);
+            transition: left 0.8s;
+            pointer-events: none;
+        }
+
+        .stat-item.clickable-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 255, 136, 0.3), 0 0 0 2px rgba(0, 255, 136, 0.4);
+        }
+
+        .stat-item.clickable-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-item.clickable-card:hover::after {
+            left: 100%;
+        }
+
+        /* Enhanced badge animations on hover */
+        .stat-item.clickable-card:hover .stat-number {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+        }
+
+        .stat-item.clickable-card:hover .stat-trophy {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
-    <!-- Floating Particles -->
-    <div class="floating-particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
+
+    
+
 
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
@@ -1988,8 +2074,8 @@
                                 </a>
                             </h2>
                             <h3 class="mb-3">
-                                <i class="bi bi-star-fill text-warning me-2"></i>
-                                <span th:text="${currentUser.points}">0</span> <span th:text="#{points.total.points}">Total Points</span>
+                                <i class="bi bi-star-fill me-2" style="color: #28a745;"></i>
+                                <span class="counter" data-target="0" th:data-target="${currentUser.points}" th:text="${currentUser.points}">0</span> <span th:text="#{points.total.points}">Total Points</span>
                             </h3>
                             <div class="progress-container">
                                 <small class="text-light mb-2 d-block" th:text="#{points.progress.next.level}">Progress to next level</small>
@@ -2082,19 +2168,21 @@
                         <i class="bi bi-arrow-up-circle"></i>
                         <span th:text="#{points.level.up.history}">Level Up History</span>
                     </h5>
-                    <div th:each="event : ${levelUpEvents}" th:if="${#lists.size(levelUpEvents) > 0}">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div>
-                                <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd')}">Date</small>
-                                <div class="fw-bold">
-                                    <span th:text="#{points.level}">Level</span> <span th:text="${event.oldLevel}">1</span> → <span th:text="${event.newLevel}">2</span>
+                    <div class="level-up-history-container">
+                        <div th:each="event : ${levelUpEvents}" th:if="${#lists.size(levelUpEvents) > 0}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <small class="text-muted" th:text="${#temporals.format(event.createdAt, 'MMM dd')}">Date</small>
+                                    <div class="fw-bold">
+                                        <span th:text="#{points.level}">Level</span> <span th:text="${event.oldLevel}">1</span> → <span th:text="${event.newLevel}">2</span>
+                                    </div>
                                 </div>
+                                <span class="points-badge" th:text="'+' + ${event.points}">+0</span>
                             </div>
-                            <span class="points-badge" th:text="'+' + ${event.points}">+0</span>
                         </div>
-                    </div>
-                    <div th:if="${#lists.isEmpty(levelUpEvents)}">
-                        <p class="text-muted text-center" th:text="#{points.no.level.ups}">No level ups yet</p>
+                        <div th:if="${#lists.isEmpty(levelUpEvents)}">
+                            <p class="text-muted text-center" th:text="#{points.no.level.ups}">No level ups yet</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2183,6 +2271,31 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Counter animation
+            function animateCounters() {
+                const counters = document.querySelectorAll('.counter');
+                
+                counters.forEach(counter => {
+                    const target = parseFloat(counter.getAttribute('data-target'));
+                    const duration = 2000; // 2 seconds
+                    const step = target / (duration / 16); // 60fps
+                    let current = 0;
+                    
+                    const timer = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        
+                        counter.textContent = Math.floor(current);
+                    }, 16);
+                });
+            }
+
+            // Animate counters after page load
+            setTimeout(animateCounters, 500);
+
             // EPIC CONFETTI EFFECT
             function createConfetti() {
                 const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
@@ -2292,24 +2405,7 @@
                 });
             });
 
-            // EPIC PARTICLE EFFECTS
-            function createFloatingParticle() {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 3 + 6) + 's';
-                
-                document.querySelector('.floating-particles').appendChild(particle);
-                
-                // Remove particle after animation
-                setTimeout(() => {
-                    particle.remove();
-                }, 10000);
-            }
 
-            // Create particles periodically
-            setInterval(createFloatingParticle, 2000);
 
             // EPIC SCROLL EFFECTS
             window.addEventListener('scroll', function() {

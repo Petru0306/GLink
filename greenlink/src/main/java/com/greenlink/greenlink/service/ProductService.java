@@ -300,6 +300,7 @@ public class ProductService {
 
             // Always filter out sold products
             predicates.add(cb.equal(root.get("sold"), false));
+            logger.info("Filtering out sold products - only showing available products");
 
             if (branch != null) {
                 predicates.add(cb.equal(root.get("branch"), branch));
@@ -326,7 +327,16 @@ public class ProductService {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        return productRepository.findAll(spec, pageable).map(this::convertToDto);
+        Page<Product> products = productRepository.findAll(spec, pageable);
+        logger.info("Found {} products in marketplace (filtered out sold products)", products.getTotalElements());
+        
+        // Log each product to debug
+        for (Product product : products.getContent()) {
+            logger.info("Product in marketplace: ID={}, Name={}, Sold={}", 
+                       product.getId(), product.getName(), product.isSold());
+        }
+        
+        return products.map(this::convertToDto);
     }
 
     public Page<ProductDto> getFilteredProducts(
@@ -412,11 +422,24 @@ public class ProductService {
     }
     
     public List<ProductDto> getSoldProductsBySeller(Long sellerId) {
+        System.out.println("=== GETTING SOLD PRODUCTS FOR SELLER ===");
+        System.out.println("Seller ID: " + sellerId);
+        
         List<Product> products = productRepository.findSoldProductsBySellerId(sellerId);
         
-        return products.stream()
+        System.out.println("Found " + products.size() + " sold products for seller " + sellerId);
+        for (Product p : products) {
+            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null"));
+        }
+        
+        List<ProductDto> result = products.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+        
+        System.out.println("Returning " + result.size() + " ProductDto objects");
+        System.out.println("=== END GETTING SOLD PRODUCTS ===");
+        
+        return result;
     }
     
     public Page<ProductDto> getSoldProductsBySellerPaginated(Long sellerId, Pageable pageable) {
@@ -444,12 +467,28 @@ public class ProductService {
     }
     
     public List<PurchaseDto> getBoughtProductsByBuyer(Long buyerId) {
+        System.out.println("=== GETTING BOUGHT PRODUCTS FOR BUYER ===");
+        System.out.println("Buyer ID: " + buyerId);
+        
         List<Product> products = productRepository.findProductsByBuyerId(buyerId);
+        
+        System.out.println("Raw products from repository: " + products.size());
+        for (Product p : products) {
+            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null") + ", soldAt: " + p.getSoldAt());
+        }
         
         List<PurchaseDto> purchaseDtos = products.stream()
                 .map(PurchaseDto::fromProduct)
                 .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
                 .collect(Collectors.toList());
+        
+        System.out.println("PurchaseDtos after conversion: " + purchaseDtos.size());
+        for (PurchaseDto dto : purchaseDtos) {
+            if (dto != null) {
+                System.out.println("  - DTO: " + dto.getProduct().getName() + " - Price: " + dto.getTotalPrice() + " - Date: " + dto.getPurchaseDate());
+            }
+        }
+        System.out.println("=== END GETTING BOUGHT PRODUCTS ===");
         
         return purchaseDtos;
     }

@@ -52,6 +52,32 @@ public class Conversation {
     @Builder.Default
     private List<Message> messages = new ArrayList<>();
     
+    // Delivery conversation fields - temporarily commented out until migration works
+    /*
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private ConversationStatus status = ConversationStatus.OPEN;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING;
+    
+    @Column
+    private LocalDateTime deliveryCompletedAt;
+    
+    // Enum for conversation status
+    public enum ConversationStatus {
+        OPEN, CLOSED, COMPLETED
+    }
+    
+    // Enum for delivery status
+    public enum DeliveryStatus {
+        PENDING, IN_PROGRESS, COMPLETED
+    }
+    */
+    
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

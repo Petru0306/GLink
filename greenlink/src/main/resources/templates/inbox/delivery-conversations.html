@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Conversations - GreenLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.0.2">
+    <link rel="stylesheet" href="/css/dm-modal.css">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+</head>
+<body>
+    <!-- Include navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="bi bi-truck me-2"></i>Delivery Conversations</h2>
+                    <a href="/inbox" class="btn btn-outline-success">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Inbox
+                    </a>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div th:if="${deliveryConversations.empty}" class="text-center py-5">
+                            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                            <h4 class="text-muted mt-3">No delivery conversations yet</h4>
+                            <p class="text-muted">When you buy or sell items, delivery conversations will appear here.</p>
+                        </div>
+                        
+                        <div th:if="${!deliveryConversations.empty}" class="list-group list-group-flush">
+                            <div th:each="conversation : deliveryConversations" class="list-group-item list-group-item-action p-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <h6 class="mb-0 me-3">
+                                                <i class="bi bi-box-seam me-2"></i>
+                                                <span th:text="${conversation.product.name}">Product Name</span>
+                                            </h6>
+                                            <span class="badge bg-success">DELIVERY</span>
+                                        </div>
+                                        
+                                        <div class="text-muted small">
+                                            <span th:if="${conversation.buyer.id == currentUser.id}">
+                                                <i class="bi bi-person me-1"></i>Seller: 
+                                                <span th:text="${conversation.seller.firstName + ' ' + conversation.seller.lastName}">Seller Name</span>
+                                            </span>
+                                            <span th:if="${conversation.seller.id == currentUser.id}">
+                                                <i class="bi bi-person me-1"></i>Buyer: 
+                                                <span th:text="${conversation.buyer.firstName + ' ' + conversation.buyer.lastName}">Buyer Name</span>
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="text-muted small">
+                                            <i class="bi bi-calendar me-1"></i>
+                                            <span th:text="${#temporals.format(conversation.updatedAt, 'dd MMM yyyy HH:mm')}">Date</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="ms-3">
+                                        <a th:href="@{/inbox/delivery-conversation/{id}(id=${conversation.id})}" 
+                                           class="btn btn-success btn-sm">
+                                            <i class="bi bi-chat me-1"></i>Open Chat
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include footer -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

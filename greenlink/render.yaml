@@ -3,7 +3,7 @@ services:
     name: greenlink
     env: docker
     plan: free
-    buildCommand: ./mvnw clean package -DskipTests
+    buildCommand: ./mvnw clean package -Dmaven.test.skip=true
     startCommand: java -jar target/greenlink-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -20,6 +20,26 @@ services:
         fromDatabase:
           name: greenlink-db
           property: password
+      - key: APP_DOMAIN
+        value: https://greenlink.onrender.com
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: RECAPTCHA_SITE_KEY
+        sync: false
+      - key: RECAPTCHA_SECRET_KEY
+        sync: false
     disk:
       name: uploads
       mountPath: /app/uploads

@@ -42,9 +42,7 @@ public class WebSocketController {
     @Autowired
     private PointsService pointsService;
     
-    /**
-     * Handle ping messages to confirm WebSocket connectivity
-     */
+   
     @MessageMapping("/chat.ping")
     public void handlePing(@Payload Map<String, Object> payload, Principal principal) {
         try {
@@ -57,7 +55,7 @@ public class WebSocketController {
                 response.put("timestamp", System.currentTimeMillis());
                 response.put("conversationId", conversationId);
                 
-                // Echo back to conversation topic
+               
                 messagingTemplate.convertAndSend("/topic/conversation." + conversationId, response);
                 logger.info("Ping response sent to conversation: " + conversationId + " by user: " + principal.getName());
             }
@@ -66,19 +64,17 @@ public class WebSocketController {
         }
     }
     
-    /**
-     * Handle user joining a conversation
-     */
+    
     @MessageMapping("/chat.join")
     public void joinConversation(@Payload Map<String, Object> payload, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         try {
             Long conversationId = Long.parseLong(payload.get("conversationId").toString());
             
-            // Mark conversation as read for the joining user
+            
             User currentUser = userService.getUserByEmail(principal.getName());
             messageService.markConversationAsRead(conversationId, currentUser);
             
-            // Send join confirmation to user
+            
             Map<String, Object> joinConfirmation = new HashMap<>();
             joinConfirmation.put("type", "JOIN_CONFIRMATION");
             joinConfirmation.put("conversationId", conversationId);
@@ -102,25 +98,27 @@ public class WebSocketController {
     @Transactional
     public void sendMessage(@Payload ChatMessageDto chatMessage, Principal principal, SimpMessageHeaderAccessor headerAccessor) {
         try {
-            // Get user from principal
+            
             User currentUser = userService.getUserByEmail(principal.getName());
             
-            // Send message using existing service
+            
             MessageDto savedMessage = messageService.sendMessage(
                     chatMessage.getConversationId(), 
                     currentUser, 
                     chatMessage.getContent()
             );
             
-            // Convert back to ChatMessageDto for broadcasting
+            // Track challenge progress for sending first message
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
+            
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
             
-            // If client provided a tempId, include it in response for tracking
+            
             if (chatMessage.getTempId() != null) {
                 responseMessage.setTempId(chatMessage.getTempId());
             }
             
-            // Broadcast to conversation topic - this will send to all subscribers including the sender
+            
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(), 
                     responseMessage
@@ -137,43 +135,43 @@ public class WebSocketController {
     @Transactional
     public void sendOffer(@Payload ChatMessageDto chatMessage, Principal principal) {
         try {
-            // Get user from principal
+            
             User currentUser = userService.getUserByEmail(principal.getName());
             
-            // Send offer using existing service
+            
             MessageDto savedMessage = messageService.makeOffer(
                     chatMessage.getConversationId(),
                     currentUser,
                     chatMessage.getOfferAmount()
             );
             
-            // Track marketplace offer for challenges
+            
             challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_OFFER_MADE", null);
             
-            // Award points for making offer
+            
             try {
-                String productName = "Product"; // We'll get this from the conversation if needed
+                    String productName = "Product"; 
                 pointsService.awardOfferMadePoints(currentUser.getId(), 1L, productName, chatMessage.getOfferAmount(), 5);
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Error awarding points for offer made: " + e.getMessage());
             }
             
-            // Convert back to ChatMessageDto for broadcasting
+            
             ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
             responseMessage.setEventType("OFFER_CREATED");
             
-            // If client provided a tempId, include it in response for tracking
+            
             if (chatMessage.getTempId() != null) {
                 responseMessage.setTempId(chatMessage.getTempId());
             }
             
-            // Broadcast to conversation topic
+            
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(),
                     responseMessage
             );
             
-            // Also send to specific offer topic for real-time updates
+            
             messagingTemplate.convertAndSend(
                     "/topic/offer." + savedMessage.getId(),
                     createOfferEvent(OfferEvent.EventType.OFFER_CREATED, savedMessage, currentUser, null)
@@ -190,10 +188,10 @@ public class WebSocketController {
     @Transactional
     public void respondToOffer(@Payload ChatMessageDto chatMessage, Principal principal) {
         try {
-            // Get user from principal
+            
             User currentUser = userService.getUserByEmail(principal.getName());
             
-            // Respond to offer using existing service
+            
             MessageDto savedMessage = messageService.respondToOffer(
                     chatMessage.getMessageId(),
                     currentUser,
@@ -201,10 +199,10 @@ public class WebSocketController {
                     chatMessage.getOfferAmount()
             );
             
-            // Get the original offer message for status update
+            
             MessageDto originalMessage = messageService.getMessageById(chatMessage.getMessageId(), currentUser);
             
-            // Create status update for the original offer
+            
             ChatMessageDto statusUpdate = new ChatMessageDto();
             statusUpdate.setMessageId(chatMessage.getMessageId());
             statusUpdate.setConversationId(chatMessage.getConversationId());
@@ -212,58 +210,58 @@ public class WebSocketController {
             statusUpdate.setOfferAmount(originalMessage.getOfferAmount());
             statusUpdate.setOffer(true);
             statusUpdate.setEventType("OFFER_UPDATED");
-            // Ensure content is null to indicate this is a status update only
+            
             statusUpdate.setContent(null);
             
-            // Send status update to conversation topic
+            
             messagingTemplate.convertAndSend(
                     "/topic/conversation." + chatMessage.getConversationId(),
                     statusUpdate
             );
             
-            // Send specific offer event
+            
             OfferEvent.EventType eventType = determineEventType(chatMessage.getOfferStatus());
             messagingTemplate.convertAndSend(
                     "/topic/offer." + chatMessage.getMessageId(),
                     createOfferEvent(eventType, originalMessage, currentUser, chatMessage.getOfferStatus())
             );
             
-            // If client provided a tempId, include it in response for tracking (only for counter offers)
+            
             if (chatMessage.getTempId() != null && savedMessage != null) {
-                // Convert back to ChatMessageDto for broadcasting (only for counter offers)
+                
                 ChatMessageDto responseMessage = ChatMessageDto.fromMessageDto(savedMessage);
                 responseMessage.setTempId(chatMessage.getTempId());
                 responseMessage.setEventType("COUNTER_OFFER_CREATED");
                 
-                // Broadcast the counter offer message
+                
                 messagingTemplate.convertAndSend(
                         "/topic/conversation." + chatMessage.getConversationId(),
                         responseMessage
                 );
                 
-                // Send counter offer event
+
                 messagingTemplate.convertAndSend(
                         "/topic/offer." + savedMessage.getId(),
                         createOfferEvent(OfferEvent.EventType.COUNTER_OFFER_CREATED, savedMessage, currentUser, null)
                 );
             }
             
-            // If offer was accepted, send a price update notification to all participants
+            
             if ("ACCEPT".equalsIgnoreCase(chatMessage.getOfferStatus()) && chatMessage.getOfferAmount() != null) {
                 ChatMessageDto priceUpdate = new ChatMessageDto();
                 priceUpdate.setConversationId(chatMessage.getConversationId());
                 priceUpdate.setOfferAmount(chatMessage.getOfferAmount());
-                priceUpdate.setContent("PRICE_UPDATE"); // Use content field to indicate this is a price update
-                priceUpdate.setOfferStatus("PRICE_UPDATED"); // Use offerStatus to indicate price update
+                priceUpdate.setContent("PRICE_UPDATE"); 
+                priceUpdate.setOfferStatus("PRICE_UPDATED"); 
                 priceUpdate.setEventType("PRICE_UPDATED");
                 
-                // Send price update to all participants
+                
                 messagingTemplate.convertAndSend(
                         "/topic/conversation." + chatMessage.getConversationId(),
                         priceUpdate
                 );
                 
-                // Send price update event
+                
                 messagingTemplate.convertAndSend(
                         "/topic/offer." + chatMessage.getMessageId(),
                         createOfferEvent(OfferEvent.EventType.PRICE_UPDATED, originalMessage, currentUser, null)
@@ -280,9 +278,7 @@ public class WebSocketController {
         }
     }
     
-    /**
-     * Create offer event for real-time updates
-     */
+    
     private OfferEvent createOfferEvent(OfferEvent.EventType eventType, MessageDto message, User user, String action) {
         return OfferEvent.builder()
                 .eventType(eventType)
@@ -306,9 +302,7 @@ public class WebSocketController {
                 .build();
     }
     
-    /**
-     * Determine event type based on action
-     */
+        
     private OfferEvent.EventType determineEventType(String action) {
         switch (action.toUpperCase()) {
             case "ACCEPT":
