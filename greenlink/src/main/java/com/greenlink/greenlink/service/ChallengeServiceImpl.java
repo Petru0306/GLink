@@ -60,7 +60,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                     challenge.setDescription(translatedDescription);
                     challenge.setBadge(translatedBadge);
                 } catch (Exception e) {
-                    // If translation not found, keep original values
+                    
                 }
             }
         }
@@ -69,11 +69,13 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     private String getTranslationKey(String title) {
-        // Map challenge titles to translation keys
+        
         switch (title) {
             case "Use Carbon Calculator":
                 return "challenge.use.carbon.calculator";
             case "Explore the Recycling Map":
+                return "challenge.explore.recycling.map";
+            case "Recycling Pioneer":
                 return "challenge.explore.recycling.map";
             case "Make an Offer on the Marketplace":
                 return "challenge.make.offer.marketplace";
@@ -158,7 +160,7 @@ public class ChallengeServiceImpl implements ChallengeService {
                     challenge.setDescription(translatedDescription);
                     challenge.setBadge(translatedBadge);
                 } catch (Exception e) {
-                    // If translation not found, keep original values
+                        
                 }
             }
         }

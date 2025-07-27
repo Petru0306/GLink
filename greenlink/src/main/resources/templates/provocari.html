@@ -899,10 +899,23 @@ function navigateToChallenge(type, title) {
     const navigationMap = {
         'DEFAULT_CHALLENGES': {
             'Use Carbon Calculator': '/calculator',
-            'Explore Recycling Map': '/reciclare',
+            'Carbon Conscious': '/calculator',
+            'Explore the Recycling Map': '/reciclare',
+            'Explorează Harta de Reciclare': '/reciclare',
+            'Recycling Pioneer': '/reciclare',
             'Complete 1 Lesson': '/educatie',
+            'First Steps': '/educatie',
             'List First Item': '/marketplace',
-            'Send First Message': '/friends'
+            'Marketplace Explorer': '/marketplace',
+            'Send Your First Message': '/inbox',
+            'Trimite Primul Tău Mesaj': '/inbox',
+            'Social Butterfly': '/friends',
+            'Profile Perfectionist': '/profile',
+            'Deal Maker': '/marketplace',
+            'Add an Item to Favorites': '/marketplace',
+            'Adaugă un Articol la Favorite': '/marketplace',
+            'Make an Offer on the Marketplace': '/marketplace',
+            'Fă o Ofertă pe Piață': '/marketplace'
         },
         'AMBASSADOR': {
             'First Friend': '/friends',
@@ -932,23 +945,42 @@ function navigateToChallenge(type, title) {
     };
     
     const typeMap = navigationMap[type];
+    console.log('Navigating challenge:', { type, title, typeMap });
+    console.log('Available titles in typeMap:', typeMap ? Object.keys(typeMap) : 'No typeMap');
+    
+    // Check for exact match first
     if (typeMap && typeMap[title]) {
+        console.log('Found exact navigation for:', title, '->', typeMap[title]);
         window.location.href = typeMap[title];
-    } else {
-        // Default navigation based on type
-        const defaultPages = {
-            'DEFAULT_CHALLENGES': '/calculator',
-            'AMBASSADOR': '/friends',
-            'MAESTER': '/educatie',
-            'SHELF_WHISPERER': '/marketplace',
-            'CART_GOBLIN': '/marketplace'
-        };
-        
-        if (defaultPages[type]) {
-            window.location.href = defaultPages[type];
-        } else {
-            console.log('No navigation found for challenge type:', type);
+        return;
+    }
+    
+    // Check for case-insensitive match
+    if (typeMap) {
+        const matchingKey = Object.keys(typeMap).find(key => 
+            key.toLowerCase().trim() === title.toLowerCase().trim()
+        );
+        if (matchingKey) {
+            console.log('Found case-insensitive navigation for:', title, '->', typeMap[matchingKey]);
+            window.location.href = typeMap[matchingKey];
+            return;
         }
+    }
+    
+    // Default navigation based on type
+    const defaultPages = {
+        'DEFAULT_CHALLENGES': '/calculator',
+        'AMBASSADOR': '/friends',
+        'MAESTER': '/educatie',
+        'SHELF_WHISPERER': '/marketplace',
+        'CART_GOBLIN': '/marketplace'
+    };
+    
+    if (defaultPages[type]) {
+        console.log('Using default navigation for type:', type, '->', defaultPages[type]);
+        window.location.href = defaultPages[type];
+    } else {
+        console.log('No navigation found for challenge type:', type);
     }
 }
 
@@ -1135,6 +1167,7 @@ function addChallengeCardClickHandlers() {
         card.addEventListener('click', function() {
             const type = this.getAttribute('data-category');
             const title = this.getAttribute('data-challenge-title');
+            console.log('Challenge card clicked:', { type, title });
             navigateToChallenge(type, title);
         });
     });
