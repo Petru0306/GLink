@@ -2,7 +2,6 @@ package com.greenlink.greenlink.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +59,11 @@ public class LessonImageController {
             
             // Generate unique filename
             String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "Invalid filename");
+                return ResponseEntity.badRequest().body(response);
+            }
             String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
             String uniqueFilename = "lesson_" + lessonId + "_user_" + currentUser.getId() + "_" + UUID.randomUUID().toString() + fileExtension;
             

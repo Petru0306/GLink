@@ -2,11 +2,9 @@ package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.model.Product;
-import com.greenlink.greenlink.dto.ProductDto;
 import com.greenlink.greenlink.service.PaymentService;
 import com.greenlink.greenlink.service.StripeService;
 import com.greenlink.greenlink.service.UserService;
-import com.greenlink.greenlink.service.ProductService;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -38,9 +36,6 @@ public class PaymentController {
     
     @Autowired
     private UserService userService;
-    
-    @Autowired
-    private ProductService productService;
     
     @Autowired
     private ProductRepository productRepository;
@@ -346,7 +341,7 @@ public class PaymentController {
         
         try {
             // Check admin password (you can change this to any password you want)
-            String adminPassword = "admin123"; // TODO: Move to application.properties
+            String adminPassword = "admin123";
             
             if (!adminPassword.equals(password)) {
                 response.put("success", false);
@@ -356,7 +351,6 @@ public class PaymentController {
             
             // Get current user and product
             User buyer = userService.getCurrentUser();
-            ProductDto productDto = productService.getProductById(productId);
             
             // Get the actual Product entity from repository
             Product product = productRepository.findById(productId)

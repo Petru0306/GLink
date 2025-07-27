@@ -5,7 +5,6 @@ import com.greenlink.greenlink.dto.DirectMessageDto;
 import com.greenlink.greenlink.model.DirectMessageConversation;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.DirectMessageService;
-import com.greenlink.greenlink.service.FriendService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ public class DirectMessageController {
     
     @Autowired
     private UserService userService;
-    
-    @Autowired
-    private FriendService friendService;
     
     @Autowired
     private ChallengeTrackingService challengeTrackingService;

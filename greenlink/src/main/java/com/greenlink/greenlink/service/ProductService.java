@@ -467,30 +467,12 @@ public class ProductService {
     }
     
     public List<PurchaseDto> getBoughtProductsByBuyer(Long buyerId) {
-        System.out.println("=== GETTING BOUGHT PRODUCTS FOR BUYER ===");
-        System.out.println("Buyer ID: " + buyerId);
-        
         List<Product> products = productRepository.findProductsByBuyerId(buyerId);
         
-        System.out.println("Raw products from repository: " + products.size());
-        for (Product p : products) {
-            System.out.println("  - Product: " + p.getName() + " (ID: " + p.getId() + ") - sold: " + p.isSold() + ", buyer: " + (p.getBuyer() != null ? p.getBuyer().getEmail() : "null") + ", soldAt: " + p.getSoldAt());
-        }
-        
-        List<PurchaseDto> purchaseDtos = products.stream()
+        return products.stream()
                 .map(PurchaseDto::fromProduct)
-                .filter(purchaseDto -> purchaseDto != null) // Filter out any null DTOs
+                .filter(purchaseDto -> purchaseDto != null)
                 .collect(Collectors.toList());
-        
-        System.out.println("PurchaseDtos after conversion: " + purchaseDtos.size());
-        for (PurchaseDto dto : purchaseDtos) {
-            if (dto != null) {
-                System.out.println("  - DTO: " + dto.getProduct().getName() + " - Price: " + dto.getTotalPrice() + " - Date: " + dto.getPurchaseDate());
-            }
-        }
-        System.out.println("=== END GETTING BOUGHT PRODUCTS ===");
-        
-        return purchaseDtos;
     }
     
     public Page<PurchaseDto> getBoughtProductsByBuyerPaginated(Long buyerId, Pageable pageable) {

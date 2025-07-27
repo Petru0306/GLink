@@ -8,7 +8,6 @@ import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.repository.MessageRepository;
 import com.greenlink.greenlink.repository.ProductRepository;
 import com.greenlink.greenlink.repository.UserRepository;
-import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;

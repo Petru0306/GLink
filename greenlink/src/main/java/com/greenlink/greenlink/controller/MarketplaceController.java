@@ -55,6 +55,7 @@ public class MarketplaceController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size,
             Model model) {
@@ -62,7 +63,26 @@ public class MarketplaceController {
         try {
             Product.Branch branchEnum = Product.Branch.valueOf(branch.toUpperCase());
             
-            Pageable pageable = PageRequest.of(page, size);
+            // Create pageable with sorting
+            Pageable pageable;
+            if (sort != null && !sort.isEmpty()) {
+                switch (sort) {
+                    case "price_asc":
+                        pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by("price").ascending());
+                        break;
+                    case "price_desc":
+                        pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by("price").descending());
+                        break;
+                    case "newest":
+                        pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
+                        break;
+                    default:
+                        pageable = PageRequest.of(page, size);
+                        break;
+                }
+            } else {
+                pageable = PageRequest.of(page, size);
+            }
             Page<ProductDto> productsPage;
             
             // Get filtered products first
@@ -107,6 +127,7 @@ public class MarketplaceController {
             model.addAttribute("searchTerm", search);
             model.addAttribute("minPrice", minPrice);
             model.addAttribute("maxPrice", maxPrice);
+            model.addAttribute("sort", sort);
             
             // Set branch title based on branch parameter
             Locale currentLocale = LocaleContextHolder.getLocale();

@@ -491,9 +491,9 @@
                             <button type="submit" class="btn btn-success apply-filters-btn mb-2">
                                 <i class="bi bi-funnel-fill me-2"></i><span th:text="#{marketplace.apply.filters}">Aplică Filtre</span>
                             </button>
-                            <a href="/marketplace" class="reset-filters-btn mt-1 d-block text-center">
+                            <button type="button" id="resetFiltersBtn" class="reset-filters-btn mt-1 d-block text-center">
                                 <i class="bi bi-x-circle me-2"></i><span th:text="#{marketplace.reset.filters}">Resetează Filtre</span>
-                            </a>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -627,7 +627,7 @@
                     <ul class="pagination justify-content-center flex-wrap">
                         <!-- Previous Button -->
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/marketplace(page=${currentPage - 1})}" aria-label="Previous" th:if="${currentPage > 0}">
+                            <a class="page-link" th:href="@{/marketplace/{branch}(branch=${branch.toString().toLowerCase()}, page=${currentPage - 1}, category=${selectedCategory}, ecoFriendly=${selectedEcoFriendly}, search=${searchTerm}, minPrice=${minPrice}, maxPrice=${maxPrice}, sort=${sort})}" aria-label="Previous" th:if="${currentPage > 0}">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                             <span class="page-link" aria-label="Previous" th:if="${currentPage == 0}">
@@ -638,12 +638,12 @@
                         <!-- Page Numbers -->
                         <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                             th:classappend="${currentPage == i} ? 'active'">
-                            <a class="page-link" th:href="@{/marketplace(page=${i})}" th:text="${i + 1}">1</a>
+                            <a class="page-link" th:href="@{/marketplace/{branch}(branch=${branch.toString().toLowerCase()}, page=${i}, category=${selectedCategory}, ecoFriendly=${selectedEcoFriendly}, search=${searchTerm}, minPrice=${minPrice}, maxPrice=${maxPrice}, sort=${sort})}" th:text="${i + 1}">1</a>
                         </li>
                         
                         <!-- Next Button -->
                         <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{/marketplace(page=${currentPage + 1})}" aria-label="Next" th:if="${currentPage < totalPages - 1}">
+                            <a class="page-link" th:href="@{/marketplace/{branch}(branch=${branch.toString().toLowerCase()}, page=${currentPage + 1}, category=${selectedCategory}, ecoFriendly=${selectedEcoFriendly}, search=${searchTerm}, minPrice=${minPrice}, maxPrice=${maxPrice}, sort=${sort})}" aria-label="Next" th:if="${currentPage < totalPages - 1}">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                             <span class="page-link" aria-label="Next" th:if="${currentPage == totalPages - 1}">
@@ -870,9 +870,74 @@
                 }
             });
 
+            // Handle filter form submission
+            $('#filterForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const params = new URLSearchParams(window.location.search);
+                const category = $(this).find('select[name="category"]').val();
+                const minPrice = $(this).find('input[name="minPrice"]').val();
+                const maxPrice = $(this).find('input[name="maxPrice"]').val();
+                const ecoFriendly = $(this).find('input[name="ecoFriendly"]').is(':checked');
+                const sortValue = sortSelect.val();
+
+                // Update parameters
+                if (category) {
+                    params.set('category', category);
+                } else {
+                    params.delete('category');
+                }
+                
+                if (minPrice) {
+                    params.set('minPrice', minPrice);
+                } else {
+                    params.delete('minPrice');
+                }
+                
+                if (maxPrice) {
+                    params.set('maxPrice', maxPrice);
+                } else {
+                    params.delete('maxPrice');
+                }
+                
+                if (ecoFriendly) {
+                    params.set('ecoFriendly', 'true');
+                } else {
+                    params.delete('ecoFriendly');
+                }
+                
+                if (sortValue) {
+                    params.set('sort', sortValue);
+                } else {
+                    params.delete('sort');
+                }
+
+                // Reset to first page when applying filters
+                params.delete('page');
+
+                window.location.href = window.location.pathname + '?' + params.toString();
+            });
+
             // Trigger sort change
             sortSelect.on('change', function() {
                 applySearchSort();
+            });
+
+            // Handle reset filters button
+            $('#resetFiltersBtn').on('click', function() {
+                // Clear all form inputs
+                $('#filterForm select[name="category"]').val('');
+                $('#filterForm input[name="minPrice"]').val('');
+                $('#filterForm input[name="maxPrice"]').val('');
+                $('#filterForm input[name="ecoFriendly"]').prop('checked', false);
+                
+                // Clear search and sort
+                searchInput.val('');
+                sortSelect.val('');
+                
+                // Redirect to current branch without any parameters
+                const currentPath = window.location.pathname;
+                window.location.href = currentPath;
             });
         });
     </script>

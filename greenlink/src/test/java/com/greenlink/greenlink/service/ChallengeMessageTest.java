@@ -2,7 +2,6 @@ package com.greenlink.greenlink.service;
 
 import com.greenlink.greenlink.model.Challenge;
 import com.greenlink.greenlink.model.User;
-import com.greenlink.greenlink.model.UserChallenge;
 import java.util.List;
 import com.greenlink.greenlink.repository.ChallengeRepository;
 import com.greenlink.greenlink.repository.UserChallengeRepository;
@@ -37,7 +36,7 @@ public class ChallengeMessageTest {
         // Create a test user
         User user = new User();
         user.setEmail("test@example.com");
-        user.setPassword("password123");
+        user.setPassword("Password123!");
         user.setFirstName("Test");
         user.setLastName("User");
         user = userRepository.save(user);

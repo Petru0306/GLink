@@ -12,7 +12,6 @@ import com.greenlink.greenlink.service.ChallengeTrackingService;
 import com.greenlink.greenlink.service.SystemMessageService;
 import com.greenlink.greenlink.service.PointsService;
 import com.greenlink.greenlink.model.SystemMessage;
-import com.greenlink.greenlink.service.DeliveryConversationService;
 import com.greenlink.greenlink.repository.ConversationRepository;
 import com.greenlink.greenlink.model.Message;
 import com.greenlink.greenlink.repository.MessageRepository;
@@ -55,9 +54,6 @@ public class MessageController {
     
     @Autowired
     private SystemMessageService systemMessageService;
-    
-    @Autowired
-    private DeliveryConversationService deliveryConversationService;
     
     @Autowired
     private ConversationRepository conversationRepository;
