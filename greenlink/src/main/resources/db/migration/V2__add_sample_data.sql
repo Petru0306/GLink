@@ -1,2 +1,0 @@
--- V2 migration file is now empty as recycling points are handled via iframe
--- Other sample data can be added here if needed 
