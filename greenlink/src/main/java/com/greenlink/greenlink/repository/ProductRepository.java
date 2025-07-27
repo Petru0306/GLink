@@ -58,22 +58,20 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId")
     List<Product> findBySellerId(@Param("sellerId") Long sellerId);
 
-    // Numără câte produse a listat un vânzător
     long countBySellerId(Long sellerId);
     
-    // Find available (not sold) products by seller
     @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId AND p.sold = false")
     List<Product> findAvailableProductsBySellerId(@Param("sellerId") Long sellerId);
     
-    // Find sold products by seller
     @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId AND p.sold = true ORDER BY p.soldAt DESC")
     List<Product> findSoldProductsBySellerId(@Param("sellerId") Long sellerId);
     
-    // Find all available products (not sold)
     @Query("SELECT p FROM Product p WHERE p.sold = false")
     List<Product> findAllAvailableProducts();
     
-    // Find products by buyer
     @Query("SELECT p FROM Product p WHERE p.buyer.id = :buyerId AND p.sold = true ORDER BY p.soldAt DESC")
     List<Product> findProductsByBuyerId(@Param("buyerId") Long buyerId);
+    
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.buyer.id = ?1 AND p.sold = true")
+    long countByBuyerId(Long buyerId);
 }

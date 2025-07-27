@@ -94,7 +94,7 @@ public class MessageController {
             
             Conversation conversation = messageService.getConversationById(conversationId);
             
-            // Security check
+            
             if (!conversation.getSeller().getId().equals(currentUser.getId()) && 
                 !conversation.getBuyer().getId().equals(currentUser.getId())) {
                 return "redirect:/inbox?error=unauthorized";
@@ -102,13 +102,13 @@ public class MessageController {
             
             List<MessageDto> messages = messageService.getConversationMessages(conversationId, currentUser);
             
-            // Mark conversation as read
+            
             messageService.markConversationAsRead(conversationId, currentUser);
             
             boolean isCurrentUserSeller = conversation.getSeller().getId().equals(currentUser.getId());
             User otherUser = isCurrentUserSeller ? conversation.getBuyer() : conversation.getSeller();
             
-            // Get product with negotiated price if applicable
+            
             ProductDto product = productService.getProductById(conversation.getProduct().getId(), currentUser);
             
             model.addAttribute("conversation", conversation);
@@ -137,12 +137,12 @@ public class MessageController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error starting conversation", e);
             try {
-                // Get the product to determine the branch for proper redirection
+                
                 ProductDto product = productService.getProductById(productId);
                 String branch = product.getBranch().toString().toLowerCase();
                 return "redirect:/marketplace/" + branch + "/product/" + productId + "?error=" + e.getMessage();
             } catch (Exception ex) {
-                // If we can't get the product, redirect to marketplace
+                
                 return "redirect:/marketplace?error=" + e.getMessage();
             }
         }
@@ -161,12 +161,12 @@ public class MessageController {
             
             MessageDto message = messageService.sendMessage(conversationId, currentUser, content);
             
-            // Track message sending for challenges
+            
             challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
             
-            // Award points for sending message
+            
             try {
-                pointsService.awardMessageSentPoints(currentUser.getId(), conversationId, 2); // 2 points per message
+                pointsService.awardMessageSentPoints(currentUser.getId(), conversationId, 2); 
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Error awarding points for message sent: " + e.getMessage());
             }
@@ -193,15 +193,15 @@ public class MessageController {
             
             MessageDto message = messageService.makeOffer(conversationId, currentUser, offerAmount);
             
-            // Track marketplace offer for challenges
+            
             challengeTrackingService.trackUserAction(currentUser.getId(), "MARKETPLACE_OFFER_MADE", null);
             
-            // Award points for making offer
+            
             try {
                 Conversation conversation = messageService.getConversationById(conversationId);
                 String productName = conversation.getProduct().getName();
                 pointsService.awardOfferMadePoints(currentUser.getId(), conversation.getProduct().getId(), 
-                    productName, offerAmount, 5); // 5 points per offer
+                    productName, offerAmount, 5); 
             } catch (Exception e) {
                 logger.log(Level.WARNING, "Error awarding points for offer made: " + e.getMessage());
             }
@@ -314,11 +314,11 @@ public class MessageController {
             System.out.println("=== LOOKING FOR DELIVERY CONVERSATIONS ===");
             System.out.println("Current user: " + currentUser.getEmail() + " (ID: " + currentUser.getId() + ")");
             
-            // Get all conversations for the user (these will be delivery conversations)
+            
             List<Conversation> allConversations = conversationRepository.findByBuyerOrSellerOrderByUpdatedAtDesc(currentUser, currentUser);
             System.out.println("Found " + allConversations.size() + " total conversations for user");
             
-            // Filter to only show conversations with products (delivery conversations)
+                    
             List<Conversation> deliveryConversations = allConversations.stream()
                     .filter(conv -> conv.getProduct() != null)
                     .collect(Collectors.toList());
@@ -413,6 +413,9 @@ public class MessageController {
                     .build();
             
             messageRepository.save(message);
+            
+            // Track challenge progress for sending first message
+            challengeTrackingService.trackUserAction(currentUser.getId(), "MESSAGE_SENT", null);
             
             response.put("success", true);
             response.put("message", "Message sent successfully");

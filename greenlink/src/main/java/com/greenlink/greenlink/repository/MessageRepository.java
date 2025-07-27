@@ -22,4 +22,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     
     @Query("SELECT COUNT(m) FROM Message m WHERE m.sender = ?1 AND m.offerAmount IS NOT NULL AND m.offerAmount > 0")
     long countOffersMadeByUser(User user);
+    
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.sender.id = ?1")
+    long countBySenderId(Long senderId);
 } 
