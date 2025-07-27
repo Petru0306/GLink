@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Connect Dashboard - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stripe-connect-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2d5a27;
+        }
+        
+        .stripe-connect-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stripe-connect-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e8f5e8;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .stripe-connect-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .stripe-connect-card h3 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .stripe-connect-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        
+        .stripe-connect-btn.secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+        
+        .stripe-connect-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .stripe-connect-info h4 {
+            color: #2d5a27;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stripe-connect-info p {
+            margin: 0;
+            color: #666;
+        }
+        
+        .stripe-connect-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .stripe-connect-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .stripe-connect-feature-icon {
+            width: 24px;
+            height: 24px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="stripe-connect-header">
+            <h1>Stripe Connect Dashboard</h1>
+            <p>Manage your connected accounts, products, and payments</p>
+        </div>
+        
+        <div class="stripe-connect-info">
+            <h4>🚀 Getting Started with Stripe Connect</h4>
+            <p>Stripe Connect allows you to accept payments on behalf of other businesses. 
+            Create connected accounts, onboard sellers, and manage their products and payments.</p>
+        </div>
+        
+        <div class="stripe-connect-grid">
+            <div class="stripe-connect-card">
+                <h3>📋 Create Connected Account</h3>
+                <p>Set up a new Stripe Connect account for a seller. This creates an Express account 
+                that the seller can onboard to start accepting payments.</p>
+                <a href="/stripe-connect/create-account" class="stripe-connect-btn">Create Account</a>
+            </div>
+            
+            <div class="stripe-connect-card">
+                <h3>🏪 Manage Products</h3>
+                <p>Create and manage products for your connected accounts. Each product can have 
+                its own pricing and description.</p>
+                <a href="#" class="stripe-connect-btn secondary" onclick="alert('Select a connected account first')">Manage Products</a>
+            </div>
+            
+            <div class="stripe-connect-card">
+                <h3>🛒 View Storefronts</h3>
+                <p>Browse the public storefronts of your connected accounts. Customers can view 
+                products and make purchases directly.</p>
+                <a href="#" class="stripe-connect-btn secondary" onclick="alert('Select a connected account first')">View Storefronts</a>
+            </div>
+            
+            <div class="stripe-connect-card">
+                <h3>💰 Payment Analytics</h3>
+                <p>Track payments, fees, and revenue across all your connected accounts. 
+                Monitor your platform's performance and earnings.</p>
+                <a href="#" class="stripe-connect-btn secondary" onclick="alert('Analytics coming soon')">View Analytics</a>
+            </div>
+        </div>
+        
+        <div class="stripe-connect-info">
+            <h4>✨ Key Features</h4>
+            <div class="stripe-connect-features">
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Express onboarding for sellers</span>
+                </div>
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Platform fee collection</span>
+                </div>
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Direct charge processing</span>
+                </div>
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Hosted checkout sessions</span>
+                </div>
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Real-time account status</span>
+                </div>
+                <div class="stripe-connect-feature">
+                    <div class="stripe-connect-feature-icon">✓</div>
+                    <span>Secure payment processing</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stripe-connect-info">
+            <h4>⚠️ Important Notes</h4>
+            <p><strong>API Keys:</strong> Make sure your Stripe API keys are properly configured in your environment variables. 
+            For production, use live keys; for testing, use test keys.</p>
+            <p><strong>Webhooks:</strong> Set up webhooks to handle payment events and keep your system in sync with Stripe.</p>
+            <p><strong>Compliance:</strong> Ensure your connected accounts complete all required verification steps before accepting live payments.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Add any interactive functionality here
+        console.log('Stripe Connect Dashboard loaded');
+    </script>
+</body>
+</html> 

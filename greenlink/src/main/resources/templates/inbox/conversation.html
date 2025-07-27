@@ -694,6 +694,58 @@
             });
         }
         
+        // Helper function to find the original offer message that needs to be updated
+        function findOriginalOfferMessage(responseMessage) {
+            console.log("Looking for original offer message for response:", responseMessage);
+            
+            // Get all offer messages in the chat
+            const allOfferMessages = document.querySelectorAll('.offer-message');
+            console.log("Total offer messages found:", allOfferMessages.length);
+            
+            // Look for the most recent pending offer message that was sent by the current user
+            // (since the response is from the other user)
+            for (let i = allOfferMessages.length - 1; i >= 0; i--) {
+                const offerMessage = allOfferMessages[i];
+                const messageDiv = offerMessage.closest('.message');
+                
+                if (messageDiv) {
+                    const messageId = messageDiv.getAttribute('data-message-id');
+                    const isCurrentUserSender = messageDiv.getAttribute('data-is-current-user-sender') === 'true';
+                    const offerStatus = offerMessage.getAttribute('data-offer-status');
+                    
+                    console.log("Checking offer message:", {
+                        messageId: messageId,
+                        isCurrentUserSender: isCurrentUserSender,
+                        offerStatus: offerStatus
+                    });
+                    
+                    // Look for a pending offer sent by current user
+                    if (isCurrentUserSender && (offerStatus === 'PENDING' || offerStatus === 'ACTION_REQUIRED')) {
+                        console.log("Found original pending offer message:", messageId);
+                        return offerMessage;
+                    }
+                }
+            }
+            
+            // If no pending offer found, look for any offer message sent by current user
+            for (let i = allOfferMessages.length - 1; i >= 0; i--) {
+                const offerMessage = allOfferMessages[i];
+                const messageDiv = offerMessage.closest('.message');
+                
+                if (messageDiv) {
+                    const isCurrentUserSender = messageDiv.getAttribute('data-is-current-user-sender') === 'true';
+                    
+                    if (isCurrentUserSender) {
+                        console.log("Found original offer message (not pending):", messageDiv.getAttribute('data-message-id'));
+                        return offerMessage;
+                    }
+                }
+            }
+            
+            console.log("No original offer message found");
+            return null;
+        }
+        
         // Set up AJAX CSRF header
         $.ajaxSetup({
             beforeSend: function(xhr) {
@@ -936,6 +988,28 @@
                 }
             }
             
+            // NEW: Handle offer response messages that contain content (when other user responds)
+            if (message.content && message.offerStatus && message.isOffer && message.senderId != currentUserId) {
+                console.log("Received offer response message:", message);
+                
+                // Check if this is a response to an existing offer
+                if (message.offerStatus === 'ACCEPTED' || 
+                    message.offerStatus === 'REJECTED' || 
+                    message.offerStatus === 'COUNTERED') {
+                    
+                    // Try to find the original offer message to update
+                    // The original offer might be in a different message structure
+                    const originalOfferMessage = findOriginalOfferMessage(message);
+                    if (originalOfferMessage) {
+                        console.log("Found original offer message, updating status to:", message.offerStatus);
+                        const originalMessageId = originalOfferMessage.getAttribute('data-message-id');
+                        updateOfferStatus(originalMessageId, message.offerStatus);
+                    } else {
+                        console.log("Could not find original offer message to update");
+                    }
+                }
+            }
+            
             // Handle price update notifications
             if (message.content === 'PRICE_UPDATE' && message.offerStatus === 'PRICE_UPDATED' && message.offerAmount) {
                 console.log("Received price update notification:", message);
@@ -988,15 +1062,26 @@
                     case 'OFFER_ACCEPTED':
                     case 'OFFER_REJECTED':
                     case 'COUNTER_OFFER_CREATED':
+                        console.log("Processing offer event:", event.eventType, "for message:", event.messageId, "status:", event.offerStatus);
                         updateOfferStatus(event.messageId, event.offerStatus);
                         break;
                     case 'PRICE_UPDATED':
                         updateProductPriceDisplay(event.offerAmount);
                         break;
+                    default:
+                        console.log("Unknown offer event type:", event.eventType);
                 }
                 
             } catch (error) {
                 console.error("Error processing offer event:", error);
+            }
+        }
+        
+        // Function to subscribe to a new offer message for real-time updates
+        function subscribeToOfferMessage(messageId) {
+            if (stompClient && stompClient.connected && messageId) {
+                console.log("Subscribing to offer updates for message:", messageId);
+                stompClient.subscribe('/topic/offer.' + messageId, onOfferEventReceived);
             }
         }
         
@@ -1920,6 +2005,11 @@
             
             messageDiv.innerHTML = messageContent + messageTime;
             chatContainer.appendChild(messageDiv);
+            
+            // Subscribe to real-time updates for new offer messages
+            if (isOfferMessage && messageId) {
+                subscribeToOfferMessage(messageId);
+            }
         }
         
         function getOfferStatusText(status) {
@@ -2052,6 +2142,23 @@
                         }
                     });
                 }
+                
+                // Also check for any pending offers that might need status updates
+                const pendingOffers = document.querySelectorAll('.offer-message[data-offer-status="PENDING"], .offer-message[data-offer-status="ACTION_REQUIRED"]');
+                if (pendingOffers.length > 0) {
+                    console.log('Found', pendingOffers.length, 'pending offers, checking for status updates...');
+                    
+                    // Check the most recent pending offer for updates
+                    const mostRecentPending = pendingOffers[pendingOffers.length - 1];
+                    const messageDiv = mostRecentPending.closest('.message');
+                    if (messageDiv) {
+                        const messageId = messageDiv.getAttribute('data-message-id');
+                        if (messageId) {
+                            console.log('Checking status for pending offer:', messageId);
+                            checkOfferStatus(messageId);
+                        }
+                    }
+                }
             }, 10000); // Check every 10 seconds
         });
         
@@ -2061,9 +2168,14 @@
                 url: `/inbox/message/${messageId}/status`,
                 type: 'GET',
                 success: function(response) {
-                    if (response.offerStatus && response.offerStatus !== 'PENDING') {
+                    if (response.offerStatus && 
+                        (response.offerStatus === 'ACCEPTED' || 
+                         response.offerStatus === 'REJECTED' || 
+                         response.offerStatus === 'COUNTERED')) {
                         console.log('Status check found updated status:', response.offerStatus);
                         updateOfferStatus(messageId, response.offerStatus);
+                    } else if (response.offerStatus) {
+                        console.log('Status check found status:', response.offerStatus, 'but not updating (still pending)');
                     }
                 },
                 error: function(xhr) {

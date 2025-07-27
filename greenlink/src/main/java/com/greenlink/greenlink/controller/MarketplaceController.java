@@ -5,7 +5,7 @@ import com.greenlink.greenlink.model.Product;
 import com.greenlink.greenlink.model.Product.Category;
 import com.greenlink.greenlink.model.User;
 import com.greenlink.greenlink.service.ProductService;
-import com.greenlink.greenlink.service.FileStorageService;
+import com.greenlink.greenlink.service.R2StorageService;
 import com.greenlink.greenlink.service.UserService;
 import com.greenlink.greenlink.service.ChallengeTrackingService;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class MarketplaceController {
     private ProductService productService;
 
     @Autowired
-    private FileStorageService fileStorageService;
+    private R2StorageService r2StorageService;
 
     @Autowired
     private UserService userService;
@@ -303,8 +303,8 @@ public class MarketplaceController {
                            RedirectAttributes redirectAttributes) {
         try {
             if (!imageFile.isEmpty()) {
-                String fileName = fileStorageService.storeFile(imageFile);
-                productDto.setImageUrl("/files/products/" + fileName);
+                String fileName = r2StorageService.storeFile(imageFile);
+                productDto.setImageUrl(r2StorageService.getFileUrl(fileName));
             }
 
             productService.addProduct(productDto);
@@ -328,9 +328,9 @@ public class MarketplaceController {
                       productDto.getBranch(), productDto.getStock());
                       
             if (!imageFile.isEmpty()) {
-                String fileName = fileStorageService.storeFile(imageFile);
+                String fileName = r2StorageService.storeFile(imageFile);
                 logger.info("Image stored successfully with filename: {}", fileName);
-                productDto.setImageUrl("/files/products/" + fileName);
+                productDto.setImageUrl(r2StorageService.getFileUrl(fileName));
                 logger.info("Set image URL to: {}", productDto.getImageUrl());
             } else {
                 logger.warn("No image file uploaded for product: {}", productDto.getName());
@@ -373,8 +373,8 @@ public class MarketplaceController {
                               @RequestHeader(value = "Referer", required = false) String referer) {
         try {
             if (imageFile != null && !imageFile.isEmpty()) {
-                String fileName = fileStorageService.storeFile(imageFile);
-                productDto.setImageUrl("/files/products/" + fileName);
+                String fileName = r2StorageService.storeFile(imageFile);
+                productDto.setImageUrl(r2StorageService.getFileUrl(fileName));
             }
 
             productService.updateProduct(id, productDto);
