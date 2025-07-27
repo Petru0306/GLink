@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <footer th:fragment="footer" class="modern-footer">
-    <!-- Animated Background Particles -->
     <div class="footer-particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -13,7 +12,6 @@
     <div class="footer-content">
         <div class="container">
             <div class="row g-3">
-                <!-- Company Info Section -->
                 <div class="col-lg-4 col-md-6 mb-3">
                     <div class="footer-section glass-card">
                         <div class="section-header">
@@ -25,10 +23,17 @@
                         <p class="company-tagline" th:text="#{footer.tagline}">
                             Conectăm oamenii cu natura pentru un viitor mai verde și mai sustenabil.
                         </p>
+                        
+                        <!-- Partener Section -->
+                        <div class="partner-compact">
+                            <span class="partner-label">Partener oficial:</span>
+                            <a href="https://www.cartepedia.ro/" target="_blank" class="partner-link-compact">
+                                <img src="/images/cartepedia-logo.png" alt="Cartepedia" class="partner-logo-compact">
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Quick Links Section -->
                 <div class="col-lg-2 col-md-6 mb-3">
                     <div class="footer-section glass-card">
                         <div class="section-header">
@@ -64,7 +69,6 @@
                     </div>
                 </div>
 
-                <!-- Legal Section -->
                 <div class="col-lg-2 col-md-6 mb-3">
                     <div class="footer-section glass-card">
                         <div class="section-header">
@@ -88,7 +92,6 @@
                     </div>
                 </div>
 
-                <!-- Contact Section -->
                 <div class="col-lg-4 col-md-6 mb-3">
                     <div class="footer-section glass-card">
                         <div class="section-header">
@@ -126,7 +129,6 @@
                 </div>
             </div>
 
-            <!-- Copyright Section -->
             <div class="copyright-section">
                 <div class="copyright-content">
                     <div class="copyright-text">
@@ -144,7 +146,6 @@
     </div>
 
     <style>
-        /* Modern Footer Styles - Compact Version */
         .modern-footer {
             position: relative;
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
@@ -154,7 +155,6 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* Animated Background Particles - Reduced */
         .modern-footer .footer-particles {
             position: absolute;
             top: 0;
@@ -191,13 +191,11 @@
             }
         }
 
-        /* Footer Content */
         .modern-footer .footer-content {
             position: relative;
             z-index: 10;
         }
 
-        /* Glass Card Effect - Compact */
         .modern-footer .footer-section {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
@@ -231,7 +229,6 @@
             border-color: rgba(0, 255, 136, 0.3);
         }
 
-        /* Section Headers - Compact */
         .modern-footer .section-header {
             display: flex;
             align-items: center;
@@ -260,7 +257,6 @@
             text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
         }
 
-        /* Company Section - Compact */
         .modern-footer .logo-container {
             display: flex;
             align-items: center;
@@ -295,7 +291,6 @@
             font-size: 0.9rem;
         }
 
-        /* Footer Links - Compact */
         .modern-footer .footer-links {
             list-style: none;
             padding: 0;
@@ -353,7 +348,6 @@
             transform: scale(1.1) rotate(10deg);
         }
 
-        /* Contact Section - Compact */
         .modern-footer .contact-info {
             display: flex;
             flex-direction: column;
@@ -425,7 +419,41 @@
             gap: 0.3rem;
         }
 
-        /* Copyright Section - Compact */
+        .modern-footer .partner-compact {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .modern-footer .partner-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .modern-footer .partner-link-compact {
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .modern-footer .partner-link-compact:hover {
+            transform: scale(1.05);
+        }
+
+        .modern-footer .partner-logo-compact {
+            display: block;
+            width: 80px;
+            height: auto;
+            object-fit: contain;
+        }
+
         .modern-footer .copyright-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
@@ -477,7 +505,6 @@
             50% { transform: translateY(-3px); }
         }
 
-        /* Responsive Design - Compact */
         @media (max-width: 768px) {
             .modern-footer {
                 padding: 1.5rem 0 1rem 0;
@@ -508,6 +535,16 @@
             .modern-footer .contact-icon {
                 margin-right: 0;
                 margin-bottom: 0.4rem;
+            }
+
+            .modern-footer .partner-compact {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .modern-footer .partner-logo-compact {
+                width: 70px;
             }
 
             .modern-footer .copyright-content {
