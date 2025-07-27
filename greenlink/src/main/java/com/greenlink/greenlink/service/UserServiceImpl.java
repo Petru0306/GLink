@@ -27,14 +27,12 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
     private final PointsService pointsService;
-    private final ProfilePictureStorageService profilePictureStorageService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, PointsService pointsService, ProfilePictureStorageService profilePictureStorageService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, PointsService pointsService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;
         this.pointsService = pointsService;
-        this.profilePictureStorageService = profilePictureStorageService;
     }
 
     @Override
@@ -97,7 +95,7 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.setActive(true);
         user.setPoints(0);
-        user.setProfilePicture("/images/default-avatar.svg");
+        user.setProfilePicture("/images/logo.svg");
         User savedUser = userRepository.save(user);
         logger.info("User registered successfully: {}", user.getEmail());
         return savedUser;
@@ -142,9 +140,8 @@ public class UserServiceImpl implements UserService {
         existingUser.setBio(userUpdate.getBio());
 
         if (profilePicture != null && !profilePicture.isEmpty()) {
-            // Use ProfilePictureStorageService for profile pictures to support R2
-            String imageUrl = profilePictureStorageService.storeFile(profilePicture);
-            existingUser.setProfilePicture(imageUrl);
+            String fileName = fileStorageService.storeFile(profilePicture);
+            existingUser.setProfilePicture("/uploads/profiles/" + fileName);
         }
 
         return userRepository.save(existingUser);

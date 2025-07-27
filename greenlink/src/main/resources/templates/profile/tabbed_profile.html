@@ -1400,6 +1400,93 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Friends Tab -->
+            <div id="friends" class="tab-content hidden">
+                <div class="animate-fade-in">
+                    <div th:if="${not #lists.isEmpty(friends)}">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div th:each="friend : ${friends}" 
+                                 class="group relative h-full">
+                                <!-- Friend Card -->
+                                <div class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden border border-gray-100 h-full flex flex-col">
+                                    <!-- Card Header with Avatar -->
+                                    <div class="relative h-48 overflow-hidden bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                                        <div th:if="${friend.profilePicture != null}" 
+                                             class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                                            <img th:src="${friend.profilePicture}" 
+                                                 class="w-full h-full object-cover rounded-full" 
+                                                 alt="Profile Picture"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div class="w-full h-full bg-green-500 rounded-full flex items-center justify-center" style="display: none;">
+                                                <i class="bi bi-person text-white text-3xl"></i>
+                                            </div>
+                                        </div>
+                                        <div th:if="${friend.profilePicture == null}" 
+                                             class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                            <i class="bi bi-person text-white text-3xl"></i>
+                                        </div>
+                                        
+                                        <!-- Level Badge -->
+                                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-green-600 font-bold rounded-full px-3 py-1 shadow-lg">
+                                            <i class="bi bi-star-fill mr-1"></i>
+                                            <span th:text="'Level ' + ${friend.level}">Level 1</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Card Content -->
+                                    <div class="p-6 flex-grow flex flex-col">
+                                        <div class="flex items-start justify-between mb-4">
+                                            <h3 class="text-xl font-bold text-gray-800 leading-tight" th:text="${friend.firstName + ' ' + friend.lastName}">Friend Name</h3>
+                                            <div class="bg-green-100 text-green-600 text-xs font-bold rounded-full px-2 py-1">
+                                                <i class="bi bi-check-circle-fill mr-1"></i>Friend
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="text-gray-600 text-sm leading-relaxed mb-4 flex-grow" th:text="${friend.email}">friend@example.com</p>
+                                        
+                                        <!-- Points and Actions -->
+                                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
+                                            <div class="flex items-center text-green-600 text-sm font-semibold">
+                                                <i class="bi bi-star-fill mr-2"></i>
+                                                <span th:text="${friend.points + ' points'}">100 points</span>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <a th:href="@{'/profile/user/' + ${friend.id}}" 
+                                                   class="bg-green-50 text-green-600 text-xs font-medium rounded-full px-3 py-1 hover:bg-green-100 transition-colors">
+                                                    <i class="bi bi-eye mr-1"></i>View Profile
+                                                </a>
+                                                <button th:if="${currentUser != null and currentUser.id != friend.id}"
+                                                        th:data-user-id="${friend.id}"
+                                                        th:data-user-name="${friend.firstName + ' ' + friend.lastName}"
+                                                        onclick="openDMModal(event)"
+                                                        class="bg-blue-50 text-blue-600 text-xs font-medium rounded-full px-3 py-1 hover:bg-blue-100 transition-colors">
+                                                    <i class="bi bi-chat-dots mr-1"></i>Message
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div th:if="${#lists.isEmpty(friends)}" class="text-center py-16">
+                        <div class="bg-white rounded-3xl p-12 shadow-xl max-w-md mx-auto">
+                            <div class="bg-gradient-to-br from-green-100 to-green-200 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                                <i class="bi bi-people text-green-600 text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-4">No Friends Yet</h3>
+                            <p class="text-gray-600 mb-8">Connect with other eco-conscious users to build your sustainability community!</p>
+                            <a href="/friends" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                                <i class="bi bi-person-plus mr-3"></i>
+                                Find Friends
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

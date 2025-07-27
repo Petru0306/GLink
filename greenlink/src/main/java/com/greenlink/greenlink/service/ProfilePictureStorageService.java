@@ -1,8 +1,5 @@
 package com.greenlink.greenlink.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,18 +16,7 @@ import java.util.Objects;
 @Service
 public class ProfilePictureStorageService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProfilePictureStorageService.class);
-
     private final Path fileStorageLocation;
-
-    @Autowired(required = false)
-    private R2StorageService r2StorageService;
-
-    @Value("${cloudflare.r2.enabled:false}")
-    private boolean r2Enabled;
-
-    @Value("${cloudflare.r2.public-url:}")
-    private String r2PublicUrl;
 
     public ProfilePictureStorageService(@Value("${file.upload-dir:uploads}/profiles") String uploadDir) {
         this.fileStorageLocation = Paths.get(uploadDir)
@@ -45,21 +31,6 @@ public class ProfilePictureStorageService {
     }
 
     public String storeFile(MultipartFile file) {
-        // Use R2 storage if enabled and available
-        if (r2Enabled && r2StorageService != null) {
-            logger.info("Using R2 storage for profile picture upload");
-            try {
-                String fileName = r2StorageService.storeFile(file);
-                // Return the full R2 URL for profile pictures
-                return r2StorageService.getFileUrl(fileName);
-            } catch (Exception e) {
-                logger.error("Failed to upload to R2, falling back to local storage: {}", e.getMessage());
-                // Fall back to local storage if R2 fails
-            }
-        }
-
-        // Fall back to local storage
-        logger.info("Using local storage for profile picture upload");
         try {
             // Validate file is not empty
             if (file.isEmpty()) {
@@ -87,7 +58,7 @@ public class ProfilePictureStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(newFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            return "/uploads/profiles/" + newFileName;
+            return newFileName;
 
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file.", ex);
@@ -95,26 +66,8 @@ public class ProfilePictureStorageService {
     }
 
     public void deleteFile(String fileName) {
-        // Use R2 storage if enabled and available
-        if (r2Enabled && r2StorageService != null) {
-            logger.info("Using R2 storage for profile picture deletion");
-            try {
-                // Extract filename from URL if it's a full URL
-                String extractedFileName = extractFileNameFromUrl(fileName);
-                r2StorageService.deleteFile(extractedFileName);
-                return;
-            } catch (Exception e) {
-                logger.error("Failed to delete from R2, falling back to local storage: {}", e.getMessage());
-                // Fall back to local storage if R2 fails
-            }
-        }
-
-        // Fall back to local storage
-        logger.info("Using local storage for profile picture deletion");
         try {
-            // Extract filename from path if it's a full path
-            String extractedFileName = extractFileNameFromUrl(fileName);
-            Path filePath = this.fileStorageLocation.resolve(extractedFileName).normalize();
+            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
             Files.deleteIfExists(filePath);
         } catch (IOException ex) {
             throw new RuntimeException("Could not delete file.", ex);
@@ -123,24 +76,5 @@ public class ProfilePictureStorageService {
 
     public Path getFileLocation(String fileName) {
         return this.fileStorageLocation.resolve(fileName).normalize();
-    }
-
-    private String extractFileNameFromUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            return null;
-        }
-        
-        // Handle R2 URLs
-        if (imageUrl.contains("r2.dev")) {
-            return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        }
-        
-        // Handle local URLs
-        if (imageUrl.contains("/uploads/profiles/")) {
-            return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-        }
-        
-        // If it's already just a filename
-        return imageUrl;
     }
 } 
