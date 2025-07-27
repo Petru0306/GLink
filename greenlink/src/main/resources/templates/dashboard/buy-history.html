@@ -7,23 +7,17 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Purchase History - GreenLink</title>
     
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- AOS (Animate on Scroll) -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
     <link rel="shortcut icon" type="image/svg+xml" href="/images/logo.svg">
     
     <style>
-        /* Global Styles */
         :root {
             --primary-green: #28a745;
             --secondary-green: #20c997;
@@ -64,7 +58,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 12px;
         }
@@ -82,7 +75,6 @@
             background: var(--gradient-secondary);
         }
 
-        /* Page Header */
         .page-header {
             background: var(--gradient-primary);
             color: white;
@@ -123,7 +115,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Statistics Cards */
         .stats-card {
             background: white;
             border-radius: 20px;
@@ -195,7 +186,6 @@
             font-size: 0.9rem;
         }
 
-        /* Section Header */
         .section-header {
             background: var(--gradient-primary);
             color: white;
@@ -224,7 +214,6 @@
             margin: 0;
         }
 
-        /* Product Cards */
         .product-card {
             background: white;
             border-radius: 24px;
@@ -481,12 +470,10 @@
             box-shadow: var(--shadow-neon);
         }
 
-        /* Remove action buttons styles since we're removing them */
         .action-buttons {
             display: none;
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
@@ -537,7 +524,7 @@
             color: white;
         }
 
-        /* Responsive Design */
+
         @media (max-width: 768px) {
             .page-title {
                 font-size: 2rem;
@@ -597,10 +584,8 @@
     </style>
 </head>
 <body>
-    <!-- Include navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-    <!-- Page Header -->
     <div class="page-header">
         <div class="container">
             <div class="page-header-content">
@@ -622,7 +607,6 @@
     </div>
 
     <div class="container">
-        <!-- Statistics Cards -->
         <div class="row mb-5" data-aos="fade-up">
             <div class="col-sm-6 col-md-3 mb-3">
                 <div class="stats-card">
@@ -669,7 +653,6 @@
             </div>
         </div>
 
-        <!-- Purchase History Section -->
         <div class="section-header" data-aos="fade-up">
             <h2>
                 <i class="bi bi-list-ul me-2"></i>
@@ -677,7 +660,6 @@
             </h2>
         </div>
 
-        <!-- Product Grid -->
         <div th:if="${!#lists.isEmpty(buyHistory)}" class="row" data-aos="fade-up">
             <div th:each="purchase : ${buyHistory}" class="col-sm-6 col-md-4 col-lg-3 mb-4">
                 <div class="product-card" th:onclick="'window.location.href=\'/marketplace/product/\' + ${purchase.product.id}'">
@@ -712,7 +694,6 @@
             </div>
         </div>
 
-        <!-- Empty State -->
         <div th:if="${#lists.isEmpty(buyHistory)}" class="empty-state" data-aos="fade-up">
             <div class="empty-icon">
                 <i class="bi bi-bag-x"></i>
@@ -725,15 +706,12 @@
         </div>
     </div>
 
-    <!-- Include footer -->
     <footer th:replace="~{fragments/footer :: footer}"></footer>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <script>
-        // Initialize AOS
         AOS.init({
             duration: 800,
             easing: 'ease-in-out',
@@ -741,9 +719,7 @@
             offset: 100
         });
 
-        // Review Modal Functions
         function openReviewModal(purchaseId) {
-            // TODO: Implement review modal functionality
             console.log('Opening review modal for purchase:', purchaseId);
         }
     </script>

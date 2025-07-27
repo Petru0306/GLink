@@ -169,8 +169,8 @@ public class ProfileController {
             }
 
             if (profilePicture != null && !profilePicture.isEmpty()) {
-                String fileName = profilePictureStorageService.storeFile(profilePicture);
-                currentUser.setProfilePicture("/uploads/profiles/" + fileName);
+                String imageUrl = profilePictureStorageService.storeFile(profilePicture);
+                currentUser.setProfilePicture(imageUrl);
                 userService.updateProfile(currentUser);
                 
                 // Track the action for points
