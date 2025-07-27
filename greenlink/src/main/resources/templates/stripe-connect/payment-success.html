@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .success-card {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #d4edda;
+            text-align: center;
+        }
+        
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #d4edda;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2.5rem;
+            color: #155724;
+        }
+        
+        .success-title {
+            color: #155724;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .success-message {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .session-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .session-details h4 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .session-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .session-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .session-detail-label {
+            font-weight: 600;
+            color: #2d5a27;
+        }
+        
+        .session-detail-value {
+            font-family: monospace;
+            color: #666;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        
+        .stripe-connect-btn.secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+        
+        .next-steps {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .next-steps h4 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .next-steps ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #666;
+        }
+        
+        .next-steps li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="success-card">
+            <div class="success-icon">
+                ✅
+            </div>
+            
+            <h1 class="success-title">Payment Successful!</h1>
+            
+            <p class="success-message" th:text="${message}">
+                Your payment has been processed successfully. Thank you for your purchase!
+            </p>
+            
+            <div class="session-details" th:if="${sessionId}">
+                <h4>Payment Details</h4>
+                <div class="session-detail">
+                    <span class="session-detail-label">Session ID:</span>
+                    <span class="session-detail-value" th:text="${sessionId}">cs_1234567890</span>
+                </div>
+                <div class="session-detail">
+                    <span class="session-detail-label">Status:</span>
+                    <span class="session-detail-value">Completed</span>
+                </div>
+                <div class="session-detail">
+                    <span class="session-detail-label">Date:</span>
+                    <span class="session-detail-value" th:text="${#dates.format(#dates.createNow(), 'MMM dd, yyyy HH:mm')}">
+                        Jan 01, 2024 12:00
+                    </span>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h4>What happens next?</h4>
+                <ul>
+                    <li>You will receive a confirmation email with your order details</li>
+                    <li>The seller will be notified of your purchase</li>
+                    <li>Your payment will be processed and transferred to the seller</li>
+                    <li>Contact the seller directly for any questions about your order</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <a href="/stripe-connect/dashboard" class="stripe-connect-btn">
+                    Back to Dashboard
+                </a>
+                <a href="/" class="stripe-connect-btn secondary">
+                    Go to Homepage
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add any additional functionality here
+        console.log('Payment success page loaded');
+        
+        // You could add analytics tracking here
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'purchase', {
+                'transaction_id': /*[[${sessionId}]]*/ 'cs_1234567890',
+                'value': 0.00 // You would get this from the session data
+            });
+        }
+    </script>
+</body>
+</html> 

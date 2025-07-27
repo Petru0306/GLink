@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Connected Account - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stripe-connect-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d5a27;
+        }
+        
+        .stripe-connect-form {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e8f5e8;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d5a27;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+        
+        .form-group .error {
+            color: #d32f2f;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .stripe-connect-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .stripe-connect-info h4 {
+            color: #2d5a27;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stripe-connect-info p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .account-details {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .account-details h5 {
+            color: #2d5a27;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-details p {
+            margin: 0.25rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="stripe-connect-header">
+            <h1>Create Connected Account</h1>
+            <p>Set up a new Stripe Connect account for a seller</p>
+        </div>
+        
+        <div class="stripe-connect-info">
+            <h4>📋 Account Information</h4>
+            <p>This will create an Express account that the seller can onboard to start accepting payments. 
+            The account will be created with platform-controlled fees and full dashboard access.</p>
+        </div>
+        
+        <div class="stripe-connect-form">
+            <form id="createAccountForm">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="seller@example.com">
+                    <div class="error" id="emailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="businessName">Business Name</label>
+                    <input type="text" id="businessName" name="businessName" 
+                           placeholder="Acme Corporation">
+                    <div class="error" id="businessNameError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">Country *</label>
+                    <select id="country" name="country" required>
+                        <option value="">Select a country</option>
+                        <option value="US">United States</option>
+                        <option value="CA">Canada</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="AU">Australia</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="JP">Japan</option>
+                        <option value="SG">Singapore</option>
+                        <option value="NL">Netherlands</option>
+                        <option value="SE">Sweden</option>
+                        <option value="NO">Norway</option>
+                        <option value="DK">Denmark</option>
+                        <option value="FI">Finland</option>
+                        <option value="CH">Switzerland</option>
+                        <option value="AT">Austria</option>
+                        <option value="BE">Belgium</option>
+                        <option value="IE">Ireland</option>
+                        <option value="IT">Italy</option>
+                        <option value="ES">Spain</option>
+                        <option value="PT">Portugal</option>
+                        <option value="PL">Poland</option>
+                        <option value="CZ">Czech Republic</option>
+                        <option value="HU">Hungary</option>
+                        <option value="RO">Romania</option>
+                        <option value="BG">Bulgaria</option>
+                        <option value="HR">Croatia</option>
+                        <option value="SI">Slovenia</option>
+                        <option value="SK">Slovakia</option>
+                        <option value="LT">Lithuania</option>
+                        <option value="LV">Latvia</option>
+                        <option value="EE">Estonia</option>
+                        <option value="CY">Cyprus</option>
+                        <option value="LU">Luxembourg</option>
+                        <option value="MT">Malta</option>
+                        <option value="GR">Greece</option>
+                    </select>
+                    <div class="error" id="countryError"></div>
+                </div>
+                
+                <button type="submit" class="stripe-connect-btn" id="submitBtn">
+                    Create Connected Account
+                </button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Creating connected account...</p>
+            </div>
+            
+            <div class="result" id="result"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/stripe-connect/dashboard" class="stripe-connect-btn" style="width: auto; display: inline-block;">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('createAccountForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Get form data
+            const formData = {
+                email: document.getElementById('email').value.trim(),
+                businessName: document.getElementById('businessName').value.trim(),
+                country: document.getElementById('country').value
+            };
+            
+            // Validate form
+            if (!validateForm(formData)) {
+                return;
+            }
+            
+            // Show loading
+            showLoading(true);
+            
+            try {
+                const response = await fetch('/stripe-connect/create-account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(result.message, result.account);
+                } else {
+                    showError(result.error || 'Failed to create account');
+                }
+                
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        });
+        
+        function validateForm(data) {
+            let isValid = true;
+            
+            if (!data.email) {
+                showFieldError('email', 'Email is required');
+                isValid = false;
+            } else if (!isValidEmail(data.email)) {
+                showFieldError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            if (!data.country) {
+                showFieldError('country', 'Country is required');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showFieldError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+        
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('.error');
+            errorElements.forEach(element => {
+                element.textContent = '';
+            });
+        }
+        
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (show) {
+                loading.style.display = 'block';
+                submitBtn.disabled = true;
+            } else {
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+        
+        function showSuccess(message, account) {
+            const result = document.getElementById('result');
+            result.className = 'result success';
+            result.style.display = 'block';
+            
+            let html = `<h4>✅ ${message}</h4>`;
+            
+            if (account) {
+                html += `
+                    <div class="account-details">
+                        <h5>Account Details:</h5>
+                        <p><strong>Account ID:</strong> ${account.accountId}</p>
+                        <p><strong>Email:</strong> ${account.email}</p>
+                        <p><strong>Country:</strong> ${account.country}</p>
+                        <p><strong>Status:</strong> ${account.status}</p>
+                        <p><strong>Charges Enabled:</strong> ${account.chargesEnabled ? 'Yes' : 'No'}</p>
+                        <p><strong>Payouts Enabled:</strong> ${account.payoutsEnabled ? 'Yes' : 'No'}</p>
+                    </div>
+                    <p style="margin-top: 1rem;">
+                        <a href="/stripe-connect/account/${account.accountId}" class="stripe-connect-btn" style="width: auto; display: inline-block;">
+                            View Account Status
+                        </a>
+                    </p>
+                `;
+            }
+            
+            result.innerHTML = html;
+        }
+        
+        function showError(message) {
+            const result = document.getElementById('result');
+            result.className = 'result error';
+            result.style.display = 'block';
+            result.innerHTML = `<h4>❌ Error</h4><p>${message}</p>`;
+        }
+    </script>
+</body>
+</html> 

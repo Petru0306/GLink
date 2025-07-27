@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stripe-connect-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d5a27;
+        }
+        
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .products-title h2 {
+            margin: 0;
+            color: #2d5a27;
+        }
+        
+        .products-title p {
+            margin: 0.5rem 0 0 0;
+            color: #666;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        
+        .stripe-connect-btn.secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e8f5e8;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .product-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d5a27;
+            margin: 0;
+            flex: 1;
+        }
+        
+        .product-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .product-status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .product-status.inactive {
+            background: #e2e3e5;
+            color: #6c757d;
+        }
+        
+        .product-description {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            min-height: 3rem;
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .product-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .product-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-detail:last-child {
+            margin-bottom: 0;
+        }
+        
+        .product-detail-label {
+            font-weight: 600;
+            color: #2d5a27;
+            font-size: 0.9rem;
+        }
+        
+        .product-detail-value {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .product-actions .stripe-connect-btn {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e8f5e8;
+        }
+        
+        .empty-state h3 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .stripe-connect-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .stripe-connect-info h4 {
+            color: #2d5a27;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stripe-connect-info p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="stripe-connect-header">
+            <h1>Products</h1>
+            <p>Manage your connected account products</p>
+        </div>
+        
+        <div class="stripe-connect-info">
+            <h4>📦 Product Management</h4>
+            <p>View and manage all products for this connected account. Products that are active will be available 
+            for purchase on the storefront. You can create new products or view existing ones.</p>
+        </div>
+        
+        <div class="products-header">
+            <div class="products-title">
+                <h2>Your Products</h2>
+                <p th:text="${'Account: ' + accountId}">Account: acct_1234567890</p>
+            </div>
+            <div class="products-actions">
+                <a th:href="@{'/stripe-connect/account/' + ${accountId} + '/products/create'}" class="stripe-connect-btn">
+                    ➕ Create Product
+                </a>
+                <a th:href="@{'/stripe-connect/store/' + ${accountId}}" class="stripe-connect-btn secondary">
+                    🛒 View Storefront
+                </a>
+            </div>
+        </div>
+        
+        <div th:if="${products.isEmpty()}" class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <h3>No Products Yet</h3>
+            <p>You haven't created any products for this connected account yet. 
+            Create your first product to start selling!</p>
+            <a th:href="@{'/stripe-connect/account/' + ${accountId} + '/products/create'}" class="stripe-connect-btn">
+                Create Your First Product
+            </a>
+        </div>
+        
+        <div th:if="${!products.isEmpty()}" class="products-grid">
+            <div th:each="product : ${products}" class="product-card">
+                <div class="product-header">
+                    <h3 class="product-name" th:text="${product.name}">Product Name</h3>
+                    <span class="product-status" 
+                          th:class="${product.active ? 'product-status active' : 'product-status inactive'}"
+                          th:text="${product.active ? 'Active' : 'Inactive'}">Active</span>
+                </div>
+                
+                <p class="product-description" th:text="${product.description ?: 'No description available'}">
+                    Product description
+                </p>
+                
+                <div class="product-price" 
+                     th:text="${'$' + (product.priceInCents / 100.0) + ' ' + product.currency.toUpperCase()}">
+                    $10.00 USD
+                </div>
+                
+                <div class="product-details">
+                    <div class="product-detail">
+                        <span class="product-detail-label">Product ID:</span>
+                        <span class="product-detail-value" th:text="${product.productId}">prod_1234567890</span>
+                    </div>
+                    <div class="product-detail">
+                        <span class="product-detail-label">Price ID:</span>
+                        <span class="product-detail-value" th:text="${product.priceId}">price_1234567890</span>
+                    </div>
+                    <div class="product-detail">
+                        <span class="product-detail-label">Currency:</span>
+                        <span class="product-detail-value" th:text="${product.currency.toUpperCase()}">USD</span>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <a th:href="@{'/stripe-connect/store/' + ${accountId}}" class="stripe-connect-btn secondary">
+                        View in Store
+                    </a>
+                    <button class="stripe-connect-btn" 
+                            th:onclick="'copyProductId(\'' + ${product.productId} + '\')'">
+                        Copy ID
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/stripe-connect/dashboard" class="stripe-connect-btn secondary" style="width: auto; display: inline-block;">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        function copyProductId(productId) {
+            navigator.clipboard.writeText(productId).then(function() {
+                alert('Product ID copied to clipboard: ' + productId);
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                alert('Failed to copy product ID');
+            });
+        }
+        
+        // Add any additional interactive functionality here
+        console.log('Products page loaded');
+    </script>
+</body>
+</html> 

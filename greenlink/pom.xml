@@ -120,6 +120,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-client</artifactId>
 		</dependency>
+		
+		<!-- AWS SDK for S3-compatible storage (CloudFlare R2) -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.24.12</version>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>url-connection-client</artifactId>
+			<version>2.24.12</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -33,7 +33,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private FileStorageService fileStorageService;
+    private R2StorageService r2StorageService;
     
     @Autowired
     private UserRepository userRepository;
@@ -235,10 +235,10 @@ public class ProductService {
         if (productDto.getImageUrl() != null && !productDto.getImageUrl().equals(existingProduct.getImageUrl())) {
             // Ștergem imaginea veche dacă există
             if (existingProduct.getImageUrl() != null) {
-                String oldFileName = existingProduct.getImageUrl().substring(
-                        existingProduct.getImageUrl().lastIndexOf("/") + 1
-                );
-                fileStorageService.deleteFile(oldFileName);
+                String oldFileName = r2StorageService.extractFileNameFromUrl(existingProduct.getImageUrl());
+                if (oldFileName != null) {
+                    r2StorageService.deleteFile(oldFileName);
+                }
             }
             existingProduct.setImageUrl(productDto.getImageUrl());
         }
@@ -261,10 +261,10 @@ public class ProductService {
 
         // Ștergem imaginea asociată dacă există
         if (product.getImageUrl() != null) {
-            String fileName = product.getImageUrl().substring(
-                    product.getImageUrl().lastIndexOf("/") + 1
-            );
-            fileStorageService.deleteFile(fileName);
+            String fileName = r2StorageService.extractFileNameFromUrl(product.getImageUrl());
+            if (fileName != null) {
+                r2StorageService.deleteFile(fileName);
+            }
         }
 
         productRepository.deleteById(id);

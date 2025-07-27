@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Status - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stripe-connect-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2d5a27;
+        }
+        
+        .account-status-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e8f5e8;
+            margin-bottom: 2rem;
+        }
+        
+        .account-status-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .account-status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .account-status-icon.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .account-status-icon.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .account-status-icon.restricted {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .account-status-icon.disabled {
+            background: #e2e3e5;
+            color: #6c757d;
+        }
+        
+        .account-status-title h2 {
+            margin: 0;
+            color: #2d5a27;
+        }
+        
+        .account-status-title p {
+            margin: 0.5rem 0 0 0;
+            color: #666;
+        }
+        
+        .account-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .account-detail {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .account-detail h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2d5a27;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .account-detail p {
+            margin: 0;
+            font-family: monospace;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        .account-detail .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.restricted {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-badge.disabled {
+            background: #e2e3e5;
+            color: #6c757d;
+        }
+        
+        .onboarding-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .onboarding-section h3 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .onboarding-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        
+        .stripe-connect-btn.secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+        
+        .stripe-connect-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .refresh-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .refresh-btn {
+            background: none;
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            background: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="stripe-connect-header">
+            <h1>Connected Account Status</h1>
+            <p>Monitor and manage your connected account</p>
+        </div>
+        
+        <div class="refresh-section">
+            <button class="refresh-btn" onclick="refreshAccountStatus()">
+                🔄 Refresh Status
+            </button>
+        </div>
+        
+        <div class="account-status-card">
+            <div class="account-status-header">
+                <div class="account-status-icon" th:class="${'account-status-icon ' + account.status}">
+                    <span th:if="${account.status == 'pending'}">⏳</span>
+                    <span th:if="${account.status == 'active'}">✅</span>
+                    <span th:if="${account.status == 'restricted'}">⚠️</span>
+                    <span th:if="${account.status == 'disabled'}">❌</span>
+                </div>
+                <div class="account-status-title">
+                    <h2 th:text="${account.businessName ?: 'Connected Account'}">Connected Account</h2>
+                    <p th:text="${account.email}">email@example.com</p>
+                </div>
+            </div>
+            
+            <div class="account-details-grid">
+                <div class="account-detail">
+                    <h4>Account ID</h4>
+                    <p th:text="${account.accountId}">acct_1234567890</p>
+                </div>
+                
+                <div class="account-detail">
+                    <h4>Status</h4>
+                    <span class="status-badge" th:class="${'status-badge ' + account.status}" th:text="${account.status}">pending</span>
+                </div>
+                
+                <div class="account-detail">
+                    <h4>Country</h4>
+                    <p th:text="${account.country}">US</p>
+                </div>
+                
+                <div class="account-detail">
+                    <h4>Account Type</h4>
+                    <p th:text="${account.type}">express</p>
+                </div>
+                
+                <div class="account-detail">
+                    <h4>Charges Enabled</h4>
+                    <span class="status-badge" th:class="${account.chargesEnabled ? 'status-badge active' : 'status-badge disabled'}" 
+                          th:text="${account.chargesEnabled ? 'Yes' : 'No'}">No</span>
+                </div>
+                
+                <div class="account-detail">
+                    <h4>Payouts Enabled</h4>
+                    <span class="status-badge" th:class="${account.payoutsEnabled ? 'status-badge active' : 'status-badge disabled'}" 
+                          th:text="${account.payoutsEnabled ? 'Yes' : 'No'}">No</span>
+                </div>
+            </div>
+            
+            <div class="onboarding-section" th:if="${!account.chargesEnabled}">
+                <h3>🚀 Complete Onboarding</h3>
+                <p>To start accepting payments, the account holder needs to complete the onboarding process. 
+                This includes providing business information, verifying their identity, and setting up their payout details.</p>
+                
+                <div class="action-buttons">
+                    <button class="stripe-connect-btn" onclick="createOnboardingLink()">
+                        Start Onboarding
+                    </button>
+                    <a th:href="@{'/stripe-connect/account/' + ${account.accountId} + '/products'}" class="stripe-connect-btn secondary">
+                        Manage Products
+                    </a>
+                </div>
+                
+                <div class="loading" id="onboardingLoading">
+                    <div class="loading-spinner"></div>
+                    <p>Creating onboarding link...</p>
+                </div>
+            </div>
+            
+            <div class="onboarding-section" th:if="${account.chargesEnabled}">
+                <h3>✅ Onboarding Complete</h3>
+                <p>This account has completed the onboarding process and is ready to accept payments. 
+                You can now create products and start selling.</p>
+                
+                <div class="action-buttons">
+                    <a th:href="@{'/stripe-connect/account/' + ${account.accountId} + '/products'}" class="stripe-connect-btn">
+                        Manage Products
+                    </a>
+                    <a th:href="@{'/stripe-connect/store/' + ${account.accountId}}" class="stripe-connect-btn secondary">
+                        View Storefront
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/stripe-connect/dashboard" class="stripe-connect-btn secondary" style="width: auto; display: inline-block;">
+                ← Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <script th:inline="javascript">
+        const accountId = /*[[${account.accountId}]]*/ 'acct_1234567890';
+        
+        function refreshAccountStatus() {
+            window.location.reload();
+        }
+        
+        function createOnboardingLink() {
+            const loading = document.getElementById('onboardingLoading');
+            loading.style.display = 'block';
+            
+            const refreshUrl = window.location.href;
+            const returnUrl = window.location.href;
+            
+            fetch(`/stripe-connect/account/${accountId}/onboard`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `refreshUrl=${encodeURIComponent(refreshUrl)}&returnUrl=${encodeURIComponent(returnUrl)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                
+                if (data.success) {
+                    // Open the onboarding link in a new window
+                    window.open(data.accountLinkUrl, '_blank');
+                    
+                    // Show success message
+                    alert('Onboarding link created! A new window will open for the account holder to complete onboarding.');
+                } else {
+                    alert('Error creating onboarding link: ' + data.error);
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                alert('Network error: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html> 

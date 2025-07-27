@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - GreenLink</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .stripe-connect-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .error-card {
+            background: white;
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #f8d7da;
+            text-align: center;
+        }
+        
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            background: #f8d7da;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 2.5rem;
+            color: #721c24;
+        }
+        
+        .error-title {
+            color: #721c24;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .error-message {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .error-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .error-details h4 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .error-details p {
+            color: #666;
+            margin: 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+        }
+        
+        .stripe-connect-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .stripe-connect-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .stripe-connect-btn.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+        
+        .stripe-connect-btn.secondary:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+        
+        .troubleshooting {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+        
+        .troubleshooting h4 {
+            color: #2d5a27;
+            margin-bottom: 1rem;
+        }
+        
+        .troubleshooting ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #666;
+        }
+        
+        .troubleshooting li {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="stripe-connect-container">
+        <div class="error-card">
+            <div class="error-icon">
+                ⚠️
+            </div>
+            
+            <h1 class="error-title">Something went wrong</h1>
+            
+            <p class="error-message" th:text="${error}">
+                An error occurred while processing your request.
+            </p>
+            
+            <div class="error-details" th:if="${error}">
+                <h4>Error Details</h4>
+                <p th:text="${error}">Error message</p>
+            </div>
+            
+            <div class="troubleshooting">
+                <h4>Troubleshooting</h4>
+                <ul>
+                    <li>Check that your Stripe API keys are properly configured</li>
+                    <li>Verify that your connected account exists and is active</li>
+                    <li>Ensure you have the necessary permissions for this operation</li>
+                    <li>Check the Stripe dashboard for any account restrictions</li>
+                    <li>Contact support if the issue persists</li>
+                </ul>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <a href="/stripe-connect/dashboard" class="stripe-connect-btn">
+                    Back to Dashboard
+                </a>
+                <a href="javascript:history.back()" class="stripe-connect-btn secondary">
+                    Go Back
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add any additional functionality here
+        console.log('Error page loaded');
+        
+        // You could add error tracking here
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'exception', {
+                'description': /*[[${error}]]*/ 'Unknown error',
+                'fatal': false
+            });
+        }
+    </script>
+</body>
+</html> 
