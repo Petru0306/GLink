@@ -73,6 +73,7 @@ class PaymentServiceTest {
         product.setPrice(100.0);
         product.setSeller(seller);
         product.setSold(false);
+        product.setStock(1); // Set stock to 1 so it gets marked as sold when purchased
     }
 
     @Test
