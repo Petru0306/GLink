@@ -31,6 +31,11 @@ public class FileController {
                 .toAbsolutePath()
                 .normalize();
         logger.info("FileController initialized with storage location: {}", this.fileStorageLocation);
+        
+        // Log additional debugging information
+        logger.info("FileController: Upload directory path: {}", uploadDir);
+        logger.info("FileController: Absolute storage location: {}", this.fileStorageLocation);
+        logger.info("FileController: Storage location exists: {}", this.fileStorageLocation.toFile().exists());
     }
 
     @GetMapping("/products/{fileName:.+}")
@@ -51,8 +56,9 @@ public class FileController {
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                         .body(resource);
             } else {
-                
+                // Log the file path that doesn't exist
                 logger.warn("File not found: {}, serving placeholder", fileName);
+                logger.warn("Attempted file path: {}", filePath.toAbsolutePath());
                 Resource placeholderResource = new ClassPathResource("static/images/placeholder-product.jpg");
                 if (placeholderResource.exists()) {
                     logger.info("Serving placeholder image instead");
@@ -110,12 +116,13 @@ public class FileController {
                         .body(resource);
             } else {
                 logger.warn("Profile file not found: {}, serving default avatar", fileName);
-                Resource defaultAvatarResource = new ClassPathResource("static/images/logo.svg");
+                logger.warn("Attempted profile file path: {}", filePath.toAbsolutePath());
+                Resource defaultAvatarResource = new ClassPathResource("static/images/default-avatar.svg");
                 if (defaultAvatarResource.exists()) {
                     logger.info("Serving default avatar instead");
                     return ResponseEntity.ok()
                             .contentType(MediaType.parseMediaType("image/svg+xml"))
-                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"logo.svg\"")
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"default-avatar.svg\"")
                             .body(defaultAvatarResource);
                 } else {
                     logger.error("Default avatar not found either!");
@@ -127,15 +134,18 @@ public class FileController {
             return ResponseEntity.badRequest().build();
         }
     }
-    
+
     private String determineContentType(String fileName) {
-        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-        return switch (fileExtension) {
-            case "png" -> "image/png";
-            case "jpg", "jpeg" -> "image/jpeg";
-            case "gif" -> "image/gif";
-            case "webp" -> "image/webp";
-            default -> "application/octet-stream";
-        };
+        if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.endsWith(".png")) {
+            return "image/png";
+        } else if (fileName.endsWith(".gif")) {
+            return "image/gif";
+        } else if (fileName.endsWith(".svg")) {
+            return "image/svg+xml";
+        } else {
+            return "application/octet-stream";
+        }
     }
 } 
