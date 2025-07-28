@@ -30,7 +30,7 @@ public class TestConfig {
     @Bean
     @Primary
     public UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService) {
-        return new UserServiceImpl(userRepository, passwordEncoder, fileStorageService, null);
+        return new UserServiceImpl(userRepository, passwordEncoder, fileStorageService, null, null);
     }
 
     @Bean

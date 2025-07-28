@@ -633,25 +633,31 @@
             <div class="leaderboard-header-content">
                 <h2 class="mb-3">
                     <i class="bi bi-list-ol me-2"></i>
-                    <span th:text="#{leaderboard.top.eco.warriors}">Top Eco Warriors</span>
+                    <span th:if="${type == 'global'}" th:text="#{leaderboard.top.eco.warriors}">Top Eco Warriors</span>
+                    <span th:if="${type == 'friends'}" th:text="#{leaderboard.friends.eco.warriors}">Friends Eco Warriors</span>
                 </h2>
-                <p class="mb-0" th:text="#{leaderboard.subtitle}">Celebrating the most dedicated environmental champions</p>
+                <p class="mb-0" th:if="${type == 'global'}" th:text="#{leaderboard.subtitle}">Celebrating the most dedicated environmental champions</p>
+                <p class="mb-0" th:if="${type == 'friends'}" th:text="#{leaderboard.friends.subtitle}">See how your friends are doing in their eco-friendly journey</p>
             </div>
         </div>
 
         <!-- Filter Buttons -->
         <div class="filter-buttons">
-            <a th:href="@{/points/leaderboard(limit=10)}" 
-               th:class="'filter-btn ' + (${limit == 10} ? 'active' : '')">
+            <a th:href="@{/points/leaderboard(limit=10, type=global)}" 
+               th:class="'filter-btn ' + (${limit == 10 && type == 'global'} ? 'active' : '')">
                 <i class="bi bi-trophy me-2"></i><span th:text="#{leaderboard.top.10}">Top 10</span>
             </a>
-            <a th:href="@{/points/leaderboard(limit=25)}" 
-               th:class="'filter-btn ' + (${limit == 25} ? 'active' : '')">
+            <a th:href="@{/points/leaderboard(limit=25, type=global)}" 
+               th:class="'filter-btn ' + (${limit == 25 && type == 'global'} ? 'active' : '')">
                 <i class="bi bi-award me-2"></i><span th:text="#{leaderboard.top.25}">Top 25</span>
             </a>
-            <a th:href="@{/points/leaderboard(limit=50)}" 
-               th:class="'filter-btn ' + (${limit == 50} ? 'active' : '')">
+            <a th:href="@{/points/leaderboard(limit=50, type=global)}" 
+               th:class="'filter-btn ' + (${limit == 50 && type == 'global'} ? 'active' : '')">
                 <i class="bi bi-star me-2"></i><span th:text="#{leaderboard.top.50}">Top 50</span>
+            </a>
+            <a th:href="@{/points/leaderboard(limit=10, type=friends)}" 
+               th:class="'filter-btn ' + (${type == 'friends'} ? 'active' : '')">
+                <i class="bi bi-people me-2"></i><span th:text="#{leaderboard.friends}">Friends</span>
             </a>
         </div>
 
@@ -659,13 +665,22 @@
         <div class="leaderboard-card">
             <h5 class="section-title">
                 <i class="bi bi-list-ol"></i>
-                Top Users by Points
+                <span th:if="${type == 'global'}">Top Users by Points</span>
+                <span th:if="${type == 'friends'}">Friends Leaderboard</span>
             </h5>
             
             <div th:if="${#lists.isEmpty(topUsers)}" class="empty-state">
                 <i class="bi bi-people"></i>
-                <h4 th:text="#{leaderboard.no.users}">No users found</h4>
-                <p th:text="#{leaderboard.no.users.desc}">Be the first to earn points and climb the leaderboard!</p>
+                <h4 th:if="${type == 'global'}" th:text="#{leaderboard.no.users}">No users found</h4>
+                <h4 th:if="${type == 'friends'}" th:text="#{leaderboard.no.friends}">No friends found</h4>
+                <p th:if="${type == 'global'}" th:text="#{leaderboard.no.users.desc}">Be the first to earn points and climb the leaderboard!</p>
+                <p th:if="${type == 'friends'}" th:text="#{leaderboard.no.friends.desc}">Add some friends to see them in your friends leaderboard!</p>
+                <div th:if="${type == 'friends'}" class="mt-3">
+                    <a href="/friends" class="filter-btn" style="padding: 1.25rem 2.5rem; font-size: 1.2rem;">
+                        <i class="bi bi-person-plus me-2"></i>
+                        <span th:text="#{leaderboard.add.friends}">Add Friends</span>
+                    </a>
+                </div>
             </div>
             
             <a th:href="@{'/profile/user/' + ${user.id}}" class="text-decoration-none" th:each="user, iterStat : ${topUsers}">

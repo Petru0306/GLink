@@ -27,12 +27,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final FileStorageService fileStorageService;
     private final PointsService pointsService;
+    private final FriendService friendService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, PointsService pointsService) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, FileStorageService fileStorageService, PointsService pointsService, FriendService friendService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.fileStorageService = fileStorageService;
         this.pointsService = pointsService;
+        this.friendService = friendService;
     }
 
     @Override
@@ -325,5 +327,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .mapToLong(User::getLevel)
                 .sum();
+    }
+
+    @Override
+    public List<User> getFriendsLeaderboard(Long userId, int limit) {
+        User user = getUserById(userId);
+        if (user == null) {
+            return List.of();
+        }
+        
+        List<User> friends = friendService.getFriendsList(user);
+        
+        // Sort friends by points in descending order and limit the results
+        return friends.stream()
+                .sorted((u1, u2) -> Integer.compare(u2.getPoints(), u1.getPoints()))
+                .limit(limit)
+                .toList();
     }
 } 

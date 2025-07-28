@@ -115,10 +115,24 @@ public class PointsController {
     }
 
     @GetMapping("/leaderboard")
-    public String showLeaderboard(Model model, @RequestParam(defaultValue = "10") int limit) {
-        List<User> topUsers = userService.getTopUsers(limit);
+    public String showLeaderboard(Model model, @RequestParam(defaultValue = "10") int limit, 
+                                 @RequestParam(defaultValue = "global") String type,
+                                 @AuthenticationPrincipal User currentUser) {
+        
+        List<User> topUsers;
+        String leaderboardType = type;
+        
+        if ("friends".equals(type) && currentUser != null) {
+            topUsers = userService.getFriendsLeaderboard(currentUser.getId(), limit);
+            leaderboardType = "friends";
+        } else {
+            topUsers = userService.getTopUsers(limit);
+            leaderboardType = "global";
+        }
+        
         model.addAttribute("topUsers", topUsers);
         model.addAttribute("limit", limit);
+        model.addAttribute("type", leaderboardType);
         return "points/leaderboard";
     }
 } 

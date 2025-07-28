@@ -20,6 +20,7 @@ public interface UserService extends UserDetailsService {
     List<User> getTopUsers(int limit);
     List<User> getTopUsersByLevel(int limit);
     List<User> getUsersByMinLevel(int minLevel);
+    List<User> getFriendsLeaderboard(Long userId, int limit);
     boolean emailExists(String email);
     void deactivateAccount(Long userId);
     void reactivateAccount(Long userId);
