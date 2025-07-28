@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.setActive(true);
         user.setPoints(0);
-        user.setProfilePicture("/images/logo.svg");
+        user.setProfilePicture("/images/default-avatar.svg");
         User savedUser = userRepository.save(user);
         logger.info("User registered successfully: {}", user.getEmail());
         return savedUser;
@@ -141,7 +141,8 @@ public class UserServiceImpl implements UserService {
 
         if (profilePicture != null && !profilePicture.isEmpty()) {
             String fileName = fileStorageService.storeFile(profilePicture);
-            existingUser.setProfilePicture("/uploads/profiles/" + fileName);
+            // Use the /files/profiles/ endpoint for serving profile pictures
+            existingUser.setProfilePicture("/files/profiles/" + fileName);
         }
 
         return userRepository.save(existingUser);
@@ -172,7 +173,7 @@ public class UserServiceImpl implements UserService {
         user.setEnabled(true);
         user.setActive(true);
         user.setPoints(0);
-        user.setProfilePicture("/images/logo.svg");
+        user.setProfilePicture("/images/default-avatar.svg");
         user.setCreatedAt(LocalDateTime.now());
         User savedUser = userRepository.save(user);
         logger.info("User created successfully: {}", user.getEmail());
