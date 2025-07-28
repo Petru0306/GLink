@@ -258,8 +258,7 @@ div.user-card.search-results-card,
 
 .user-card.search-results-card .user-avatar,
 div.user-card.search-results-card .user-avatar {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
-    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3) !important;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
 }
 
 /* Override any potential conflicting styles */
@@ -268,8 +267,9 @@ div.user-card.search-results-card .user-avatar {
     border: 2px solid #28a745 !important;
 }
 
-.search-results-card .user-avatar {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+/* Only apply background gradient to search results avatars that don't have a profile picture */
+.search-results-card .user-avatar:not([style*="background-image"]) {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
 }
 
 /* Empty State Styling */
