@@ -1,16 +1,21 @@
 package com.greenlink.greenlink.controller;
 
 import com.greenlink.greenlink.service.ChallengeTrackingService;
+import com.greenlink.greenlink.service.ReCaptchaService;
 import com.greenlink.greenlink.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/test")
@@ -23,6 +28,18 @@ public class TestController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ReCaptchaService reCaptchaService;
+    
+    @Value("${recaptcha.enabled:false}")
+    private boolean recaptchaEnabled;
+    
+    @Value("${recaptcha.site-key}")
+    private String recaptchaSiteKey;
+    
+    @Value("${recaptcha.secret-key}")
+    private String recaptchaSecretKey;
 
     @GetMapping("/test-offer-challenge")
     public String testOfferChallenge(@RequestParam Long userId) {
@@ -87,5 +104,39 @@ public class TestController {
         } catch (Exception e) {
             return "Error recalculating level for user " + userId + ": " + e.getMessage();
         }
+    }
+
+    @GetMapping("/test-recaptcha")
+    @ResponseBody
+    public Map<String, Object> testRecaptchaConfig() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("recaptchaEnabled", recaptchaEnabled);
+        result.put("recaptchaSiteKey", recaptchaSiteKey != null ? recaptchaSiteKey.substring(0, Math.min(10, recaptchaSiteKey.length())) + "..." : "null");
+        result.put("recaptchaSecretKey", recaptchaSecretKey != null ? recaptchaSecretKey.substring(0, Math.min(10, recaptchaSecretKey.length())) + "..." : "null");
+        result.put("timestamp", new java.util.Date());
+        return result;
+    }
+
+    @GetMapping("/test-recaptcha-validation")
+    @ResponseBody
+    public Map<String, Object> testRecaptchaValidation(@RequestParam String token, @RequestParam(required = false) String remoteIp) {
+        Map<String, Object> result = new HashMap<>();
+        
+        try {
+            boolean isValid = reCaptchaService.validateCaptcha(token, remoteIp);
+            
+            result.put("success", true);
+            result.put("token", token != null ? token.substring(0, Math.min(10, token.length())) + "..." : "null");
+            result.put("remoteIp", remoteIp);
+            result.put("isValid", isValid);
+            result.put("recaptchaEnabled", recaptchaEnabled);
+            
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("error", e.getMessage());
+            logger.error("Error testing reCAPTCHA validation", e);
+        }
+        
+        return result;
     }
 } 

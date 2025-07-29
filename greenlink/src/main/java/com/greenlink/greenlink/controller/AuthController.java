@@ -57,7 +57,11 @@ public class AuthController {
                               @RequestParam("confirmPassword") String confirmPassword,
                               @RequestParam(value = "g-recaptcha-response", required = false) String recaptchaResponse,
                               HttpServletRequest request) {
+        logger.debug("Registration attempt for email: {}", user.getEmail());
+        logger.debug("reCAPTCHA enabled: {}, response present: {}", recaptchaEnabled, recaptchaResponse != null && !recaptchaResponse.isEmpty());
+        
         if (result.hasErrors()) {
+            logger.debug("Validation errors found: {}", result.getAllErrors());
             model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
             model.addAttribute("recaptchaEnabled", recaptchaEnabled);
             return "register";
@@ -65,6 +69,7 @@ public class AuthController {
 
         // Check if passwords match
         if (!user.getPassword().equals(confirmPassword)) {
+            logger.debug("Password mismatch detected");
             model.addAttribute("error", "Passwords do not match");
             model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
             model.addAttribute("recaptchaEnabled", recaptchaEnabled);
@@ -74,9 +79,12 @@ public class AuthController {
         // Validate reCAPTCHA if enabled
         if (recaptchaEnabled) {
             String clientIp = request.getRemoteAddr();
+            logger.debug("Validating reCAPTCHA for IP: {}", clientIp);
             boolean isValidCaptcha = reCaptchaService.validateCaptcha(recaptchaResponse, clientIp);
+            logger.debug("reCAPTCHA validation result: {}", isValidCaptcha);
             
             if (!isValidCaptcha) {
+                logger.warn("reCAPTCHA validation failed for user: {}", user.getEmail());
                 model.addAttribute("error", "Please validate the reCAPTCHA");
                 model.addAttribute("recaptchaSiteKey", recaptchaSiteKey);
                 model.addAttribute("recaptchaEnabled", recaptchaEnabled);
@@ -85,9 +93,12 @@ public class AuthController {
         }
 
         try {
+            logger.debug("Attempting to register user: {}", user.getEmail());
             userService.registerUser(user);
+            logger.info("User registered successfully: {}", user.getEmail());
             return "redirect:/login?registered";
         } catch (RuntimeException e) {
+            logger.error("Registration failed for user: {}", user.getEmail(), e);
             model.addAttribute("error", e.getMessage());
             return "register";
         }
